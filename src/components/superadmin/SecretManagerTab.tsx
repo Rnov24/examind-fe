@@ -171,8 +171,8 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
   const testSecretConnection = async (provider: string, keyName: string) => {
     setTestingKey(keyName)
     try {
-      const res = await api.post('/superadmin/secrets/test-connection', {
-        provider,
+      const res = await api.post('/superadmin/secrets/test', {
+        service_name: provider,
         key_name: keyName,
       })
       showToast('success', res.data?.message || `Koneksi ke ${provider.toUpperCase()} berhasil diverifikasi!`)
@@ -194,9 +194,9 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
     setIsModalOpen(true)
   }
 
-  const handleToggleStatus = async (id: number) => {
+  const handleToggleStatus = async (keyName: string) => {
     try {
-      await api.patch(`/superadmin/secrets/${id}/toggle-status`)
+      await api.patch(`/superadmin/secrets/${keyName}/toggle`)
       showToast('success', 'Status secret berhasil diubah.')
       loadSecrets()
     } catch (err: any) {
@@ -204,12 +204,12 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
     }
   }
 
-  const handleDeleteSecret = async (id: number) => {
+  const handleDeleteSecret = async (keyName: string) => {
     if (!confirm('Hapus secret ini dari database? Server akan kembali menggunakan variabel lingkungan .env.')) {
       return
     }
     try {
-      await api.delete(`/superadmin/secrets/${id}`)
+      await api.delete(`/superadmin/secrets/${keyName}`)
       showToast('success', 'Secret berhasil dihapus.')
       loadSecrets()
     } catch (err: any) {
@@ -641,13 +641,13 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
                     <td className="p-4 pr-6 text-right">
                       <div className="flex items-center justify-end gap-1.5">
                         <button
-                          onClick={() => handleToggleStatus(s.id)}
+                          onClick={() => handleToggleStatus(s.key_name)}
                           className="px-2.5 py-1 rounded-md text-[11px] font-bold border border-slate-200 hover:bg-slate-100 bg-white text-slate-700 cursor-pointer"
                         >
                           {s.is_active ? 'Nonaktifkan' : 'Aktifkan'}
                         </button>
                         <button
-                          onClick={() => handleDeleteSecret(s.id)}
+                          onClick={() => handleDeleteSecret(s.key_name)}
                           className="p-1 rounded-md text-slate-400 hover:text-rose-600 hover:bg-rose-50 cursor-pointer transition-colors"
                           title="Hapus Secret"
                         >

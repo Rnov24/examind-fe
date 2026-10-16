@@ -57,6 +57,14 @@ Ini keputusan paling penting. Framework belakangan; arsitektur inferensi duluan.
 
 ### Keputusan arsitektur
 
+**KEPUTUSAN Jal (2026-10-16): Opsi A, full client-side.** ONNX (YOLO) dan
+MediaPipe jalan di browser via Web Worker — tidak ada inferensi di server.
+
+Konsekuensi penting dari keputusan ini: **`torch` bisa dicopot dari
+`requirements.txt` backend.** Backend tinggal FastAPI + SQLAlchemy + Pydantic,
+jadi ringan dan muat di free tier 512 MB (lihat 3.2). Model PyTorch tetap
+dibutuhkan di sisi training (export YOLO → ONNX), tapi tidak ikut di-deploy.
+
 **Opsi A sebagai primary** (event ringan: wajah hilang, wajah >1, HP terdeteksi),
 **Opsi B opsional** untuk verifikasi snapshot yang di-flag. Kontrak event antara
 frontend–backend didefinisikan dulu (lihat Fase 0), supaya migrasi framework
@@ -135,33 +143,44 @@ proses always-on, database managed/mandel, file besar di object storage.
 - Alternatif: Cloudflare Pages (juga gratis, boleh komersial di free tier tapi
   bandwidth jauh lebih kecil).
 
-### 3.2 Backend (FastAPI) → Railway dulu, VPS lokal kalau serius
+### 3.2 Backend (FastAPI) → Render free + keep-alive (Rp0)
 
-Backend butuh proses Python yang selalu nyala — tidak cocok di Vercel/edge.
+Syarat Jal: **gratis**. Realita free tier 2026 (dicek 2026-10-16): hampir semua
+yang "beneran gratis" sudah mati atau butuh kartu kredit — Koyeb free tier
+retired, Hugging Face Docker Spaces sekarang butuh PRO, Railway praktis
+berbayar, Oracle/GCP/Fly.io butuh kartu untuk verifikasi.
 
-- **Mulai: Railway Hobby ($5/bulan, termasuk $5 kredit pemakaian).**
-  Deploy paling gampang (connect GitHub → jalan), MySQL one-click, private
-  networking antar service. Angka 2026: free plan praktisnya hanya $1 kredit —
-  jangan ngarep gratis.
-- **Naik kelas: VPS Indonesia** (IDCloudHost / Niagahoster, kisaran
-  Rp50–150rb/bulan). Alasan: latensi rendah untuk pengguna Indonesia, data
-  tetap di dalam negeri (sensitif untuk data siswa!), biaya flat tidak kaget
-  seperti usage-based.
-- **Jangan**: Render free tier (service sleep kalau idle — fatal saat ujian),
-  atau server kampus tanpa SLA.
-- Praktik: Docker Compose (api + mysql + worker), reverse proxy Caddy/Nginx
-  dengan TLS otomatis, healthcheck `/health`.
+- **Pilihan utama: Render free web service (tanpa kartu kredit).**
+  Native Python/FastAPI, RAM 512 MB. Syarat muat: **copot `torch` dari
+  `requirements.txt`** — sudah tidak dibutuhkan karena inferensi pindah ke
+  browser (keputusan Opsi A). Sisanya (FastAPI, SQLAlchemy, Pydantic) muat
+  nyaman di 512 MB.
+- **Kelemahan jujur**: service sleep setelah ~15 menit idle, bangunnya
+  ~30–60 detik. Mitigasi: **cron-job.org** (gratis, tanpa kartu) ping
+  `/api/health` tiap 10 menit supaya tidak pernah idle. Trik ini umum dipakai
+  dan cukup untuk demo/pengembangan. Untuk hari-H ujian beneran dengan puluhan
+  siswa serentak, free tier bukan tempatnya — siapkan upgrade saat itu tiba.
+- **Alternatif kalau nanti punya kartu kredit**: Oracle Cloud Always Free —
+  VM ARM 2 OCPU/12 GB selamanya + managed MySQL HeatWave 50 GB, tidak pernah
+  sleep. Tapi butuh kartu untuk verifikasi, dan ada risiko idle-reclamation
+  (VM bisa dihapus kalau 7 hari berturut-turut di bawah 20% CPU/memori).
+- Praktik: healthcheck di `/health`, env var via Render dashboard (secret
+  jangan di-commit, Secret Manager backend tetap dipakai).
 
-### 3.3 Database (MySQL) → ikut backend
+### 3.3 Database → TiDB Cloud Starter (MySQL-compatible, gratis)
 
-- Di Railway: pakai MySQL plugin one-click, volume persistent.
-- Di VPS: MySQL di Docker container yang sama, data di volume.
-- **Backup otomatis harian** ke object storage (mysqldump via cron) — ini
-  non-negotiable untuk data ujian.
+- **Pilihan utama: TiDB Cloud Starter** — free tier tanpa kartu kredit:
+  5 GB row storage, 50 juta Request Unit/bulan, wire-compatible MySQL 8.0.
+  SQLAlchemy + PyMySQL yang sekarang **tidak perlu ganti driver**; yang berubah
+  hanya connection string (host TiDB, port 4000, SSL wajib).
+- Backup otomatis dari dashboard TiDB. Schema dan migrasi Alembic tetap jalan
+  seperti biasa.
 - Catatan jujur: `GEMINI.md` menyebut MySQL via XAMPP sebagai syarat proyek
   kampus. Kalau EXAMIND ini untuk tugas kampus, **skenario XAMPP tetap
-  dipertahankan untuk demo di kampus**; hosting eksternal adalah jalur
-  deployment beneran. Dua-duanya bisa hidup berdampingan.
+  dipertahankan untuk demo di kampus**; TiDB adalah jalur deployment beneran.
+  Dua-duanya bisa hidup berdampingan, ganti env var saja.
+- Alternatif gratis: MySQL di VM Oracle Always Free (butuh kartu kredit),
+  atau SQLite untuk dev lokal.
 
 ### 3.4 File besar (model ONNX, snapshot proctoring) → Object storage
 
@@ -187,8 +206,8 @@ Siswa (browser)
  │     └── model .onnx ──→ Cloudflare R2 (CDN)
  └── ONNX/MediaPipe jalan lokal di Web Worker (privasi terjaga)
 
-FastAPI (Railway/VPS)
- ├── MySQL (same host / Railway plugin) + backup harian → R2
+FastAPI (Render free, keep-alive via cron-job.org)
+ ├── TiDB Cloud Starter (MySQL-compatible, gratis) — backup otomatis
  └── snapshot flag ──→ R2
 ```
 
@@ -212,11 +231,12 @@ bapak yang review diff-nya seperti biasa.
 
 ## 5. Keputusan yang butuh jawaban Jal sebelum eksekusi
 
-1. **Arsitektur proctoring**: Opsi A (browser, direkomendasikan) atau tetap mau
-   ada porsi server-side dari awal?
+1. **Arsitektur proctoring**: ✅ DIPUTUSKAN (2026-10-16) — Opsi A, full client-side.
+   ONNX (YOLO) + MediaPipe jalan di browser via Web Worker.
 2. **YOLO vs MediaPipe ObjectDetector** untuk deteksi HP: mulai dari yang ringan
    (MediaPipe) dulu, atau langsung YOLO?
-3. **Hosting backend awal**: Railway ($5/bln) atau langsung VPS lokal?
+3. **Hosting**: ✅ DIPUTUSKAN (2026-10-16) — full gratis: Vercel (fe) + Render
+   free + keep-alive (be) + TiDB Cloud Starter (db) + Cloudflare R2 (storage).
 4. **Mulai dari Fase 0 (PoC proctoring) atau Fase 1 (scaffold Next.js)?**
    Rekomendasi bapak: Fase 0 dulu — kalau PoC proctoring gagal di laptop
    kentang, seluruh rencana berubah dan kita hemat berminggu-minggu kerja sia-sia.

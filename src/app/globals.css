@@ -1,0 +1,168 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: 'Plus Jakarta Sans', 'Rubik', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color-scheme: light;
+
+  /* EXAMIND Institutional Light Theme Tokens */
+  --canvas-bg: #f8fafc;
+  --surface-card: #ffffff;
+  --surface-subtle: #f1f5f9;
+  --surface-hover: #e2e8f0;
+  --border-default: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --text-main: #0f172a;
+  --text-body: #334155;
+  --text-muted: #64748b;
+  --text-faint: #94a3b8;
+  --accent-primary: #0f172a;
+  --accent-lime: #c2ef4e;
+  --accent-indigo: #4f46e5;
+  --accent-violet: #6366f1;
+  --accent-emerald: #059669;
+  --accent-amber: #d97706;
+  --accent-rose: #e11d48;
+
+  /* Backward compatibility aliases mapped to Light Theme */
+  --sentri-primary: #0f172a;
+  --sentri-ink-deep: #0f172a;
+  --sentri-on-primary: #ffffff;
+  --sentri-accent-lime: #c2ef4e;
+  --sentri-accent-pink: #e11d48;
+  --sentri-accent-violet: #4f46e5;
+  --sentri-accent-violet-deep: #4338ca;
+  --sentri-accent-violet-mid: #6366f1;
+  --sentri-surface-canvas-dark: #ffffff;
+  --sentri-surface-canvas-light: #ffffff;
+  --sentri-surface-night: #f8fafc;
+  --sentri-surface-press-light: #f1f5f9;
+  --sentri-surface-press-stronger: #e2e8f0;
+  --sentri-hairline-violet: #e2e8f0;
+  --sentri-hairline-cool: #cbd5e1;
+  --sentri-hairline-cloud: #e2e8f0;
+  --sentri-ink: #0f172a;
+  --sentri-ink-press: #020617;
+  --sentri-on-dark-muted: #64748b;
+  --sentri-on-dark-faint: #94a3b8;
+  --sentri-ring-focus: #818cf8;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background-color: #f8fafc;
+  color: #0f172a;
+  font-family: 'Plus Jakarta Sans', 'Rubik', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, .heading-display {
+  font-family: 'Outfit', 'Plus Jakarta Sans', system-ui, sans-serif;
+}
+
+/* Custom refined light scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Tabular figures for timers, NISN, and scores */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Reusable Institutional Card & Control Classes */
+.sentri-card {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  color: #0f172a;
+  border-radius: 0.75rem;
+}
+
+.sentri-card-elevated {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  color: #0f172a;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  border-radius: 0.75rem;
+}
+
+.sentri-input {
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #0f172a;
+  border-radius: 0.5rem;
+}
+.sentri-input:focus {
+  border-color: #4f46e5;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+}
+
+.sentri-chip-lime {
+  background-color: #c2ef4e;
+  color: #0f172a;
+  font-weight: 800;
+  border-radius: 0.25rem;
+  padding: 0.125rem 0.5rem;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.sentri-chip-violet {
+  background-color: #eef2ff;
+  color: #4338ca;
+  border: 1px solid #c7d2fe;
+  border-radius: 0.25rem;
+  padding: 0.125rem 0.5rem;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.sentri-btn-inverted {
+  background-color: #0f172a;
+  color: #ffffff;
+  font-weight: 700;
+  border-radius: 0.5rem;
+  transition: all 0.15s ease;
+}
+.sentri-btn-inverted:hover {
+  background-color: #1e293b;
+}
+
+.sentri-btn-lime {
+  background-color: #c2ef4e;
+  color: #0f172a;
+  font-weight: 800;
+  border-radius: 0.5rem;
+  transition: all 0.15s ease;
+}
+.sentri-btn-lime:hover {
+  background-color: #addc3b;
+}
+
+.sentri-btn-secondary {
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  transition: all 0.15s ease;
+}
+.sentri-btn-secondary:hover {
+  background-color: #f1f5f9;
+}

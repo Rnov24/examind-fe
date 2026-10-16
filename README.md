@@ -1,51 +1,92 @@
-# examind-fe — EXAMIND Frontend
+# EXAMIND Frontend (Next.js 15 + App Router)
 
-> Vue 3 + TypeScript + Vite frontend for the EXAMIND AI-Powered Online Examination Platform (Sistem Ujian Online Berbasis AI).
+> Production Next.js 15 (React 19 + TypeScript + Tailwind CSS) frontend for the EXAMIND AI-Powered Online Examination Platform (*Sistem Ujian Online Berbasis AI*). Fully managed via **pnpm**.
 
-Companion repo: [Rnov24/examind-be](https://github.com/Rnov24/examind-be) (FastAPI backend). Split from the original `Rnov24/examind` monorepo on 2026-10-16.
+Companion repo: [Rnov24/examind-be](https://github.com/Rnov24/examind-be) (FastAPI backend).
 
-## Tech stack
+---
 
-- **Vue 3.5** + TypeScript, **Vite 5** dev server on port **3000**
-- **Vue Router 4** (with auth navigation guards), **Pinia** stores (`auth`, `exam`, `proctoring`)
-- **Tailwind CSS 3**, `lucide-vue-next` icons, `qrcode.vue`
-- Offline-first exam flow helpers in `src/utils/` (`indexedDB.ts`, `companionEdge.ts`, `proctoringEdge.ts`)
-- Design system & product notes: [`DESIGN.md`](./DESIGN.md), [`PRODUCT.md`](./PRODUCT.md)
-- Full platform specs: [`docs/`](./docs) (PRD, SRS, UX, UML, tickets)
+## ⚡ Tech Stack & Architecture
 
-## Prerequisites
+- **Next.js 15** (App Router) + **React 19** + **TypeScript 5.8**
+- **pnpm** exclusively for deterministic dependency management (`pnpm-lock.yaml`, `.npmrc`)
+- **Tailwind CSS 3.4** + `@tailwindcss/typography`, preserving 100% fidelity to [`DESIGN.md`](./DESIGN.md) (institutional slate/indigo/#c2ef4e aesthetic, Plus Jakarta Sans, Outfit, Rubik, JetBrains Mono)
+- **Zustand** reactive stores (`authStore`, `examStore`, `proctoringStore`)
+- **Lucide React** icon library
+- **Edge AI & Computer Vision Proctoring**:
+  - `src/utils/proctoringEdge.ts`: Primary camera face detection heuristics & fullscreen tracking
+  - `src/utils/companionEdge.ts`: Secondary phone camera edge CV, gyroscope/accelerometer telemetry, glare detection
+  - `src/utils/indexedDB.ts`: Offline-first question/answer caching
 
+---
+
+## 📁 App Router Organization
+
+Routing has been upgraded from legacy hash history to structured Next.js route groups:
+
+```text
+frontend/src/app/
+├── (marketing)/                # Public landing & feature marketing
+│   ├── layout.tsx
+│   └── page.tsx                # http://localhost:3000/
+├── (auth)/                     # Authentication
+│   ├── layout.tsx
+│   └── login/page.tsx          # http://localhost:3000/login
+├── (dashboard)/                # Role-based dashboard & administration
+│   ├── layout.tsx              # Shell with institutional Navbar & Sidebar
+│   ├── dashboard/page.tsx      # Role router redirector
+│   ├── superadmin/dashboard/   # Tenant & multi-school management
+│   ├── superadmin/secrets/     # KMS & encrypted secret management
+│   ├── admin/dashboard/        # School admin dashboard
+│   ├── teacher/dashboard/      # Teacher overview & quick actions
+│   ├── student/dashboard/      # Student schedule & exam history
+│   ├── classes/ & [id]/        # Class roster & student management
+│   ├── questions/ & [id]/      # AI-assisted question bank workspace
+│   ├── exams/                  # Exam catalog, creator & editor
+│   ├── exams/[id]/monitor/     # Real-time dual-camera proctoring monitor
+│   ├── grading/                # AI & human-in-the-loop grading workspace
+│   └── analytics/              # Psychometric IRT & Bloom analytics
+├── (exam)/                     # High-security exam workspace
+│   ├── layout.tsx              # Distraction-free full-screen shell
+│   └── student/exam/[examId]/  # Exam runner with edge proctoring & offline IndexedDB
+└── (companion)/                # Secondary mobile proctoring camera
+    ├── layout.tsx
+    └── companion/page.tsx      # Mobile phone camera & gyroscope telemetry streamer
+```
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
 - Node.js 20+
-- pnpm (or npm)
-- Backend running at `http://localhost:8000` (see examind-be)
+- pnpm 9+ or 10+ (`npm install -g pnpm`)
+- EXAMIND Backend running at `http://localhost:8000`
 
-## Setup
-
-```bash
-pnpm install        # or: npm install
-pnpm dev            # starts Vite on http://localhost:3000
-```
-
-The dev server proxies `/api`, `/ws` and `/uploads` to `http://localhost:8000`, so the frontend talks to the backend with zero CORS setup in development.
-
-Production builds use an absolute backend URL (`http://<host>:8000/api/v1`) — see `src/lib/api.ts`.
-
-## Build for XAMPP
+### Setup & Development
 
 ```bash
-pnpm build          # output goes to dist/
+# Navigate to the frontend directory
+cd frontend
+
+# Install dependencies with pnpm
+pnpm install
+
+# Start Next.js development server
+pnpm dev
 ```
 
-Then serve via Apache: [`index.php`](./index.php) at this repo root redirects straight to `dist/`, so you can drop this repo's contents into `c:\xampp\htdocs\examind-fe` and open it in the browser without `npm`.
+The application runs on `http://localhost:3000`. API and WebSocket calls route automatically to the backend (`http://localhost:8000`).
 
-## One-click launch (Windows)
+### Production Build & Verification
 
-`scripts/start_examind.bat` starts MySQL (XAMPP), the FastAPI backend and this Vite dev server, assuming both repos are cloned side by side:
+```bash
+# Type check without emitting
+pnpm exec tsc --noEmit
 
+# Optimized production Next.js build
+pnpm build
+
+# Run production server
+pnpm start
 ```
-<parent>/
-├── examind-fe/
-└── examind-be/
-```
-
-`scripts/stop_examind.bat` stops everything.

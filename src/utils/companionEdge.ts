@@ -132,6 +132,10 @@ export class CompanionEdgeEngine {
     this.baselineOrientation = { ...this.currentOrientation }
   }
 
+  public recalibrate(): void {
+    this.recalibrateOrientation()
+  }
+
   private startEdgeProcessingLoop(): void {
     // Edge CV loop runs at 2.5 Hz (every 400ms) - extremely lightweight for mobile CPU & battery
     let tickCount = 0

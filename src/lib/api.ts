@@ -1,10 +1,10 @@
 import axios from 'axios'
 
-const isDev = typeof window !== 'undefined' && window.location.port === '3000'
-const host = typeof window !== 'undefined' && window.location.hostname ? window.location.hostname : 'localhost'
+const isBrowser = typeof window !== 'undefined'
+const defaultBaseUrl = isBrowser ? '/api/v1' : (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1')
 
 export const api = axios.create({
-  baseURL: isDev ? '/api/v1' : `http://${host}:8000/api/v1`,
+  baseURL: defaultBaseUrl,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -13,9 +13,11 @@ export const api = axios.create({
 // Request Interceptor: Attach JWT Token
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('examind_token')
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`
+    if (isBrowser) {
+      const token = localStorage.getItem('examind_token')
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`
+      }
     }
     return config
   },
@@ -26,12 +28,11 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response && error.response.status === 401) {
-      // Avoid redirect loops if already on login page
-      if (!window.location.hash.includes('/login') && !window.location.pathname.includes('/login')) {
+    if (error.response && error.response.status === 401 && isBrowser) {
+      if (!window.location.pathname.includes('/login')) {
         localStorage.removeItem('examind_token')
         localStorage.removeItem('examind_user')
-        window.location.href = '/#/login?reason=session_expired'
+        window.location.href = '/login?reason=session_expired'
       }
     }
     return Promise.reject(error)

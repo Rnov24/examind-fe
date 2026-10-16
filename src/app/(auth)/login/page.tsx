@@ -3,7 +3,7 @@
 import React, { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { AlertCircle, Loader2 } from 'lucide-react'
+import { AlertCircle, Loader2, Check } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 
 function LoginForm() {
@@ -14,6 +14,7 @@ function LoginForm() {
   const [identifier, setIdentifier] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
+  const [loginSuccess, setLoginSuccess] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const [sessionExpiredNotice, setSessionExpiredNotice] = useState(false)
 
@@ -51,12 +52,16 @@ function LoginForm() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
+    setLoginSuccess(false)
     setErrorMessage('')
     setSessionExpiredNotice(false)
 
     try {
       const loggedUser = await login(identifier.trim(), password)
       if (loggedUser) {
+        setLoading(false)
+        setLoginSuccess(true)
+        await new Promise((resolve) => setTimeout(resolve, 600))
         const redirect = searchParams.get('redirect') || (
           loggedUser.role === 'superadmin'
             ? '/superadmin/dashboard'
@@ -69,6 +74,7 @@ function LoginForm() {
         router.push(redirect)
       }
     } catch (err: any) {
+      setLoginSuccess(false)
       setErrorMessage(
         err.response?.data?.message ||
           err.message ||
@@ -78,6 +84,7 @@ function LoginForm() {
       setLoading(false)
     }
   }
+
 
   return (
     <div className="min-h-screen bg-[#f8fafc] text-slate-900 flex flex-col justify-between p-4 sm:p-6 font-sans selection:bg-[#c2ef4e] selection:text-slate-950 relative overflow-hidden">
@@ -112,7 +119,10 @@ function LoginForm() {
 
       {/* Main Login Card Area */}
       <main className="relative z-10 max-w-md w-full mx-auto my-auto py-8">
-        <div className="bg-white/95 backdrop-blur-xl rounded-2xl border border-slate-200/90 shadow-subtle-elevated p-6 sm:p-8 space-y-6 text-slate-900">
+        <div
+          className="anim-rise bg-white/95 backdrop-blur-xl rounded-2xl border border-slate-200/90 shadow-subtle-elevated p-6 sm:p-8 space-y-6 text-slate-900"
+          style={{ '--anim-duration': '300ms' } as React.CSSProperties}
+        >
           {/* Card Header */}
           <div className="space-y-2 text-center">
             <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-slate-100 text-slate-800 border border-slate-200 font-mono">
@@ -155,7 +165,7 @@ function LoginForm() {
                 type="text"
                 required
                 placeholder="Contoh: 0081234567 atau budi.santoso@..."
-                className="w-full px-4 py-2.5 rounded-xl bg-slate-50/70 border border-slate-200 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 transition-all shadow-xs"
+                className="w-full px-4 py-2.5 rounded-xl bg-slate-50/70 border border-slate-200 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-[#6a5fc1] focus:ring-2 focus:ring-[#6a5fc1]/25 transition-[border-color,box-shadow,background-color] duration-200 ease-out shadow-xs"
               />
             </div>
 
@@ -177,19 +187,30 @@ function LoginForm() {
                 type="password"
                 required
                 placeholder="••••••••"
-                className="w-full px-4 py-2.5 rounded-xl bg-slate-50/70 border border-slate-200 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 transition-all shadow-xs"
+                className="w-full px-4 py-2.5 rounded-xl bg-slate-50/70 border border-slate-200 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-[#6a5fc1] focus:ring-2 focus:ring-[#6a5fc1]/25 transition-[border-color,box-shadow,background-color] duration-200 ease-out shadow-xs"
               />
             </div>
 
             <button
               type="submit"
-              disabled={loading}
-              className="w-full mt-2 py-3 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 active:bg-slate-950 text-white font-bold text-xs transition-all disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer shadow-card hover:shadow-card-hover font-display tracking-wide"
+              disabled={loading || loginSuccess}
+              className={`w-full mt-2 py-3 px-4 rounded-xl font-bold text-xs transition-all duration-300 flex items-center justify-center gap-2 shadow-card font-display tracking-wide ${
+                loginSuccess
+                  ? 'bg-[#c2ef4e] text-slate-950 shadow-[0_0_16px_rgba(194,239,78,0.35)] cursor-default'
+                  : loading
+                  ? 'bg-slate-900 text-white opacity-75 cursor-not-allowed'
+                  : 'bg-slate-900 hover:bg-slate-800 active:bg-slate-950 text-white cursor-pointer hover:shadow-card-hover'
+              }`}
             >
-              {loading ? (
+              {loginSuccess ? (
+                <span className="anim-pop inline-flex items-center gap-2">
+                  <Check className="w-4 h-4 text-slate-950 stroke-[3]" />
+                  <span>Berhasil Masuk</span>
+                </span>
+              ) : loading ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin text-[#c2ef4e]" />
-                  <span>Memverifikasi Kredensial...</span>
+                  <span>Memeriksa…</span>
                 </>
               ) : (
                 <span>Masuk ke Sistem Ujian</span>

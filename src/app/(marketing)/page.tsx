@@ -32,6 +32,28 @@ export default function LandingPage() {
     }
   }, [isHydrated, hydrate])
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible')
+            observer.unobserve(entry.target)
+          }
+        })
+      },
+      { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+    )
+
+    const revealElements = document.querySelectorAll('[data-reveal]')
+    revealElements.forEach((el) => observer.observe(el))
+
+    return () => observer.disconnect()
+  }, [])
+
+
   const userName = user?.full_name || user?.identifier || 'Pengguna'
   const isAuth = isAuthenticated()
 
@@ -252,23 +274,37 @@ export default function LandingPage() {
       {/* HERO SECTION */}
       <section id="hero" className="relative z-10 pt-16 pb-24 md:pt-24 md:pb-32 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto text-center space-y-8">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-slate-900 tracking-tight leading-[1.15] max-w-4xl mx-auto">
+          <h1
+            className="anim-rise text-4xl sm:text-5xl md:text-6xl font-black text-slate-900 tracking-tight leading-[1.15] max-w-4xl mx-auto"
+            style={{ '--anim-duration': '400ms', '--anim-delay': '80ms' } as React.CSSProperties}
+          >
             Satu Platform Ujian Berstandar Institusi.<br className="hidden sm:inline" />
-            <span className="bg-[#c2ef4e] text-slate-950 px-2.5 py-0.5 rounded-xs inline-block font-black mt-1">Bebas Kecurangan</span>,
+            <span
+              className="anim-pop bg-[#c2ef4e] text-slate-950 px-2.5 py-0.5 rounded-xs inline-block font-black mt-1"
+              style={{ '--anim-duration': '350ms', '--anim-delay': '240ms' } as React.CSSProperties}
+            >
+              Bebas Kecurangan
+            </span>,
             Adil bagi Siswa, Efisien bagi Guru.
           </h1>
 
-          <p className="text-base sm:text-lg md:text-xl text-slate-600 leading-relaxed max-w-2xl mx-auto font-normal">
+          <p
+            className="anim-rise text-base sm:text-lg md:text-xl text-slate-600 leading-relaxed max-w-2xl mx-auto font-normal"
+            style={{ '--anim-duration': '400ms', '--anim-delay': '180ms' } as React.CSSProperties}
+          >
             Menggabungkan pengawasan AI Dual-Camera beretika, pembuatan soal adaptif, dan koreksi esai otomatis rubrik 4 dimensi. Menjamin objektivitas penilaian dan ketenangan peserta ujian tanpa risiko diskualifikasi sepihak.
           </p>
 
-          <div className="flex flex-wrap items-center justify-center gap-3.5 pt-2">
+          <div
+            className="anim-rise flex flex-wrap items-center justify-center gap-3.5 pt-2"
+            style={{ '--anim-duration': '400ms', '--anim-delay': '280ms' } as React.CSSProperties}
+          >
             <button
               onClick={() => openInquiryModal('demo')}
               className="px-6 py-3.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm shadow-md transition-all flex items-center gap-2 cursor-pointer"
             >
               <span>Jadwalkan Demo Sekolah</span>
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-4 h-4 anim-nudge-x" />
             </button>
 
             <a
@@ -279,7 +315,10 @@ export default function LandingPage() {
             </a>
           </div>
 
-          <div className="pt-8 flex flex-wrap items-center justify-center gap-6 sm:gap-8 text-xs sm:text-sm text-slate-600 font-medium border-t border-slate-200 max-w-4xl mx-auto">
+          <div
+            className="anim-rise pt-8 flex flex-wrap items-center justify-center gap-6 sm:gap-8 text-xs sm:text-sm text-slate-600 font-medium border-t border-slate-200 max-w-4xl mx-auto"
+            style={{ '--anim-duration': '400ms', '--anim-delay': '380ms' } as React.CSSProperties}
+          >
             <div className="flex items-center gap-2">
               <ShieldCheck className="w-4 h-4 text-emerald-600" />
               <span>Standar Integritas 2026</span>
@@ -300,7 +339,7 @@ export default function LandingPage() {
         </div>
 
         {/* INTERACTIVE HERO STAGE / MOCKUP SHOWCASE */}
-        <div id="keunggulan" className="max-w-6xl mx-auto mt-14 scroll-mt-24">
+        <div id="keunggulan" data-reveal className="max-w-6xl mx-auto mt-14 scroll-mt-24">
           <div className="rounded-xl border border-slate-200 bg-white shadow-xl overflow-hidden backdrop-blur-md">
             {/* Window Header Bar */}
             <div className="px-5 py-3.5 bg-slate-100 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -647,7 +686,7 @@ export default function LandingPage() {
       {/* TIGA PILAR PENGGUNA */}
       <section id="peran" className="relative z-10 py-24 px-4 sm:px-6 lg:px-8 border-t border-slate-200 bg-white scroll-mt-20">
         <div className="max-w-7xl mx-auto space-y-14">
-          <div className="max-w-3xl space-y-3">
+          <div data-reveal className="max-w-3xl space-y-3">
             <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
               Tiga Sudut Pandang, Satu Ekosistem Harmonis
             </h2>
@@ -658,7 +697,11 @@ export default function LandingPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* CARD SISWA */}
-            <div className="p-6 rounded-xl bg-slate-50 border border-slate-200 space-y-4 hover:border-slate-300 hover:shadow-md transition-all flex flex-col justify-between">
+            <div
+              data-reveal
+              style={{ '--reveal-delay': '0ms' } as React.CSSProperties}
+              className="p-6 rounded-xl bg-slate-50 border border-slate-200 space-y-4 hover:border-slate-300 hover:shadow-md transition-all flex flex-col justify-between"
+            >
               <div className="space-y-3.5">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-800 border border-emerald-200 flex items-center justify-center font-bold shrink-0">
@@ -687,7 +730,11 @@ export default function LandingPage() {
             </div>
 
             {/* CARD GURU */}
-            <div className="p-6 rounded-xl bg-slate-50 border border-slate-200 space-y-4 hover:border-slate-300 hover:shadow-md transition-all flex flex-col justify-between">
+            <div
+              data-reveal
+              style={{ '--reveal-delay': '100ms' } as React.CSSProperties}
+              className="p-6 rounded-xl bg-slate-50 border border-slate-200 space-y-4 hover:border-slate-300 hover:shadow-md transition-all flex flex-col justify-between"
+            >
               <div className="space-y-3.5">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-lg bg-indigo-100 text-indigo-800 border border-indigo-200 flex items-center justify-center font-bold shrink-0">
@@ -716,7 +763,11 @@ export default function LandingPage() {
             </div>
 
             {/* CARD SEKOLAH */}
-            <div className="p-6 rounded-xl bg-slate-50 border border-slate-200 space-y-4 hover:border-slate-300 hover:shadow-md transition-all flex flex-col justify-between">
+            <div
+              data-reveal
+              style={{ '--reveal-delay': '200ms' } as React.CSSProperties}
+              className="p-6 rounded-xl bg-slate-50 border border-slate-200 space-y-4 hover:border-slate-300 hover:shadow-md transition-all flex flex-col justify-between"
+            >
               <div className="space-y-3.5">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-lg bg-purple-100 text-purple-800 border border-purple-200 flex items-center justify-center font-bold shrink-0">
@@ -750,7 +801,7 @@ export default function LandingPage() {
       {/* DUAL-CAMERA DETAIL */}
       <section id="proctoring" className="relative z-10 py-24 px-4 sm:px-6 lg:px-8 border-t border-slate-200 bg-slate-50 scroll-mt-20">
         <div className="max-w-7xl mx-auto space-y-12">
-          <div className="max-w-3xl space-y-3">
+          <div data-reveal className="max-w-3xl space-y-3">
             <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
               Bagaimana AI Dual-Camera Mengamankan Ruang Ujian
             </h2>
@@ -760,7 +811,11 @@ export default function LandingPage() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            <div className="lg:col-span-6 bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+            <div
+              data-reveal
+              style={{ '--reveal-delay': '0ms' } as React.CSSProperties}
+              className="lg:col-span-6 bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4"
+            >
               <div className="flex items-center justify-between pb-3 border-b border-slate-200 text-xs">
                 <span className="font-bold text-slate-900">Topologi Pengawasan Kamera Ganda</span>
                 <span className="text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded border border-emerald-200 font-mono font-bold">
@@ -796,7 +851,11 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div className="lg:col-span-6 space-y-6">
+            <div
+              data-reveal
+              style={{ '--reveal-delay': '120ms' } as React.CSSProperties}
+              className="lg:col-span-6 space-y-6"
+            >
               <div className="space-y-1.5">
                 <h3 className="text-base font-bold text-slate-900 flex items-center gap-2.5">
                   <span className="w-6 h-6 rounded-md bg-slate-900 text-white flex items-center justify-center text-xs font-mono font-bold">1</span>
@@ -834,7 +893,7 @@ export default function LandingPage() {
       {/* PRICING & LISENSI SAAS */}
       <section id="pricing" className="relative z-10 py-24 px-4 sm:px-6 lg:px-8 border-t border-slate-200 bg-white text-slate-900 scroll-mt-20">
         <div className="max-w-7xl mx-auto space-y-14">
-          <div className="max-w-3xl space-y-3">
+          <div data-reveal className="max-w-3xl space-y-3">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-xs bg-slate-100 text-slate-800 text-xs font-mono font-bold uppercase tracking-wider border border-slate-200">
               Pengadaan Institusi B2B
             </div>
@@ -849,7 +908,11 @@ export default function LandingPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
             {/* TIER 1: STARTER */}
-            <div className="p-7 rounded-xl bg-slate-50 border border-slate-200 flex flex-col justify-between space-y-6 shadow-xs hover:border-slate-300 transition-all text-slate-900">
+            <div
+              data-reveal
+              style={{ '--reveal-delay': '0ms' } as React.CSSProperties}
+              className="p-7 rounded-xl bg-slate-50 border border-slate-200 flex flex-col justify-between space-y-6 shadow-xs hover:border-slate-300 transition-all text-slate-900"
+            >
               <div className="space-y-5">
                 <div>
                   <span className="text-xs font-bold text-slate-500 uppercase tracking-wider font-mono">Sekolah Mandiri</span>
@@ -897,7 +960,11 @@ export default function LandingPage() {
             </div>
 
             {/* TIER 2: INSTITUSI PRO */}
-            <div className="p-7 rounded-xl bg-white border-2 border-slate-900 flex flex-col justify-between space-y-6 shadow-xl relative text-slate-900">
+            <div
+              data-reveal
+              style={{ '--reveal-delay': '100ms' } as React.CSSProperties}
+              className="p-7 rounded-xl bg-white border-2 border-slate-900 flex flex-col justify-between space-y-6 shadow-xl relative text-slate-900"
+            >
               <div className="absolute -top-3.5 right-6 px-3 py-0.5 rounded-full text-xs font-bold bg-[#c2ef4e] text-slate-950 shadow-sm font-mono border border-slate-900">
                 Paling Direkomendasikan
               </div>
@@ -953,7 +1020,11 @@ export default function LandingPage() {
             </div>
 
             {/* TIER 3: ENTERPRISE */}
-            <div className="p-7 rounded-xl bg-slate-50 border border-slate-200 flex flex-col justify-between space-y-6 shadow-xs hover:border-slate-300 transition-all text-slate-900">
+            <div
+              data-reveal
+              style={{ '--reveal-delay': '200ms' } as React.CSSProperties}
+              className="p-7 rounded-xl bg-slate-50 border border-slate-200 flex flex-col justify-between space-y-6 shadow-xs hover:border-slate-300 transition-all text-slate-900"
+            >
               <div className="space-y-5">
                 <div>
                   <span className="text-xs font-bold text-slate-500 uppercase tracking-wider font-mono">Konsorsium & Yayasan</span>
@@ -1006,7 +1077,11 @@ export default function LandingPage() {
           </div>
 
           {/* Procurement Guarantee Callout */}
-          <div className="p-6 rounded-xl bg-slate-50 border border-slate-200 shadow-xs flex items-center gap-4 text-sm text-slate-900">
+          <div
+            data-reveal
+            style={{ '--reveal-delay': '100ms' } as React.CSSProperties}
+            className="p-6 rounded-xl bg-slate-50 border border-slate-200 shadow-xs flex items-center gap-4 text-sm text-slate-900"
+          >
             <ShieldCheck className="w-6 h-6 text-emerald-600 shrink-0" />
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 w-full">
               <div>
@@ -1027,7 +1102,7 @@ export default function LandingPage() {
       {/* FAQ SECTION */}
       <section id="faq" className="relative z-10 py-24 px-4 sm:px-6 lg:px-8 border-t border-slate-200 bg-slate-50 scroll-mt-20">
         <div className="max-w-4xl mx-auto space-y-12">
-          <div className="text-center space-y-3">
+          <div data-reveal className="text-center space-y-3">
             <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
               Pertanyaan Umum Pengadaan EXAMIND
             </h2>
@@ -1036,7 +1111,11 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="divide-y divide-slate-200 border-y border-slate-200">
+          <div
+            data-reveal
+            style={{ '--reveal-delay': '100ms' } as React.CSSProperties}
+            className="divide-y divide-slate-200 border-y border-slate-200"
+          >
             {faqs.map((item, idx) => (
               <div key={idx} className="py-4">
                 <button
@@ -1060,7 +1139,7 @@ export default function LandingPage() {
       </section>
 
       {/* SQUIGGLY ACCENT DIVIDER */}
-      <div className="relative w-full overflow-hidden leading-none bg-slate-50 pt-4">
+      <div data-reveal className="relative w-full overflow-hidden leading-none bg-slate-50 pt-4">
         <svg className="w-full h-4 sm:h-5 text-[#c2ef4e]" viewBox="0 0 1200 24" fill="none" preserveAspectRatio="none">
           <path
             d="M0,12 Q30,0 60,12 T120,12 T180,12 T240,12 T300,12 T360,12 T420,12 T480,12 T540,12 T600,12 T660,12 T720,12 T780,12 T840,12 T900,12 T960,12 T1020,12 T1080,12 T1140,12 T1200,12"
@@ -1073,7 +1152,7 @@ export default function LandingPage() {
       </div>
 
       {/* FOOTER */}
-      <footer className="relative z-10 bg-white border-t border-slate-200 text-slate-600 text-xs py-16 px-4 sm:px-6 lg:px-8">
+      <footer data-reveal className="relative z-10 bg-white border-t border-slate-200 text-slate-600 text-xs py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
           <div className="space-y-3 md:col-span-1">
             <div className="flex items-center gap-2.5">

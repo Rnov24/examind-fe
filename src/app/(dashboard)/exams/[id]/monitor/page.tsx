@@ -15,6 +15,7 @@ import {
   Check,
 } from 'lucide-react'
 import api from '@/lib/api'
+import { wsBaseUrl } from '@/lib/ws'
 
 interface StudentSession {
   session_id: number
@@ -227,8 +228,7 @@ export default function LiveMonitoringPage() {
     // Setup WebSocket
     let ws: WebSocket | null = null
     if (typeof window !== 'undefined') {
-      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
-      const wsUrl = `${protocol}//${window.location.host}/ws/exam/${examId}/live-monitor`
+      const wsUrl = `${wsBaseUrl()}/ws/exam/${examId}/live-monitor`
       ws = new WebSocket(wsUrl)
       wsRef.current = ws
 

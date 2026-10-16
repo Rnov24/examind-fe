@@ -15,6 +15,7 @@ import {
   Loader2,
 } from 'lucide-react'
 import { CompanionEdgeEngine, type CompanionTelemetry } from '@/utils/companionEdge'
+import { wsBaseUrl } from '@/lib/ws'
 
 function CompanionInner() {
   const searchParams = useSearchParams()
@@ -91,8 +92,7 @@ function CompanionInner() {
 
   function connectWs() {
     if (!token || !sessionId) return
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
-    const wsUrl = `${protocol}//${window.location.host}/ws/companion/${sessionId}?token=${token}`
+    const wsUrl = `${wsBaseUrl()}/ws/proctoring/${sessionId}/companion?token=${token}`
 
     const ws = new WebSocket(wsUrl)
     wsRef.current = ws

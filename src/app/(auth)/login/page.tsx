@@ -210,8 +210,9 @@ function LoginForm() {
             </div>
           </form>
 
-          {/* Quick Demo Switcher */}
-          <div className="pt-5 border-t border-slate-100 space-y-2.5">
+          {/* Quick Demo Switcher — dev only, stripped from production builds */}
+          {process.env.NODE_ENV === 'development' && (
+            <div className="pt-5 border-t border-slate-100 space-y-2.5">
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-bold text-slate-700 uppercase tracking-wider font-mono">
                 Akses Cepat Uji Coba:
@@ -284,7 +285,8 @@ function LoginForm() {
                 <p className="text-[10px] text-slate-500 font-mono truncate">Platform Owner</p>
               </button>
             </div>
-          </div>
+            </div>
+          )}
         </div>
       </main>
 

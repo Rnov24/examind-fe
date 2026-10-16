@@ -1,16 +1,21 @@
 import type { NextConfig } from 'next'
 
+// BACKEND_URL: base URL of the FastAPI backend (no trailing slash).
+//   Local dev : http://localhost:8000 (default)
+//   Production: https://<workspace>--examind-be-api.modal.run
+const backendUrl = process.env.BACKEND_URL || 'http://localhost:8000'
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   async rewrites() {
     return [
       {
         source: '/api/:path*',
-        destination: 'http://localhost:8000/api/:path*',
+        destination: `${backendUrl}/api/:path*`,
       },
       {
         source: '/uploads/:path*',
-        destination: 'http://localhost:8000/uploads/:path*',
+        destination: `${backendUrl}/uploads/:path*`,
       },
     ]
   },

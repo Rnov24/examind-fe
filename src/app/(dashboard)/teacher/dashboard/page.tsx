@@ -52,7 +52,7 @@ export default function TeacherDashboardPage() {
   return (
     <div className="space-y-6 max-w-6xl mx-auto font-sans">
       {/* Institutional Light Header with Ambient Glow */}
-      <div className="bg-gradient-to-r from-white via-white to-indigo-50/30 rounded-2xl border border-slate-200/90 p-6 sm:p-7 shadow-card relative overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+      <div className="bg-gradient-to-r from-white via-white to-indigo-50/30 rounded-2xl border border-slate-200/90 p-4 sm:p-7 shadow-card relative overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-5">
         <div className="absolute -right-16 -top-16 w-64 h-64 bg-indigo-100/40 rounded-full blur-3xl pointer-events-none"></div>
         <div className="space-y-1.5 relative z-10">
           <div className="flex items-center gap-2">
@@ -69,17 +69,17 @@ export default function TeacherDashboardPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-3 shrink-0 relative z-10">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 shrink-0 relative z-10 w-full sm:w-auto">
           <Link
             href="/questions"
-            className="px-4 py-2.5 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs rounded-xl border border-slate-300/90 hover:border-slate-400 transition-all shadow-card flex items-center gap-2 cursor-pointer"
+            className="px-4 py-2.5 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs rounded-xl border border-slate-300/90 hover:border-slate-400 transition-all shadow-card flex items-center justify-center gap-2 cursor-pointer w-full sm:w-auto"
           >
             <BookOpen className="w-4 h-4 text-slate-900" />
             <span>Bank Soal & AI</span>
           </Link>
           <Link
             href="/exams/create"
-            className="px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl transition-all shadow-card hover:shadow-card-hover flex items-center gap-2 cursor-pointer"
+            className="px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl transition-all shadow-card hover:shadow-card-hover flex items-center justify-center gap-2 cursor-pointer w-full sm:w-auto"
           >
             <Plus className="w-4 h-4 text-[#c2ef4e]" />
             <span>Buat Ujian Baru</span>
@@ -138,21 +138,21 @@ export default function TeacherDashboardPage() {
 
       {/* Active Exams Table Container */}
       <div className="bg-white rounded-2xl border border-slate-200/90 shadow-card overflow-hidden">
-        <div className="p-5 px-6 border-b border-slate-100 flex items-center justify-between">
+        <div className="p-4 sm:p-5 sm:px-6 border-b border-slate-100 flex items-center justify-between gap-3">
           <div>
             <h2 className="text-base font-display font-bold text-slate-900">Daftar Paket Ujian Terkini</h2>
             <p className="text-xs text-slate-500">Status ujian, mode proctoring, dan akses pemantauan pengawas</p>
           </div>
           <Link
             href="/exams"
-            className="text-xs font-bold text-slate-900 hover:text-indigo-600 flex items-center gap-1.5 font-mono transition-colors"
+            className="text-xs font-bold text-slate-900 hover:text-indigo-600 flex items-center gap-1.5 font-mono transition-colors shrink-0"
           >
             <span>Semua Ujian</span>
             <span>→</span>
           </Link>
         </div>
 
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto touch-pan-x">
           <table className="w-full text-left text-xs text-slate-600">
             <thead className="bg-slate-50/80 text-[11px] uppercase font-bold text-slate-500 tracking-wider border-b border-slate-100 font-mono">
               <tr>
@@ -193,7 +193,7 @@ export default function TeacherDashboardPage() {
                       {exam.status}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-right space-x-2">
+                  <td className="px-6 py-4 text-right space-x-2 whitespace-nowrap">
                     <Link
                       href={`/exams/${exam.id}/monitor`}
                       className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200/80 font-bold text-[11px] transition-colors cursor-pointer shadow-2xs"

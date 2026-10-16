@@ -114,7 +114,7 @@ export default function AdminDashboardPage() {
   return (
     <div className="space-y-6">
       {/* Institutional Daylight Header */}
-      <div className="relative overflow-hidden bg-white rounded-2xl border border-slate-200/80 p-6 md:p-8 shadow-card flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+      <div className="relative overflow-hidden bg-white rounded-2xl border border-slate-200/80 p-4 sm:p-6 md:p-8 shadow-card flex flex-col sm:flex-row sm:items-center justify-between gap-6">
         <div className="pointer-events-none absolute -top-16 -right-16 w-72 h-72 bg-indigo-50/70 rounded-full blur-3xl"></div>
         <div className="pointer-events-none absolute -bottom-16 -left-16 w-60 h-60 bg-emerald-50/50 rounded-full blur-2xl"></div>
 
@@ -135,16 +135,16 @@ export default function AdminDashboardPage() {
           </p>
         </div>
 
-        <div className="relative flex items-center gap-2.5 shrink-0 pt-4 sm:pt-0 border-t sm:border-t-0 border-slate-100">
+        <div className="relative flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 shrink-0 pt-4 sm:pt-0 border-t sm:border-t-0 border-slate-100 w-full sm:w-auto">
           <Link
             href="/classes"
-            className="px-4 py-2.5 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs rounded-xl border border-slate-200 transition-colors shadow-xs cursor-pointer"
+            className="px-4 py-2.5 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs rounded-xl border border-slate-200 transition-colors shadow-xs cursor-pointer flex items-center justify-center w-full sm:w-auto"
           >
             Kelola Kelas
           </Link>
           <button
             onClick={() => setShowAddUserModal(true)}
-            className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl transition-all shadow-card hover:shadow-card-hover flex items-center gap-2 cursor-pointer font-display tracking-wide"
+            className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl transition-all shadow-card hover:shadow-card-hover flex items-center justify-center gap-2 cursor-pointer font-display tracking-wide w-full sm:w-auto"
           >
             <UserPlus className="w-3.5 h-3.5 text-[#c2ef4e]" />
             <span>Tambah Pengguna</span>
@@ -236,14 +236,14 @@ export default function AdminDashboardPage() {
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 w-full md:w-auto">
             <select
               value={selectedRole}
               onChange={(e) => {
                 setSelectedRole(e.target.value)
                 fetchUsers(e.target.value, searchKeyword)
               }}
-              className="px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 focus:outline-none focus:border-slate-400 font-sans shadow-xs"
+              className="px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 focus:outline-none focus:border-slate-400 font-sans shadow-xs w-full sm:w-auto"
             >
               <option value="all">Semua Peran (All)</option>
               <option value="admin">Administrator</option>
@@ -251,7 +251,7 @@ export default function AdminDashboardPage() {
               <option value="student">Siswa / Peserta</option>
             </select>
 
-            <div className="relative">
+            <div className="relative w-full sm:w-auto flex-1 sm:flex-initial">
               <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
                 value={searchKeyword}
@@ -261,13 +261,13 @@ export default function AdminDashboardPage() {
                 }}
                 type="text"
                 placeholder="Cari nama, NIP, NISN..."
-                className="pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-slate-400 focus:bg-white w-48 sm:w-60 shadow-xs transition-colors"
+                className="pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-slate-400 focus:bg-white w-full sm:w-60 shadow-xs transition-colors"
               />
             </div>
           </div>
         </div>
 
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto touch-pan-x">
           <table className="w-full text-left text-sm text-slate-600">
             <thead className="bg-slate-50/80 text-xs uppercase font-bold text-slate-600 tracking-wider border-b border-slate-200 font-mono">
               <tr>
@@ -366,9 +366,10 @@ export default function AdminDashboardPage() {
               <button
                 type="button"
                 onClick={() => setShowAddUserModal(false)}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+                aria-label="Tutup modal"
+                className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
               >
-                <X className="w-4 h-4" />
+                <X className="w-5 h-5" />
               </button>
             </div>
 

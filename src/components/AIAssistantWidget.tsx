@@ -149,7 +149,7 @@ export default function AIAssistantWidget() {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 z-40 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs shadow-xl shadow-slate-900/20 border border-slate-700/60 flex items-center gap-2.5 transition-all cursor-pointer"
+          className="fixed bottom-[max(1.5rem,env(safe-area-inset-bottom))] right-[max(1.5rem,env(safe-area-inset-right))] z-40 px-4 py-2.5 min-h-[44px] rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs shadow-xl shadow-slate-900/20 border border-slate-700/60 flex items-center gap-2.5 transition-all cursor-pointer"
         >
           <div className="w-5 h-5 rounded-md bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 flex items-center justify-center font-mono text-[10px] font-bold">
             AI
@@ -168,7 +168,7 @@ export default function AIAssistantWidget() {
 
       {/* Chat Drawer Window */}
       {isOpen && (
-        <div className="fixed bottom-6 right-6 z-50 w-96 max-w-[calc(100vw-2rem)] h-[580px] max-h-[calc(100vh-4rem)] bg-white rounded-xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden text-slate-900">
+        <div className="fixed bottom-[max(1.5rem,env(safe-area-inset-bottom))] right-4 sm:right-[max(1.5rem,env(safe-area-inset-right))] left-4 sm:left-auto z-50 sm:w-96 max-w-[calc(100vw-2rem)] h-[580px] max-h-[calc(100vh-max(4rem,calc(2rem+env(safe-area-inset-bottom))))] bg-white rounded-xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden text-slate-900">
           {/* Drawer Header */}
           <div className="p-4 px-5 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
             <div className="flex items-center gap-2.5">
@@ -201,9 +201,9 @@ export default function AIAssistantWidget() {
                   onClick={clearMessages}
                   title="Bersihkan Percakapan"
                   aria-label="Bersihkan Percakapan"
-                  className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors cursor-pointer"
+                  className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors cursor-pointer"
                 >
-                  <RotateCcw className="w-3.5 h-3.5" />
+                  <RotateCcw className="w-4 h-4" />
                 </button>
               )}
               <button
@@ -211,7 +211,7 @@ export default function AIAssistantWidget() {
                 onClick={() => setIsOpen(false)}
                 title="Tutup Chat"
                 aria-label="Tutup Chat"
-                className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors cursor-pointer"
+                className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -325,7 +325,8 @@ export default function AIAssistantWidget() {
             <button
               onClick={() => handleSend()}
               disabled={!inputQuery.trim() || isLoading}
-              className="p-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 disabled:opacity-40 text-white font-bold transition-colors cursor-pointer shadow-xs"
+              aria-label="Kirim Pesan"
+              className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg bg-slate-900 hover:bg-slate-800 disabled:opacity-40 text-white font-bold transition-colors cursor-pointer shadow-xs shrink-0"
             >
               <Send className="w-4 h-4" />
             </button>

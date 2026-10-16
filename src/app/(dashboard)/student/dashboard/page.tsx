@@ -25,7 +25,7 @@ export default function StudentDashboardPage() {
   return (
     <div className="space-y-6 max-w-5xl mx-auto font-sans">
       {/* Institutional Daylight Header Card */}
-      <div className="relative overflow-hidden bg-white rounded-2xl border border-slate-200/80 p-6 md:p-8 shadow-card flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+      <div className="relative overflow-hidden bg-white rounded-2xl border border-slate-200/80 p-4 sm:p-6 md:p-8 shadow-card flex flex-col sm:flex-row sm:items-center justify-between gap-6">
         <div className="pointer-events-none absolute -top-16 -right-16 w-72 h-72 bg-emerald-50/70 rounded-full blur-3xl"></div>
         <div className="pointer-events-none absolute -bottom-16 -left-16 w-60 h-60 bg-indigo-50/50 rounded-full blur-2xl"></div>
 

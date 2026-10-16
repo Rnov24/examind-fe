@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useMemo } from 'react'
+import React, { useMemo, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
@@ -33,7 +33,34 @@ import { useUiStore } from '@/stores/uiStore'
 export default function Sidebar() {
   const pathname = usePathname()
   const { user } = useAuthStore()
-  const { sidebarOpen, toggleSidebar } = useUiStore()
+  const { sidebarOpen, toggleSidebar, setSidebarOpen, initSidebar } = useUiStore()
+
+  // Initialize sidebar on first mount (guard for SSR: defaults to true on server, adapts on client)
+  useEffect(() => {
+    initSidebar()
+
+    const mql = window.matchMedia('(min-width: 768px)')
+    const handleChange = (e: MediaQueryListEvent) => {
+      setSidebarOpen(e.matches)
+    }
+    mql.addEventListener('change', handleChange)
+    return () => mql.removeEventListener('change', handleChange)
+  }, [initSidebar, setSidebarOpen])
+
+  // Close drawer on Escape key (mobile only)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && sidebarOpen) {
+        if (typeof window !== 'undefined' && window.innerWidth < 768) {
+          setSidebarOpen(false)
+          document.getElementById('sidebar-toggle-btn')?.focus()
+        }
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [sidebarOpen, setSidebarOpen])
+
 
   const isSuperAdmin = user?.role === 'superadmin'
   const isAdmin = user?.role === 'admin'
@@ -99,6 +126,12 @@ export default function Sidebar() {
     }
   }, [isSuperAdmin, isAdmin, isTeacher, user])
 
+  const handleNavClick = () => {
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      setSidebarOpen(false)
+    }
+  }
+
   const renderLink = (
     href: string,
     label: string,
@@ -110,6 +143,7 @@ export default function Sidebar() {
     return (
       <Link
         href={href}
+        onClick={handleNavClick}
         className={`group flex items-center justify-between px-3 py-2.5 rounded-xl text-xs transition-all relative ${
           active
             ? 'bg-slate-900 text-white font-semibold shadow-card ring-1 ring-slate-800'
@@ -157,36 +191,58 @@ export default function Sidebar() {
     </div>
   )
 
-  if (!sidebarOpen) {
-    return null
-  }
-
   return (
-    <aside className="w-72 shrink-0 border-r border-slate-200/80 bg-white/85 backdrop-blur-md flex flex-col justify-between p-3.5 h-[calc(100vh-4rem)] sticky top-16 overflow-y-auto text-slate-800 select-none shadow-2xs transition-all">
-      <div className="space-y-4">
-        {/* Dynamic User & Role Identity Header Card with Collapse Button */}
-        <div className="p-3 rounded-2xl bg-gradient-to-br from-slate-50 via-white to-slate-100/70 border border-slate-200/80 shadow-xs relative group">
-          <button
-            onClick={toggleSidebar}
-            className="absolute top-2.5 right-2.5 p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors cursor-pointer"
-            title="Tutup Sidebar"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </button>
+    <>
+      {/* Mobile Drawer Backdrop */}
+      <div
+        onClick={() => setSidebarOpen(false)}
+        className={`fixed inset-0 z-40 bg-slate-950/40 backdrop-blur-[2px] transition-opacity duration-300 md:hidden motion-reduce:transition-none ${
+          sidebarOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
+        aria-hidden="true"
+      />
 
-          <div className="flex items-center gap-2.5 pr-6">
-            <div
-              className={`w-9 h-9 rounded-xl ${roleMeta.monogramBg} text-white flex items-center justify-center font-bold text-xs shadow-xs font-display shrink-0`}
+      {/* Main Sidebar Navigation / Overlay Drawer */}
+      <aside
+        id="sidebar-nav"
+        aria-label="Menu Navigasi Utama"
+        className={`fixed md:sticky top-0 md:top-16 inset-y-0 md:inset-y-auto left-0 md:left-auto z-40 md:z-20 w-72 max-w-[calc(100vw-3rem)] md:max-w-none md:w-72 shrink-0 border-r border-slate-200/80 bg-white md:bg-white/85 backdrop-blur-md flex flex-col justify-between p-3.5 pb-[max(1rem,env(safe-area-inset-bottom))] md:pb-3.5 h-full md:h-[calc(100vh-4rem)] overflow-y-auto text-slate-800 select-none shadow-2xl md:shadow-2xs transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none ${
+          sidebarOpen
+            ? 'translate-x-0'
+            : '-translate-x-full md:hidden pointer-events-none md:pointer-events-auto'
+        }`}
+      >
+        <div className="space-y-4">
+          {/* Dynamic User & Role Identity Header Card with Collapse Button */}
+          <div className="p-3 rounded-2xl bg-gradient-to-br from-slate-50 via-white to-slate-100/70 border border-slate-200/80 shadow-xs relative group">
+            <button
+              onClick={() => {
+                setSidebarOpen(false)
+                if (typeof window !== 'undefined' && window.innerWidth < 768) {
+                  document.getElementById('sidebar-toggle-btn')?.focus()
+                }
+              }}
+              className="absolute top-2 right-2 p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              title="Tutup Sidebar"
+              aria-label="Tutup Sidebar"
             >
-              {user?.full_name?.charAt(0) || 'U'}
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+
+            <div className="flex items-center gap-2.5 pr-10">
+              <div
+                className={`w-9 h-9 rounded-xl ${roleMeta.monogramBg} text-white flex items-center justify-center font-bold text-xs shadow-xs font-display shrink-0`}
+              >
+                {user?.full_name?.charAt(0) || 'U'}
+              </div>
+              <div className="min-w-0 flex-1">
+                <h2 className="text-xs font-bold text-slate-900 truncate leading-tight">
+                  {user?.full_name || 'Pengguna EXAMIND'}
+                </h2>
+                <p className="text-[10px] text-slate-500 font-mono truncate">{roleMeta.subtext}</p>
+              </div>
             </div>
-            <div className="min-w-0 flex-1">
-              <h2 className="text-xs font-bold text-slate-900 truncate leading-tight">
-                {user?.full_name || 'Pengguna EXAMIND'}
-              </h2>
-              <p className="text-[10px] text-slate-500 font-mono truncate">{roleMeta.subtext}</p>
-            </div>
-          </div>
+
           <div className="mt-2.5 pt-2 border-t border-slate-200/60 flex items-center justify-between">
             <span className={`text-[10px] font-bold px-2 py-0.5 rounded-lg ${roleMeta.badgeClass}`}>
               {roleMeta.label}
@@ -356,7 +412,7 @@ export default function Sidebar() {
       </div>
 
       {/* Global Sidebar System Footer */}
-      <div className="pt-3 border-t border-slate-200/80 space-y-2">
+      <div className="pt-3 pb-[max(0.5rem,env(safe-area-inset-bottom))] md:pb-0 border-t border-slate-200/80 space-y-2">
         <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 text-[10px] font-mono text-slate-600 flex items-center justify-between">
           <div className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
@@ -374,5 +430,6 @@ export default function Sidebar() {
         </div>
       </div>
     </aside>
+    </>
   )
 }

@@ -381,7 +381,7 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
             <Loader2 className="w-8 h-8 text-indigo-600 animate-spin" />
           </div>
         ) : (
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto touch-pan-x">
             <table className="w-full text-left text-sm text-slate-600">
               <thead className="bg-slate-50/80 text-xs uppercase font-bold text-slate-600 tracking-wider font-mono border-b border-slate-200">
                 <tr>

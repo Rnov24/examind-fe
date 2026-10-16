@@ -266,7 +266,7 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
       {/* Toast Notification */}
       {toast && (
         <div
-          className={`fixed bottom-6 right-6 z-50 px-4 py-3 rounded-xl shadow-xl border flex items-center gap-3 max-w-md text-xs font-semibold ${
+          className={`fixed bottom-[max(1.5rem,env(safe-area-inset-bottom))] right-4 sm:right-[max(1.5rem,env(safe-area-inset-right))] z-50 px-4 py-3 rounded-xl shadow-xl border flex items-center gap-3 max-w-md text-xs font-semibold ${
             toast.type === 'success'
               ? 'bg-slate-900 text-white border-slate-700 shadow-slate-900/20'
               : 'bg-rose-50 text-rose-800 border-rose-200 shadow-rose-900/10'
@@ -280,9 +280,10 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
           <span className="flex-1">{toast.message}</span>
           <button
             onClick={() => setToast(null)}
-            className="p-1 rounded-md hover:bg-white/10 text-slate-400 hover:text-white cursor-pointer"
+            aria-label="Tutup notifikasi"
+            className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg hover:bg-white/10 text-slate-400 hover:text-white cursor-pointer"
           >
-            <X className="w-3.5 h-3.5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
       )}
@@ -592,7 +593,7 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
             </div>
           </div>
 
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto touch-pan-x">
             <table className="w-full text-left border-collapse text-xs">
               <thead>
                 <tr className="bg-slate-50/70 border-b border-slate-200/80 text-slate-600 font-bold uppercase tracking-wider font-mono text-[11px]">
@@ -846,7 +847,8 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
               </h3>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700 cursor-pointer"
+                aria-label="Tutup modal"
+                className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-700 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>

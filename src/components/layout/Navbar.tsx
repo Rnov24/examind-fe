@@ -10,7 +10,11 @@ import { useUiStore } from '@/stores/uiStore'
 export default function Navbar() {
   const router = useRouter()
   const { user, logout, hydrate, isHydrated } = useAuthStore()
-  const { sidebarOpen, toggleSidebar } = useUiStore()
+  const { sidebarOpen, toggleSidebar, initSidebar } = useUiStore()
+
+  useEffect(() => {
+    initSidebar()
+  }, [initSidebar])
 
   useEffect(() => {
     if (!isHydrated) {
@@ -48,41 +52,44 @@ export default function Navbar() {
   }
 
   return (
-    <header className="h-16 border-b border-slate-200/80 bg-white/85 backdrop-blur-md px-6 flex items-center justify-between sticky top-0 z-30 text-slate-900 transition-all">
+    <header className="h-16 border-b border-slate-200/80 bg-white/85 backdrop-blur-md px-4 sm:px-6 flex items-center justify-between sticky top-0 z-30 text-slate-900 transition-all">
       {/* Brand Mark & Institution Title */}
-      <div className="flex items-center gap-2 sm:gap-3">
+      <div className="flex items-center gap-2 sm:gap-3 min-w-0">
         <button
+          id="sidebar-toggle-btn"
           onClick={toggleSidebar}
           aria-label="Toggle Sidebar"
-          className="p-2 -ml-2 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer"
+          aria-expanded={sidebarOpen}
+          aria-controls="sidebar-nav"
+          className="p-2.5 -ml-2 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer min-w-[44px] min-h-[44px] flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-indigo-500"
           title={sidebarOpen ? 'Sembunyikan Sidebar' : 'Tampilkan Sidebar'}
         >
           <PanelLeft className="w-5 h-5" />
         </button>
 
-        <Link href="/dashboard" className="flex items-center gap-3 group">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-slate-900 to-slate-800 text-white flex items-center justify-center font-display font-black text-xs tracking-wider shadow-sm ring-1 ring-slate-800/60 group-hover:ring-[#c2ef4e]/60 transition-all relative overflow-hidden">
+        <Link href="/dashboard" className="flex items-center gap-2.5 sm:gap-3 group min-w-0">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-slate-900 to-slate-800 text-white flex items-center justify-center font-display font-black text-xs tracking-wider shadow-sm ring-1 ring-slate-800/60 group-hover:ring-[#c2ef4e]/60 transition-all relative overflow-hidden shrink-0">
             <span className="relative z-10">EX</span>
             <span className="absolute -bottom-1 -right-1 w-2.5 h-2.5 bg-[#c2ef4e] rounded-full blur-[1px]"></span>
           </div>
-          <div>
-            <div className="flex items-center gap-2">
+          <div className="min-w-0">
+            <div className="flex items-center gap-1.5 sm:gap-2">
               <span className="font-display font-extrabold text-slate-900 leading-none text-base tracking-tight group-hover:text-indigo-600 transition-colors">
                 EXAMIND
               </span>
-              <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-[#c2ef4e] text-slate-950 font-mono tracking-wider">
+              <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-[#c2ef4e] text-slate-950 font-mono tracking-wider shrink-0">
                 CBT
               </span>
             </div>
-            <p className="text-[11px] text-slate-500 font-medium mt-0.5 tracking-tight flex items-center gap-1.5">
-              <span>{institutionName}</span>
+            <p className="text-[10px] sm:text-[11px] text-slate-500 font-medium mt-0.5 tracking-tight truncate max-w-[120px] sm:max-w-[240px]">
+              <span className="truncate">{institutionName}</span>
             </p>
           </div>
         </Link>
       </div>
 
       {/* Right Header Actions & User Profile */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3 sm:gap-4 shrink-0">
         {/* Live Server Status Indicator */}
         <div className="hidden md:flex items-center gap-2 px-3 py-1 rounded-full bg-slate-50 border border-slate-200/80 text-[11px] font-medium text-slate-600 shadow-2xs">
           <span className="relative flex h-2 w-2">
@@ -93,7 +100,7 @@ export default function Navbar() {
         </div>
 
         {/* User Profile & Logout */}
-        <div className="flex items-center gap-3 pl-3 border-l border-slate-200/80">
+        <div className="flex items-center gap-2.5 sm:gap-3 pl-2.5 sm:pl-3 border-l border-slate-200/80">
           <div className="text-right hidden sm:block">
             <p className="text-xs font-bold text-slate-900 leading-none tracking-tight">
               {user?.full_name || 'Pengguna'}
@@ -113,7 +120,7 @@ export default function Navbar() {
           </div>
 
           {/* Avatar Initials */}
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-slate-100 to-slate-200 border border-slate-300/80 flex items-center justify-center text-xs font-bold text-slate-800 shadow-2xs font-display">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-slate-100 to-slate-200 border border-slate-300/80 flex items-center justify-center text-xs font-bold text-slate-800 shadow-2xs font-display shrink-0">
             {userInitials}
           </div>
 
@@ -121,7 +128,7 @@ export default function Navbar() {
             onClick={handleLogout}
             title="Keluar dari Akun"
             aria-label="Keluar dari Akun"
-            className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+            className="p-2.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors cursor-pointer min-w-[44px] min-h-[44px] flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-rose-500"
           >
             <LogOut className="w-4 h-4" />
           </button>

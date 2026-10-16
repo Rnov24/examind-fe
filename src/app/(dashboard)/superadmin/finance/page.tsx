@@ -394,7 +394,7 @@ export default function SuperAdminFinancePage() {
           </div>
         </div>
 
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto touch-pan-x">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
               <tr className="bg-slate-50/70 border-b border-slate-200/80 font-mono text-slate-500 uppercase tracking-wider text-[11px]">

@@ -114,7 +114,7 @@ export default function AdminDashboardPage() {
   return (
     <div className="space-y-6">
       {/* Institutional Daylight Header */}
-      <div className="relative overflow-hidden bg-white rounded-2xl border border-slate-200/80 p-4 sm:p-6 md:p-8 shadow-card flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+      <div className="relative overflow-hidden bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-card flex flex-col sm:flex-row sm:items-center justify-between gap-6">
         <div className="pointer-events-none absolute -top-16 -right-16 w-72 h-72 bg-indigo-50/70 rounded-full blur-3xl"></div>
         <div className="pointer-events-none absolute -bottom-16 -left-16 w-60 h-60 bg-emerald-50/50 rounded-full blur-2xl"></div>
 
@@ -138,15 +138,15 @@ export default function AdminDashboardPage() {
         <div className="relative flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 shrink-0 pt-4 sm:pt-0 border-t sm:border-t-0 border-slate-100 w-full sm:w-auto">
           <Link
             href="/classes"
-            className="px-4 py-2.5 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs rounded-xl border border-slate-200 transition-colors shadow-xs cursor-pointer flex items-center justify-center w-full sm:w-auto"
+            className="px-4 py-2.5 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs rounded-xl border border-slate-200 transition-colors shadow-xs cursor-pointer flex items-center justify-center w-full sm:w-auto focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
           >
             Kelola Kelas
           </Link>
           <button
             onClick={() => setShowAddUserModal(true)}
-            className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl transition-all shadow-card hover:shadow-card-hover flex items-center justify-center gap-2 cursor-pointer font-display tracking-wide w-full sm:w-auto"
+            className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl transition-all shadow-card hover:shadow-card-hover flex items-center justify-center gap-2 cursor-pointer font-display tracking-wide w-full sm:w-auto focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
           >
-            <UserPlus className="w-3.5 h-3.5 text-[#c2ef4e]" />
+            <UserPlus className="w-3.5 h-3.5 text-[#c2ef4e]" aria-hidden="true" />
             <span>Tambah Pengguna</span>
           </button>
         </div>
@@ -156,7 +156,7 @@ export default function AdminDashboardPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-4">
           <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-200/70 flex items-center justify-center font-bold shrink-0 ring-4 ring-indigo-50/70">
-            <Users className="w-6 h-6" />
+            <Users className="w-6 h-6" aria-hidden="true" />
           </div>
           <div>
             <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block font-mono">
@@ -166,7 +166,7 @@ export default function AdminDashboardPage() {
               <h3 className="text-2xl font-extrabold text-slate-900 font-display tabular-nums">
                 {stats.total_users}
               </h3>
-              <span className="text-[11px] text-slate-400 font-medium">
+              <span className="text-[11px] text-slate-500 font-medium">
                 ({stats.total_teachers} Guru, {stats.total_students} Siswa)
               </span>
             </div>
@@ -175,7 +175,7 @@ export default function AdminDashboardPage() {
 
         <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-4">
           <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-200/70 flex items-center justify-center font-bold shrink-0 ring-4 ring-indigo-50/70">
-            <GraduationCap className="w-6 h-6" />
+            <GraduationCap className="w-6 h-6" aria-hidden="true" />
           </div>
           <div>
             <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block font-mono">
@@ -189,7 +189,7 @@ export default function AdminDashboardPage() {
 
         <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-4">
           <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-200/70 flex items-center justify-center font-bold shrink-0 ring-4 ring-indigo-50/70">
-            <FileSpreadsheet className="w-6 h-6" />
+            <FileSpreadsheet className="w-6 h-6" aria-hidden="true" />
           </div>
           <div>
             <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block font-mono">
@@ -199,7 +199,7 @@ export default function AdminDashboardPage() {
               <h3 className="text-2xl font-extrabold text-slate-900 font-display tabular-nums">
                 {stats.total_exams}
               </h3>
-              <span className="text-[11px] text-slate-400 font-medium">
+              <span className="text-[11px] text-slate-500 font-medium">
                 ({stats.total_question_banks} Bank)
               </span>
             </div>
@@ -208,7 +208,7 @@ export default function AdminDashboardPage() {
 
         <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-4">
           <div className="w-12 h-12 rounded-xl bg-rose-50 text-rose-600 border border-rose-200/70 flex items-center justify-center font-bold shrink-0 ring-4 ring-rose-50/70">
-            <ShieldAlert className="w-6 h-6" />
+            <ShieldAlert className="w-6 h-6" aria-hidden="true" />
           </div>
           <div>
             <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block font-mono">
@@ -218,7 +218,7 @@ export default function AdminDashboardPage() {
               <h3 className="text-2xl font-extrabold text-rose-600 font-display tabular-nums">
                 {stats.disqualified_sessions}
               </h3>
-              <span className="text-[11px] text-slate-400 font-medium">
+              <span className="text-[11px] text-slate-500 font-medium">
                 / {stats.total_sessions} Sesi
               </span>
             </div>
@@ -243,7 +243,7 @@ export default function AdminDashboardPage() {
                 setSelectedRole(e.target.value)
                 fetchUsers(e.target.value, searchKeyword)
               }}
-              className="px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 focus:outline-none focus:border-slate-400 font-sans shadow-xs w-full sm:w-auto"
+              className="px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-400 font-sans shadow-xs w-full sm:w-auto"
             >
               <option value="all">Semua Peran (All)</option>
               <option value="admin">Administrator</option>
@@ -252,7 +252,7 @@ export default function AdminDashboardPage() {
             </select>
 
             <div className="relative w-full sm:w-auto flex-1 sm:flex-initial">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <Search className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" aria-hidden="true" />
               <input
                 value={searchKeyword}
                 onChange={(e) => {
@@ -261,7 +261,7 @@ export default function AdminDashboardPage() {
                 }}
                 type="text"
                 placeholder="Cari nama, NIP, NISN..."
-                className="pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-slate-400 focus:bg-white w-full sm:w-60 shadow-xs transition-colors"
+                className="pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-400 focus:bg-white w-full sm:w-60 shadow-xs transition-colors"
               />
             </div>
           </div>
@@ -289,7 +289,7 @@ export default function AdminDashboardPage() {
                       </div>
                       <div>
                         <p className="font-display font-bold text-slate-900 leading-snug">{usr.full_name}</p>
-                        <p className="text-[11px] text-slate-400 font-mono">ID: #{usr.id}</p>
+                        <p className="text-[11px] text-slate-500 font-mono">ID: #{usr.id}</p>
                       </div>
                     </div>
                   </td>
@@ -328,7 +328,7 @@ export default function AdminDashboardPage() {
                     {usr.id !== user?.id ? (
                       <button
                         onClick={() => toggleUserStatus(usr)}
-                        className={`px-3.5 py-1.5 rounded-xl font-bold text-xs transition-colors cursor-pointer shadow-xs ${
+                        className={`px-3.5 py-1.5 rounded-xl font-bold text-xs transition-colors cursor-pointer shadow-xs focus:ring-2 focus:ring-slate-900/10 focus:outline-none ${
                           usr.is_active
                             ? 'bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200'
                             : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200'
@@ -337,15 +337,29 @@ export default function AdminDashboardPage() {
                         {usr.is_active ? 'Nonaktifkan' : 'Aktifkan'}
                       </button>
                     ) : (
-                      <span className="text-xs text-slate-400 italic">Akun Anda</span>
+                      <span className="text-xs text-slate-500 italic">Akun Anda</span>
                     )}
                   </td>
                 </tr>
               ))}
               {userList.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="text-center py-12 text-slate-400 text-xs">
-                    Tidak ada data pengguna yang sesuai filter.
+                  <td colSpan={6} className="text-center py-12 text-slate-500 text-xs">
+                    <div className="flex flex-col items-center justify-center max-w-sm mx-auto">
+                      <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-2.5">
+                        <Users className="w-5 h-5" aria-hidden="true" />
+                      </div>
+                      <p className="font-bold text-slate-900 text-sm">Tidak Ada Pengguna yang Sesuai</p>
+                      <p className="text-xs text-slate-500 mt-1 mb-3">Tidak ditemukan akun pengguna pada filter ini. Tambahkan akun baru atau bersihkan pencarian.</p>
+                      <button
+                        type="button"
+                        onClick={() => setShowAddUserModal(true)}
+                        className="px-3.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs flex items-center gap-1.5 cursor-pointer focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+                      >
+                        <UserPlus className="w-3.5 h-3.5 text-[#c2ef4e]" aria-hidden="true" />
+                        <span>Tambah Pengguna Baru</span>
+                      </button>
+                    </div>
                   </td>
                 </tr>
               )}
@@ -366,10 +380,11 @@ export default function AdminDashboardPage() {
               <button
                 type="button"
                 onClick={() => setShowAddUserModal(false)}
+                title="Tutup modal"
                 aria-label="Tutup modal"
-                className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+                className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-slate-900/10"
               >
-                <X className="w-5 h-5" />
+                <X className="w-5 h-5" aria-hidden="true" />
               </button>
             </div>
 
@@ -382,7 +397,7 @@ export default function AdminDashboardPage() {
                   required
                   type="text"
                   placeholder="Contoh: Budi Prasetyo, M.Pd"
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:border-slate-400"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900"
                 />
               </div>
 
@@ -397,7 +412,7 @@ export default function AdminDashboardPage() {
                     required
                     type="text"
                     placeholder="19820310..."
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:border-slate-400 font-mono"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 font-mono"
                   />
                 </div>
                 <div>
@@ -405,7 +420,7 @@ export default function AdminDashboardPage() {
                   <select
                     value={newUserForm.role}
                     onChange={(e) => setNewUserForm({ ...newUserForm, role: e.target.value })}
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm font-semibold text-slate-900 focus:bg-white focus:outline-none focus:border-slate-400"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm font-semibold text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900"
                   >
                     <option value="student">Siswa (Student)</option>
                     <option value="teacher">Guru (Teacher)</option>
@@ -422,7 +437,7 @@ export default function AdminDashboardPage() {
                   required
                   type="email"
                   placeholder="nama@sekolah.sch.id"
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:border-slate-400"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900"
                 />
               </div>
 
@@ -434,7 +449,7 @@ export default function AdminDashboardPage() {
                   required
                   type="password"
                   placeholder="Minimal 6 karakter"
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:border-slate-400"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900"
                 />
               </div>
 
@@ -448,14 +463,14 @@ export default function AdminDashboardPage() {
                 <button
                   type="button"
                   onClick={() => setShowAddUserModal(false)}
-                  className="px-4 py-2 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold text-xs bg-white cursor-pointer"
+                  className="px-4 py-2 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold text-xs bg-white cursor-pointer focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-5 py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-lg shadow-xs disabled:opacity-50 cursor-pointer"
+                  className="px-5 py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-lg shadow-xs disabled:opacity-50 cursor-pointer focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
                 >
                   {isSubmitting ? 'Menyimpan...' : 'Simpan Akun'}
                 </button>

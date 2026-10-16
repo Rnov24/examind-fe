@@ -58,13 +58,13 @@ export default function Navbar() {
         <button
           id="sidebar-toggle-btn"
           onClick={toggleSidebar}
-          aria-label="Toggle Sidebar"
+          aria-label="Alihkan Sidebar"
           aria-expanded={sidebarOpen}
           aria-controls="sidebar-nav"
           className="p-2.5 -ml-2 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer min-w-[44px] min-h-[44px] flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-indigo-500"
           title={sidebarOpen ? 'Sembunyikan Sidebar' : 'Tampilkan Sidebar'}
         >
-          <PanelLeft className="w-5 h-5" />
+          <PanelLeft className="w-5 h-5" aria-hidden="true" />
         </button>
 
         <Link href="/dashboard" className="flex items-center gap-2.5 sm:gap-3 group min-w-0">
@@ -112,7 +112,7 @@ export default function Navbar() {
                 {roleLabel}
               </span>
               {user?.identifier && (
-                <span className="text-[10px] text-slate-400 font-mono">
+                <span className="text-[10px] text-slate-500 font-mono">
                   {user.identifier}
                 </span>
               )}
@@ -128,9 +128,9 @@ export default function Navbar() {
             onClick={handleLogout}
             title="Keluar dari Akun"
             aria-label="Keluar dari Akun"
-            className="p-2.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors cursor-pointer min-w-[44px] min-h-[44px] flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-rose-500"
+            className="p-2.5 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors cursor-pointer min-w-[44px] min-h-[44px] flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-rose-500"
           >
-            <LogOut className="w-4 h-4" />
+            <LogOut className="w-4 h-4" aria-hidden="true" />
           </button>
         </div>
       </div>

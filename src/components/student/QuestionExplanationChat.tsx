@@ -298,14 +298,16 @@ export default function QuestionExplanationChat({
                   : 'Tanyakan kenapa jawabanmu salah atau konsepnya...'
               }
               disabled={isLoading}
-              className="flex-1 px-3 py-2 rounded-lg bg-white border border-slate-300 focus:border-indigo-600 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none transition-all shadow-xs"
+              className="flex-1 px-3 py-2 rounded-lg bg-white border border-slate-300 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-500/20 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none transition-all shadow-xs"
             />
             <button
               onClick={() => handleSend()}
               disabled={!inputQuery.trim() || isLoading}
+              title="Kirim pesan"
+              aria-label="Kirim pertanyaan"
               className="px-3.5 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 disabled:opacity-40 text-white font-bold text-xs transition-colors cursor-pointer shadow-xs flex items-center gap-1"
             >
-              <Send className="w-3.5 h-3.5" />
+              <Send className="w-3.5 h-3.5" aria-hidden="true" />
             </button>
           </div>
         </div>

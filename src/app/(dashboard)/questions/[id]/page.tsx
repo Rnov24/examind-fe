@@ -147,9 +147,11 @@ export default function QuestionBankDetailPage() {
         <div className="flex items-center gap-3">
           <Link
             href="/questions"
-            className="p-2 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 transition-colors shadow-xs"
+            title="Kembali ke Bank Soal"
+            aria-label="Kembali ke Bank Soal"
+            className="p-2 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 transition-colors shadow-xs focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
           >
-            <ArrowLeft className="w-4 h-4" />
+            <ArrowLeft className="w-4 h-4" aria-hidden="true" />
           </Link>
           <div>
             <h2 className="text-2xl font-black text-slate-900 tracking-tight">{bankDetail?.title}</h2>
@@ -162,16 +164,16 @@ export default function QuestionBankDetailPage() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => setShowAIModal(true)}
-            className="px-4 py-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs flex items-center gap-2 cursor-pointer transition-colors"
+            className="px-4 py-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs flex items-center gap-2 cursor-pointer transition-colors focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
           >
-            <Sparkles className="w-4 h-4 text-[#c2ef4e]" />
+            <Sparkles className="w-4 h-4 text-[#c2ef4e]" aria-hidden="true" />
             <span>Generate dengan AI</span>
           </button>
           <button
             onClick={() => setShowManualModal(true)}
-            className="px-4 py-2.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-xs flex items-center gap-2 cursor-pointer transition-colors"
+            className="px-4 py-2.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-xs flex items-center gap-2 cursor-pointer transition-colors focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-4 h-4" aria-hidden="true" />
             <span>Tambah Manual</span>
           </button>
         </div>
@@ -180,7 +182,7 @@ export default function QuestionBankDetailPage() {
       {/* Questions List */}
       {isLoading ? (
         <div className="flex items-center justify-center p-12">
-          <Loader2 className="w-8 h-8 text-indigo-600 animate-spin" />
+          <Loader2 className="w-8 h-8 text-indigo-600 animate-spin" aria-hidden="true" />
         </div>
       ) : (
         <div className="space-y-4">
@@ -212,9 +214,11 @@ export default function QuestionBankDetailPage() {
                   <span className="text-xs font-bold text-slate-500 font-mono">{q.default_points} Poin</span>
                   <button
                     onClick={() => handleDeleteQuestion(q.id)}
-                    className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+                    title="Hapus butir soal"
+                    aria-label="Hapus butir soal"
+                    className="p-1.5 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-rose-500/20"
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <Trash2 className="w-4 h-4" aria-hidden="true" />
                   </button>
                 </div>
               </div>
@@ -278,12 +282,32 @@ export default function QuestionBankDetailPage() {
           ))}
 
           {(!bankDetail?.questions || bankDetail.questions.length === 0) && (
-            <div className="bg-white rounded-xl p-12 text-center border border-dashed border-slate-300 text-slate-900">
-              <BookOpen className="w-12 h-12 text-slate-400 mx-auto mb-3" />
-              <h4 className="font-bold text-slate-900">Bank Soal Masih Kosong</h4>
-              <p className="text-xs text-slate-500 mt-1">
-                Gunakan tombol &apos;Generate dengan AI&apos; untuk membuat draft paket soal secara instan.
+            <div className="bg-white rounded-2xl p-12 text-center border border-dashed border-slate-300 text-slate-900 shadow-xs flex flex-col items-center justify-center">
+              <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-3">
+                <BookOpen className="w-6 h-6" aria-hidden="true" />
+              </div>
+              <h4 className="font-bold text-slate-900 text-base">Bank Soal Masih Kosong</h4>
+              <p className="text-xs text-slate-500 mt-1 max-w-sm mb-4">
+                Buat butir soal pertama Anda secara otomatis dengan bantuan AI Generator atau tambahkan secara manual.
               </p>
+              <div className="flex items-center gap-2.5">
+                <button
+                  type="button"
+                  onClick={() => setShowAIModal(true)}
+                  className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition-all flex items-center gap-1.5 cursor-pointer focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-[#c2ef4e]" aria-hidden="true" />
+                  <span>Generate AI</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowManualModal(true)}
+                  className="px-4 py-2 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-xs transition-all flex items-center gap-1.5 cursor-pointer focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+                >
+                  <Plus className="w-3.5 h-3.5" aria-hidden="true" />
+                  <span>Tambah Manual</span>
+                </button>
+              </div>
             </div>
           )}
         </div>
@@ -310,10 +334,11 @@ export default function QuestionBankDetailPage() {
               <button
                 type="button"
                 onClick={() => setShowManualModal(false)}
+                title="Tutup modal"
                 aria-label="Tutup modal"
-                className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+                className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-slate-900/10"
               >
-                <X className="w-4 h-4" />
+                <X className="w-4 h-4" aria-hidden="true" />
               </button>
             </div>
 
@@ -324,7 +349,7 @@ export default function QuestionBankDetailPage() {
                   <select
                     value={manualForm.question_type}
                     onChange={(e) => setManualForm({ ...manualForm, question_type: e.target.value })}
-                    className="w-full px-3 py-2 rounded-lg border border-slate-300 bg-slate-50 text-slate-900 text-xs font-medium focus:bg-white focus:border-slate-900 outline-none"
+                    className="w-full px-3 py-2 rounded-lg border border-slate-300 bg-slate-50 text-slate-900 text-xs font-medium focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 outline-none"
                   >
                     <option value="multiple_choice">Pilihan Ganda (PG)</option>
                     <option value="short_essay">Esai Singkat</option>
@@ -337,7 +362,7 @@ export default function QuestionBankDetailPage() {
                   <select
                     value={manualForm.difficulty}
                     onChange={(e) => setManualForm({ ...manualForm, difficulty: e.target.value })}
-                    className="w-full px-3 py-2 rounded-lg border border-slate-300 bg-slate-50 text-slate-900 text-xs font-medium focus:bg-white focus:border-slate-900 outline-none"
+                    className="w-full px-3 py-2 rounded-lg border border-slate-300 bg-slate-50 text-slate-900 text-xs font-medium focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 outline-none"
                   >
                     <option value="easy">Mudah</option>
                     <option value="medium">Sedang</option>
@@ -355,7 +380,7 @@ export default function QuestionBankDetailPage() {
                     max="100"
                     step="0.5"
                     required
-                    className="w-full px-3 py-2 rounded-lg border border-slate-300 bg-slate-50 text-slate-900 text-xs font-mono font-medium focus:bg-white focus:border-slate-900 outline-none"
+                    className="w-full px-3 py-2 rounded-lg border border-slate-300 bg-slate-50 text-slate-900 text-xs font-mono font-medium focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 outline-none"
                   />
                 </div>
               </div>
@@ -370,7 +395,7 @@ export default function QuestionBankDetailPage() {
                   rows={3}
                   required
                   placeholder="Tuliskan teks pertanyaan atau instruksi tugas secara rinci..."
-                  className="w-full px-3 py-2.5 rounded-lg border border-slate-300 bg-slate-50 text-slate-900 text-xs font-medium focus:bg-white focus:border-slate-900 outline-none leading-relaxed"
+                  className="w-full px-3 py-2.5 rounded-lg border border-slate-300 bg-slate-50 text-slate-900 text-xs font-medium focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 outline-none leading-relaxed"
                 />
               </div>
 
@@ -388,7 +413,7 @@ export default function QuestionBankDetailPage() {
                     {manualForm.options.map((opt, optIdx) => (
                       <div
                         key={opt.id}
-                        className="flex items-center gap-2 bg-white p-2 rounded-lg border border-slate-200"
+                        className="flex items-center gap-2 bg-white p-2 rounded-lg border border-slate-200 focus-within:border-slate-900 focus-within:ring-2 focus-within:ring-slate-900/10"
                       >
                         <label className="flex items-center gap-1.5 cursor-pointer shrink-0">
                           <input
@@ -397,6 +422,7 @@ export default function QuestionBankDetailPage() {
                             checked={manualForm.correct_answer === opt.id}
                             onChange={(e) => setManualForm({ ...manualForm, correct_answer: e.target.value })}
                             name="manual_correct_opt"
+                            aria-label={`Jadikan opsi ${opt.id} sebagai kunci jawaban`}
                             className="w-4 h-4 text-slate-900"
                           />
                           <span className="font-mono font-bold text-xs w-4">{opt.id}.</span>
@@ -410,6 +436,7 @@ export default function QuestionBankDetailPage() {
                           }}
                           type="text"
                           required
+                          aria-label={`Teks pilihan ${opt.id}`}
                           placeholder={`Isi pilihan ${opt.id}...`}
                           className="flex-1 px-2.5 py-1 text-xs border-0 bg-transparent focus:outline-none text-slate-900 placeholder:text-slate-400"
                         />
@@ -435,7 +462,7 @@ export default function QuestionBankDetailPage() {
                   onChange={(e) => setManualForm({ ...manualForm, explanation: e.target.value })}
                   rows={2}
                   placeholder="Uraian konsep kunci atau pembahasan mengapa jawaban tersebut benar..."
-                  className="w-full px-3 py-2 rounded-lg border border-slate-300 bg-slate-50 text-slate-900 text-xs font-medium focus:bg-white focus:border-slate-900 outline-none leading-relaxed"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-300 bg-slate-50 text-slate-900 text-xs font-medium focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 outline-none leading-relaxed"
                 />
               </div>
 
@@ -443,16 +470,16 @@ export default function QuestionBankDetailPage() {
                 <button
                   type="button"
                   onClick={() => setShowManualModal(false)}
-                  className="px-4 py-2 rounded-lg text-xs font-bold text-slate-700 hover:bg-slate-50 border border-slate-300 cursor-pointer shadow-xs transition-colors"
+                  className="px-4 py-2 rounded-lg text-xs font-bold text-slate-700 hover:bg-slate-50 border border-slate-300 cursor-pointer shadow-xs transition-colors focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
                   disabled={isSavingManual}
-                  className="px-5 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 disabled:opacity-50 text-white text-xs font-bold shadow-xs cursor-pointer transition-colors flex items-center gap-1.5"
+                  className="px-5 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 disabled:opacity-50 text-white text-xs font-bold shadow-xs cursor-pointer transition-colors flex items-center gap-1.5 focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
                 >
-                  {isSavingManual && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                  {isSavingManual && <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" />}
                   <span>{isSavingManual ? 'Menyimpan...' : 'Simpan Butir Soal'}</span>
                 </button>
               </div>

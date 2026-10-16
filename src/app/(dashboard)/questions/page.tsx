@@ -20,6 +20,7 @@ export default function QuestionBankPage() {
   const [newBankTitle, setNewBankTitle] = useState('')
   const [newBankDesc, setNewBankDesc] = useState('')
   const [loading, setLoading] = useState(false)
+  const [createError, setCreateError] = useState<string | null>(null)
   const [isFetching, setIsFetching] = useState(true)
 
   async function loadBanks() {
@@ -36,6 +37,7 @@ export default function QuestionBankPage() {
 
   async function handleCreateBank(e: React.FormEvent) {
     e.preventDefault()
+    setCreateError(null)
     setLoading(true)
     try {
       await api.post('/questions/banks', {
@@ -49,7 +51,7 @@ export default function QuestionBankPage() {
       setNewBankDesc('')
       await loadBanks()
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Gagal membuat bank soal.')
+      setCreateError(err.response?.data?.message || 'Gagal membuat bank soal.')
     } finally {
       setLoading(false)
     }
@@ -72,7 +74,7 @@ export default function QuestionBankPage() {
             onClick={() => setShowCreateModal(true)}
             className="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition-all flex items-center gap-2 cursor-pointer"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-4 h-4" aria-hidden="true" />
             <span>Buat Bank Soal</span>
           </button>
         </div>
@@ -119,10 +121,21 @@ export default function QuestionBankPage() {
           ))}
 
           {banks.length === 0 && (
-            <div className="col-span-full bg-white rounded-xl p-12 text-center border border-dashed border-slate-300">
-              <BookOpen className="w-12 h-12 text-slate-400 mx-auto mb-3" />
-              <h4 className="font-bold text-slate-900">Belum Ada Bank Soal</h4>
-              <p className="text-xs text-slate-500 mt-1">Buat bank soal baru untuk mulai merancang butir soal PG dan esai.</p>
+            <div className="col-span-full bg-white rounded-2xl p-12 text-center border border-slate-200/80 shadow-card">
+              <div className="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center mx-auto mb-3">
+                <BookOpen className="w-6 h-6 text-indigo-600" aria-hidden="true" />
+              </div>
+              <h4 className="font-bold text-slate-900 text-sm">Belum Ada Bank Soal</h4>
+              <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
+                Buat bank soal baru untuk mulai merancang butir soal PG dan esai.
+              </p>
+              <button
+                onClick={() => setShowCreateModal(true)}
+                className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition-colors cursor-pointer"
+              >
+                <Plus className="w-4 h-4 text-[#c2ef4e]" aria-hidden="true" />
+                <span>Buat Bank Soal</span>
+              </button>
             </div>
           )}
         </div>
@@ -141,13 +154,19 @@ export default function QuestionBankPage() {
                 type="button"
                 onClick={() => setShowCreateModal(false)}
                 aria-label="Tutup modal"
-                className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+                className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-slate-500 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
               >
-                <X className="w-4 h-4" />
+                <X className="w-4 h-4" aria-hidden="true" />
               </button>
             </div>
 
             <form onSubmit={handleCreateBank} className="space-y-4">
+              {createError && (
+                <div className="p-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 text-xs">
+                  {createError}
+                </div>
+              )}
+
               <div>
                 <label className="block text-xs font-bold text-slate-700 uppercase mb-1">Mata Pelajaran</label>
                 <input
@@ -156,7 +175,7 @@ export default function QuestionBankPage() {
                   type="text"
                   required
                   placeholder="Contoh: Fisika, Matematika, Biologi"
-                  className="w-full px-4 py-2.5 rounded-lg bg-slate-50 border border-slate-300 text-slate-900 text-sm font-medium focus:bg-white focus:border-slate-900 outline-none"
+                  className="w-full px-4 py-2.5 rounded-lg bg-slate-50 border border-slate-300 text-slate-900 text-sm font-medium focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 outline-none"
                 />
               </div>
 
@@ -168,7 +187,7 @@ export default function QuestionBankPage() {
                   type="text"
                   required
                   placeholder="Contoh: Bank Soal Teori Kuantum & Relativitas"
-                  className="w-full px-4 py-2.5 rounded-lg bg-slate-50 border border-slate-300 text-slate-900 text-sm font-medium focus:bg-white focus:border-slate-900 outline-none"
+                  className="w-full px-4 py-2.5 rounded-lg bg-slate-50 border border-slate-300 text-slate-900 text-sm font-medium focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 outline-none"
                 />
               </div>
 
@@ -179,7 +198,7 @@ export default function QuestionBankPage() {
                   onChange={(e) => setNewBankDesc(e.target.value)}
                   rows={3}
                   placeholder="Catatan lingkup materi..."
-                  className="w-full px-4 py-2.5 rounded-lg bg-slate-50 border border-slate-300 text-slate-900 text-sm font-medium focus:bg-white focus:border-slate-900 outline-none"
+                  className="w-full px-4 py-2.5 rounded-lg bg-slate-50 border border-slate-300 text-slate-900 text-sm font-medium focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 outline-none"
                 />
               </div>
 
@@ -196,7 +215,7 @@ export default function QuestionBankPage() {
                   disabled={loading}
                   className="px-5 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs disabled:opacity-50 cursor-pointer flex items-center gap-1.5"
                 >
-                  {loading && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                  {loading && <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" />}
                   <span>{loading ? 'Menyimpan...' : 'Simpan Bank Soal'}</span>
                 </button>
               </div>

@@ -313,9 +313,11 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
               loadTaskSecrets()
             }}
             disabled={isSecretsLoading || isTaskLoading}
+            title="Muat ulang status engine"
+            aria-label="Muat ulang status engine"
             className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold flex items-center gap-2 transition-colors cursor-pointer disabled:opacity-50 shadow-xs"
           >
-            <RefreshCw className={`w-3.5 h-3.5 text-slate-600 ${isSecretsLoading || isTaskLoading ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-3.5 h-3.5 text-slate-600 ${isSecretsLoading || isTaskLoading ? 'animate-spin' : ''}`} aria-hidden="true" />
             <span>{isSecretsLoading || isTaskLoading ? 'Menyinkronkan...' : 'Refresh All Engines'}</span>
           </button>
         </div>
@@ -371,26 +373,26 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
                 {/* Engine Parameters Pill */}
                 <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-2 text-xs font-mono">
                   <div className="flex justify-between items-center">
-                    <span className="text-slate-400 uppercase text-[10px]">AI Provider:</span>
+                    <span className="text-slate-500 uppercase text-[10px]">AI Provider:</span>
                     <span className="font-bold text-slate-900 uppercase bg-white px-2 py-0.5 rounded border border-slate-200">
                       {task.provider}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-slate-400 uppercase text-[10px]">Model Utama:</span>
+                    <span className="text-slate-500 uppercase text-[10px]">Model Utama:</span>
                     <span className="font-bold text-indigo-700">{task.model}</span>
                   </div>
                   <div className="flex justify-between items-center text-[11px]">
-                    <span className="text-slate-400 uppercase text-[10px]">Parameter:</span>
+                    <span className="text-slate-500 uppercase text-[10px]">Parameter:</span>
                     <span className="text-slate-700">
                       Temp: <strong className="text-slate-900">{task.temperature}</strong> • Max Tokens:{' '}
                       <strong className="text-slate-900">{task.max_tokens}</strong>
                     </span>
                   </div>
                   <div className="flex justify-between items-center text-[11px] pt-1 border-t border-slate-200/60">
-                    <span className="text-slate-400 uppercase text-[10px]">Kredensial API:</span>
+                    <span className="text-slate-500 uppercase text-[10px]">Kredensial API:</span>
                     <span className="text-slate-600 flex items-center gap-1">
-                      <Lock className="w-3 h-3 text-slate-400" />
+                      <Lock className="w-3 h-3 text-slate-500" aria-hidden="true" />
                       {task.has_custom_key ? (
                         <span className="text-emerald-700 font-bold">{task.api_key_masked} (Custom)</span>
                       ) : (
@@ -496,7 +498,7 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
               <span className="truncate">
                 {getSecretByKey('GEMINI_API_KEY')?.masked_value || 'Menggunakan .env / Fallback'}
               </span>
-              <span className="text-[10px] font-sans font-semibold text-slate-400 shrink-0">v1beta API</span>
+              <span className="text-[10px] font-sans font-semibold text-slate-500 shrink-0">v1beta API</span>
             </div>
 
             <div className="grid grid-cols-2 gap-2 pt-1">
@@ -556,7 +558,7 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
               <span className="truncate">
                 {getSecretByKey('RESEND_API_KEY')?.masked_value || 'Menggunakan .env / Fallback'}
               </span>
-              <span className="text-[10px] font-sans font-semibold text-slate-400 shrink-0">SMTP / REST</span>
+              <span className="text-[10px] font-sans font-semibold text-slate-500 shrink-0">SMTP / REST</span>
             </div>
 
             <div className="grid grid-cols-2 gap-2 pt-1">
@@ -649,10 +651,11 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
                         </button>
                         <button
                           onClick={() => handleDeleteSecret(s.key_name)}
-                          className="p-1 rounded-md text-slate-400 hover:text-rose-600 hover:bg-rose-50 cursor-pointer transition-colors"
+                          className="p-1 rounded-md text-slate-500 hover:text-rose-600 hover:bg-rose-50 cursor-pointer transition-colors"
                           title="Hapus Secret"
+                          aria-label="Hapus secret API"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-4 h-4" aria-hidden="true" />
                         </button>
                       </div>
                     </td>
@@ -660,7 +663,7 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
                 ))}
                 {secrets.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="p-8 text-center text-slate-400">
+                    <td colSpan={6} className="p-8 text-center text-slate-500">
                       Belum ada secret kustom yang tersimpan di database. Sistem saat ini berjalan dengan fallback variabel lingkungan .env.
                     </td>
                   </tr>
@@ -688,7 +691,9 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
               </div>
               <button
                 onClick={() => setEditingTask(null)}
-                className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700 cursor-pointer"
+                title="Tutup konfigurasi task"
+                aria-label="Tutup konfigurasi task"
+                className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-slate-700 cursor-pointer"
               >
                 ✕
               </button>
@@ -746,7 +751,7 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
               <div>
                 <div className="flex items-center justify-between mb-1">
                   <label className="block font-bold text-slate-700">Kunci API Khusus Task (Opsional)</label>
-                  <span className="text-[10px] text-slate-400 font-mono">Kosongkan jika pakai Vault Global</span>
+                  <span className="text-[10px] text-slate-500 font-mono">Kosongkan jika pakai Vault Global</span>
                 </div>
                 <input
                   type="password"
@@ -773,7 +778,7 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
                     onChange={(e) => setTaskForm({ ...taskForm, temperature: parseFloat(e.target.value) })}
                     className="w-full accent-indigo-600 cursor-pointer"
                   />
-                  <span className="text-[10px] text-slate-400 block mt-0.5">
+                  <span className="text-[10px] text-slate-500 block mt-0.5">
                     {taskForm.temperature <= 0.2
                       ? 'Deterministik (Tepat untuk Koreksi)'
                       : 'Kreatif (Variasi Soal)'}

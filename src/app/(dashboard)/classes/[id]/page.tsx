@@ -126,9 +126,11 @@ export default function ClassDetailPage() {
       <div className="flex items-center gap-3">
         <Link
           href="/classes"
-          className="p-2 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 transition-colors shadow-xs"
+          title="Kembali ke Daftar Kelas"
+          aria-label="Kembali ke Daftar Kelas"
+          className="p-2 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 transition-colors shadow-xs focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
         >
-          <ArrowLeft className="w-4 h-4" />
+          <ArrowLeft className="w-4 h-4" aria-hidden="true" />
         </Link>
         <div>
           <h2 className="text-2xl font-black text-slate-900 tracking-tight">
@@ -150,9 +152,9 @@ export default function ClassDetailPage() {
 
           <button
             onClick={openAddMemberModal}
-            className="px-4 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs flex items-center gap-2 cursor-pointer transition-colors"
+            className="px-4 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs flex items-center gap-2 cursor-pointer transition-colors focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
           >
-            <UserPlus className="w-3.5 h-3.5" />
+            <UserPlus className="w-3.5 h-3.5" aria-hidden="true" />
             <span>Tambah Siswa ke Kelas</span>
           </button>
         </div>
@@ -206,8 +208,22 @@ export default function ClassDetailPage() {
                 ))}
                 {(!classDetail?.members || classDetail.members.length === 0) && (
                   <tr>
-                    <td colSpan={5} className="text-center py-8 text-slate-500">
-                      Belum ada siswa yang ditambahkan.
+                    <td colSpan={5} className="text-center py-12 text-slate-500">
+                      <div className="flex flex-col items-center justify-center max-w-sm mx-auto">
+                        <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-2.5">
+                          <UserPlus className="w-5 h-5" aria-hidden="true" />
+                        </div>
+                        <p className="font-bold text-slate-900 text-sm">Belum Ada Siswa Terdaftar</p>
+                        <p className="text-xs text-slate-500 mt-1 mb-3">Tambahkan siswa dari database sekolah ke rombel kelas ini.</p>
+                        <button
+                          type="button"
+                          onClick={openAddMemberModal}
+                          className="px-3.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs flex items-center gap-1.5 cursor-pointer focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+                        >
+                          <UserPlus className="w-3.5 h-3.5" aria-hidden="true" />
+                          <span>Tambah Siswa</span>
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 )}
@@ -229,10 +245,11 @@ export default function ClassDetailPage() {
               <button
                 type="button"
                 onClick={() => setShowAddModal(false)}
+                title="Tutup modal"
                 aria-label="Tutup modal"
-                className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+                className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-slate-900/10"
               >
-                <X className="w-4 h-4" />
+                <X className="w-4 h-4" aria-hidden="true" />
               </button>
             </div>
 
@@ -242,7 +259,7 @@ export default function ClassDetailPage() {
                 <select
                   value={selectedStudentId ?? ''}
                   onChange={(e) => setSelectedStudentId(e.target.value ? Number(e.target.value) : null)}
-                  className="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs font-medium focus:bg-white focus:border-slate-900 outline-none bg-slate-50 text-slate-900"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs font-medium focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 outline-none bg-slate-50 text-slate-900"
                 >
                   <option value="">-- Pilih Siswa --</option>
                   {availableStudents.map((s) => (
@@ -257,7 +274,7 @@ export default function ClassDetailPage() {
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="px-4 py-2 rounded-lg text-xs font-bold text-slate-700 hover:bg-slate-50 border border-slate-300 cursor-pointer shadow-xs transition-colors"
+                  className="px-4 py-2 rounded-lg text-xs font-bold text-slate-700 hover:bg-slate-50 border border-slate-300 cursor-pointer shadow-xs transition-colors focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
                 >
                   Batal
                 </button>
@@ -265,9 +282,9 @@ export default function ClassDetailPage() {
                   type="button"
                   disabled={!selectedStudentId || isSubmitting}
                   onClick={handleAddMember}
-                  className="px-5 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-xs disabled:opacity-50 cursor-pointer transition-colors flex items-center gap-1.5"
+                  className="px-5 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-xs disabled:opacity-50 cursor-pointer transition-colors flex items-center gap-1.5 focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
                 >
-                  {isSubmitting && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                  {isSubmitting && <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" />}
                   <span>{isSubmitting ? 'Menambahkan...' : 'Tambahkan'}</span>
                 </button>
               </div>

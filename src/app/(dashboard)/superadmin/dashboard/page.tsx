@@ -125,13 +125,13 @@ export default function SuperAdminDashboardPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="relative overflow-hidden bg-white rounded-2xl border border-slate-200/80 p-4 sm:p-6 md:p-8 shadow-card flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+      <div className="relative overflow-hidden bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-card flex flex-col sm:flex-row sm:items-center justify-between gap-6">
         <div className="pointer-events-none absolute -top-16 -right-16 w-72 h-72 bg-purple-50/70 rounded-full blur-3xl"></div>
         <div className="pointer-events-none absolute -bottom-16 -left-16 w-60 h-60 bg-indigo-50/50 rounded-full blur-2xl"></div>
 
         <div className="relative flex items-center gap-3.5">
           <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-200/70 flex items-center justify-center font-bold shrink-0 shadow-xs ring-4 ring-indigo-50/70">
-            <Building2 className="w-6 h-6" />
+            <Building2 className="w-6 h-6" aria-hidden="true" />
           </div>
           <div>
             <div className="flex items-center gap-2 flex-wrap">
@@ -151,23 +151,23 @@ export default function SuperAdminDashboardPage() {
         <div className="relative flex items-center gap-2.5 pt-4 sm:pt-0 border-t sm:border-t-0 border-slate-100 w-full sm:w-auto">
           <button
             onClick={() => setShowCreateModal(true)}
-            className="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-card hover:shadow-card-hover flex items-center justify-center gap-2 transition-all cursor-pointer font-display tracking-wide w-full sm:w-auto"
+            className="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-card hover:shadow-card-hover flex items-center justify-center gap-2 transition-all cursor-pointer font-display tracking-wide w-full sm:w-auto focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
           >
-            <Plus className="w-4 h-4 text-[#c2ef4e]" />
+            <Plus className="w-4 h-4 text-[#c2ef4e]" aria-hidden="true" />
             <span>Onboard Sekolah Baru</span>
           </button>
         </div>
       </div>
 
       {/* Quick Navigation Cards to Related Modules */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Link
           href="/superadmin/finance"
-          className="p-3.5 rounded-xl bg-gradient-to-r from-emerald-500/10 via-emerald-500/5 to-transparent border border-emerald-200/80 hover:border-emerald-300 transition-all group flex items-center justify-between"
+          className="p-3.5 rounded-xl bg-gradient-to-r from-emerald-500/10 via-emerald-500/5 to-transparent border border-emerald-200/80 hover:border-emerald-300 transition-all group flex items-center justify-between focus:ring-2 focus:ring-emerald-500/20 focus:outline-none"
         >
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-lg bg-emerald-600 text-white shadow-xs group-hover:scale-105 transition-transform">
-              <TrendingUp className="w-4 h-4" />
+              <TrendingUp className="w-4 h-4" aria-hidden="true" />
             </div>
             <div>
               <p className="text-xs font-bold text-slate-900">Finansial & MRR Analytics</p>
@@ -179,11 +179,11 @@ export default function SuperAdminDashboardPage() {
 
         <Link
           href="/superadmin/pricing"
-          className="p-3.5 rounded-xl bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent border border-amber-200/80 hover:border-amber-300 transition-all group flex items-center justify-between"
+          className="p-3.5 rounded-xl bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent border border-amber-200/80 hover:border-amber-300 transition-all group flex items-center justify-between focus:ring-2 focus:ring-amber-500/20 focus:outline-none"
         >
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-lg bg-amber-600 text-white shadow-xs group-hover:scale-105 transition-transform">
-              <Coins className="w-4 h-4" />
+              <Coins className="w-4 h-4" aria-hidden="true" />
             </div>
             <div>
               <p className="text-xs font-bold text-slate-900">Pricing & Skema Kredit AI</p>
@@ -195,11 +195,11 @@ export default function SuperAdminDashboardPage() {
 
         <Link
           href="/superadmin/secrets"
-          className="p-3.5 rounded-xl bg-gradient-to-r from-indigo-500/10 via-indigo-500/5 to-transparent border border-indigo-200/80 hover:border-indigo-300 transition-all group flex items-center justify-between"
+          className="p-3.5 rounded-xl bg-gradient-to-r from-indigo-500/10 via-indigo-500/5 to-transparent border border-indigo-200/80 hover:border-indigo-300 transition-all group flex items-center justify-between focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
         >
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-lg bg-indigo-600 text-white shadow-xs group-hover:scale-105 transition-transform">
-              <Key className="w-4 h-4" />
+              <Key className="w-4 h-4" aria-hidden="true" />
             </div>
             <div>
               <p className="text-xs font-bold text-slate-900">Task-based AI Secrets</p>
@@ -218,7 +218,7 @@ export default function SuperAdminDashboardPage() {
               Total Sekolah / Tenant
             </span>
             <div className="p-2 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-200/70">
-              <Building2 className="w-4 h-4" />
+              <Building2 className="w-4 h-4" aria-hidden="true" />
             </div>
           </div>
           <div className="font-display text-3xl font-extrabold text-slate-900 tracking-tight tabular-nums">
@@ -235,13 +235,13 @@ export default function SuperAdminDashboardPage() {
               Siswa Terdaftar Global
             </span>
             <div className="p-2 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-200/70">
-              <GraduationCap className="w-4 h-4" />
+              <GraduationCap className="w-4 h-4" aria-hidden="true" />
             </div>
           </div>
           <div className="font-display text-3xl font-extrabold text-slate-900 tracking-tight tabular-nums">
             {stats?.total_global_students || 0}
           </div>
-          <p className="text-[11px] text-slate-400 font-mono">
+          <p className="text-[11px] text-slate-500 font-mono">
             Dari {stats?.total_global_users || 0} total pengguna platform
           </p>
         </div>
@@ -252,13 +252,13 @@ export default function SuperAdminDashboardPage() {
               Guru & Tenaga Pendidik
             </span>
             <div className="p-2 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-200/70">
-              <Users className="w-4 h-4" />
+              <Users className="w-4 h-4" aria-hidden="true" />
             </div>
           </div>
           <div className="font-display text-3xl font-extrabold text-slate-900 tracking-tight tabular-nums">
             {stats?.total_global_teachers || 0}
           </div>
-          <p className="text-[11px] text-slate-400 font-mono">Pengampu dan penyusun ujian</p>
+          <p className="text-[11px] text-slate-500 font-mono">Pengampu dan penyusun ujian</p>
         </div>
 
         <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200 space-y-2">
@@ -267,13 +267,13 @@ export default function SuperAdminDashboardPage() {
               Kredit AI Digunakan
             </span>
             <div className="p-2 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-200/70">
-              <Cpu className="w-4 h-4" />
+              <Cpu className="w-4 h-4" aria-hidden="true" />
             </div>
           </div>
           <div className="font-display text-3xl font-extrabold text-slate-900 tracking-tight tabular-nums">
             {stats?.total_ai_credits_used || 0}
           </div>
-          <p className="text-[11px] text-slate-400 font-mono">Total konsumsi token LLM global</p>
+          <p className="text-[11px] text-slate-500 font-mono">Total konsumsi token LLM global</p>
         </div>
       </div>
 

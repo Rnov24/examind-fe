@@ -52,14 +52,14 @@ export default function TeacherDashboardPage() {
   return (
     <div className="space-y-6 max-w-6xl mx-auto font-sans">
       {/* Institutional Light Header with Ambient Glow */}
-      <div className="bg-gradient-to-r from-white via-white to-indigo-50/30 rounded-2xl border border-slate-200/90 p-4 sm:p-7 shadow-card relative overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+      <div className="bg-gradient-to-r from-white via-white to-indigo-50/30 rounded-2xl border border-slate-200/90 p-5 sm:p-6 shadow-card relative overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-5">
         <div className="absolute -right-16 -top-16 w-64 h-64 bg-indigo-100/40 rounded-full blur-3xl pointer-events-none"></div>
         <div className="space-y-1.5 relative z-10">
           <div className="flex items-center gap-2">
             <span className="text-[10px] font-black uppercase tracking-wider text-slate-950 bg-[#c2ef4e] px-2.5 py-0.5 rounded-md font-mono shadow-2xs">
               Portal Guru & Pengawas
             </span>
-            <span className="text-xs text-slate-400 font-mono">NIP: {user?.identifier || '-'}</span>
+            <span className="text-xs text-slate-500 font-mono">NIP: {user?.identifier || '-'}</span>
           </div>
           <h1 className="text-2xl font-display font-extrabold tracking-tight text-slate-900">
             Selamat Datang, {user?.full_name || 'Bapak/Ibu Guru'}
@@ -72,16 +72,16 @@ export default function TeacherDashboardPage() {
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 shrink-0 relative z-10 w-full sm:w-auto">
           <Link
             href="/questions"
-            className="px-4 py-2.5 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs rounded-xl border border-slate-300/90 hover:border-slate-400 transition-all shadow-card flex items-center justify-center gap-2 cursor-pointer w-full sm:w-auto"
+            className="px-4 py-2.5 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs rounded-xl border border-slate-300/90 hover:border-slate-400 transition-all shadow-card flex items-center justify-center gap-2 cursor-pointer w-full sm:w-auto focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
           >
-            <BookOpen className="w-4 h-4 text-slate-900" />
+            <BookOpen className="w-4 h-4 text-slate-900" aria-hidden="true" />
             <span>Bank Soal & AI</span>
           </Link>
           <Link
             href="/exams/create"
-            className="px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl transition-all shadow-card hover:shadow-card-hover flex items-center justify-center gap-2 cursor-pointer w-full sm:w-auto"
+            className="px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl transition-all shadow-card hover:shadow-card-hover flex items-center justify-center gap-2 cursor-pointer w-full sm:w-auto focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
           >
-            <Plus className="w-4 h-4 text-[#c2ef4e]" />
+            <Plus className="w-4 h-4 text-[#c2ef4e]" aria-hidden="true" />
             <span>Buat Ujian Baru</span>
           </Link>
         </div>
@@ -91,42 +91,42 @@ export default function TeacherDashboardPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200 group flex items-center gap-4">
           <div className="w-12 h-12 rounded-xl bg-indigo-50/80 text-indigo-700 ring-1 ring-indigo-200/60 flex items-center justify-center font-bold shrink-0 group-hover:scale-105 transition-transform">
-            <BookOpen className="w-5 h-5" />
+            <BookOpen className="w-5 h-5" aria-hidden="true" />
           </div>
           <div>
-            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block font-mono">Bank Soal</span>
+            <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block font-mono">Bank Soal</span>
             <span className="text-2xl font-black text-slate-900 font-display tabular-nums">{banksCount} Paket</span>
           </div>
         </div>
 
         <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200 group flex items-center gap-4">
           <div className="w-12 h-12 rounded-xl bg-emerald-50/80 text-emerald-700 ring-1 ring-emerald-200/60 flex items-center justify-center font-bold shrink-0 group-hover:scale-105 transition-transform">
-            <FileSpreadsheet className="w-5 h-5" />
+            <FileSpreadsheet className="w-5 h-5" aria-hidden="true" />
           </div>
           <div>
-            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block font-mono">Paket Ujian</span>
+            <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block font-mono">Paket Ujian</span>
             <span className="text-2xl font-black text-slate-900 font-display tabular-nums">{examsCount} Jadwal</span>
           </div>
         </div>
 
         <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200 group flex items-center gap-4">
           <div className="w-12 h-12 rounded-xl bg-purple-50/80 text-purple-700 ring-1 ring-purple-200/60 flex items-center justify-center font-bold shrink-0 group-hover:scale-105 transition-transform">
-            <Users className="w-5 h-5" />
+            <Users className="w-5 h-5" aria-hidden="true" />
           </div>
           <div>
-            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block font-mono">Rombel Belajar</span>
+            <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block font-mono">Rombel Belajar</span>
             <span className="text-2xl font-black text-slate-900 font-display tabular-nums">{classesCount} Kelas</span>
           </div>
         </div>
 
         <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200 group flex items-center gap-4">
           <div className="w-12 h-12 rounded-xl bg-amber-50/80 text-amber-700 ring-1 ring-amber-200/60 flex items-center justify-center font-bold shrink-0 group-hover:scale-105 transition-transform">
-            <ShieldAlert className="w-5 h-5" />
+            <ShieldAlert className="w-5 h-5" aria-hidden="true" />
           </div>
           <div>
-            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block font-mono">Proctoring AI</span>
+            <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block font-mono">Proctoring AI</span>
             <span className="text-xs font-bold text-emerald-700 flex items-center gap-1.5 mt-0.5 font-mono">
-              <span className="relative flex h-2 w-2">
+              <span className="relative flex h-2 w-2" aria-hidden="true">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
               </span>
@@ -145,10 +145,10 @@ export default function TeacherDashboardPage() {
           </div>
           <Link
             href="/exams"
-            className="text-xs font-bold text-slate-900 hover:text-indigo-600 flex items-center gap-1.5 font-mono transition-colors shrink-0"
+            className="text-xs font-bold text-slate-900 hover:text-indigo-600 flex items-center gap-1.5 font-mono transition-colors shrink-0 focus:ring-2 focus:ring-slate-900/10 focus:outline-none rounded-lg px-2 py-1"
           >
             <span>Semua Ujian</span>
-            <span>→</span>
+            <span aria-hidden="true">→</span>
           </Link>
         </div>
 
@@ -172,7 +172,7 @@ export default function TeacherDashboardPage() {
                   <td className="px-6 py-4 tabular-nums font-mono text-slate-700">{exam.duration_minutes} Menit</td>
                   <td className="px-6 py-4">
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold capitalize bg-indigo-50 text-indigo-700 border border-indigo-200/80 font-mono">
-                      <Eye className="w-3 h-3" />
+                      <Eye className="w-3 h-3" aria-hidden="true" />
                       {exam.proctoring_level === 'dual_camera'
                         ? 'Dual-Camera'
                         : exam.proctoring_level === 'single_camera'
@@ -196,14 +196,14 @@ export default function TeacherDashboardPage() {
                   <td className="px-6 py-4 text-right space-x-2 whitespace-nowrap">
                     <Link
                       href={`/exams/${exam.id}/monitor`}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200/80 font-bold text-[11px] transition-colors cursor-pointer shadow-2xs"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200/80 font-bold text-[11px] transition-colors cursor-pointer shadow-2xs focus:ring-2 focus:ring-rose-500/20 focus:outline-none"
                     >
-                      <Radio className="w-3 h-3" />
+                      <Radio className="w-3 h-3" aria-hidden="true" />
                       <span>Live Monitor</span>
                     </Link>
                     <Link
                       href={`/grading/${exam.id}`}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-[11px] transition-colors cursor-pointer shadow-2xs"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-[11px] transition-colors cursor-pointer shadow-2xs focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
                     >
                       <span>Koreksi Esai</span>
                     </Link>
@@ -212,8 +212,21 @@ export default function TeacherDashboardPage() {
               ))}
               {recentExams.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="text-center py-10 text-slate-400">
-                    Belum ada paket ujian yang dibuat.
+                  <td colSpan={6} className="text-center py-12 text-slate-500">
+                    <div className="flex flex-col items-center justify-center max-w-sm mx-auto">
+                      <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-2.5">
+                        <FileSpreadsheet className="w-5 h-5" aria-hidden="true" />
+                      </div>
+                      <p className="font-bold text-slate-900 text-sm">Belum Ada Paket Ujian</p>
+                      <p className="text-xs text-slate-500 mt-1 mb-3">Buat paket ujian baru dan jadwalkan untuk kelas siswa Anda.</p>
+                      <Link
+                        href="/exams/create"
+                        className="px-3.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs flex items-center gap-1.5 cursor-pointer focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+                      >
+                        <Plus className="w-3.5 h-3.5 text-[#c2ef4e]" aria-hidden="true" />
+                        <span>Buat Ujian Baru</span>
+                      </Link>
+                    </div>
                   </td>
                 </tr>
               )}

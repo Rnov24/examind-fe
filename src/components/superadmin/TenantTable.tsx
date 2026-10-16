@@ -46,7 +46,7 @@ export default function TenantTable({
       {/* Filter & Search Bar */}
       <div className="bg-white rounded-xl p-4 border border-slate-200 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3">
         <div className="relative w-full sm:w-80">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" aria-hidden="true" />
           <input
             value={localSearch}
             onChange={(e) => {
@@ -55,7 +55,7 @@ export default function TenantTable({
             }}
             type="text"
             placeholder="Cari sekolah, kode, atau domain..."
-            className="w-full pl-9 pr-4 py-2 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 placeholder:text-slate-400 text-xs focus:bg-white focus:outline-none focus:border-slate-400"
+            className="w-full pl-9 pr-4 py-2 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 placeholder:text-slate-400 text-xs focus:bg-white focus:outline-none focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10"
           />
         </div>
 
@@ -66,7 +66,7 @@ export default function TenantTable({
               setLocalPlan(e.target.value)
               onPlanUpdate(e.target.value)
             }}
-            className="px-3 py-2 rounded-lg border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-slate-400 bg-slate-50"
+            className="px-3 py-2 rounded-lg border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 bg-slate-50"
           >
             <option value="">Semua Paket</option>
             <option value="starter">Starter</option>
@@ -78,7 +78,7 @@ export default function TenantTable({
             onClick={onCreateTenant}
             className="px-4 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer shrink-0"
           >
-            <Plus className="w-3.5 h-3.5" />
+            <Plus className="w-3.5 h-3.5" aria-hidden="true" />
             <span>Tambah Sekolah</span>
           </button>
         </div>
@@ -186,7 +186,7 @@ export default function TenantTable({
               ))}
               {tenants.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="p-8 text-center text-slate-400">
+                  <td colSpan={7} className="p-8 text-center text-slate-500">
                     Tidak ada data sekolah / tenant yang sesuai dengan filter.
                   </td>
                 </tr>

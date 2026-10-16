@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Plus, Eye, Radio, BarChart3, Loader2 } from 'lucide-react'
+import { Plus, Eye, Radio, BarChart3, Loader2, FileText } from 'lucide-react'
 import api from '@/lib/api'
 import { formatDate } from '@/lib/utils'
 
@@ -54,7 +54,7 @@ export default function ExamListPage() {
           href="/exams/create"
           className="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-card hover:shadow-card-hover transition-all flex items-center justify-center gap-2 cursor-pointer font-display tracking-wide shrink-0 w-full sm:w-auto"
         >
-          <Plus className="w-4 h-4 text-[#c2ef4e]" />
+          <Plus className="w-4 h-4 text-[#c2ef4e]" aria-hidden="true" />
           <span>Buat Paket Ujian Baru</span>
         </Link>
       </div>
@@ -93,11 +93,11 @@ export default function ExamListPage() {
                     <td className="px-6 py-4 font-semibold text-slate-800">{e.class_name}</td>
                     <td className="px-6 py-4">
                       <p className="text-xs font-semibold text-slate-800">{formatDate(e.start_time)}</p>
-                      <p className="text-[11px] text-slate-400 font-mono">{e.duration_minutes} Menit</p>
+                      <p className="text-[11px] text-slate-500 font-mono">{e.duration_minutes} Menit</p>
                     </td>
                     <td className="px-6 py-4">
                       <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold capitalize font-mono bg-indigo-50 text-indigo-700 border border-indigo-200/80 shadow-xs">
-                        <Eye className="w-3.5 h-3.5" />
+                        <Eye className="w-3.5 h-3.5" aria-hidden="true" />
                         {(e.proctoring_level || '').replace('_', ' ')}
                       </span>
                     </td>
@@ -127,7 +127,7 @@ export default function ExamListPage() {
                           href={`/exams/${e.id}/monitor`}
                           className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-bold text-xs transition-colors cursor-pointer shadow-xs"
                         >
-                          <Radio className="w-3.5 h-3.5 animate-pulse text-rose-600" />
+                          <Radio className="w-3.5 h-3.5 animate-pulse text-rose-600" aria-hidden="true" />
                           <span>Monitor</span>
                         </Link>
                       )}
@@ -136,7 +136,7 @@ export default function ExamListPage() {
                           href={`/exams/${e.id}/analytics`}
                           className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 font-bold text-xs transition-colors cursor-pointer shadow-xs"
                         >
-                          <BarChart3 className="w-3.5 h-3.5" />
+                          <BarChart3 className="w-3.5 h-3.5" aria-hidden="true" />
                           <span>Hasil</span>
                         </Link>
                       )}
@@ -145,8 +145,21 @@ export default function ExamListPage() {
                 ))}
                 {exams.length === 0 && (
                   <tr>
-                    <td colSpan={7} className="text-center py-16 text-slate-400 text-xs">
-                      Belum ada paket ujian. Buat paket ujian pertama Anda.
+                    <td colSpan={7} className="text-center py-12 px-4">
+                      <div className="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center mx-auto mb-3">
+                        <FileText className="w-6 h-6 text-indigo-600" aria-hidden="true" />
+                      </div>
+                      <h4 className="font-bold text-slate-900 text-sm">Belum Ada Paket Ujian</h4>
+                      <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
+                        Mulai dengan membuat paket ujian pertama untuk menjadwalkan asesmen siswa.
+                      </p>
+                      <Link
+                        href="/exams/create"
+                        className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition-colors"
+                      >
+                        <Plus className="w-4 h-4 text-[#c2ef4e]" aria-hidden="true" />
+                        <span>Buat Ujian Baru</span>
+                      </Link>
                     </td>
                   </tr>
                 )}

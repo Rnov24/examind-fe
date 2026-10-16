@@ -149,7 +149,7 @@ export default function AIAssistantWidget() {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-[max(1.5rem,env(safe-area-inset-bottom))] right-[max(1.5rem,env(safe-area-inset-right))] z-40 px-4 py-2.5 min-h-[44px] rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs shadow-xl shadow-slate-900/20 border border-slate-700/60 flex items-center gap-2.5 transition-all cursor-pointer"
+          className="fixed bottom-[max(1.5rem,env(safe-area-inset-bottom))] right-[max(1.5rem,env(safe-area-inset-right))] z-40 px-4 py-2.5 min-h-[44px] rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs shadow-xl shadow-slate-900/20 border border-slate-700/60 flex items-center gap-2.5 transition-all cursor-pointer focus:ring-2 focus:ring-slate-900/20 focus:outline-none"
         >
           <div className="w-5 h-5 rounded-md bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 flex items-center justify-center font-mono text-[10px] font-bold">
             AI
@@ -201,9 +201,9 @@ export default function AIAssistantWidget() {
                   onClick={clearMessages}
                   title="Bersihkan Percakapan"
                   aria-label="Bersihkan Percakapan"
-                  className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors cursor-pointer"
+                  className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-white/20"
                 >
-                  <RotateCcw className="w-4 h-4" />
+                  <RotateCcw className="w-4 h-4" aria-hidden="true" />
                 </button>
               )}
               <button
@@ -211,9 +211,9 @@ export default function AIAssistantWidget() {
                 onClick={() => setIsOpen(false)}
                 title="Tutup Chat"
                 aria-label="Tutup Chat"
-                className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors cursor-pointer"
+                className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-white/20"
               >
-                <X className="w-4 h-4" />
+                <X className="w-4 h-4" aria-hidden="true" />
               </button>
             </div>
           </div>
@@ -300,7 +300,7 @@ export default function AIAssistantWidget() {
                   handleSend(cleanText || chip)
                 }}
                 disabled={isLoading}
-                className="px-2.5 py-1 rounded-md bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-[11px] font-medium transition-colors cursor-pointer disabled:opacity-50 shadow-xs"
+                className="px-2.5 py-1 rounded-md bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-[11px] font-medium transition-colors cursor-pointer disabled:opacity-50 shadow-xs focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
               >
                 {chip}
               </button>
@@ -320,15 +320,16 @@ export default function AIAssistantWidget() {
                   : 'Tanyakan sesuatu ke Gemini AI...'
               }
               disabled={isLoading}
-              className="flex-1 px-3.5 py-2.5 rounded-lg bg-slate-50 border border-slate-300 focus:bg-white focus:border-indigo-600 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none transition-all"
+              className="flex-1 px-3.5 py-2.5 rounded-lg bg-slate-50 border border-slate-300 focus:bg-white focus:border-indigo-600 focus:ring-2 focus:ring-indigo-500/20 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none transition-all"
             />
             <button
               onClick={() => handleSend()}
               disabled={!inputQuery.trim() || isLoading}
-              aria-label="Kirim Pesan"
-              className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg bg-slate-900 hover:bg-slate-800 disabled:opacity-40 text-white font-bold transition-colors cursor-pointer shadow-xs shrink-0"
+              title="Kirim pesan"
+              aria-label="Kirim pesan"
+              className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg bg-slate-900 hover:bg-slate-800 disabled:opacity-40 text-white font-bold transition-colors cursor-pointer shadow-xs shrink-0 focus:ring-2 focus:ring-slate-900/20 focus:outline-none"
             >
-              <Send className="w-4 h-4" />
+              <Send className="w-4 h-4" aria-hidden="true" />
             </button>
           </div>
         </div>

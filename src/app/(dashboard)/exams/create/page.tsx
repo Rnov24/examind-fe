@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Loader2 } from 'lucide-react'
+import { ArrowLeft, Loader2, X } from 'lucide-react'
 import api from '@/lib/api'
 
 interface ClassOption {
@@ -27,6 +27,7 @@ export default function ExamCreatePage() {
   const [randomizeQuestions, setRandomizeQuestions] = useState(true)
   const [randomizeOptions, setRandomizeOptions] = useState(true)
   const [loading, setLoading] = useState(false)
+  const [formError, setFormError] = useState<string | null>(null)
   const [classes, setClasses] = useState<ClassOption[]>([])
 
   useEffect(() => {
@@ -61,6 +62,13 @@ export default function ExamCreatePage() {
   async function handleCreateExam(e: React.FormEvent) {
     e.preventDefault()
     if (!classId) return
+    setFormError(null)
+
+    if (new Date(endTime) <= new Date(startTime)) {
+      setFormError('Waktu batas akhir penutupan ujian harus lebih lambat dari waktu mulai.')
+      return
+    }
+
     setLoading(true)
 
     try {
@@ -79,7 +87,7 @@ export default function ExamCreatePage() {
       const newExam = res.data.data
       router.push(`/exams/${newExam.id}`)
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Gagal membuat paket ujian.')
+      setFormError(err.response?.data?.message || 'Gagal membuat paket ujian. Silakan periksa formulir.')
     } finally {
       setLoading(false)
     }
@@ -90,9 +98,11 @@ export default function ExamCreatePage() {
       <div className="flex items-center gap-3">
         <Link
           href="/exams"
-          className="p-2 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 transition-colors shadow-xs"
+          title="Kembali ke Daftar Ujian"
+          aria-label="Kembali ke Daftar Ujian"
+          className="p-2 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 transition-colors shadow-xs focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
         >
-          <ArrowLeft className="w-4 h-4" />
+          <ArrowLeft className="w-4 h-4" aria-hidden="true" />
         </Link>
         <div>
           <h2 className="text-2xl font-black text-slate-900 tracking-tight">Buat Paket Ujian Baru</h2>
@@ -103,6 +113,20 @@ export default function ExamCreatePage() {
       </div>
 
       <div className="bg-white rounded-xl p-6 sm:p-8 border border-slate-200 shadow-xs text-slate-900">
+        {formError && (
+          <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-medium flex items-center justify-between mb-6">
+            <span>{formError}</span>
+            <button
+              type="button"
+              onClick={() => setFormError(null)}
+              className="text-rose-600 hover:text-rose-800 font-bold ml-2 cursor-pointer focus:outline-none focus:ring-2 focus:ring-rose-500/30 rounded-md p-0.5"
+              aria-label="Tutup pesan kesalahan"
+            >
+              <X className="w-3.5 h-3.5" aria-hidden="true" />
+            </button>
+          </div>
+        )}
+
         <form onSubmit={handleCreateExam} className="space-y-6">
           <div>
             <label className="block text-xs font-bold text-slate-800 uppercase mb-1.5 font-mono">Judul Ujian</label>
@@ -112,7 +136,7 @@ export default function ExamCreatePage() {
               type="text"
               required
               placeholder="Contoh: Ujian Tengah Semester Fisika Kuantum XII MIPA"
-              className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-sm font-medium focus:bg-white focus:ring-1 focus:ring-slate-900 focus:border-slate-900 outline-none placeholder:text-slate-400"
+              className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-sm font-medium focus:bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none placeholder:text-slate-400"
             />
           </div>
 
@@ -125,7 +149,7 @@ export default function ExamCreatePage() {
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
               placeholder="Petunjuk khusus ujian..."
-              className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-sm font-medium focus:bg-white focus:ring-1 focus:ring-slate-900 focus:border-slate-900 outline-none placeholder:text-slate-400"
+              className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-sm font-medium focus:bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none placeholder:text-slate-400"
             />
           </div>
 
@@ -138,7 +162,7 @@ export default function ExamCreatePage() {
                 value={classId ?? ''}
                 onChange={(e) => setClassId(e.target.value ? Number(e.target.value) : null)}
                 required
-                className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-sm font-medium focus:bg-white focus:ring-1 focus:ring-slate-900 focus:border-slate-900 outline-none"
+                className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-sm font-medium focus:bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none"
               >
                 <option value="">-- Pilih Rombel Kelas --</option>
                 {classes.map((c) => (
@@ -160,8 +184,9 @@ export default function ExamCreatePage() {
                 min={5}
                 max={300}
                 required
-                className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-sm font-medium focus:bg-white focus:ring-1 focus:ring-slate-900 focus:border-slate-900 outline-none"
+                className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-sm font-medium focus:bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none"
               />
+              <p className="text-[11px] text-slate-500 mt-1 font-mono">Rentang durasi ujian antara 5 hingga 300 menit.</p>
             </div>
           </div>
 
@@ -175,8 +200,9 @@ export default function ExamCreatePage() {
                 onChange={(e) => setStartTime(e.target.value)}
                 type="datetime-local"
                 required
-                className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-sm font-medium focus:bg-white focus:ring-1 focus:ring-slate-900 focus:border-slate-900 outline-none"
+                className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-sm font-medium focus:bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none"
               />
+              <p className="text-[11px] text-slate-500 mt-1 font-mono">Waktu saat siswa diizinkan memulai pengerjaan.</p>
             </div>
 
             <div>
@@ -188,8 +214,9 @@ export default function ExamCreatePage() {
                 onChange={(e) => setEndTime(e.target.value)}
                 type="datetime-local"
                 required
-                className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-sm font-medium focus:bg-white focus:ring-1 focus:ring-slate-900 focus:border-slate-900 outline-none"
+                className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-sm font-medium focus:bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none"
               />
+              <p className="text-[11px] text-slate-500 mt-1 font-mono">Batas akhir pengumpulan seluruh sesi ujian.</p>
             </div>
           </div>
 
@@ -207,12 +234,13 @@ export default function ExamCreatePage() {
                 <select
                   value={proctoringLevel}
                   onChange={(e) => setProctoringLevel(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs font-medium focus:bg-white focus:ring-1 focus:ring-slate-900 focus:border-slate-900 outline-none bg-white text-slate-900"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs font-medium focus:bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none bg-white text-slate-900"
                 >
                   <option value="dual_camera">Dual-Camera (Kamera Laptop + HP Sekunder)</option>
                   <option value="single_camera">Single-Camera (Hanya Kamera Depan Laptop)</option>
                   <option value="disabled">Nonaktifkan Proctoring</option>
                 </select>
+                <p className="text-[11px] text-slate-500 mt-1 font-mono">Dual-camera merekam wajah dan meja peserta.</p>
               </div>
 
               <div>
@@ -222,11 +250,12 @@ export default function ExamCreatePage() {
                 <select
                   value={explanationPolicy}
                   onChange={(e) => setExplanationPolicy(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs font-medium focus:bg-white focus:ring-1 focus:ring-slate-900 focus:border-slate-900 outline-none bg-white text-slate-900"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs font-medium focus:bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none bg-white text-slate-900"
                 >
                   <option value="after_exam_closed">Setelah Ujian Ditutup / Dinilai</option>
                   <option value="instant">Seketika Setelah Siswa Mengumpulkan</option>
                 </select>
+                <p className="text-[11px] text-slate-500 mt-1 font-mono">Kapan siswa dapat mengakses penjelasan AI.</p>
               </div>
             </div>
 
@@ -255,16 +284,16 @@ export default function ExamCreatePage() {
           <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-200">
             <Link
               href="/exams"
-              className="px-5 py-2.5 rounded-lg text-xs font-bold text-slate-700 hover:bg-slate-50 border border-slate-300 transition-colors shadow-xs inline-block"
+              className="px-5 py-2.5 rounded-lg text-xs font-bold text-slate-700 hover:bg-slate-50 border border-slate-300 transition-colors shadow-xs inline-block focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
             >
               Batal
             </Link>
             <button
               type="submit"
               disabled={loading || !classId}
-              className="px-6 py-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-xs disabled:opacity-50 cursor-pointer transition-colors flex items-center gap-1.5"
+              className="px-6 py-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-xs disabled:opacity-50 cursor-pointer transition-colors flex items-center gap-1.5 focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
             >
-              {loading && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+              {loading && <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" />}
               <span>{loading ? 'Menyimpan...' : 'Lanjut ke Pemilihan Butir Soal →'}</span>
             </button>
           </div>

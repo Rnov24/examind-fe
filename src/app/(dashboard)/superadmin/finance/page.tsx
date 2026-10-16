@@ -117,16 +117,17 @@ export default function SuperAdminFinancePage() {
           <button
             onClick={loadFinance}
             disabled={loading}
-            className="p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 transition-all shadow-xs cursor-pointer"
-            title="Refresh Data"
+            className="p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 transition-all shadow-xs cursor-pointer focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+            title="Muat ulang data finansial"
+            aria-label="Muat ulang data finansial"
           >
-            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-emerald-600' : ''}`} />
+            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-emerald-600' : ''}`} aria-hidden="true" />
           </button>
           <button
             onClick={() => alert('Laporan keuangan format CSV & PDF telah diekspor ke sistem!')}
-            className="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-card flex items-center gap-2 transition-all cursor-pointer font-display tracking-wide"
+            className="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-card flex items-center gap-2 transition-all cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
           >
-            <Download className="w-4 h-4 text-[#c2ef4e]" />
+            <Download className="w-4 h-4 text-[#c2ef4e]" aria-hidden="true" />
             <span>Ekspor Buku Besar</span>
           </button>
         </div>
@@ -477,8 +478,11 @@ export default function SuperAdminFinancePage() {
                 </h3>
               </div>
               <button
+                type="button"
                 onClick={() => setSelectedInvoice(null)}
-                className="p-1 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700 cursor-pointer"
+                className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-lg hover:bg-slate-100 text-slate-500 hover:text-slate-800 cursor-pointer focus:outline-none focus:ring-2 focus:ring-slate-900/10"
+                title="Tutup rincian faktur"
+                aria-label="Tutup rincian faktur"
               >
                 ✕
               </button>
@@ -488,12 +492,12 @@ export default function SuperAdminFinancePage() {
             <div className="space-y-4 text-xs">
               <div className="grid grid-cols-2 gap-4 p-4 rounded-xl bg-slate-50 border border-slate-100">
                 <div>
-                  <span className="text-slate-400 font-mono text-[10px] uppercase">Diterbitkan Untuk:</span>
+                  <span className="text-slate-500 font-mono text-[10px] uppercase">Diterbitkan Untuk:</span>
                   <p className="font-bold text-slate-900 mt-0.5">{selectedInvoice.tenant_name}</p>
                   <p className="text-[10px] text-slate-500 font-mono">Kode: {selectedInvoice.code}</p>
                 </div>
                 <div>
-                  <span className="text-slate-400 font-mono text-[10px] uppercase">Tanggal Bayar:</span>
+                  <span className="text-slate-500 font-mono text-[10px] uppercase">Tanggal Bayar:</span>
                   <p className="font-bold text-slate-900 mt-0.5">{selectedInvoice.date}</p>
                   <p className="text-[10px] text-emerald-600 font-semibold flex items-center gap-1 mt-0.5">
                     <CheckCircle2 className="w-3 h-3" /> Status: Terverifikasi

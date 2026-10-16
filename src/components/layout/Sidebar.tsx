@@ -186,7 +186,7 @@ export default function Sidebar() {
   }
 
   const renderSectionHeader = (title: string) => (
-    <div className="pt-3 pb-1 px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 font-mono flex items-center justify-between">
+    <div className="pt-3 pb-1 px-3 text-[10px] font-bold uppercase tracking-wider text-slate-500 font-mono flex items-center justify-between">
       <span>{title}</span>
     </div>
   )
@@ -222,11 +222,11 @@ export default function Sidebar() {
                   document.getElementById('sidebar-toggle-btn')?.focus()
                 }
               }}
-              className="absolute top-2 right-2 p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="absolute top-2 right-2 p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-slate-500 hover:text-slate-700 hover:bg-slate-200/60 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500"
               title="Tutup Sidebar"
               aria-label="Tutup Sidebar"
             >
-              <ChevronLeft className="w-5 h-5" />
+              <ChevronLeft className="w-5 h-5" aria-hidden="true" />
             </button>
 
             <div className="flex items-center gap-2.5 pr-10">
@@ -418,13 +418,13 @@ export default function Sidebar() {
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             <span className="font-semibold text-slate-900">TiDB Cloud & WS</span>
           </div>
-          <span className="text-slate-400 font-bold">Ready</span>
+          <span className="text-slate-500 font-bold">Ready</span>
         </div>
 
-        <div className="px-2 flex items-center justify-between text-[10px] text-slate-400 font-mono">
+        <div className="px-2 flex items-center justify-between text-[10px] text-slate-500 font-mono">
           <span>EXAMIND v1.0 • Next.js 15</span>
           <span className="flex items-center gap-1">
-            <Cpu className="w-3 h-3 text-slate-400" />
+            <Cpu className="w-3 h-3 text-slate-500" aria-hidden="true" />
             Edge AI
           </span>
         </div>

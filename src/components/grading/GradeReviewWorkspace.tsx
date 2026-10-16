@@ -235,7 +235,7 @@ export default function GradeReviewWorkspace({
                 <p className="font-bold">
                   Tanggal Cetak: {new Date().toLocaleDateString('id-ID', { dateStyle: 'long' })}
                 </p>
-                <p className="text-[10px] font-mono text-slate-400">EXAM-ID: {examId}</p>
+                <p className="text-[10px] font-mono text-slate-500">EXAM-ID: {examId}</p>
               </div>
             </div>
             <div className="mt-3 pt-2 border-t border-slate-200 text-xs flex justify-between">
@@ -359,9 +359,11 @@ export default function GradeReviewWorkspace({
             <div className="flex items-center gap-3.5">
               <button
                 onClick={() => setSelectedSessionId(null)}
+                title="Kembali ke daftar sesi"
+                aria-label="Kembali ke daftar sesi"
                 className="p-2.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 transition-colors cursor-pointer border border-slate-200 shadow-xs"
               >
-                <ArrowLeft className="w-4 h-4" />
+                <ArrowLeft className="w-4 h-4" aria-hidden="true" />
               </button>
               <div>
                 <h3 className="font-display font-bold text-slate-900 text-lg">{sessionDetail?.student_name}</h3>
@@ -483,7 +485,7 @@ export default function GradeReviewWorkspace({
                                     <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
                                     Respan Span-01 Lite Decision Matrix
                                   </span>
-                                  <span className="text-[10px] text-slate-400 font-mono">
+                                  <span className="text-[10px] text-slate-500 font-mono">
                                     Zero-Output-Tokens • Calibrated Probabilities
                                   </span>
                                 </div>
@@ -493,7 +495,7 @@ export default function GradeReviewWorkspace({
                               </div>
 
                               <div className="space-y-2 pt-1">
-                                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 font-mono block">
+                                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 font-mono block">
                                   Evaluasi Kriteria Acuan Atomik:
                                 </span>
                                 {parsed.evaluations.map((ev: any, evIdx: number) => {

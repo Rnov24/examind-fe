@@ -82,9 +82,9 @@ export default function ClassListPage() {
 
         <button
           onClick={() => setShowCreateModal(true)}
-          className="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition-all flex items-center gap-2 cursor-pointer"
+          className="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition-all flex items-center gap-2 cursor-pointer focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
         >
-          <Plus className="w-4 h-4" />
+          <Plus className="w-4 h-4" aria-hidden="true" />
           <span>Tambah Kelas Baru</span>
         </button>
       </div>
@@ -115,7 +115,7 @@ export default function ClassListPage() {
 
               <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
                 <div className="flex items-center gap-2 text-xs font-semibold text-slate-700">
-                  <Users className="w-4 h-4 text-indigo-600" />
+                  <Users className="w-4 h-4 text-indigo-600" aria-hidden="true" />
                   <span className="font-mono">{c.members_count ?? 0} Siswa Terdaftar</span>
                 </div>
 
@@ -130,10 +130,20 @@ export default function ClassListPage() {
           ))}
 
           {classes.length === 0 && (
-            <div className="col-span-full bg-white rounded-xl p-12 text-center border border-dashed border-slate-300">
-              <Users className="w-12 h-12 text-slate-400 mx-auto mb-3" />
-              <h4 className="font-bold text-slate-900">Belum Ada Kelas</h4>
-              <p className="text-xs text-slate-500 mt-1">Tambahkan kelas pertama Anda untuk memulai pendaftaran siswa.</p>
+            <div className="col-span-full bg-white rounded-2xl p-10 text-center border border-dashed border-slate-300 shadow-xs flex flex-col items-center justify-center">
+              <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-3">
+                <Users className="w-6 h-6" aria-hidden="true" />
+              </div>
+              <h4 className="font-bold text-slate-900 text-base">Belum Ada Kelas Akademik</h4>
+              <p className="text-xs text-slate-500 mt-1 max-w-sm mb-4">Tambahkan kelas pertama Anda untuk mulai mengatur rombel belajar dan mendaftarkan siswa.</p>
+              <button
+                type="button"
+                onClick={() => setShowCreateModal(true)}
+                className="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition-all flex items-center gap-2 cursor-pointer focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+              >
+                <Plus className="w-4 h-4" aria-hidden="true" />
+                <span>Tambah Kelas Baru</span>
+              </button>
             </div>
           )}
         </div>
@@ -151,10 +161,11 @@ export default function ClassListPage() {
               <button
                 type="button"
                 onClick={() => setShowCreateModal(false)}
+                title="Tutup modal"
                 aria-label="Tutup modal"
-                className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+                className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-slate-900/10"
               >
-                <X className="w-4 h-4" />
+                <X className="w-4 h-4" aria-hidden="true" />
               </button>
             </div>
 
@@ -167,7 +178,7 @@ export default function ClassListPage() {
                   type="text"
                   required
                   placeholder="Contoh: XII MIPA 2"
-                  className="w-full px-4 py-2.5 rounded-lg bg-slate-50 border border-slate-300 text-slate-900 text-sm font-medium focus:bg-white focus:border-slate-900 outline-none"
+                  className="w-full px-4 py-2.5 rounded-lg bg-slate-50 border border-slate-300 text-slate-900 text-sm font-medium focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 outline-none"
                 />
               </div>
 
@@ -177,7 +188,7 @@ export default function ClassListPage() {
                   <select
                     value={newGradeLevel}
                     onChange={(e) => setNewGradeLevel(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-lg bg-slate-50 border border-slate-300 text-slate-900 text-sm font-medium focus:bg-white focus:border-slate-900 outline-none"
+                    className="w-full px-4 py-2.5 rounded-lg bg-slate-50 border border-slate-300 text-slate-900 text-sm font-medium focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 outline-none"
                   >
                     <option value="10">Kelas 10</option>
                     <option value="11">Kelas 11</option>
@@ -193,7 +204,7 @@ export default function ClassListPage() {
                     type="text"
                     required
                     placeholder="2026/2027"
-                    className="w-full px-4 py-2.5 rounded-lg bg-slate-50 border border-slate-300 text-slate-900 text-sm font-medium focus:bg-white focus:border-slate-900 outline-none font-mono"
+                    className="w-full px-4 py-2.5 rounded-lg bg-slate-50 border border-slate-300 text-slate-900 text-sm font-medium focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 outline-none font-mono"
                   />
                 </div>
               </div>
@@ -202,16 +213,16 @@ export default function ClassListPage() {
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="px-4 py-2 rounded-lg text-xs font-bold text-slate-700 hover:bg-slate-50 bg-white border border-slate-300 cursor-pointer shadow-xs"
+                  className="px-4 py-2 rounded-lg text-xs font-bold text-slate-700 hover:bg-slate-50 bg-white border border-slate-300 cursor-pointer shadow-xs focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-5 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 disabled:opacity-50 text-white text-xs font-bold shadow-xs cursor-pointer flex items-center gap-1.5"
+                  className="px-5 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 disabled:opacity-50 text-white text-xs font-bold shadow-xs cursor-pointer flex items-center gap-1.5 focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
                 >
-                  {isSubmitting && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                  {isSubmitting && <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" />}
                   <span>{isSubmitting ? 'Menyimpan...' : 'Simpan Kelas'}</span>
                 </button>
               </div>

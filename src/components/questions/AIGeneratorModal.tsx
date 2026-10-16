@@ -73,6 +73,7 @@ export default function AIGeneratorModal({
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
   const [generatedData, setGeneratedData] = useState<GeneratedData | null>(null)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -92,8 +93,9 @@ export default function AIGeneratorModal({
   }
 
   async function handleGenerate() {
+    setErrorMessage(null)
     if (!topicContent.trim()) {
-      alert('Silakan masukkan topik atau ringkasan materi terlebih dahulu.')
+      setErrorMessage('Silakan masukkan topik atau ringkasan materi terlebih dahulu.')
       return
     }
 
@@ -111,7 +113,7 @@ export default function AIGeneratorModal({
       setGeneratedData(res.data.data)
     } catch (err: any) {
       const errorMsg = err.response?.data?.message || 'Gagal menghasilkan soal dengan AI.'
-      alert(errorMsg)
+      setErrorMessage(errorMsg)
     } finally {
       setLoading(false)
     }
@@ -173,8 +175,13 @@ export default function AIGeneratorModal({
             </div>
           </div>
 
-          <button onClick={onClose} className="p-2 text-slate-400 hover:text-slate-700 rounded-lg cursor-pointer">
-            <X className="w-5 h-5" />
+          <button
+            onClick={onClose}
+            aria-label="Tutup modal pembuatan soal AI"
+            title="Tutup modal pembuatan soal AI"
+            className="p-2 text-slate-500 hover:text-slate-700 rounded-lg cursor-pointer"
+          >
+            <X className="w-5 h-5" aria-hidden="true" />
           </button>
         </div>
 
@@ -190,7 +197,7 @@ export default function AIGeneratorModal({
                 onChange={(e) => setTopicContent(e.target.value)}
                 rows={4}
                 placeholder="Ketik topik materi secara spesifik, contoh: Teori Kuantum Planck, Efek Fotolistrik Einstein, dan spektrum garis atom hidrogen..."
-                className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-sm font-medium focus:bg-white focus:ring-1 focus:ring-slate-900 focus:border-slate-900 outline-none placeholder:text-slate-400"
+                className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-sm font-medium focus:bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none placeholder:text-slate-400"
               />
             </div>
 
@@ -203,7 +210,7 @@ export default function AIGeneratorModal({
                   type="number"
                   min={1}
                   max={20}
-                  className="w-full px-3 py-2.5 rounded-lg border border-slate-300 bg-slate-50 text-slate-900 text-sm font-medium focus:bg-white focus:ring-1 focus:ring-slate-900 focus:border-slate-900 outline-none"
+                  className="w-full px-3 py-2.5 rounded-lg border border-slate-300 bg-slate-50 text-slate-900 text-sm font-medium focus:bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none"
                 />
               </div>
 
@@ -215,7 +222,7 @@ export default function AIGeneratorModal({
                   type="number"
                   min={0}
                   max={10}
-                  className="w-full px-3 py-2.5 rounded-lg border border-slate-300 bg-slate-50 text-slate-900 text-sm font-medium focus:bg-white focus:ring-1 focus:ring-slate-900 focus:border-slate-900 outline-none"
+                  className="w-full px-3 py-2.5 rounded-lg border border-slate-300 bg-slate-50 text-slate-900 text-sm font-medium focus:bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none"
                 />
               </div>
 
@@ -224,7 +231,7 @@ export default function AIGeneratorModal({
                 <select
                   value={difficulty}
                   onChange={(e) => setDifficulty(e.target.value)}
-                  className="w-full px-3 py-2.5 rounded-lg border border-slate-300 bg-slate-50 text-slate-900 text-sm font-medium focus:bg-white focus:ring-1 focus:ring-slate-900 focus:border-slate-900 outline-none"
+                  className="w-full px-3 py-2.5 rounded-lg border border-slate-300 bg-slate-50 text-slate-900 text-sm font-medium focus:bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none"
                 >
                   <option value="easy">Mudah (C1-C2)</option>
                   <option value="medium">Sedang (C3-C4)</option>
@@ -237,7 +244,7 @@ export default function AIGeneratorModal({
             <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-indigo-600" />
+                  <Sparkles className="w-4 h-4 text-indigo-600" aria-hidden="true" />
                   <span className="text-xs font-bold text-slate-900">AI Provider: Google Gemini</span>
                 </div>
                 <span
@@ -251,12 +258,15 @@ export default function AIGeneratorModal({
                 </span>
               </div>
               <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1 font-mono">
+                  Google Gemini API Key (Opsional)
+                </label>
                 <input
                   value={geminiApiKey}
                   onChange={(e) => handleApiKeyChange(e.target.value)}
                   type="password"
                   placeholder="Masukkan Google Gemini API Key (AIzaSy...)"
-                  className="w-full px-3 py-2 rounded-lg bg-white border border-slate-300 text-xs font-mono text-slate-900 focus:ring-1 focus:ring-slate-900 focus:border-slate-900 outline-none placeholder:text-slate-400"
+                  className="w-full px-3 py-2 rounded-lg bg-white border border-slate-300 text-xs font-mono text-slate-900 focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none placeholder:text-slate-400"
                 />
                 <p className="text-[10px] text-slate-500 mt-1">
                   Dapatkan API Key gratis di{' '}
@@ -273,6 +283,12 @@ export default function AIGeneratorModal({
               </div>
             </div>
 
+            {errorMessage && (
+              <div className="p-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
+                <span>{errorMessage}</span>
+              </div>
+            )}
+
             <div className="pt-4 flex items-center justify-end gap-3 border-t border-slate-200">
               <button
                 type="button"
@@ -288,9 +304,9 @@ export default function AIGeneratorModal({
                 className="px-6 py-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs flex items-center gap-2 disabled:opacity-50 cursor-pointer transition-colors"
               >
                 {loading ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
                 ) : (
-                  <Sparkles className="w-4 h-4 text-[#c2ef4e]" />
+                  <Sparkles className="w-4 h-4 text-[#c2ef4e]" aria-hidden="true" />
                 )}
                 <span>{loading ? 'AI Sedang Memproses...' : 'Generate Soal dengan AI'}</span>
               </button>

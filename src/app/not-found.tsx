@@ -52,7 +52,7 @@ export default function NotFound() {
         </h1>
 
         <p
-          className="anim-rise mt-5 text-base sm:text-lg text-white/60 leading-relaxed max-w-xl"
+          className="anim-rise mt-5 text-base sm:text-lg text-white/70 leading-relaxed max-w-xl"
           style={{ '--anim-duration': '450ms', '--anim-delay': '260ms' } as React.CSSProperties}
         >
           Halaman yang kamu cari tidak terdaftar di EXAMIND. Mungkin tautannya
@@ -67,21 +67,21 @@ export default function NotFound() {
             href="/"
             className="group inline-flex items-center gap-2 px-6 py-3.5 rounded-lg bg-[#c2ef4e] hover:bg-[#d3f56e] text-slate-950 font-bold text-sm transition-colors"
           >
-            <Home className="w-4 h-4" />
+            <Home className="w-4 h-4" aria-hidden="true" />
             <span>Kembali ke Beranda</span>
-            <ArrowLeft className="w-4 h-4 anim-nudge-x rotate-180" />
+            <ArrowLeft className="w-4 h-4 anim-nudge-x rotate-180" aria-hidden="true" />
           </Link>
           <Link
             href="/login"
             className="inline-flex items-center gap-2 px-5 py-3.5 rounded-lg bg-white/[0.06] hover:bg-white/[0.1] border border-white/15 text-white font-semibold text-sm transition-colors"
           >
-            <LogIn className="w-4 h-4" />
+            <LogIn className="w-4 h-4" aria-hidden="true" />
             <span>Masuk ke Sistem</span>
           </Link>
         </div>
       </main>
 
-      <footer className="relative z-10 pb-8 text-center text-xs text-white/35 font-mono">
+      <footer className="relative z-10 pb-8 text-center text-xs text-white/70 font-mono">
         EXAMIND — Sistem Ujian Online Berbasis AI
       </footer>
     </div>

@@ -48,9 +48,9 @@ export default function TenantModal({
           <button
             onClick={onClose}
             aria-label="Tutup modal"
-            className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-700 cursor-pointer"
+            className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl hover:bg-slate-100 text-slate-500 hover:text-slate-700 cursor-pointer"
           >
-            <X className="w-4 h-4" />
+            <X className="w-4 h-4" aria-hidden="true" />
           </button>
         </div>
 
@@ -64,7 +64,7 @@ export default function TenantModal({
                 required
                 type="text"
                 placeholder="Contoh: SMAN 2 Kota Bandung"
-                className="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:border-slate-400"
+                className="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 placeholder:text-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none"
               />
             </div>
 
@@ -76,7 +76,7 @@ export default function TenantModal({
                 required
                 type="text"
                 placeholder="sman2bdg"
-                className="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 font-mono focus:bg-white focus:outline-none focus:border-slate-400 uppercase"
+                className="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 font-mono focus:bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none uppercase"
               />
             </div>
 
@@ -85,7 +85,7 @@ export default function TenantModal({
               <select
                 value={form.subscription_plan}
                 onChange={(e) => onChange({ ...form, subscription_plan: e.target.value })}
-                className="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 focus:bg-white focus:outline-none focus:border-slate-400"
+                className="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 focus:bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none"
               >
                 <option value="starter">Starter (150 Siswa)</option>
                 <option value="pro">Pro (500 Siswa)</option>
@@ -105,7 +105,7 @@ export default function TenantModal({
                   required
                   type="text"
                   placeholder="admin_sman2bdg"
-                  className="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 focus:bg-white focus:outline-none focus:border-slate-400 font-mono"
+                  className="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 focus:bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none font-mono"
                 />
               </div>
 
@@ -117,7 +117,7 @@ export default function TenantModal({
                   required
                   type="text"
                   placeholder="Drs. Mulyadi (Kepala TU)"
-                  className="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 focus:bg-white focus:outline-none focus:border-slate-400"
+                  className="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 focus:bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none"
                 />
               </div>
 
@@ -129,7 +129,7 @@ export default function TenantModal({
                   required
                   type="email"
                   placeholder="admin@sman2bdg.sch.id"
-                  className="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 focus:bg-white focus:outline-none focus:border-slate-400"
+                  className="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 focus:bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none"
                 />
               </div>
 
@@ -141,7 +141,7 @@ export default function TenantModal({
                   required
                   type="password"
                   placeholder="Minimal 8 karakter"
-                  className="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 focus:bg-white focus:outline-none focus:border-slate-400"
+                  className="w-full px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-slate-900 focus:bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none"
                 />
               </div>
             </div>

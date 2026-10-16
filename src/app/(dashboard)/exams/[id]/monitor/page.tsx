@@ -299,9 +299,11 @@ export default function LiveMonitoringPage() {
         <div className="flex items-center gap-3.5">
           <Link
             href={`/exams/${examId}`}
-            className="p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 transition-colors shadow-xs"
+            title="Kembali ke Detail Ujian"
+            aria-label="Kembali ke Detail Ujian"
+            className="p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 transition-colors shadow-xs focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
           >
-            <ArrowLeft className="w-4 h-4" />
+            <ArrowLeft className="w-4 h-4" aria-hidden="true" />
           </Link>
           <div>
             <div className="flex items-center gap-2.5 flex-wrap">
@@ -309,7 +311,7 @@ export default function LiveMonitoringPage() {
                 Live Monitoring Pengawasan AI
               </h2>
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200 font-mono shadow-xs">
-                <span className="relative flex h-2 w-2">
+                <span className="relative flex h-2 w-2" aria-hidden="true">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
                 </span>
@@ -326,7 +328,7 @@ export default function LiveMonitoringPage() {
         <div className="flex items-center gap-2 self-stretch sm:self-auto">
           <button
             onClick={() => setFilterMode('all')}
-            className={`flex-1 sm:flex-initial px-4 py-2 rounded-xl font-bold text-xs transition-all cursor-pointer font-display tracking-wide ${
+            className={`flex-1 sm:flex-initial px-4 py-2 rounded-xl font-bold text-xs transition-all cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-slate-900/10 focus:outline-none ${
               filterMode === 'all'
                 ? 'bg-slate-900 text-white shadow-card'
                 : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 shadow-xs'
@@ -336,7 +338,7 @@ export default function LiveMonitoringPage() {
           </button>
           <button
             onClick={() => setFilterMode('flagged')}
-            className={`flex-1 sm:flex-initial px-4 py-2 rounded-xl font-bold text-xs transition-all cursor-pointer font-display tracking-wide ${
+            className={`flex-1 sm:flex-initial px-4 py-2 rounded-xl font-bold text-xs transition-all cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-amber-500/20 focus:outline-none ${
               filterMode === 'flagged'
                 ? 'bg-amber-600 text-white shadow-card'
                 : 'bg-amber-50 border border-amber-200 text-amber-800 hover:bg-amber-100 shadow-xs'
@@ -371,22 +373,22 @@ export default function LiveMonitoringPage() {
                     </h4>
                     {student.status === 'aborted' ? (
                       <span className="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase bg-rose-50 text-rose-700 border border-rose-200 tracking-wider font-mono flex items-center gap-1 shrink-0">
-                        <ShieldAlert className="w-3 h-3 text-rose-600" />
+                        <ShieldAlert className="w-3 h-3 text-rose-600" aria-hidden="true" />
                         Didiskualifikasi
                       </span>
                     ) : student.integrity_score < 90 ? (
                       <span className="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase bg-amber-50 text-amber-700 border border-amber-200 tracking-wider font-mono flex items-center gap-1 animate-pulse shrink-0">
-                        <AlertTriangle className="w-3 h-3 text-amber-600" />
+                        <AlertTriangle className="w-3 h-3 text-amber-600" aria-hidden="true" />
                         Perlu Klarifikasi
                       </span>
                     ) : (
                       <span className="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase bg-emerald-50 text-emerald-700 border border-emerald-200 tracking-wider font-mono flex items-center gap-1 shrink-0">
-                        <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                        <CheckCircle2 className="w-3 h-3 text-emerald-600" aria-hidden="true" />
                         Aman
                       </span>
                     )}
                   </div>
-                  <p className="text-xs text-slate-400 font-mono mt-0.5">{student.student_identifier}</p>
+                  <p className="text-xs text-slate-500 font-mono mt-0.5">{student.student_identifier}</p>
                 </div>
 
                 {/* Integrity Score Pill */}
@@ -409,7 +411,7 @@ export default function LiveMonitoringPage() {
               <div className="rounded-xl overflow-hidden bg-slate-950 aspect-video relative flex items-center justify-center border border-slate-200/80 shadow-inner group">
                 {student.status === 'aborted' ? (
                   <div className="text-center p-4 bg-slate-950/95 w-full h-full flex flex-col items-center justify-center space-y-1.5">
-                    <ShieldAlert className="w-7 h-7 text-rose-500" />
+                    <ShieldAlert className="w-7 h-7 text-rose-500" aria-hidden="true" />
                     <span className="text-rose-400 font-bold text-xs uppercase tracking-wider font-mono">
                       Didiskualifikasi Pengawas
                     </span>
@@ -428,7 +430,7 @@ export default function LiveMonitoringPage() {
                   />
                 ) : (
                   <div className="text-center p-4">
-                    <UserCheck className="w-8 h-8 text-slate-500 mx-auto mb-1" />
+                    <UserCheck className="w-8 h-8 text-slate-500 mx-auto mb-1" aria-hidden="true" />
                     <span className="text-[11px] text-slate-400 font-medium">Tidak ada anomali visual</span>
                   </div>
                 )}
@@ -462,7 +464,7 @@ export default function LiveMonitoringPage() {
                     <span className="font-semibold text-rose-300 capitalize truncate mr-2">
                       {student.last_event.replace('_', ' ')}
                     </span>
-                    <span className="text-slate-400 text-[10px] font-mono shrink-0">
+                    <span className="text-slate-300 text-[10px] font-mono shrink-0">
                       {student.last_event_time}
                     </span>
                   </div>
@@ -475,16 +477,16 @@ export default function LiveMonitoringPage() {
                   <button
                     onClick={() => openWarningModal(student)}
                     disabled={student.status === 'aborted'}
-                    className="py-2 px-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-50 text-slate-700 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-xs"
+                    className="py-2 px-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-50 text-slate-700 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-xs focus:ring-2 focus:ring-amber-500/20 focus:outline-none"
                   >
-                    <Bell className="w-3.5 h-3.5 text-amber-600" />
+                    <Bell className="w-3.5 h-3.5 text-amber-600" aria-hidden="true" />
                     <span>Peringatkan</span>
                   </button>
                   <button
                     onClick={() => openSnapshotModal(student)}
-                    className="py-2 px-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-800 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-xs"
+                    className="py-2 px-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-800 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-xs focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
                   >
-                    <History className="w-3.5 h-3.5 text-indigo-600" />
+                    <History className="w-3.5 h-3.5 text-indigo-600" aria-hidden="true" />
                     <span>Log Bukti</span>
                   </button>
                 </div>
@@ -496,18 +498,18 @@ export default function LiveMonitoringPage() {
                       onClick={() => tolerateStudent(student)}
                       disabled={isProcessingAction}
                       title="Toleransi wajar sebagai false positive / pergerakan alami"
-                      className="flex-1 py-1.5 px-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold text-[11px] flex items-center justify-center gap-1 transition-all cursor-pointer shadow-xs disabled:opacity-50"
+                      className="flex-1 py-1.5 px-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold text-[11px] flex items-center justify-center gap-1 transition-all cursor-pointer shadow-xs disabled:opacity-50 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none"
                     >
-                      <Check className="w-3.5 h-3.5 text-emerald-600" />
+                      <Check className="w-3.5 h-3.5 text-emerald-600" aria-hidden="true" />
                       <span>Toleransi</span>
                     </button>
                     <button
                       onClick={() => openDisqualifyModal(student)}
                       disabled={isProcessingAction}
                       title="Putuskan diskualifikasi resmi oleh pengawas"
-                      className="py-1.5 px-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-300 font-bold text-[11px] flex items-center justify-center gap-1 transition-all cursor-pointer shadow-xs disabled:opacity-50"
+                      className="py-1.5 px-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-300 font-bold text-[11px] flex items-center justify-center gap-1 transition-all cursor-pointer shadow-xs disabled:opacity-50 focus:ring-2 focus:ring-rose-500/20 focus:outline-none"
                     >
-                      <ShieldAlert className="w-3.5 h-3.5 text-rose-600" />
+                      <ShieldAlert className="w-3.5 h-3.5 text-rose-600" aria-hidden="true" />
                       <span>Diskualifikasi</span>
                     </button>
                   </div>
@@ -524,8 +526,33 @@ export default function LiveMonitoringPage() {
         })}
 
         {filteredStudents.length === 0 && (
-          <div className="col-span-full bg-white rounded-2xl p-16 text-center text-slate-500 border border-slate-200/80 shadow-card">
-            Tidak ada data peserta ujian yang sesuai filter.
+          <div className="col-span-full bg-white rounded-2xl p-12 text-center flex flex-col items-center justify-center border border-slate-200/80 shadow-card">
+            <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-3">
+              <UserCheck className="w-6 h-6" aria-hidden="true" />
+            </div>
+            <h4 className="font-bold text-slate-900 text-base">Tidak Ada Peserta yang Sesuai</h4>
+            <p className="text-xs text-slate-500 mt-1 max-w-sm mb-4">
+              {filterMode === 'flagged'
+                ? 'Semua peserta ujian saat ini berada dalam kondisi aman tanpa anomali integritas terdeteksi.'
+                : 'Belum ada sesi ujian peserta yang terdaftar atau aktif pada ujian ini.'}
+            </p>
+            {filterMode === 'flagged' ? (
+              <button
+                type="button"
+                onClick={() => setFilterMode('all')}
+                className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition-all cursor-pointer focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+              >
+                Tampilkan Semua Peserta
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={loadExamSessions}
+                className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition-all cursor-pointer focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+              >
+                Muat Ulang Sesi
+              </button>
+            )}
           </div>
         )}
       </div>
@@ -540,25 +567,30 @@ export default function LiveMonitoringPage() {
               <span className="font-bold text-slate-900">{activeWarningStudent.student_name}</span>.
             </p>
 
-            <textarea
-              value={warningMessageText}
-              onChange={(e) => setWarningMessageText(e.target.value)}
-              rows={3}
-              placeholder="Contoh: Harap fokus dan pandangan tetap ke arah layar laptop..."
-              className="w-full p-3.5 rounded-lg bg-slate-50 border border-slate-300 text-slate-900 text-sm focus:bg-white focus:outline-none focus:border-slate-900"
-            />
+            <div>
+              <label className="block text-xs font-bold text-slate-700 uppercase mb-1 font-mono">
+                Isi Pesan Peringatan
+              </label>
+              <textarea
+                value={warningMessageText}
+                onChange={(e) => setWarningMessageText(e.target.value)}
+                rows={3}
+                placeholder="Contoh: Harap fokus dan pandangan tetap ke arah layar laptop..."
+                className="w-full p-3.5 rounded-lg bg-slate-50 border border-slate-300 text-slate-900 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900"
+              />
+            </div>
 
             <div className="flex items-center justify-end gap-3 pt-2">
               <button
                 onClick={() => setActiveWarningStudent(null)}
-                className="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 font-bold text-xs bg-white cursor-pointer shadow-xs"
+                className="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 font-bold text-xs bg-white cursor-pointer shadow-xs focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
               >
                 Batal
               </button>
               <button
                 onClick={sendWarning}
                 disabled={!warningMessageText.trim()}
-                className="px-5 py-2 rounded-lg bg-rose-600 hover:bg-rose-700 disabled:opacity-50 text-white font-bold text-xs shadow-xs cursor-pointer"
+                className="px-5 py-2 rounded-lg bg-rose-600 hover:bg-rose-700 disabled:opacity-50 text-white font-bold text-xs shadow-xs cursor-pointer focus:ring-2 focus:ring-rose-500/20 focus:outline-none"
               >
                 Kirim ke Layar Siswa
               </button>
@@ -580,10 +612,11 @@ export default function LiveMonitoringPage() {
               </div>
               <button
                 onClick={() => setSelectedStudentLogs(null)}
+                title="Tutup log insiden"
                 aria-label="Tutup log insiden"
-                className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl hover:bg-slate-100 text-slate-500 hover:text-slate-800 cursor-pointer"
+                className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl hover:bg-slate-100 text-slate-500 hover:text-slate-800 cursor-pointer focus:outline-none focus:ring-2 focus:ring-slate-900/10"
               >
-                <X className="w-5 h-5" />
+                <X className="w-5 h-5" aria-hidden="true" />
               </button>
             </div>
 
@@ -630,13 +663,13 @@ export default function LiveMonitoringPage() {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => setVerdict(log.id, 'ignored_false_positive')}
-                      className="px-2.5 py-1 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-[11px] font-bold text-slate-700 cursor-pointer shadow-xs"
+                      className="px-2.5 py-1 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-[11px] font-bold text-slate-700 cursor-pointer shadow-xs focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
                     >
                       Abaikan
                     </button>
                     <button
                       onClick={() => setVerdict(log.id, 'confirmed_violation')}
-                      className="px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 text-[11px] font-bold border border-rose-200 cursor-pointer"
+                      className="px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 text-[11px] font-bold border border-rose-200 cursor-pointer focus:ring-2 focus:ring-rose-500/20 focus:outline-none"
                     >
                       Konfirmasi
                     </button>
@@ -662,17 +695,17 @@ export default function LiveMonitoringPage() {
                     <button
                       onClick={() => tolerateStudent(selectedStudentLogs)}
                       disabled={isProcessingAction}
-                      className="px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold text-xs flex items-center gap-1.5 cursor-pointer shadow-xs disabled:opacity-50"
+                      className="px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold text-xs flex items-center gap-1.5 cursor-pointer shadow-xs disabled:opacity-50 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none"
                     >
-                      <Check className="w-3.5 h-3.5 text-emerald-600" />
+                      <Check className="w-3.5 h-3.5 text-emerald-600" aria-hidden="true" />
                       <span>Toleransi Semua Anomali</span>
                     </button>
                     <button
                       onClick={() => openDisqualifyModal(selectedStudentLogs)}
                       disabled={isProcessingAction}
-                      className="px-3 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-300 font-bold text-xs flex items-center gap-1.5 cursor-pointer shadow-xs disabled:opacity-50"
+                      className="px-3 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-300 font-bold text-xs flex items-center gap-1.5 cursor-pointer shadow-xs disabled:opacity-50 focus:ring-2 focus:ring-rose-500/20 focus:outline-none"
                     >
-                      <ShieldAlert className="w-3.5 h-3.5 text-rose-600" />
+                      <ShieldAlert className="w-3.5 h-3.5 text-rose-600" aria-hidden="true" />
                       <span>Putuskan Diskualifikasi</span>
                     </button>
                   </>
@@ -689,7 +722,7 @@ export default function LiveMonitoringPage() {
           <div className="bg-white rounded-xl p-6 max-w-lg w-full space-y-4 shadow-2xl border border-slate-200 text-slate-900">
             <div className="flex items-center gap-3 border-b border-slate-200 pb-3">
               <div className="w-10 h-10 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center border border-rose-200 shrink-0">
-                <ShieldAlert className="w-5 h-5" />
+                <ShieldAlert className="w-5 h-5" aria-hidden="true" />
               </div>
               <div>
                 <h3 className="text-base font-black text-slate-900 tracking-tight">Putusan Diskualifikasi Ujian</h3>
@@ -702,7 +735,7 @@ export default function LiveMonitoringPage() {
             {/* Human-in-the-Loop Guarantee Notice */}
             <div className="p-3.5 rounded-lg bg-amber-50 border border-amber-200 text-xs text-amber-900 space-y-1">
               <p className="font-bold flex items-center gap-1.5">
-                <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
+                <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" aria-hidden="true" />
                 Prinsip Human-in-the-Loop EXAMIND:
               </p>
               <p className="text-[11px] text-amber-800 leading-relaxed">
@@ -720,7 +753,7 @@ export default function LiveMonitoringPage() {
                 <select
                   value={disqualifyReason}
                   onChange={(e) => setDisqualifyReason(e.target.value)}
-                  className="w-full p-2.5 rounded-lg bg-slate-50 border border-slate-300 text-slate-900 text-xs font-medium focus:bg-white focus:border-slate-900"
+                  className="w-full p-2.5 rounded-lg bg-slate-50 border border-slate-300 text-slate-900 text-xs font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900"
                 >
                   <option value="Kerjasama / Menyontek Terang-terangan">
                     Kerjasama / Menyontek Terang-terangan (Orang lain / Gadget)
@@ -749,7 +782,7 @@ export default function LiveMonitoringPage() {
                   onChange={(e) => setDisqualifyNotes(e.target.value)}
                   rows={3}
                   placeholder="Contoh: Terkonfirmasi membuka buku materi dan mengabaikan 2 kali peringatan pengawas pada menit 15 dan 22."
-                  className="w-full p-3 rounded-lg bg-slate-50 border border-slate-300 text-slate-900 text-xs focus:bg-white focus:outline-none focus:border-slate-900"
+                  className="w-full p-3 rounded-lg bg-slate-50 border border-slate-300 text-slate-900 text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900"
                 />
               </div>
             </div>
@@ -757,16 +790,16 @@ export default function LiveMonitoringPage() {
             <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-200">
               <button
                 onClick={() => setActiveDisqualifyStudent(null)}
-                className="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 font-bold text-xs bg-white cursor-pointer shadow-xs"
+                className="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 font-bold text-xs bg-white cursor-pointer shadow-xs focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
               >
                 Batalkan
               </button>
               <button
                 onClick={confirmDisqualifyStudent}
                 disabled={isProcessingAction || !disqualifyReason}
-                className="px-5 py-2 rounded-lg bg-rose-600 hover:bg-rose-700 disabled:opacity-50 text-white font-bold text-xs shadow-xs cursor-pointer flex items-center gap-1.5"
+                className="px-5 py-2 rounded-lg bg-rose-600 hover:bg-rose-700 disabled:opacity-50 text-white font-bold text-xs shadow-xs cursor-pointer flex items-center gap-1.5 focus:ring-2 focus:ring-rose-500/20 focus:outline-none"
               >
-                <ShieldAlert className="w-4 h-4" />
+                <ShieldAlert className="w-4 h-4" aria-hidden="true" />
                 <span>{isProcessingAction ? 'Memproses...' : 'Tetapkan Diskualifikasi'}</span>
               </button>
             </div>

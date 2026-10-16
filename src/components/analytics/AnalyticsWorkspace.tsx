@@ -269,7 +269,7 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
           <select
             value={selectedExamId}
             onChange={(e) => handleExamChange(Number(e.target.value))}
-            className="text-xs font-bold bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 focus:outline-none focus:border-slate-400 text-slate-900 font-sans shadow-xs"
+            className="text-xs font-bold bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 focus:outline-none focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 text-slate-900 font-sans shadow-xs"
           >
             {allExams.map((e) => (
               <option key={e.id} value={e.id} className="bg-white text-slate-900">
@@ -315,9 +315,9 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
           </span>
           <div className="font-display text-3xl font-extrabold text-slate-900 tracking-tight tabular-nums">
             {analyticsData?.highest_score ?? 0}{' '}
-            <span className="text-lg text-slate-400 font-normal">/ {analyticsData?.lowest_score ?? 0}</span>
+            <span className="text-lg text-slate-500 font-normal">/ {analyticsData?.lowest_score ?? 0}</span>
           </div>
-          <p className="text-[11px] text-slate-400">Rentang sebaran nilai siswa</p>
+          <p className="text-[11px] text-slate-500">Rentang sebaran nilai siswa</p>
         </div>
 
         <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200 space-y-1.5">
@@ -327,7 +327,7 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
           <div className="font-display text-3xl font-extrabold text-indigo-700 tracking-tight tabular-nums">
             {analyticsData?.std_deviation ?? analyticsData?.standard_deviation ?? 0}
           </div>
-          <p className="text-[11px] text-slate-400">Tingkat homogenitas kelas</p>
+          <p className="text-[11px] text-slate-500">Tingkat homogenitas kelas</p>
         </div>
       </div>
 
@@ -346,7 +346,7 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
               key={idx}
               className="flex-1 flex flex-col items-center gap-2 group h-full justify-end cursor-pointer"
             >
-              <div className="text-[10px] font-bold text-slate-400 group-hover:text-slate-900 font-mono tabular-nums transition-colors">
+              <div className="text-[10px] font-bold text-slate-500 group-hover:text-slate-900 font-mono tabular-nums transition-colors">
                 {bin.count} Siswa
               </div>
               <div
@@ -413,7 +413,7 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
                       <span className="font-bold text-slate-900 font-mono tabular-nums">
                         {item.difficulty_index}
                       </span>
-                      <span className="text-xs text-slate-400 block capitalize font-mono">
+                      <span className="text-xs text-slate-500 block capitalize font-mono">
                         ({item.difficulty_category})
                       </span>
                     </td>
@@ -421,7 +421,7 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
                       <span className="font-bold text-slate-900 font-mono tabular-nums">
                         {item.discrimination_index}
                       </span>
-                      <span className="text-xs text-slate-400 block capitalize font-mono">
+                      <span className="text-xs text-slate-500 block capitalize font-mono">
                         ({item.discrimination_category})
                       </span>
                     </td>
@@ -447,7 +447,7 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
 
                 {(!analyticsData?.item_analysis || analyticsData.item_analysis.length === 0) && (
                   <tr>
-                    <td colSpan={6} className="p-16 text-center text-slate-400 text-xs">
+                    <td colSpan={6} className="p-16 text-center text-slate-500 text-xs">
                       Data analisis butir soal belum tersedia atau siswa belum mengumpulkan ujian.
                     </td>
                   </tr>
@@ -478,7 +478,7 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
             <p className="text-[10px] text-slate-500 font-mono">EXAMIND Certified System Report</p>
           </div>
         </div>
-        <div className="mt-8 text-center text-[10px] text-slate-400 font-mono">
+        <div className="mt-8 text-center text-[10px] text-slate-500 font-mono">
           Rekapitulasi nilai dan analisis psikometrik ini dicetak secara sah melalui platform evaluasi akademik
           EXAMIND.
         </div>

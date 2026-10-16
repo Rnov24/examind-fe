@@ -207,16 +207,17 @@ export default function SuperAdminPricingPage() {
           <button
             onClick={loadAllData}
             disabled={loading}
-            className="p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 transition-all shadow-xs cursor-pointer"
-            title="Refresh Data"
+            className="p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 transition-all shadow-xs cursor-pointer focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+            title="Muat ulang data tarif"
+            aria-label="Muat ulang data tarif"
           >
-            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-amber-600' : ''}`} />
+            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-amber-600' : ''}`} aria-hidden="true" />
           </button>
           <button
             onClick={() => setShowPromoModal(true)}
-            className="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-card flex items-center gap-2 transition-all cursor-pointer font-display tracking-wide"
+            className="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-card flex items-center gap-2 transition-all cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
           >
-            <Plus className="w-4 h-4 text-[#c2ef4e]" />
+            <Plus className="w-4 h-4 text-[#c2ef4e]" aria-hidden="true" />
             <span>Tambah Kode Promo</span>
           </button>
         </div>
@@ -642,8 +643,11 @@ export default function SuperAdminPricingPage() {
                 </h3>
               </div>
               <button
+                type="button"
                 onClick={() => setShowPromoModal(false)}
-                className="p-1 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700 cursor-pointer"
+                className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-lg hover:bg-slate-100 text-slate-500 hover:text-slate-800 cursor-pointer focus:outline-none focus:ring-2 focus:ring-slate-900/10"
+                title="Tutup modal kode promo"
+                aria-label="Tutup modal kode promo"
               >
                 ✕
               </button>

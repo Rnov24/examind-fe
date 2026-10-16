@@ -1,0 +1,102 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{vue,js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ['"Plus Jakarta Sans"', 'Rubik', '-apple-system', 'system-ui', 'Segoe UI', 'Helvetica', 'Arial', 'sans-serif'],
+        display: ['Outfit', '"Plus Jakarta Sans"', 'Rubik', 'system-ui', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'Monaco', 'Menlo', 'Ubuntu Mono', 'monospace'],
+      },
+      boxShadow: {
+        card: '0 1px 3px 0 rgba(15, 23, 42, 0.04), 0 1px 2px -1px rgba(15, 23, 42, 0.04)',
+        'card-hover': '0 12px 24px -6px rgba(15, 23, 42, 0.08), 0 4px 8px -4px rgba(15, 23, 42, 0.04)',
+        'subtle-elevated': '0 4px 20px -2px rgba(15, 23, 42, 0.06)',
+        'glow-lime': '0 0 20px -3px rgba(194, 239, 78, 0.4)',
+        'glow-indigo': '0 0 25px -5px rgba(99, 102, 241, 0.25)',
+      },
+      colors: {
+        // EXAMIND Light Theme Institutional Palette
+        sentri: {
+          primary: '#0f172a',
+          ink: '#0f172a',
+          'ink-deep': '#0f172a',
+          'on-primary': '#ffffff',
+          lime: '#c2ef4e',
+          pink: '#e11d48',
+          violet: '#4f46e5',
+          'violet-deep': '#4338ca',
+          'violet-mid': '#6366f1',
+          canvas: '#ffffff',
+          night: '#f8fafc',
+          'press-light': '#f1f5f9',
+          'press-stronger': '#e2e8f0',
+          subtle: '#f8fafc',
+          'hairline-violet': '#e2e8f0',
+          'hairline-cool': '#cbd5e1',
+          'hairline-cloud': '#e2e8f0',
+          muted: '#64748b',
+          faint: '#94a3b8',
+          ring: '#818cf8',
+        },
+        // First-class semantic shorthand utility classes
+        night: '#f8fafc',
+        canvas: '#ffffff',
+        hairline: {
+          DEFAULT: '#e2e8f0',
+          violet: '#e2e8f0',
+          cool: '#cbd5e1',
+          cloud: '#e2e8f0',
+        },
+        muted: '#64748b',
+        faint: '#94a3b8',
+        lime: {
+          DEFAULT: '#c2ef4e',
+          400: '#c2ef4e',
+          500: '#addc3b',
+        },
+        violet: {
+          DEFAULT: '#4f46e5',
+          deep: '#4338ca',
+          mid: '#6366f1',
+          light: '#c7d2fe',
+        },
+        pink: {
+          DEFAULT: '#e11d48',
+        },
+        // Standard slate scale for crisp contrast in light mode
+        slate: {
+          50: '#f8fafc',
+          100: '#f1f5f9',
+          200: '#e2e8f0',
+          300: '#cbd5e1',
+          400: '#94a3b8',
+          500: '#64748b',
+          600: '#475569',
+          700: '#334155',
+          800: '#1e293b',
+          900: '#0f172a',
+          950: '#020617',
+        },
+        primary: {
+          DEFAULT: '#0f172a',
+          50: '#f8fafc',
+          100: '#f1f5f9',
+          200: '#e2e8f0',
+          300: '#cbd5e1',
+          400: '#94a3b8',
+          500: '#64748b',
+          600: '#475569',
+          700: '#334155',
+          800: '#1e293b',
+          900: '#0f172a',
+          950: '#020617',
+        },
+      },
+    },
+  },
+  plugins: [],
+}

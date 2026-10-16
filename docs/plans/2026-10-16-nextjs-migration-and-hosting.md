@@ -143,29 +143,63 @@ proses always-on, database managed/mandel, file besar di object storage.
 - Alternatif: Cloudflare Pages (juga gratis, boleh komersial di free tier tapi
   bandwidth jauh lebih kecil).
 
-### 3.2 Backend (FastAPI) → Render free + keep-alive (Rp0)
+### 3.2 Backend (FastAPI) → Modal free tier ✅ (pilihan utama)
 
-Syarat Jal: **gratis**. Realita free tier 2026 (dicek 2026-10-16): hampir semua
-yang "beneran gratis" sudah mati atau butuh kartu kredit — Koyeb free tier
-retired, Hugging Face Docker Spaces sekarang butuh PRO, Railway praktis
-berbayar, Oracle/GCP/Fly.io butuh kartu untuk verifikasi.
+Kamu sudah punya Modal yang verified jalan (Qwen3-TTS live di sana sejak
+2026-10-14) — dan setelah dicek, Modal memang lebih cocok dari Render untuk
+kasus EXAMIND:
 
-- **Pilihan utama: Render free web service (tanpa kartu kredit).**
-  Native Python/FastAPI, RAM 512 MB. Syarat muat: **copot `torch` dari
-  `requirements.txt`** — sudah tidak dibutuhkan karena inferensi pindah ke
-  browser (keputusan Opsi A). Sisanya (FastAPI, SQLAlchemy, Pydantic) muat
-  nyaman di 512 MB.
-- **Kelemahan jujur**: service sleep setelah ~15 menit idle, bangunnya
-  ~30–60 detik. Mitigasi: **cron-job.org** (gratis, tanpa kartu) ping
-  `/api/health` tiap 10 menit supaya tidak pernah idle. Trik ini umum dipakai
-  dan cukup untuk demo/pengembangan. Untuk hari-H ujian beneran dengan puluhan
-  siswa serentak, free tier bukan tempatnya — siapkan upgrade saat itu tiba.
-- **Alternatif kalau nanti punya kartu kredit**: Oracle Cloud Always Free —
-  VM ARM 2 OCPU/12 GB selamanya + managed MySQL HeatWave 50 GB, tidak pernah
-  sleep. Tapi butuh kartu untuk verifikasi, dan ada risiko idle-reclamation
-  (VM bisa dihapus kalau 7 hari berturut-turut di bawah 20% CPU/memori).
-- Praktik: healthcheck di `/health`, env var via Render dashboard (secret
-  jangan di-commit, Secret Manager backend tetap dipakai).
+- **Gratis $30 kredit komputasi/bulan** (Starter plan, tanpa kartu kredit).
+  Ditagih per detik compute yang aktif; scale-to-zero = idle itu Rp0.
+- **FastAPI dibungkus native** via `@modal.asgi_app()` — perubahan kode minimal
+  (satu file `modal_app.py` di root examind-be), arsitektur app tidak berubah.
+- **WebSocket didukung penuh** (RFC 6455, satu function call per koneksi,
+  pesan sampai 2 MiB) — WS proctoring jalan. Tambah `@modal.concurrent`
+  supaya satu container melayani banyak koneksi siswa sekaligus.
+- **Tidak ada sleep paksa** seperti Render; cold start FastAPI tanpa torch
+  cuma 1–3 detik. `scaledown_window` bisa dibesarkan pas hari ujian.
+- Hitungan kasar: 1 CPU + 1 GB RAM ≈ $0.055/jam aktif → $30 ≈ 540 jam
+  container/bulan. Pola trafik ujian itu bursty (ramai 1–2 jam lalu sepi),
+  jadi ini jauh lebih hemat daripada server always-on.
+- Pola deploy-nya sudah terbukti di repo ini (lihat
+  `~/workspace/modal-qwen-tts/modal_qwen_tts.py` sebagai referensi):
+
+```python
+import modal
+
+image = (
+    modal.Image.debian_slim()
+    .pip_install("fastapi[standard]", "uvicorn", "sqlalchemy",
+                 "pymysql", "pydantic", "pydantic-settings",
+                 "python-dotenv", "httpx", "websockets",
+                 "python-multipart", "cryptography", "alembic")
+)
+
+app = modal.App("examind-be")
+
+@app.function(image=image, scaledown_window=300)
+@modal.asgi_app()
+def api():
+    from app.main import app as fastapi_app
+    return fastapi_app
+```
+
+`modal deploy modal_app.py` → dapat URL
+`https://<workspace>--examind-be-api.modal.run`.
+
+**Catatan jujur** (biar ekspektasinya lurus):
+
+- Region Modal adanya US/EU → latensi ~150–250ms dari Indonesia. Oke untuk
+  REST dan event proctoring, karena video tidak pernah dikirim ke server
+  (cuma event ringan hasil inferensi browser).
+- Kredit $30 hangus tiap bulan; kalau habis di tengah bulan ujian, service
+  berhenti. Monitor pemakaian di dashboard Modal, terutama bulan ada ujian.
+- Log retention di Starter cuma 1 hari — untuk debug insiden ujian, forward
+  log penting ke tempat lain atau andalkan log di DB.
+- Database tetap eksternal (TiDB Cloud, 3.3) — Modal tidak punya managed MySQL.
+- **Render free tetap jadi fallback** (tanpa kartu juga) kalau suatu saat
+  butuh alternatif: 512 MB RAM, sleep setelah 15 menit idle, diakalin dengan
+  cron-job.org ping `/api/health` tiap 10 menit.
 
 ### 3.3 Database → TiDB Cloud Starter (MySQL-compatible, gratis)
 
@@ -206,7 +240,7 @@ Siswa (browser)
  │     └── model .onnx ──→ Cloudflare R2 (CDN)
  └── ONNX/MediaPipe jalan lokal di Web Worker (privasi terjaga)
 
-FastAPI (Render free, keep-alive via cron-job.org)
+FastAPI (Modal free tier, scale-to-zero via asgi_app)
  ├── TiDB Cloud Starter (MySQL-compatible, gratis) — backup otomatis
  └── snapshot flag ──→ R2
 ```
@@ -235,8 +269,9 @@ bapak yang review diff-nya seperti biasa.
    ONNX (YOLO) + MediaPipe jalan di browser via Web Worker.
 2. **YOLO vs MediaPipe ObjectDetector** untuk deteksi HP: mulai dari yang ringan
    (MediaPipe) dulu, atau langsung YOLO?
-3. **Hosting**: ✅ DIPUTUSKAN (2026-10-16) — full gratis: Vercel (fe) + Render
-   free + keep-alive (be) + TiDB Cloud Starter (db) + Cloudflare R2 (storage).
+3. **Hosting**: ✅ DIPUTUSKAN (2026-10-16, revisi) — full gratis: Vercel (fe) +
+   **Modal free tier** (be, via `asgi_app`) + TiDB Cloud Starter (db) +
+   Cloudflare R2 (storage). Render free jadi fallback.
 4. **Mulai dari Fase 0 (PoC proctoring) atau Fase 1 (scaffold Next.js)?**
    Rekomendasi bapak: Fase 0 dulu — kalau PoC proctoring gagal di laptop
    kentang, seluruh rencana berubah dan kita hemat berminggu-minggu kerja sia-sia.

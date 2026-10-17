@@ -464,4 +464,78 @@ h1, h2, h3, .heading-display {
   }
 }
 
+/* Progressive Enhancement: When JavaScript is disabled, render all content immediately */
+@media (scripting: none) {
+  [data-reveal],
+  [data-reveal-line] {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+  }
+}
+
+/* Institutional Pattern Overlays */
+.bg-grid-dots {
+  background-image: radial-gradient(rgba(15, 23, 42, 0.08) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.bg-grid-dots-dark {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.12) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Tactile Paper Edge Transition */
+.paper-edge-shadow {
+  box-shadow: 0 -12px 30px -4px rgba(15, 23, 42, 0.04);
+}
+
+.paper-sheet-effect {
+  position: relative;
+}
+.paper-sheet-effect::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(15, 23, 42, 0.08), transparent);
+}
+
+/* ==========================================================================
+   Bento Directional Shimmer Sweep & Staggered Loading
+   Lightweight CSS-only sweep for independent Bento block loading
+   ========================================================================== */
+@keyframes bento-shimmer-sweep {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.bento-shimmer {
+  background: linear-gradient(
+    90deg,
+    #f1f5f9 0%,
+    #e2e8f0 25%,
+    #ffffff 50%,
+    #e2e8f0 75%,
+    #f1f5f9 100%
+  );
+  background-size: 200% 100%;
+  animation: bento-shimmer-sweep 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  will-change: background-position;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bento-shimmer {
+    animation: none !important;
+    background: #e2e8f0 !important;
+  }
+}
+
+
 

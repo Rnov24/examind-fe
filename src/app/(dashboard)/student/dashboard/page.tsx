@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 import api from '@/lib/api'
 import { useAuthStore } from '@/stores/authStore'
+import { Badge, Button, EmptyState } from '@/components/ui'
 
 interface ActiveExam {
   id: number
@@ -66,9 +67,9 @@ export default function StudentDashboardPage() {
 
         <div className="relative space-y-2 max-w-xl min-w-0">
           <div className="flex items-center gap-2.5 flex-wrap">
-            <span className="inline-flex items-center text-[10px] font-black uppercase tracking-wider text-slate-950 bg-[#c2ef4e] px-2.5 py-0.5 rounded font-mono shadow-xs">
+            <Badge variant="lime" size="xs">
               Portal Asesmen Siswa
-            </span>
+            </Badge>
             <span className="text-xs font-semibold text-slate-500 font-mono bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200/60 truncate">
               NISN: {user?.identifier || '-'}
             </span>
@@ -85,13 +86,9 @@ export default function StudentDashboardPage() {
           <span className="text-[10px] uppercase font-bold text-slate-500 tracking-wider font-mono">
             Status Perangkat
           </span>
-          <span className="inline-flex items-center gap-2 text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-xl font-mono shadow-xs">
-            <span className="relative flex h-2 w-2" aria-hidden="true">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-            </span>
+          <Badge variant="emerald" size="lg" dot dotPulse>
             Siap Ujian (Ready)
-          </span>
+          </Badge>
         </div>
       </div>
 
@@ -116,14 +113,14 @@ export default function StudentDashboardPage() {
             <h3 className="font-bold text-slate-900 text-base">Gagal Mengambil Jadwal Ujian</h3>
             <p className="text-xs text-slate-600 max-w-md mx-auto">{errorMessage}</p>
           </div>
-          <button
-            type="button"
+          <Button
+            variant="primary"
+            size="sm"
             onClick={loadActiveExams}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition-colors cursor-pointer focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+            leftIcon={<RefreshCw className="w-3.5 h-3.5" aria-hidden="true" />}
           >
-            <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" />
-            <span>Coba Lagi</span>
-          </button>
+            Coba Lagi
+          </Button>
         </div>
       )}
 

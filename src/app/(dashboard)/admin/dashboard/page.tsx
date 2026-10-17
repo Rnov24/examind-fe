@@ -19,6 +19,25 @@ import {
 } from 'lucide-react'
 import api from '@/lib/api'
 import { useAuthStore } from '@/stores/authStore'
+import {
+  Button,
+  Badge,
+  Input,
+  Select,
+  SearchInput,
+  Table,
+  TableContainer,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+  EmptyState,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+} from '@/components/ui'
 
 export default function AdminDashboardPage() {
   const { user } = useAuthStore()
@@ -137,9 +156,9 @@ export default function AdminDashboardPage() {
 
         <div className="relative space-y-2 max-w-xl min-w-0">
           <div className="flex items-center gap-2.5 flex-wrap">
-            <span className="inline-flex items-center text-[10px] font-black uppercase tracking-wider text-slate-950 bg-[#c2ef4e] px-2.5 py-0.5 rounded font-mono shadow-xs">
+            <Badge variant="lime" size="xs">
               Administrator Institusi
-            </span>
+            </Badge>
             <span className="text-xs font-semibold text-slate-500 font-mono bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200/60 truncate">
               {user?.identifier || 'Admin'}
             </span>
@@ -156,21 +175,21 @@ export default function AdminDashboardPage() {
         <div className="relative flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 shrink-0 pt-4 sm:pt-0 border-t sm:border-t-0 border-slate-100 w-full sm:w-auto">
           <Link
             href="/classes"
-            className="px-4 py-2.5 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs rounded-xl border border-slate-200 transition-colors shadow-xs cursor-pointer flex items-center justify-center w-full sm:w-auto focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+            className="px-4 py-2.5 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs rounded-xl border border-slate-200 transition-colors shadow-xs cursor-pointer flex items-center justify-center w-full sm:w-auto focus-visible:ring-2 focus-visible:ring-[#6a5fc1] focus-visible:outline-none"
           >
             Kelola Kelas
           </Link>
-          <button
-            type="button"
+          <Button
+            variant="primary"
+            size="md"
             onClick={() => {
               setFormErrorMessage('')
               setShowAddUserModal(true)
             }}
-            className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl transition-all shadow-card hover:shadow-card-hover flex items-center justify-center gap-2 cursor-pointer font-display tracking-wide w-full sm:w-auto focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+            leftIcon={<UserPlus className="w-3.5 h-3.5 text-[#c2ef4e]" aria-hidden="true" />}
           >
-            <UserPlus className="w-3.5 h-3.5 text-[#c2ef4e]" aria-hidden="true" />
-            <span>Tambah Pengguna</span>
-          </button>
+            Tambah Pengguna
+          </Button>
         </div>
       </div>
 
@@ -380,31 +399,35 @@ export default function AdminDashboardPage() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 w-full md:w-auto">
-            <select
-              value={selectedRole}
-              onChange={(e) => {
-                setSelectedRole(e.target.value)
-                fetchUsers(e.target.value, searchKeyword)
-              }}
-              className="px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-400 font-sans shadow-xs w-full sm:w-auto cursor-pointer"
-            >
-              <option value="all">Semua Peran (All)</option>
-              <option value="admin">Administrator</option>
-              <option value="teacher">Guru / Pengawas</option>
-              <option value="student">Siswa / Peserta</option>
-            </select>
+            <div className="w-full sm:w-48">
+              <Select
+                selectSize="sm"
+                value={selectedRole}
+                onChange={(e) => {
+                  setSelectedRole(e.target.value)
+                  fetchUsers(e.target.value, searchKeyword)
+                }}
+              >
+                <option value="all">Semua Peran (All)</option>
+                <option value="admin">Administrator</option>
+                <option value="teacher">Guru / Pengawas</option>
+                <option value="student">Siswa / Peserta</option>
+              </Select>
+            </div>
 
-            <div className="relative w-full sm:w-auto flex-1 sm:flex-initial">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" aria-hidden="true" />
-              <input
+            <div className="w-full sm:w-64">
+              <SearchInput
+                inputSize="sm"
                 value={searchKeyword}
                 onChange={(e) => {
                   setSearchKeyword(e.target.value)
                   fetchUsers(selectedRole, e.target.value)
                 }}
-                type="text"
+                onClear={() => {
+                  setSearchKeyword('')
+                  fetchUsers(selectedRole, '')
+                }}
                 placeholder="Cari nama, NIP, NISN..."
-                className="pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-400 focus:bg-white w-full sm:w-60 shadow-xs transition-colors"
               />
             </div>
           </div>
@@ -425,34 +448,34 @@ export default function AdminDashboardPage() {
               <AlertTriangle className="w-5 h-5" aria-hidden="true" />
             </div>
             <p className="text-xs text-rose-700 font-semibold">{usersErrorMessage}</p>
-            <button
-              type="button"
+            <Button
+              size="sm"
+              variant="primary"
               onClick={() => fetchUsers(selectedRole, searchKeyword)}
-              className="px-3.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition-colors"
             >
               Coba Lagi
-            </button>
+            </Button>
           </div>
         )}
 
         {/* Users Table */}
         {!isLoadingUsers && !usersErrorMessage && (
-          <div className="overflow-x-auto touch-pan-x">
-            <table className="w-full text-left text-sm text-slate-600">
-              <thead className="bg-slate-50/80 text-xs uppercase font-bold text-slate-600 tracking-wider border-b border-slate-200 font-mono">
-                <tr>
-                  <th className="px-6 py-4">Pengguna</th>
-                  <th className="px-6 py-4">Identifier (NIP / NISN)</th>
-                  <th className="px-6 py-4">Peran</th>
-                  <th className="px-6 py-4">Email</th>
-                  <th className="px-6 py-4">Status Akun</th>
-                  <th className="px-6 py-4 text-right">Aksi</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 font-medium">
+          <TableContainer accent="none">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="px-6 py-4">Pengguna</TableHead>
+                  <TableHead className="px-6 py-4">Identifier (NIP / NISN)</TableHead>
+                  <TableHead className="px-6 py-4">Peran</TableHead>
+                  <TableHead className="px-6 py-4">Email</TableHead>
+                  <TableHead className="px-6 py-4">Status Akun</TableHead>
+                  <TableHead className="px-6 py-4 text-right">Aksi</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {userList.map((usr) => (
-                  <tr key={usr.id} className="hover:bg-slate-50/80 transition-colors">
-                    <td className="px-6 py-4">
+                  <TableRow key={usr.id}>
+                    <TableCell className="px-6 py-4">
                       <div className="flex items-center gap-3 min-w-0">
                         <div className="w-9 h-9 rounded-xl bg-slate-100 text-slate-800 border border-slate-200 flex items-center justify-center font-bold text-xs font-mono shadow-xs shrink-0">
                           {usr.full_name?.charAt(0) || 'U'}
@@ -464,119 +487,91 @@ export default function AdminDashboardPage() {
                           <p className="text-[11px] text-slate-500 font-mono truncate">ID: #{usr.id}</p>
                         </div>
                       </div>
-                    </td>
-                    <td className="px-6 py-4 font-mono text-xs text-slate-600 whitespace-nowrap">
+                    </TableCell>
+                    <TableCell className="px-6 py-4 font-mono text-xs text-slate-600 whitespace-nowrap">
                       {usr.identifier}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span
-                        className={`px-2.5 py-0.5 rounded-lg text-xs font-bold uppercase tracking-wider font-mono inline-block shadow-xs ${
-                          usr.role === 'admin'
-                            ? 'bg-slate-100 text-slate-800 border border-slate-200'
-                            : usr.role === 'teacher'
-                            ? 'bg-indigo-50 text-indigo-700 border border-indigo-200'
-                            : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                        }`}
+                    </TableCell>
+                    <TableCell className="px-6 py-4 whitespace-nowrap">
+                      <Badge
+                        variant={usr.role === 'admin' ? 'neutral' : usr.role === 'teacher' ? 'violet' : 'emerald'}
+                        size="sm"
                       >
                         {usr.role === 'teacher' ? 'Guru' : usr.role === 'student' ? 'Siswa' : 'Admin'}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-xs text-slate-600 font-mono truncate max-w-[160px]">
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="px-6 py-4 text-xs text-slate-600 font-mono truncate max-w-[160px]">
                       {usr.email}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span
-                        className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-xs font-semibold font-mono border shadow-xs transition-colors duration-200 ${
-                          usr.is_active
-                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                            : 'bg-rose-50 text-rose-700 border-rose-200'
-                        }`}
+                    </TableCell>
+                    <TableCell className="px-6 py-4 whitespace-nowrap">
+                      <Badge
+                        variant={usr.is_active ? 'emerald' : 'rose'}
+                        size="sm"
+                        dot
+                        dotPulse={usr.is_active}
                       >
-                        <span
-                          className={`w-1.5 h-1.5 rounded-full ${
-                            usr.is_active ? 'bg-emerald-500' : 'bg-rose-500'
-                          }`}
-                        ></span>
                         {usr.is_active ? 'Aktif' : 'Nonaktif'}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-right whitespace-nowrap">
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="px-6 py-4 text-right whitespace-nowrap">
                       {usr.id !== user?.id ? (
-                        <button
-                          type="button"
+                        <Button
+                          size="xs"
+                          variant={usr.is_active ? 'destructive' : 'secondary'}
                           onClick={() => toggleUserStatus(usr)}
                           disabled={togglingUserId === usr.id}
-                          className={`px-3.5 py-1.5 rounded-xl font-bold text-xs transition-colors cursor-pointer shadow-xs focus:ring-2 focus:ring-slate-900/10 focus:outline-none disabled:opacity-50 ${
-                            usr.is_active
-                              ? 'bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200'
-                              : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200'
-                          }`}
+                          isLoading={togglingUserId === usr.id}
                         >
-                          {togglingUserId === usr.id
-                            ? 'Memproses...'
-                            : usr.is_active
-                            ? 'Nonaktifkan'
-                            : 'Aktifkan'}
-                        </button>
+                          {usr.is_active ? 'Nonaktifkan' : 'Aktifkan'}
+                        </Button>
                       ) : (
-                        <span className="text-xs text-slate-400 italic">Akun Anda</span>
+                        <span className="text-xs text-slate-400 italic font-mono">Akun Anda</span>
                       )}
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ))}
 
                 {userList.length === 0 && (
-                  <tr>
-                    <td colSpan={6} className="text-center py-12 text-slate-500 text-xs">
-                      <div className="flex flex-col items-center justify-center max-w-sm mx-auto">
-                        <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-2.5">
-                          <Users className="w-5 h-5" aria-hidden="true" />
-                        </div>
-                        {isFilterActive ? (
-                          <>
-                            <p className="font-bold text-slate-900 text-sm">
-                              Pengguna Tidak Ditemukan
-                            </p>
-                            <p className="text-xs text-slate-500 mt-1 mb-3">
-                              Tidak ada akun yang sesuai dengan filter atau kata kunci pencarian.
-                            </p>
-                            <button
-                              type="button"
+                  <TableRow>
+                    <TableCell colSpan={6} className="p-0">
+                      <EmptyState
+                        icon={<Users className="w-6 h-6 text-slate-500" aria-hidden="true" />}
+                        title={isFilterActive ? 'Pengguna Tidak Ditemukan' : 'Belum Ada Akun Pengguna Terdaftar'}
+                        description={
+                          isFilterActive
+                            ? 'Tidak ada akun yang sesuai dengan filter atau kata kunci pencarian.'
+                            : 'Daftarkan akun guru atau siswa pertama untuk memulai pengoperasian sistem sekolah.'
+                        }
+                        action={
+                          isFilterActive ? (
+                            <Button
+                              size="sm"
+                              variant="secondary"
                               onClick={() => {
                                 setSelectedRole('all')
                                 setSearchKeyword('')
                                 fetchUsers('all', '')
                               }}
-                              className="px-3.5 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-xs transition-colors cursor-pointer"
                             >
                               Reset Filter & Pencarian
-                            </button>
-                          </>
-                        ) : (
-                          <>
-                            <p className="font-bold text-slate-900 text-sm">
-                              Belum Ada Akun Pengguna Terdaftar
-                            </p>
-                            <p className="text-xs text-slate-500 mt-1 mb-3">
-                              Daftarkan akun guru atau siswa pertama untuk memulai pengoperasian sistem sekolah.
-                            </p>
-                            <button
-                              type="button"
+                            </Button>
+                          ) : (
+                            <Button
+                              size="sm"
+                              variant="primary"
                               onClick={() => setShowAddUserModal(true)}
-                              className="px-3.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs flex items-center gap-1.5 cursor-pointer focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+                              leftIcon={<UserPlus className="w-3.5 h-3.5 text-[#c2ef4e]" aria-hidden="true" />}
                             >
-                              <UserPlus className="w-3.5 h-3.5 text-[#c2ef4e]" aria-hidden="true" />
-                              <span>Tambah Pengguna Baru</span>
-                            </button>
-                          </>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
+                              Tambah Pengguna Baru
+                            </Button>
+                          )
+                        }
+                      />
+                    </TableCell>
+                  </TableRow>
                 )}
-              </tbody>
-            </table>
-          </div>
+              </TableBody>
+            </Table>
+          </TableContainer>
         )}
       </div>
 
@@ -654,107 +649,73 @@ function AddUserModal({
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [isOpen, isSubmitting])
 
-  if (!isOpen) return null
-
   return (
-    <div
-      onClick={(e) => {
-        if (e.target === e.currentTarget && !isSubmitting) onClose()
-      }}
-      className="fixed inset-0 bg-slate-950/60 z-50 flex items-center justify-center p-4 animate-in fade-in duration-150"
+    <Modal
+      isOpen={isOpen}
+      onClose={isSubmitting ? () => {} : onClose}
+      size="md"
+      accent="midnight"
     >
-      <div className="bg-white border border-slate-200/90 rounded-2xl max-w-lg w-full p-6 sm:p-7 shadow-2xl space-y-5 animate-in zoom-in-95 duration-150 text-slate-900">
-        <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-          <div>
-            <h3 className="text-lg font-bold text-slate-900 font-display">
-              Tambah Akun Pengguna
-            </h3>
-            <p className="text-xs text-slate-500">
-              Daftarkan akun baru ke dalam sistem institusi sekolah
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            title="Tutup modal"
-            aria-label="Tutup modal"
-            className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-slate-900/10"
-          >
-            <X className="w-5 h-5" aria-hidden="true" />
-          </button>
-        </div>
+      <ModalHeader
+        title="Tambah Akun Pengguna"
+        description="Daftarkan akun baru ke dalam sistem institusi sekolah"
+        icon={<UserPlus className="w-5 h-5 text-slate-800" aria-hidden="true" />}
+        onClose={isSubmitting ? undefined : onClose}
+      />
 
-        <form
-          onSubmit={(e) => {
-            e.preventDefault()
-            onSubmit(form)
-          }}
-          className="space-y-4 text-xs font-medium"
-        >
-          <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1">Nama Lengkap</label>
-            <input
-              ref={fullNameInputRef}
-              value={form.full_name}
-              onChange={(e) => setForm((prev) => ({ ...prev, full_name: e.target.value }))}
-              required
-              type="text"
-              placeholder="Contoh: Budi Prasetyo, M.Pd"
-              className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]/25 focus:border-[#150f23] transition-all"
-            />
-          </div>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault()
+          onSubmit(form)
+        }}
+      >
+        <ModalBody>
+          <Input
+            ref={fullNameInputRef}
+            label="Nama Lengkap"
+            value={form.full_name}
+            onChange={(e) => setForm((prev) => ({ ...prev, full_name: e.target.value }))}
+            required
+            placeholder="Contoh: Budi Prasetyo, M.Pd"
+          />
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">
-                Identifier (NIP / NISN / Username)
-              </label>
-              <input
-                value={form.identifier}
-                onChange={(e) => setForm((prev) => ({ ...prev, identifier: e.target.value }))}
-                required
-                type="text"
-                placeholder="19820310..."
-                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]/25 focus:border-[#150f23] font-mono transition-all"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">Peran (Role)</label>
-              <select
-                value={form.role}
-                onChange={(e) => setForm((prev) => ({ ...prev, role: e.target.value }))}
-                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]/25 focus:border-[#150f23] cursor-pointer transition-all"
-              >
-                <option value="student">Siswa (Student)</option>
-                <option value="teacher">Guru (Teacher)</option>
-                <option value="admin">Administrator</option>
-              </select>
-            </div>
+            <Input
+              label="Identifier (NIP / NISN / Username)"
+              value={form.identifier}
+              onChange={(e) => setForm((prev) => ({ ...prev, identifier: e.target.value }))}
+              required
+              placeholder="19820310..."
+              className="font-mono"
+            />
+            <Select
+              label="Peran (Role)"
+              value={form.role}
+              onChange={(e) => setForm((prev) => ({ ...prev, role: e.target.value }))}
+            >
+              <option value="student">Siswa (Student)</option>
+              <option value="teacher">Guru (Teacher)</option>
+              <option value="admin">Administrator</option>
+            </Select>
           </div>
 
-          <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1">Alamat Email</label>
-            <input
-              value={form.email}
-              onChange={(e) => setForm((prev) => ({ ...prev, email: e.target.value }))}
-              required
-              type="email"
-              placeholder="nama@sekolah.sch.id"
-              className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]/25 focus:border-[#150f23] transition-all"
-            />
-          </div>
+          <Input
+            label="Alamat Email"
+            type="email"
+            value={form.email}
+            onChange={(e) => setForm((prev) => ({ ...prev, email: e.target.value }))}
+            required
+            placeholder="nama@sekolah.sch.id"
+          />
 
-          <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1">Kata Sandi (Password)</label>
-            <input
-              value={form.password}
-              onChange={(e) => setForm((prev) => ({ ...prev, password: e.target.value }))}
-              required
-              type="password"
-              placeholder="Minimal 6 karakter"
-              className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]/25 focus:border-[#150f23] transition-all"
-            />
-          </div>
+          <Input
+            label="Kata Sandi (Password)"
+            type="password"
+            value={form.password}
+            onChange={(e) => setForm((prev) => ({ ...prev, password: e.target.value }))}
+            required
+            placeholder="Minimal 6 karakter"
+          />
 
           {errorMessage && (
             <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold flex items-center gap-2">
@@ -762,27 +723,29 @@ function AddUserModal({
               <span>{errorMessage}</span>
             </div>
           )}
+        </ModalBody>
 
-          <div className="flex items-center justify-end gap-3 pt-2">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold text-xs bg-white cursor-pointer focus:ring-2 focus:ring-slate-900/10 focus:outline-none transition-colors"
-            >
-              Batal
-            </button>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="px-5 py-2.5 bg-[#150f23] hover:bg-slate-800 text-white font-bold text-xs rounded-xl shadow-md disabled:opacity-50 cursor-pointer flex items-center gap-2 focus:ring-2 focus:ring-[#6a5fc1]/30 focus:outline-none font-display tracking-wide transition-all"
-            >
-              {isSubmitting && <Loader2 className="w-3.5 h-3.5 animate-spin text-[#c2ef4e]" aria-hidden="true" />}
-              <span>{isSubmitting ? 'Menyimpan...' : 'Simpan Akun Pengguna'}</span>
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+        <ModalFooter>
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
+            onClick={onClose}
+            disabled={isSubmitting}
+          >
+            Batal
+          </Button>
+          <Button
+            type="submit"
+            variant="primary"
+            size="sm"
+            isLoading={isSubmitting}
+          >
+            Simpan Akun Pengguna
+          </Button>
+        </ModalFooter>
+      </form>
+    </Modal>
   )
 }
 

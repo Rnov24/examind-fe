@@ -19,8 +19,29 @@ module.exports = {
         'subtle-elevated': '0 4px 20px -2px rgba(15, 23, 42, 0.06)',
         'glow-lime': '0 0 20px -3px rgba(194, 239, 78, 0.4)',
         'glow-indigo': '0 0 25px -5px rgba(99, 102, 241, 0.25)',
+        'midnight-elevated': '0 10px 30px -10px rgba(21, 15, 35, 0.5)',
       },
       colors: {
+        // EXAMIND Midnight-Violet & Canonical Brand Palette (DESIGN.md)
+        midnight: {
+          DEFAULT: '#150f23',
+          surface: '#1f1633',
+          hairline: '#362d59',
+        },
+        ink: {
+          DEFAULT: '#1f1633',
+          deep: '#1f1633',
+        },
+        examind: {
+          midnight: '#150f23',
+          ink: '#1f1633',
+          lime: '#c2ef4e',
+          violet: '#6a5fc1',
+          'violet-deep': '#422082',
+          rose: '#e11d48',
+          emerald: '#10b981',
+          amber: '#f59e0b',
+        },
         // EXAMIND Light Theme Institutional Palette
         sentri: {
           primary: '#0f172a',

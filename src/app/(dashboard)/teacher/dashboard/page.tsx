@@ -17,6 +17,18 @@ import {
 } from 'lucide-react'
 import api from '@/lib/api'
 import { useAuthStore } from '@/stores/authStore'
+import {
+  Table,
+  TableContainer,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+  Badge,
+  EmptyState,
+  Button,
+} from '@/components/ui'
 
 interface ExamItem {
   id: number
@@ -342,58 +354,58 @@ export default function TeacherDashboardPage() {
               </div>
               <Link
                 href="/exams"
-                className="text-xs font-bold text-slate-900 hover:text-indigo-600 flex items-center gap-1 font-mono transition-colors shrink-0 focus:ring-2 focus:ring-slate-900/10 focus:outline-none rounded-lg px-2 py-1"
+                className="text-xs font-bold text-slate-900 hover:text-indigo-600 flex items-center gap-1 font-mono transition-colors shrink-0 focus-visible:ring-2 focus-visible:ring-[#6a5fc1] focus-visible:outline-none rounded-lg px-2 py-1"
               >
                 <span>Lihat Semua Ujian</span>
-                <span aria-hidden="true">&rarr;</span>
+                <ChevronRight className="w-3.5 h-3.5 text-slate-500" aria-hidden="true" />
               </Link>
             </div>
 
-            <div className="overflow-x-auto touch-pan-x">
-              <table className="w-full text-left text-xs text-slate-600">
-                <thead className="bg-slate-50/80 text-[11px] uppercase font-bold text-slate-500 tracking-wider border-b border-slate-100 font-mono">
-                  <tr>
-                    <th className="px-6 py-3.5">Judul Ujian</th>
-                    <th className="px-6 py-3.5">Kelas</th>
-                    <th className="px-6 py-3.5">Durasi</th>
-                    <th className="px-6 py-3.5">Pengawasan</th>
-                    <th className="px-6 py-3.5">Status</th>
-                    <th className="px-6 py-3.5 text-right">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 font-medium">
+            <TableContainer accent="none">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="px-6 py-3.5">Judul Ujian</TableHead>
+                    <TableHead className="px-6 py-3.5">Kelas</TableHead>
+                    <TableHead className="px-6 py-3.5">Durasi</TableHead>
+                    <TableHead className="px-6 py-3.5">Pengawasan</TableHead>
+                    <TableHead className="px-6 py-3.5">Status</TableHead>
+                    <TableHead className="px-6 py-3.5 text-right">Aksi</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                   {recentExams.map((exam) => (
-                    <tr key={exam.id} className="hover:bg-slate-50/80 transition-colors">
-                      <td className="px-6 py-4 font-bold text-slate-900 text-sm max-w-xs truncate min-w-0">
+                    <TableRow key={exam.id}>
+                      <TableCell className="px-6 py-4 font-bold text-slate-900 text-sm max-w-xs truncate min-w-0">
                         {exam.title}
-                      </td>
-                      <td className="px-6 py-4 text-slate-700 font-medium whitespace-nowrap">
+                      </TableCell>
+                      <TableCell className="px-6 py-4 text-slate-700 font-medium whitespace-nowrap">
                         {exam.class_name || '-'}
-                      </td>
-                      <td className="px-6 py-4 tabular-nums font-mono text-slate-700 whitespace-nowrap">
+                      </TableCell>
+                      <TableCell className="px-6 py-4 tabular-nums font-mono text-slate-700 whitespace-nowrap">
                         {exam.duration_minutes} Menit
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold capitalize bg-indigo-50 text-indigo-700 border border-indigo-200/80 font-mono">
-                          <Eye className="w-3 h-3" aria-hidden="true" />
+                      </TableCell>
+                      <TableCell className="px-6 py-4 whitespace-nowrap">
+                        <Badge variant="violet" size="sm" icon={<Eye className="w-3 h-3" aria-hidden="true" />}>
                           {exam.proctoring_level === 'dual_camera'
                             ? 'Dual-Camera'
                             : exam.proctoring_level === 'single_camera'
                             ? 'Kamera Utama'
                             : 'Standar'}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span
-                          className={`inline-block px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider border font-mono ${
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="px-6 py-4 whitespace-nowrap">
+                        <Badge
+                          variant={
                             exam.status === 'in_progress'
-                              ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                              ? 'emerald'
                               : exam.status === 'published'
-                              ? 'bg-indigo-50 text-indigo-700 border-indigo-200/80'
-                              : exam.status === 'completed'
-                              ? 'bg-slate-100 text-slate-700 border-slate-200'
-                              : 'bg-slate-100 text-slate-700 border-slate-200'
-                          }`}
+                              ? 'violet'
+                              : 'neutral'
+                          }
+                          size="sm"
+                          dot={exam.status === 'in_progress'}
+                          dotPulse={exam.status === 'in_progress'}
                         >
                           {exam.status === 'published'
                             ? 'Terjadwal'
@@ -402,50 +414,50 @@ export default function TeacherDashboardPage() {
                             : exam.status === 'completed'
                             ? 'Selesai'
                             : exam.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-right space-x-2 whitespace-nowrap">
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="px-6 py-4 text-right space-x-2 whitespace-nowrap">
                         <Link
                           href={`/exams/${exam.id}/monitor`}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200/80 font-bold text-[11px] transition-colors cursor-pointer shadow-2xs focus:ring-2 focus:ring-emerald-500/20 focus:outline-none"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200/80 font-bold text-[11px] transition-colors cursor-pointer shadow-2xs focus-visible:ring-2 focus-visible:ring-emerald-500/20 focus-visible:outline-none"
                         >
                           <Radio className="w-3 h-3" aria-hidden="true" />
                           <span>Live Monitor</span>
                         </Link>
                         <Link
                           href={`/grading/${exam.id}`}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-[11px] transition-colors cursor-pointer shadow-2xs focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-[11px] transition-colors cursor-pointer shadow-2xs focus-visible:ring-2 focus-visible:ring-[#6a5fc1] focus-visible:outline-none"
                         >
                           <span>Koreksi Esai</span>
                         </Link>
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   ))}
                   {recentExams.length === 0 && (
-                    <tr>
-                      <td colSpan={6} className="text-center py-12 text-slate-500">
-                        <div className="flex flex-col items-center justify-center max-w-sm mx-auto">
-                          <div className="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200 text-slate-500 flex items-center justify-center mb-2.5">
-                            <FileSpreadsheet className="w-5 h-5" aria-hidden="true" />
-                          </div>
-                          <p className="font-bold text-slate-900 text-sm">Belum Ada Paket Ujian</p>
-                          <p className="text-xs text-slate-500 mt-1 mb-3">
-                            Mulai dengan membuat paket ujian pertama dan jadwalkan untuk kelas siswa Anda.
-                          </p>
-                          <Link
-                            href="/exams/create"
-                            className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs flex items-center gap-1.5 cursor-pointer focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
-                          >
-                            <Plus className="w-3.5 h-3.5 text-[#c2ef4e]" aria-hidden="true" />
-                            <span>Buat Paket Ujian</span>
-                          </Link>
-                        </div>
-                      </td>
-                    </tr>
+                    <TableRow>
+                      <TableCell colSpan={6} className="p-0">
+                        <EmptyState
+                          icon={<FileSpreadsheet className="w-6 h-6 text-slate-500" aria-hidden="true" />}
+                          title="Belum Ada Paket Ujian"
+                          description="Mulai dengan membuat paket ujian pertama dan jadwalkan untuk kelas siswa Anda."
+                          action={
+                            <Link href="/exams/create">
+                              <Button
+                                size="sm"
+                                variant="primary"
+                                leftIcon={<Plus className="w-3.5 h-3.5 text-[#c2ef4e]" aria-hidden="true" />}
+                              >
+                                Buat Paket Ujian
+                              </Button>
+                            </Link>
+                          }
+                        />
+                      </TableCell>
+                    </TableRow>
                   )}
-                </tbody>
-              </table>
-            </div>
+                </TableBody>
+              </Table>
+            </TableContainer>
           </div>
         </>
       )}

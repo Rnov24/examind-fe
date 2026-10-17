@@ -10,17 +10,19 @@ import {
   Calendar,
   Download,
   ArrowUpRight,
+  ArrowDownRight,
+  ArrowRight,
   ShieldCheck,
   CheckCircle2,
   Coins,
-  Key,
   RefreshCw,
   FileText,
   Printer,
-  ChevronRight,
-  ExternalLink,
+  Clock,
+  X,
 } from 'lucide-react'
 import api from '@/lib/api'
+import { useCountUp, MoneyCountUp, formatIDR } from '@/hooks/useCountUp'
 
 interface Invoice {
   id: string
@@ -31,6 +33,7 @@ interface Invoice {
   status: string
   date: string
   payment_method: string
+  period?: string
 }
 
 interface PlanStat {
@@ -42,12 +45,35 @@ interface PlanStat {
 interface MonthStat {
   month: string
   mrr: number
+  schools?: number
   tenants: number
   growth: string
 }
 
+interface FinanceData {
+  mrr: number
+  arr: number
+  arpu: number
+  active_tenants?: number
+  paying_tenants?: number
+  growth_rate_mom?: number
+  churn_rate?: number
+  plan_revenue?: Record<string, number>
+  plan_distribution?: Record<string, number>
+  plans_breakdown?: {
+    starter?: PlanStat
+    pro?: PlanStat
+    enterprise?: PlanStat
+    [key: string]: PlanStat | undefined
+  }
+  mrr_history?: MonthStat[]
+  historical_mrr?: MonthStat[]
+  recent_invoices?: Invoice[]
+  invoices?: Invoice[]
+}
+
 export default function SuperAdminFinancePage() {
-  const [financeData, setFinanceData] = useState<any>(null)
+  const [financeData, setFinanceData] = useState<FinanceData | null>(null)
   const [loading, setLoading] = useState(true)
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null)
   const [searchInvoice, setSearchInvoice] = useState('')
@@ -68,15 +94,41 @@ export default function SuperAdminFinancePage() {
     loadFinance()
   }, [])
 
-  const formatIDR = (val: number) => {
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      maximumFractionDigits: 0,
-    }).format(val || 0)
+  // Cascading money count-up hooks for top KPI cards (settles like a financial ledger)
+  const mrrCount = useCountUp(financeData?.mrr, 1200, { delay: 0 })
+  const arrCount = useCountUp(financeData?.arr, 1300, { delay: 200 })
+  const arpuCount = useCountUp(financeData?.arpu, 1400, { delay: 400 })
+
+  const handleExportLedger = () => {
+    const list = financeData?.recent_invoices || financeData?.invoices || []
+    if (list.length === 0) {
+      alert('Belum ada data faktur buku besar untuk diekspor.')
+      return
+    }
+
+    const headers = ['No. Faktur', 'Institusi Sekolah', 'Kode', 'Paket', 'Metode Bayar', 'Tanggal', 'Nominal (IDR)', 'Status']
+    const rows = list.map((inv) => [
+      `"${inv.id}"`,
+      `"${(inv.tenant_name || '').replace(/"/g, '""')}"`,
+      `"${inv.code || ''}"`,
+      `"${inv.plan || ''}"`,
+      `"${inv.payment_method && inv.payment_method !== '-' ? inv.payment_method : 'Belum ditentukan'}"`,
+      `"${inv.date || ''}"`,
+      inv.amount || 0,
+      `"${inv.status || ''}"`,
+    ])
+
+    const csvContent = 'data:text/csv;charset=utf-8,\uFEFF' + [headers.join(','), ...rows.map((r) => r.join(','))].join('\n')
+    const encodedUri = encodeURI(csvContent)
+    const link = document.createElement('a')
+    link.setAttribute('href', encodedUri)
+    link.setAttribute('download', `Buku-Besar-EXAMIND-${new Date().toISOString().slice(0, 10)}.csv`)
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
   }
 
-  const invoices: Invoice[] = financeData?.recent_invoices || []
+  const invoices: Invoice[] = financeData?.recent_invoices || financeData?.invoices || []
   const filteredInvoices = invoices.filter(
     (inv) =>
       inv.tenant_name.toLowerCase().includes(searchInvoice.toLowerCase()) ||
@@ -84,15 +136,28 @@ export default function SuperAdminFinancePage() {
       inv.code.toLowerCase().includes(searchInvoice.toLowerCase())
   )
 
-  const historical: MonthStat[] = financeData?.historical_mrr || []
-  const maxMrr = Math.max(...historical.map((h) => h.mrr), 5000000)
+  const historical: MonthStat[] = financeData?.historical_mrr || financeData?.mrr_history || []
+  const maxMrr = historical.length > 0 ? Math.max(...historical.map((h) => h.mrr), 1000000) : 1000000
+
+  // Honest growth rate across the historical period (first non-zero month vs latest month)
+  const firstMonthWithData = historical.find((h) => h.mrr > 0)
+  const latestMonth = historical.length > 0 ? historical[historical.length - 1] : null
+  const periodGrowthPct =
+    firstMonthWithData && latestMonth && firstMonthWithData.mrr > 0
+      ? Math.round(((latestMonth.mrr - firstMonthWithData.mrr) / firstMonthWithData.mrr) * 100)
+      : null
+
+  // Honest plan breakdown data with honest fallbacks to 0
+  const proStats = financeData?.plans_breakdown?.pro ?? { count: 0, subtotal: 0, percentage: 0 }
+  const enterpriseStats = financeData?.plans_breakdown?.enterprise ?? { count: 0, subtotal: 0, percentage: 0 }
+  const starterStats = financeData?.plans_breakdown?.starter ?? { count: 0, subtotal: 0, percentage: 0 }
 
   return (
     <div className="space-y-6">
       {/* Top Header */}
       <div className="relative overflow-hidden bg-white rounded-2xl border border-slate-200/80 p-6 md:p-8 shadow-card flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-        <div className="pointer-events-none absolute -top-16 -right-16 w-72 h-72 bg-emerald-50/70 rounded-full blur-3xl"></div>
-        <div className="pointer-events-none absolute -bottom-16 -left-16 w-60 h-60 bg-indigo-50/40 rounded-full blur-2xl"></div>
+        <div className="pointer-events-none absolute -top-16 -right-16 w-72 h-72 bg-emerald-50/70 rounded-full blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-16 -left-16 w-60 h-60 bg-indigo-50/40 rounded-full blur-2xl" />
 
         <div className="relative flex items-center gap-3.5">
           <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200/70 flex items-center justify-center font-bold shrink-0 shadow-xs ring-4 ring-emerald-50/70">
@@ -101,7 +166,7 @@ export default function SuperAdminFinancePage() {
           <div>
             <div className="flex items-center gap-2 flex-wrap">
               <h2 className="font-display text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
-                Finansial & MRR Analytics
+                Finansial &amp; MRR Analytics
               </h2>
               <span className="px-2.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-slate-900 text-[#c2ef4e] font-mono shadow-xs">
                 Revenue Intelligence
@@ -124,7 +189,7 @@ export default function SuperAdminFinancePage() {
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-emerald-600' : ''}`} aria-hidden="true" />
           </button>
           <button
-            onClick={() => alert('Laporan keuangan format CSV & PDF telah diekspor ke sistem!')}
+            onClick={handleExportLedger}
             className="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-card flex items-center gap-2 transition-all cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
           >
             <Download className="w-4 h-4 text-[#c2ef4e]" aria-hidden="true" />
@@ -145,13 +210,47 @@ export default function SuperAdminFinancePage() {
               <DollarSign className="w-4 h-4" />
             </div>
           </div>
-          <div className="font-display text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight tabular-nums">
-            {formatIDR(financeData?.mrr || 0)}
+          <div
+            ref={mrrCount.ref}
+            className="font-display text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight tabular-nums flex items-baseline gap-2"
+          >
+            <span>{mrrCount.displayValue}</span>
+            <span
+              aria-hidden="true"
+              className={`inline-block w-2 h-2 rounded-full transition-all duration-75 shrink-0 ${
+                mrrCount.isAnimating
+                  ? mrrCount.justTickedThousand
+                    ? 'bg-[#c2ef4e] scale-125 shadow-[0_0_8px_#c2ef4e]'
+                    : 'bg-[#c2ef4e]/30 scale-90'
+                  : 'opacity-0 scale-50'
+              }`}
+            />
           </div>
-          <div className="flex items-center gap-1.5 text-[11px] font-semibold text-emerald-600 font-mono">
-            <ArrowUpRight className="w-3.5 h-3.5" />
-            <span>+16.7% vs bulan lalu</span>
-          </div>
+          {financeData?.growth_rate_mom != null ? (
+            <div
+              className={`flex items-center gap-1.5 text-[11px] font-semibold font-mono ${
+                financeData.growth_rate_mom > 0
+                  ? 'text-emerald-600'
+                  : financeData.growth_rate_mom < 0
+                  ? 'text-rose-600'
+                  : 'text-slate-500'
+              }`}
+            >
+              {financeData.growth_rate_mom > 0 ? (
+                <ArrowUpRight className="w-3.5 h-3.5" />
+              ) : financeData.growth_rate_mom < 0 ? (
+                <ArrowDownRight className="w-3.5 h-3.5" />
+              ) : null}
+              <span>
+                {financeData.growth_rate_mom > 0
+                  ? `+${financeData.growth_rate_mom}%`
+                  : `${financeData.growth_rate_mom}%`}{' '}
+                vs bulan lalu
+              </span>
+            </div>
+          ) : (
+            <p className="text-[11px] text-slate-400 font-mono">Pertumbuhan MoM belum terhitung</p>
+          )}
         </div>
 
         {/* ARR */}
@@ -164,10 +263,23 @@ export default function SuperAdminFinancePage() {
               <CreditCard className="w-4 h-4" />
             </div>
           </div>
-          <div className="font-display text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight tabular-nums">
-            {formatIDR(financeData?.arr || 0)}
+          <div
+            ref={arrCount.ref}
+            className="font-display text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight tabular-nums flex items-baseline gap-2"
+          >
+            <span>{arrCount.displayValue}</span>
+            <span
+              aria-hidden="true"
+              className={`inline-block w-2 h-2 rounded-full transition-all duration-75 shrink-0 ${
+                arrCount.isAnimating
+                  ? arrCount.justTickedThousand
+                    ? 'bg-[#c2ef4e] scale-125 shadow-[0_0_8px_#c2ef4e]'
+                    : 'bg-[#c2ef4e]/30 scale-90'
+                  : 'opacity-0 scale-50'
+              }`}
+            />
           </div>
-          <p className="text-[11px] text-slate-500 font-mono">Proyeksi tahunan dari langganan aktif</p>
+          <p className="text-[11px] text-slate-500 font-mono">Proyeksi tahunan dari langganan aktif (MRR &times; 12)</p>
         </div>
 
         {/* ARPU */}
@@ -180,10 +292,23 @@ export default function SuperAdminFinancePage() {
               <Building2 className="w-4 h-4" />
             </div>
           </div>
-          <div className="font-display text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight tabular-nums">
-            {formatIDR(financeData?.arpu || 0)}
+          <div
+            ref={arpuCount.ref}
+            className="font-display text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight tabular-nums flex items-baseline gap-2"
+          >
+            <span>{arpuCount.displayValue}</span>
+            <span
+              aria-hidden="true"
+              className={`inline-block w-2 h-2 rounded-full transition-all duration-75 shrink-0 ${
+                arpuCount.isAnimating
+                  ? arpuCount.justTickedThousand
+                    ? 'bg-[#c2ef4e] scale-125 shadow-[0_0_8px_#c2ef4e]'
+                    : 'bg-[#c2ef4e]/30 scale-90'
+                  : 'opacity-0 scale-50'
+              }`}
+            />
           </div>
-          <p className="text-[11px] text-slate-500 font-mono">Rata-rata pengeluaran per institusi</p>
+          <p className="text-[11px] text-slate-500 font-mono">Rata-rata pengeluaran per institusi aktif</p>
         </div>
 
         {/* Paying Schools */}
@@ -197,9 +322,18 @@ export default function SuperAdminFinancePage() {
             </div>
           </div>
           <div className="font-display text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight tabular-nums">
-            {financeData?.paying_tenants || 0} Institusi
+            {financeData?.paying_tenants ?? financeData?.active_tenants ?? 0} Institusi
           </div>
-          <p className="text-[11px] text-emerald-600 font-semibold font-mono">100% Churn Prevention SLA</p>
+          {financeData?.churn_rate != null ? (
+            <p className="text-[11px] text-slate-500 font-mono">
+              Tingkat churn:{' '}
+              <span className="font-semibold text-emerald-600">
+                {financeData.churn_rate}%
+              </span>
+            </p>
+          ) : (
+            <p className="text-[11px] text-slate-400 font-mono">Tingkat churn belum tercatat</p>
+          )}
         </div>
       </div>
 
@@ -216,49 +350,73 @@ export default function SuperAdminFinancePage() {
                 Trajektori pendapatan berulang bulanan dari onboarding sekolah baru
               </p>
             </div>
-            <span className="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold font-mono">
-              +133% YTD Growth
-            </span>
+            {periodGrowthPct !== null ? (
+              <span
+                className={`px-2.5 py-1 rounded-lg text-xs font-bold font-mono border ${
+                  periodGrowthPct >= 0
+                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                    : 'bg-rose-50 text-rose-700 border-rose-200'
+                }`}
+              >
+                {periodGrowthPct >= 0 ? `+${periodGrowthPct}%` : `${periodGrowthPct}%`} Pertumbuhan Periode
+              </span>
+            ) : (
+              <span className="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 border border-slate-200 text-xs font-medium font-mono">
+                Data historis berjalan
+              </span>
+            )}
           </div>
 
           {/* Bar Chart Visualization */}
           <div className="pt-4">
-            <div className="h-48 flex items-end gap-3 sm:gap-6 justify-between border-b border-slate-200 pb-2">
-              {historical.map((item, idx) => {
-                const heightPercent = Math.max(15, Math.round((item.mrr / maxMrr) * 100))
-                const isCurrent = idx === historical.length - 1
+            {historical.length === 0 ? (
+              <div className="h-48 flex items-center justify-center text-slate-400 text-xs font-mono border-b border-slate-200">
+                Belum ada data historis MRR yang tercatat.
+              </div>
+            ) : (
+              <div className="h-48 flex items-end gap-3 sm:gap-6 justify-between border-b border-slate-200 pb-2">
+                {historical.map((item, idx) => {
+                  const heightPercent = maxMrr > 0 ? Math.max(12, Math.round((item.mrr / maxMrr) * 100)) : 12
+                  const isCurrent = idx === historical.length - 1
+                  const labelFormatted =
+                    item.mrr >= 1000000
+                      ? `${(item.mrr / 1000000).toLocaleString('id-ID', { maximumFractionDigits: 1 })}M`
+                      : item.mrr > 0
+                      ? `${Math.round(item.mrr / 1000)}k`
+                      : '0'
 
-                return (
-                  <div key={item.month} className="flex-1 flex flex-col items-center gap-2 group relative">
-                    {/* Tooltip on hover */}
-                    <div className="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-12 z-20 bg-slate-900 text-white text-[10px] font-mono py-1 px-2 rounded-lg whitespace-nowrap shadow-xl pointer-events-none">
-                      {formatIDR(item.mrr)} • {item.tenants} Sekolah ({item.growth})
-                    </div>
+                  return (
+                    <div key={item.month} className="flex-1 flex flex-col items-center gap-2 group relative">
+                      {/* Tooltip on hover */}
+                      <div className="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-12 z-20 bg-slate-900 text-white text-[10px] font-mono py-1 px-2.5 rounded-lg whitespace-nowrap shadow-xl pointer-events-none">
+                        {formatIDR(item.mrr)} • {item.tenants ?? item.schools ?? 0} Sekolah ({item.growth || '0%'})
+                      </div>
 
-                    <div className="w-full max-w-[48px] flex flex-col items-center">
-                      <span className="text-[10px] font-bold font-mono text-slate-600 mb-1">
-                        {(item.mrr / 1000000).toFixed(1)}M
-                      </span>
-                      <div
-                        style={{ height: `${heightPercent}%` }}
-                        className={`w-full rounded-t-xl transition-all duration-300 ${
-                          isCurrent
-                            ? 'bg-gradient-to-t from-slate-900 to-indigo-600 shadow-md ring-2 ring-indigo-500/60'
-                            : 'bg-slate-200 group-hover:bg-slate-300'
+                      <div className="w-full max-w-[48px] flex flex-col items-center">
+                        <span className="text-[10px] font-bold font-mono text-slate-600 mb-1">
+                          {labelFormatted}
+                        </span>
+                        <div
+                          style={{ height: `${heightPercent}%` }}
+                          className={`w-full rounded-t-xl transition-all duration-300 ${
+                            isCurrent
+                              ? 'bg-gradient-to-t from-slate-900 to-indigo-600 shadow-md ring-2 ring-indigo-500/60'
+                              : 'bg-slate-200 group-hover:bg-slate-300'
+                          }`}
+                        />
+                      </div>
+                      <span
+                        className={`text-xs font-mono font-semibold ${
+                          isCurrent ? 'text-indigo-700 font-bold' : 'text-slate-500'
                         }`}
-                      />
+                      >
+                        {item.month}
+                      </span>
                     </div>
-                    <span
-                      className={`text-xs font-mono font-semibold ${
-                        isCurrent ? 'text-indigo-700 font-bold' : 'text-slate-500'
-                      }`}
-                    >
-                      {item.month}
-                    </span>
-                  </div>
-                )
-              })}
-            </div>
+                  )
+                })}
+              </div>
+            )}
           </div>
 
           <div className="flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-100">
@@ -290,21 +448,21 @@ export default function SuperAdminFinancePage() {
                   <span className="text-xs font-bold text-slate-900">Paket Pro (Unggulan)</span>
                 </div>
                 <span className="text-xs font-bold text-indigo-700 font-mono">
-                  {financeData?.plans_breakdown?.pro?.percentage || 100}%
+                  {proStats.percentage}%
                 </span>
               </div>
               <div className="flex items-center justify-between text-xs font-mono">
                 <span className="text-slate-500">
-                  {financeData?.plans_breakdown?.pro?.count || 1} Sekolah Terdaftar
+                  {proStats.count} Sekolah Terdaftar
                 </span>
                 <span className="font-bold text-slate-800">
-                  {formatIDR(financeData?.plans_breakdown?.pro?.subtotal || 3500000)}
+                  <MoneyCountUp value={proStats.subtotal} delay={100} duration={900} />
                 </span>
               </div>
               <div className="w-full bg-indigo-200/60 h-1.5 rounded-full overflow-hidden">
                 <div
-                  className="bg-indigo-600 h-full rounded-full"
-                  style={{ width: `${financeData?.plans_breakdown?.pro?.percentage || 100}%` }}
+                  className="bg-indigo-600 h-full rounded-full transition-all duration-500"
+                  style={{ width: `${Math.min(100, Math.max(0, proStats.percentage))}%` }}
                 />
               </div>
             </div>
@@ -317,21 +475,21 @@ export default function SuperAdminFinancePage() {
                   <span className="text-xs font-bold text-slate-900">Enterprise District</span>
                 </div>
                 <span className="text-xs font-bold text-slate-600 font-mono">
-                  {financeData?.plans_breakdown?.enterprise?.percentage || 0}%
+                  {enterpriseStats.percentage}%
                 </span>
               </div>
               <div className="flex items-center justify-between text-xs font-mono">
                 <span className="text-slate-500">
-                  {financeData?.plans_breakdown?.enterprise?.count || 0} Sekolah
+                  {enterpriseStats.count} Sekolah
                 </span>
                 <span className="font-bold text-slate-800">
-                  {formatIDR(financeData?.plans_breakdown?.enterprise?.subtotal || 0)}
+                  <MoneyCountUp value={enterpriseStats.subtotal} delay={250} duration={900} />
                 </span>
               </div>
               <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
                 <div
-                  className="bg-purple-600 h-full rounded-full"
-                  style={{ width: `${financeData?.plans_breakdown?.enterprise?.percentage || 0}%` }}
+                  className="bg-purple-600 h-full rounded-full transition-all duration-500"
+                  style={{ width: `${Math.min(100, Math.max(0, enterpriseStats.percentage))}%` }}
                 />
               </div>
             </div>
@@ -344,21 +502,21 @@ export default function SuperAdminFinancePage() {
                   <span className="text-xs font-bold text-slate-900">Starter Edukasi</span>
                 </div>
                 <span className="text-xs font-bold text-slate-600 font-mono">
-                  {financeData?.plans_breakdown?.starter?.percentage || 0}%
+                  {starterStats.percentage}%
                 </span>
               </div>
               <div className="flex items-center justify-between text-xs font-mono">
                 <span className="text-slate-500">
-                  {financeData?.plans_breakdown?.starter?.count || 0} Sekolah
+                  {starterStats.count} Sekolah
                 </span>
                 <span className="font-bold text-slate-800">
-                  {formatIDR(financeData?.plans_breakdown?.starter?.subtotal || 0)}
+                  <MoneyCountUp value={starterStats.subtotal} delay={400} duration={900} />
                 </span>
               </div>
               <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
                 <div
-                  className="bg-emerald-600 h-full rounded-full"
-                  style={{ width: `${financeData?.plans_breakdown?.starter?.percentage || 0}%` }}
+                  className="bg-emerald-600 h-full rounded-full transition-all duration-500"
+                  style={{ width: `${Math.min(100, Math.max(0, starterStats.percentage))}%` }}
                 />
               </div>
             </div>
@@ -370,7 +528,8 @@ export default function SuperAdminFinancePage() {
               className="w-full py-2.5 px-3 rounded-xl border border-dashed border-slate-300 hover:border-slate-400 bg-slate-50/80 hover:bg-slate-100 text-slate-700 text-xs font-bold flex items-center justify-center gap-2 transition-all font-display"
             >
               <Coins className="w-3.5 h-3.5 text-amber-600" />
-              <span>Kelola Tarif & Limit Paket &rarr;</span>
+              <span>Kelola Tarif &amp; Limit Paket</span>
+              <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
         </div>
@@ -380,7 +539,7 @@ export default function SuperAdminFinancePage() {
       <div className="bg-white rounded-2xl border border-slate-200/80 shadow-card overflow-hidden">
         <div className="p-5 border-b border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h3 className="font-display text-base font-bold text-slate-900">Buku Besar Faktur & Tagihan</h3>
+            <h3 className="font-display text-base font-bold text-slate-900">Buku Besar Faktur &amp; Tagihan</h3>
             <p className="text-xs text-slate-500">Riwayat transaksi pembayaran langganan SaaS institusi sekolah</p>
           </div>
 
@@ -417,7 +576,7 @@ export default function SuperAdminFinancePage() {
                   </td>
                 </tr>
               ) : (
-                filteredInvoices.map((inv) => (
+                filteredInvoices.map((inv, idx) => (
                   <tr key={inv.id} className="hover:bg-slate-50/60 transition-colors">
                     <td className="py-3.5 px-4 font-mono font-bold text-slate-900">
                       {inv.id}
@@ -432,19 +591,34 @@ export default function SuperAdminFinancePage() {
                       </span>
                     </td>
                     <td className="py-3.5 px-4 text-slate-600 font-mono text-[11px]">
-                      {inv.payment_method}
+                      {inv.payment_method && inv.payment_method !== '-' ? (
+                        inv.payment_method
+                      ) : (
+                        <span className="text-slate-400 italic">Belum ditentukan</span>
+                      )}
                     </td>
                     <td className="py-3.5 px-4 text-slate-500 font-mono">
-                      {inv.date}
+                      {inv.date && inv.date !== '-' ? inv.date : '-'}
                     </td>
                     <td className="py-3.5 px-4 font-mono font-bold text-slate-900">
-                      {formatIDR(inv.amount)}
+                      <MoneyCountUp value={inv.amount} duration={800} delay={Math.min(idx * 40, 300)} />
                     </td>
                     <td className="py-3.5 px-4">
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                        <CheckCircle2 className="w-3 h-3" />
-                        Lunas
-                      </span>
+                      {inv.status === 'paid' ? (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                          <CheckCircle2 className="w-3 h-3" />
+                          Lunas
+                        </span>
+                      ) : inv.status === 'past_due' ? (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                          <Clock className="w-3 h-3" />
+                          Jatuh Tempo
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-200 uppercase">
+                          {inv.status || 'Draft'}
+                        </span>
+                      )}
                     </td>
                     <td className="py-3.5 px-4 text-right">
                       <button
@@ -484,7 +658,7 @@ export default function SuperAdminFinancePage() {
                 title="Tutup rincian faktur"
                 aria-label="Tutup rincian faktur"
               >
-                ✕
+                <X className="w-4 h-4" />
               </button>
             </div>
 
@@ -498,10 +672,20 @@ export default function SuperAdminFinancePage() {
                 </div>
                 <div>
                   <span className="text-slate-500 font-mono text-[10px] uppercase">Tanggal Bayar:</span>
-                  <p className="font-bold text-slate-900 mt-0.5">{selectedInvoice.date}</p>
-                  <p className="text-[10px] text-emerald-600 font-semibold flex items-center gap-1 mt-0.5">
-                    <CheckCircle2 className="w-3 h-3" /> Status: Terverifikasi
-                  </p>
+                  <p className="font-bold text-slate-900 mt-0.5">{selectedInvoice.date && selectedInvoice.date !== '-' ? selectedInvoice.date : '-'}</p>
+                  {selectedInvoice.status === 'paid' ? (
+                    <p className="text-[10px] text-emerald-600 font-semibold flex items-center gap-1 mt-0.5">
+                      <CheckCircle2 className="w-3 h-3" /> Status: Terverifikasi (Lunas)
+                    </p>
+                  ) : selectedInvoice.status === 'past_due' ? (
+                    <p className="text-[10px] text-amber-600 font-semibold flex items-center gap-1 mt-0.5">
+                      <Clock className="w-3 h-3" /> Status: Menunggu Pembayaran (Jatuh Tempo)
+                    </p>
+                  ) : (
+                    <p className="text-[10px] text-slate-500 font-semibold flex items-center gap-1 mt-0.5">
+                      Status: {selectedInvoice.status}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -513,22 +697,30 @@ export default function SuperAdminFinancePage() {
                 <div className="p-3 flex justify-between items-center text-slate-800">
                   <div>
                     <p className="font-bold">Langganan EXAMIND SaaS ({selectedInvoice.plan.toUpperCase()})</p>
-                    <p className="text-[10px] text-slate-500">Akses LMS CBT, AI Proctoring & 5.000 Kredit AI</p>
+                    <p className="text-[10px] text-slate-500">
+                      {selectedInvoice.plan.toLowerCase() === 'starter'
+                        ? 'Akses LMS CBT, Pengawasan Single Camera & 1.000 Kredit AI'
+                        : selectedInvoice.plan.toLowerCase() === 'enterprise'
+                        ? 'Akses Yayasan Multi-Sekolah, KMS Dedicated & 25.000 Kredit AI'
+                        : 'Akses LMS CBT, AI Dual-Camera Proctoring & 5.000 Kredit AI'}
+                    </p>
                   </div>
-                  <span className="font-mono font-bold">{formatIDR(selectedInvoice.amount)}</span>
+                  <span className="font-mono font-bold">
+                    <MoneyCountUp value={selectedInvoice.amount} duration={800} />
+                  </span>
                 </div>
                 <div className="p-3 border-t border-slate-100 flex justify-between items-center text-slate-500 text-[11px]">
-                  <span>PPN (11% Ditanggung Platform)</span>
-                  <span className="font-mono">Rp 0</span>
+                  <span>Pajak Pertambahan Nilai (PPN 11%)</span>
+                  <span className="font-mono text-emerald-700 font-semibold">Termasuk dalam tarif</span>
                 </div>
                 <div className="p-3 bg-slate-50 border-t border-slate-200 flex justify-between items-center text-slate-900 font-bold">
                   <span>Total Tagihan Dibayar</span>
-                  <span className="font-mono text-base text-emerald-700">{formatIDR(selectedInvoice.amount)}</span>
+                  <MoneyCountUp value={selectedInvoice.amount} duration={800} className="font-mono text-base text-emerald-700" />
                 </div>
               </div>
 
               <div className="text-[11px] text-slate-400 font-mono text-center">
-                Metode Pembayaran: {selectedInvoice.payment_method} • Dikeluarkan oleh PT EXAMIND TEKNOLOGI EDUKASI
+                Metode Pembayaran: {selectedInvoice.payment_method && selectedInvoice.payment_method !== '-' ? selectedInvoice.payment_method : 'Transfer Bank / SPK Resmi'} • Dikeluarkan oleh PT EXAMIND TEKNOLOGI EDUKASI
               </div>
             </div>
 

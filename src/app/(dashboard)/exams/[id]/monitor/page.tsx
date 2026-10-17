@@ -223,6 +223,18 @@ export default function LiveMonitoringPage() {
   }
 
   useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (activeDisqualifyStudent) setActiveDisqualifyStudent(null)
+        else if (activeWarningStudent) setActiveWarningStudent(null)
+        else if (selectedStudentLogs) setSelectedStudentLogs(null)
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [activeDisqualifyStudent, activeWarningStudent, selectedStudentLogs])
+
+  useEffect(() => {
     loadExamSessions()
 
     // Setup WebSocket
@@ -559,7 +571,12 @@ export default function LiveMonitoringPage() {
 
       {/* Send Warning Modal */}
       {activeWarningStudent && (
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setActiveWarningStudent(null)
+          }}
+          className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+        >
           <div className="bg-white rounded-xl p-6 max-w-md w-full space-y-4 shadow-2xl border border-slate-200 text-slate-900">
             <h3 className="text-base font-bold text-slate-900">Kirim Peringatan Langsung</h3>
             <p className="text-xs text-slate-500">
@@ -575,6 +592,7 @@ export default function LiveMonitoringPage() {
                 value={warningMessageText}
                 onChange={(e) => setWarningMessageText(e.target.value)}
                 rows={3}
+                autoFocus
                 placeholder="Contoh: Harap fokus dan pandangan tetap ke arah layar laptop..."
                 className="w-full p-3.5 rounded-lg bg-slate-50 border border-slate-300 text-slate-900 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900"
               />
@@ -601,7 +619,12 @@ export default function LiveMonitoringPage() {
 
       {/* Log & Snapshot Detail Modal */}
       {selectedStudentLogs && (
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setSelectedStudentLogs(null)
+          }}
+          className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+        >
           <div className="bg-white rounded-xl p-6 max-w-2xl w-full max-h-[85vh] flex flex-col space-y-4 shadow-2xl border border-slate-200 text-slate-900">
             <div className="flex items-center justify-between border-b border-slate-200 pb-3">
               <div>
@@ -718,7 +741,12 @@ export default function LiveMonitoringPage() {
 
       {/* Deliberate Disqualification Decision Modal (Human-in-the-Loop) */}
       {activeDisqualifyStudent && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setActiveDisqualifyStudent(null)
+          }}
+          className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+        >
           <div className="bg-white rounded-xl p-6 max-w-lg w-full space-y-4 shadow-2xl border border-slate-200 text-slate-900">
             <div className="flex items-center gap-3 border-b border-slate-200 pb-3">
               <div className="w-10 h-10 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center border border-rose-200 shrink-0">

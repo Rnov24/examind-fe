@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, Check, Printer, Loader2, Sparkles } from 'lucide-react'
+import { ArrowLeft, Check, Printer, Loader2, Sparkles, AlertCircle, RotateCcw, X } from 'lucide-react'
 import api from '@/lib/api'
 
 interface SessionListItem {
@@ -59,6 +59,15 @@ export default function GradeReviewWorkspace({
   const [notesForm, setNotesForm] = useState<Record<number, string>>({})
   const [savingOverrideMap, setSavingOverrideMap] = useState<Record<number, boolean>>({})
   const [isLoading, setIsLoading] = useState(false)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [notification, setNotification] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+
+  function showNotification(type: 'success' | 'error', text: string) {
+    setNotification({ type, text })
+    setTimeout(() => {
+      setNotification((curr) => (curr?.text === text ? null : curr))
+    }, 4000)
+  }
 
   function handlePrint() {
     window.print()
@@ -79,11 +88,16 @@ export default function GradeReviewWorkspace({
 
   async function loadSessions(targetExamId: number) {
     setIsLoading(true)
+    setErrorMessage(null)
     try {
       const res = await api.get(`/grading/exam/${targetExamId}/sessions`)
       setSessionsList(res.data.data || [])
-    } catch (err) {
+    } catch (err: any) {
       console.error('Failed to load grading sessions:', err)
+      setErrorMessage(
+        err.response?.data?.message ||
+          'Gagal memuat daftar hasil submission siswa. Periksa koneksi ke server ujian CBT.'
+      )
     } finally {
       setIsLoading(false)
     }
@@ -107,8 +121,8 @@ export default function GradeReviewWorkspace({
       }
       setOverrideForm(newOverride)
       setNotesForm(newNotes)
-    } catch {
-      alert('Gagal memuat detail sesi jawaban.')
+    } catch (err: any) {
+      showNotification('error', err.response?.data?.message || 'Gagal memuat detail sesi jawaban siswa.')
     } finally {
       setIsLoading(false)
     }
@@ -137,10 +151,10 @@ export default function GradeReviewWorkspace({
         )
         setSessionDetail({ ...sessionDetail, answers: updatedAnswers })
       }
-      alert('Nilai override berhasil disimpan!')
+      showNotification('success', 'Nilai guru berhasil disimpan ke lembar penilaian siswa!')
       await loadSessions(examId)
-    } catch {
-      alert('Gagal menyimpan nilai override.')
+    } catch (err: any) {
+      showNotification('error', err.response?.data?.message || 'Gagal menyimpan nilai guru. Coba lagi.')
     } finally {
       setSavingOverrideMap((prev) => ({ ...prev, [ansId]: false }))
     }
@@ -198,6 +212,33 @@ export default function GradeReviewWorkspace({
         )}
       </div>
 
+      {/* Notification Toast Banner */}
+      {notification && (
+        <div
+          className={`p-4 rounded-xl border text-xs flex items-center justify-between gap-3 shadow-xs transition-all ${
+            notification.type === 'success'
+              ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
+              : 'bg-rose-50 border-rose-200 text-rose-800'
+          }`}
+        >
+          <div className="flex items-center gap-2">
+            {notification.type === 'success' ? (
+              <Check className="w-4 h-4 text-emerald-600 shrink-0" aria-hidden="true" />
+            ) : (
+              <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" aria-hidden="true" />
+            )}
+            <span className="font-semibold">{notification.text}</span>
+          </div>
+          <button
+            onClick={() => setNotification(null)}
+            className="text-slate-400 hover:text-slate-600 text-xs font-bold cursor-pointer"
+            aria-label="Tutup notifikasi"
+          >
+            <X className="w-3.5 h-3.5" aria-hidden="true" />
+          </button>
+        </div>
+      )}
+
       {/* Mode 1: Exam Session Selection or List */}
       {!selectedSessionId ? (
         <div className="bg-white rounded-2xl border border-slate-200/80 shadow-card overflow-hidden text-slate-900">
@@ -248,9 +289,29 @@ export default function GradeReviewWorkspace({
             </div>
           </div>
 
+          {/* Error Banner with Retry */}
+          {errorMessage && (
+            <div className="m-6 p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs">
+              <div className="flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" aria-hidden="true" />
+                <span className="font-medium">{errorMessage}</span>
+              </div>
+              <button
+                onClick={() => loadSessions(examId)}
+                className="px-3.5 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer shrink-0"
+              >
+                <RotateCcw className="w-3.5 h-3.5" aria-hidden="true" />
+                <span>Coba Lagi</span>
+              </button>
+            </div>
+          )}
+
           {isLoading ? (
-            <div className="flex items-center justify-center p-16">
-              <Loader2 className="w-8 h-8 text-indigo-600 animate-spin" />
+            <div className="p-12 flex flex-col items-center justify-center gap-3">
+              <Loader2 className="w-7 h-7 text-indigo-600 animate-spin" />
+              <p className="text-xs font-semibold text-slate-500 font-mono">
+                Memuat daftar submission & hasil koreksi esai AI...
+              </p>
             </div>
           ) : (
             <div className="overflow-x-auto touch-pan-x">
@@ -269,8 +330,12 @@ export default function GradeReviewWorkspace({
                 <tbody className="divide-y divide-slate-100 font-medium">
                   {sessionsList.map((s) => (
                     <tr key={s.session_id} className="hover:bg-slate-50/80 transition-colors">
-                      <td className="px-6 py-4 font-display font-bold text-slate-900">{s.student_name}</td>
-                      <td className="px-6 py-4 font-mono text-xs text-slate-600">{s.student_identifier}</td>
+                      <td className="px-6 py-4 font-display font-bold text-slate-900 max-w-[200px] truncate" title={s.student_name}>
+                        {s.student_name}
+                      </td>
+                      <td className="px-6 py-4 font-mono text-xs text-slate-600 max-w-[140px] truncate" title={s.student_identifier}>
+                        {s.student_identifier}
+                      </td>
                       <td className="px-6 py-4">
                         <span
                           className={`inline-block px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-wider font-mono shadow-xs ${
@@ -318,10 +383,15 @@ export default function GradeReviewWorkspace({
                     </tr>
                   ))}
 
-                  {sessionsList.length === 0 && (
+                  {sessionsList.length === 0 && !errorMessage && (
                     <tr>
                       <td colSpan={7} className="p-16 text-center text-slate-500">
-                        Belum ada submission ujian yang siap dinilai.
+                        <div className="flex flex-col items-center justify-center gap-1.5">
+                          <p className="font-bold text-slate-800 text-sm">Belum Ada Submission Siswa</p>
+                          <p className="text-xs text-slate-500">
+                            Lembar jawaban siswa yang telah selesai mengikuti ujian akan otomatis tampil di sini untuk ditinjau.
+                          </p>
+                        </div>
                       </td>
                     </tr>
                   )}

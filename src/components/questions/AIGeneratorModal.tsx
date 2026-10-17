@@ -119,9 +119,21 @@ export default function AIGeneratorModal({
     }
   }
 
+  useEffect(() => {
+    if (!isOpen) return
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose()
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [isOpen, onClose])
+
   async function handleSaveAllToBank() {
     if (!generatedData) return
     setSaving(true)
+    setErrorMessage(null)
 
     try {
       // Save MCQs
@@ -152,8 +164,12 @@ export default function AIGeneratorModal({
 
       onSaved()
       onClose()
-    } catch {
-      alert('Gagal menyimpan butir soal ke bank.')
+    } catch (err: any) {
+      console.error('Failed to save generated questions:', err)
+      setErrorMessage(
+        err.response?.data?.message ||
+          'Gagal menyimpan butir soal ke bank soal. Periksa koneksi ke server.'
+      )
     } finally {
       setSaving(false)
     }
@@ -162,7 +178,12 @@ export default function AIGeneratorModal({
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+    <div
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose()
+      }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm"
+    >
       <div className="bg-white rounded-xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-slate-200 max-h-[90vh] overflow-y-auto text-slate-900">
         <div className="flex items-center justify-between pb-4 border-b border-slate-200 mb-6">
           <div className="flex items-center gap-3">
@@ -441,6 +462,12 @@ export default function AIGeneratorModal({
                     )}
                   </div>
                 ))}
+              </div>
+            )}
+
+            {errorMessage && (
+              <div className="p-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
+                <span>{errorMessage}</span>
               </div>
             )}
 

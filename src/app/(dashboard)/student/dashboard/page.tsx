@@ -1,54 +1,89 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
-import { Eye, FileText, ShieldCheck, Camera, AlertTriangle, ArrowRight } from 'lucide-react'
+import {
+  Eye,
+  FileText,
+  AlertTriangle,
+  ArrowRight,
+  Clock,
+  User,
+  RefreshCw,
+  Loader2,
+  ChevronDown,
+  ShieldCheck,
+} from 'lucide-react'
 import api from '@/lib/api'
 import { useAuthStore } from '@/stores/authStore'
 
+interface ActiveExam {
+  id: number
+  title: string
+  class_name: string
+  duration_minutes: number
+  teacher_name?: string
+  proctoring_level: string
+  start_time?: string
+}
+
 export default function StudentDashboardPage() {
   const { user } = useAuthStore()
-  const [activeExams, setActiveExams] = useState<any[]>([])
+  const [activeExams, setActiveExams] = useState<ActiveExam[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+
+  const loadActiveExams = useCallback(async () => {
+    setIsLoading(true)
+    setErrorMessage(null)
+    try {
+      const res = await api.get('/student/exams/active')
+      setActiveExams(res.data.data || [])
+    } catch (err: any) {
+      console.error('Failed to load active exams:', err)
+      setErrorMessage(
+        err.response?.data?.message ||
+          'Gagal memuat jadwal ujian. Pastikan koneksi internet aktif dan silakan coba lagi.'
+      )
+    } finally {
+      setIsLoading(false)
+    }
+  }, [])
 
   useEffect(() => {
-    async function loadActiveExams() {
-      try {
-        const res = await api.get('/student/exams/active')
-        setActiveExams(res.data.data || [])
-      } catch (err) {
-        console.error('Failed to load active exams:', err)
-      }
-    }
     loadActiveExams()
-  }, [])
+  }, [loadActiveExams])
+
+  const heroExam = activeExams.length > 0 ? activeExams[0] : null
+  const otherExams = activeExams.length > 1 ? activeExams.slice(1) : []
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto font-sans">
-      {/* Institutional Daylight Header Card */}
-      <div className="relative overflow-hidden bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-card flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+      {/* Institutional Daylight Header */}
+      <div className="relative overflow-hidden bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-card flex flex-col sm:flex-row sm:items-center justify-between gap-5">
         <div className="pointer-events-none absolute -top-16 -right-16 w-72 h-72 bg-emerald-50/70 rounded-full blur-3xl"></div>
         <div className="pointer-events-none absolute -bottom-16 -left-16 w-60 h-60 bg-indigo-50/50 rounded-full blur-2xl"></div>
 
-        <div className="relative space-y-2 max-w-xl">
+        <div className="relative space-y-2 max-w-xl min-w-0">
           <div className="flex items-center gap-2.5 flex-wrap">
             <span className="inline-flex items-center text-[10px] font-black uppercase tracking-wider text-slate-950 bg-[#c2ef4e] px-2.5 py-0.5 rounded font-mono shadow-xs">
               Portal Asesmen Siswa
             </span>
-            <span className="text-xs font-semibold text-slate-500 font-mono bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200/60">
+            <span className="text-xs font-semibold text-slate-500 font-mono bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200/60 truncate">
               NISN: {user?.identifier || '-'}
             </span>
           </div>
-          <h1 className="font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">
+          <h1 className="font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 truncate">
             Selamat Datang, {user?.full_name || 'Siswa'}
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
-            Daftar paket ujian, evaluasi formatif/sumatif, dan status kesiapan perangkat pengawasan ujian Anda.
+            Periksa paket ujian terjadwal Anda dan pastikan perangkat kamera telah siap sebelum memulai.
           </p>
         </div>
 
-        <div className="relative flex items-center sm:flex-col sm:items-end justify-between sm:justify-center gap-2 pt-4 sm:pt-0 border-t sm:border-t-0 border-slate-100">
+        <div className="relative flex items-center sm:flex-col sm:items-end justify-between sm:justify-center gap-2 pt-4 sm:pt-0 border-t sm:border-t-0 border-slate-100 shrink-0">
           <span className="text-[10px] uppercase font-bold text-slate-500 tracking-wider font-mono">
-            Status Sistem
+            Status Perangkat
           </span>
           <span className="inline-flex items-center gap-2 text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-xl font-mono shadow-xs">
             <span className="relative flex h-2 w-2" aria-hidden="true">
@@ -60,154 +95,209 @@ export default function StudentDashboardPage() {
         </div>
       </div>
 
-      {/* Student Stats & Environment Status */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-200/70 flex items-center justify-center font-bold shrink-0 ring-4 ring-indigo-50/70">
-            <FileText className="w-6 h-6" aria-hidden="true" />
-          </div>
-          <div>
-            <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block font-mono">
-              Ujian Terjadwal
-            </span>
-            <span className="text-lg font-bold text-slate-900 font-display tabular-nums">
-              {activeExams.length} Paket Aktif
-            </span>
-            <span className="text-[11px] text-slate-500 block mt-0.5">Tersedia untuk dikerjakan</span>
-          </div>
-        </div>
-
-        <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200/70 flex items-center justify-center font-bold shrink-0 ring-4 ring-emerald-50/70">
-            <ShieldCheck className="w-6 h-6" aria-hidden="true" />
-          </div>
-          <div>
-            <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block font-mono">
-              Pengawasan CBT
-            </span>
-            <span className="text-sm font-bold text-slate-900 block font-display">AI Proctoring Guard</span>
-            <span className="text-[11px] text-slate-500">Human-in-the-Loop Review</span>
-          </div>
-        </div>
-
-        <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-purple-50 text-purple-700 border border-purple-200/70 flex items-center justify-center font-bold shrink-0 ring-4 ring-purple-50/70">
-            <Camera className="w-6 h-6" aria-hidden="true" />
-          </div>
-          <div>
-            <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block font-mono">
-              Dual-Camera
-            </span>
-            <span className="text-sm font-bold text-slate-900 block font-display">Webcam & Smartphone</span>
-            <span className="text-[11px] text-slate-500">Sinkronisasi QR Otomatis</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Human-in-the-Loop Security Notice */}
-      <div className="p-5 bg-gradient-to-r from-amber-50/80 to-amber-50/30 border border-amber-200 text-amber-900 rounded-2xl shadow-card flex items-start gap-4 text-xs">
-        <div className="w-8 h-8 rounded-lg bg-amber-100 border border-amber-300 flex items-center justify-center shrink-0 mt-0.5">
-          <AlertTriangle className="w-4 h-4 text-amber-700" aria-hidden="true" />
-        </div>
-        <div className="space-y-1">
-          <p className="font-bold text-amber-950 font-display text-sm">
-            Ketentuan Integritas & Keamanan Ujian EXAMIND:
-          </p>
-          <p className="text-amber-900 text-xs leading-relaxed">
-            Selama ujian berlangsung, peserta wajib berada dalam mode <strong>Layar Penuh (Full Screen)</strong>. Berpindah tab, meminimalkan jendela browser, atau pergerakan mencurigakan akan dicatat secara otomatis oleh sistem proctoring untuk ditinjau secara langsung oleh guru pengawas sebelum keputusan diambil.
+      {/* Loading State */}
+      {isLoading && (
+        <div className="bg-white rounded-2xl border border-slate-200/80 p-12 text-center shadow-card space-y-3">
+          <Loader2 className="w-8 h-8 text-indigo-600 animate-spin mx-auto" aria-hidden="true" />
+          <h3 className="font-bold text-slate-900 text-sm">Memuat jadwal paket ujian...</h3>
+          <p className="text-xs text-slate-500 max-w-sm mx-auto">
+            Menghubungkan ke server CBT sekolah untuk mengambil paket ujian aktif Anda.
           </p>
         </div>
-      </div>
+      )}
 
-      {/* Active Exams List */}
-      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-card overflow-hidden">
-        <div className="p-5 sm:px-6 border-b border-slate-100 flex items-center justify-between">
-          <div>
-            <h2 className="font-display text-base font-bold text-slate-900">Daftar Paket Ujian Terjadwal</h2>
-            <p className="text-xs text-slate-500">Pilih paket ujian aktif di bawah ini untuk memulai pengerjaan</p>
+      {/* Error State */}
+      {!isLoading && errorMessage && (
+        <div className="bg-white rounded-2xl border border-rose-200 p-8 text-center shadow-card space-y-4">
+          <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 border border-rose-200 flex items-center justify-center mx-auto">
+            <AlertTriangle className="w-6 h-6" aria-hidden="true" />
           </div>
-          <span className="text-xs font-mono font-bold text-slate-700 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200/60 tabular-nums">
-            Total: {activeExams.length}
-          </span>
+          <div className="space-y-1">
+            <h3 className="font-bold text-slate-900 text-base">Gagal Mengambil Jadwal Ujian</h3>
+            <p className="text-xs text-slate-600 max-w-md mx-auto">{errorMessage}</p>
+          </div>
+          <button
+            type="button"
+            onClick={loadActiveExams}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition-colors cursor-pointer focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+          >
+            <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" />
+            <span>Coba Lagi</span>
+          </button>
         </div>
+      )}
 
-        <div className="divide-y divide-slate-100">
-          {activeExams.map((exam) => (
-            <div
-              key={exam.id}
-              className="p-5 sm:px-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 hover:bg-slate-50/80 transition-colors"
-            >
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-slate-100 text-slate-800 border border-slate-200 font-mono">
-                    {exam.class_name}
+      {/* Main Content: Distilled to "What exam do I take next" */}
+      {!isLoading && !errorMessage && heroExam && (
+        <>
+          {/* PRIMARY HERO: The Next Exam to Take */}
+          <div className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950 text-white rounded-2xl p-6 sm:p-8 shadow-card border border-slate-800">
+            <div className="pointer-events-none absolute top-0 right-0 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl"></div>
+            <div className="pointer-events-none absolute bottom-0 left-1/3 w-64 h-64 bg-[#c2ef4e]/10 rounded-full blur-3xl"></div>
+
+            <div className="relative z-10 space-y-5">
+              <div className="flex items-center justify-between gap-3 flex-wrap">
+                <div className="flex items-center gap-2">
+                  <span className="px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider bg-[#c2ef4e] text-slate-950 font-mono shadow-xs">
+                    Ujian Aktif Berikutnya
                   </span>
-                  <span className="px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200/80 flex items-center gap-1.5 font-mono">
-                    <Eye className="w-3.5 h-3.5" aria-hidden="true" />
-                    {exam.proctoring_level === 'dual_camera'
-                      ? 'Dual-Camera'
-                      : exam.proctoring_level === 'single_camera'
-                      ? 'Kamera Utama'
-                      : 'Standar'}
+                  <span className="px-2.5 py-1 rounded-md text-[11px] font-bold bg-white/10 text-white border border-white/10 font-mono">
+                    {heroExam.class_name}
                   </span>
                 </div>
-
-                <h3 className="font-display text-base font-bold text-slate-900 leading-snug">
-                  {exam.title}
-                </h3>
-                <p className="text-xs text-slate-500 flex items-center gap-3 flex-wrap">
-                  <span className="flex items-center gap-1">
-                    <span>⏱️ Durasi:</span>
-                    <strong className="text-slate-800 font-mono font-bold">
-                      {exam.duration_minutes} Menit
-                    </strong>
-                  </span>
-                  <span>•</span>
-                  <span className="flex items-center gap-1">
-                    <span>👨‍🏫 Pengampu:</span>
-                    <strong className="text-slate-800 font-semibold">{exam.teacher_name}</strong>
-                  </span>
-                </p>
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-bold bg-indigo-400/15 text-indigo-200 border border-indigo-400/20 font-mono">
+                  <Eye className="w-3.5 h-3.5 text-[#c2ef4e]" aria-hidden="true" />
+                  {heroExam.proctoring_level === 'dual_camera'
+                    ? 'Dual-Camera Proctoring'
+                    : heroExam.proctoring_level === 'single_camera'
+                    ? 'Kamera Utama'
+                    : 'Pengawasan Standar'}
+                </span>
               </div>
 
-              <div className="flex items-center gap-2.5 shrink-0 w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100">
+              <div className="space-y-2 max-w-2xl min-w-0">
+                <h2 className="font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-white leading-tight">
+                  {heroExam.title}
+                </h2>
+                <div className="flex items-center gap-4 text-xs text-slate-300 flex-wrap pt-1">
+                  <span className="flex items-center gap-1.5 font-mono">
+                    <Clock className="w-4 h-4 text-[#c2ef4e]" aria-hidden="true" />
+                    <strong>{heroExam.duration_minutes} Menit</strong>
+                  </span>
+                  {heroExam.teacher_name && (
+                    <span className="flex items-center gap-1.5">
+                      <User className="w-4 h-4 text-slate-400" aria-hidden="true" />
+                      <span>Pengampu: {heroExam.teacher_name}</span>
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* ONE Clear Primary Action with Secondary Link */}
+              <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                 <Link
-                  href={`/student/exam/${exam.id}/result`}
-                  className="flex-1 sm:flex-initial text-center px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs transition-colors cursor-pointer shadow-xs focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+                  href={`/student/exam/${heroExam.id}`}
+                  className="px-6 py-3.5 rounded-xl bg-[#c2ef4e] hover:bg-[#b0df3f] text-slate-950 font-extrabold text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2.5 cursor-pointer font-display tracking-wide group focus:ring-2 focus:ring-white/40 focus:outline-none"
                 >
-                  Lihat Hasil / Nilai
+                  <span>Mulai Ujian Sekarang</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
                 </Link>
                 <Link
-                  href={`/student/exam/${exam.id}`}
-                  className="flex-1 sm:flex-initial text-center px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs hover:shadow-card transition-all flex items-center justify-center gap-2 cursor-pointer group focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+                  href={`/student/exam/${heroExam.id}/result`}
+                  className="px-4 py-3.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-200 font-semibold text-xs border border-white/10 transition-colors flex items-center justify-center cursor-pointer focus:ring-2 focus:ring-white/20 focus:outline-none"
                 >
-                  <span>Mulai Ujian</span>
-                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" aria-hidden="true" />
+                  Lihat Riwayat & Pembahasan
                 </Link>
               </div>
             </div>
-          ))}
+          </div>
 
-          {activeExams.length === 0 && (
-            <div className="p-12 text-center flex flex-col items-center justify-center">
-              <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-3">
-                <FileText className="w-6 h-6" aria-hidden="true" />
+          {/* Secondary Scheduled Exams (if more than 1) */}
+          {otherExams.length > 0 && (
+            <div className="bg-white rounded-2xl border border-slate-200/80 shadow-card overflow-hidden">
+              <div className="p-4 sm:px-6 border-b border-slate-100 flex items-center justify-between">
+                <div>
+                  <h3 className="font-display text-sm sm:text-base font-bold text-slate-900">
+                    Paket Ujian Terjadwal Lainnya
+                  </h3>
+                  <p className="text-xs text-slate-500">Daftar ujian yang juga ditugaskan untuk kelas Anda</p>
+                </div>
+                <span className="text-xs font-mono font-bold text-slate-700 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200/60 tabular-nums">
+                  {otherExams.length} Paket
+                </span>
               </div>
-              <h3 className="font-bold text-slate-900 text-base">Tidak Ada Ujian Aktif Saat Ini</h3>
-              <p className="text-xs text-slate-500 max-w-sm mx-auto mt-1 mb-4">
-                Saat ini belum ada paket ujian terjadwal yang ditugaskan untuk kelas Anda. Silakan hubungi guru pengampu atau muat ulang jadwal.
-              </p>
-              <button
-                type="button"
-                onClick={() => window.location.reload()}
-                className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition-all cursor-pointer focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
-              >
-                Periksa Jadwal Terbaru
-              </button>
+
+              <div className="divide-y divide-slate-100">
+                {otherExams.map((exam) => (
+                  <div
+                    key={exam.id}
+                    className="p-4 sm:px-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 hover:bg-slate-50/80 transition-colors"
+                  >
+                    <div className="space-y-1.5 min-w-0 flex-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-700 font-mono">
+                          {exam.class_name}
+                        </span>
+                        <span className="text-xs text-slate-500 font-mono">
+                          Durasi: {exam.duration_minutes} Menit
+                        </span>
+                      </div>
+                      <h4 className="font-display text-sm font-bold text-slate-900 truncate">
+                        {exam.title}
+                      </h4>
+                      {exam.teacher_name && (
+                        <p className="text-xs text-slate-500">Guru: {exam.teacher_name}</p>
+                      )}
+                    </div>
+
+                    <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto">
+                      <Link
+                        href={`/student/exam/${exam.id}`}
+                        className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition-all flex items-center justify-center gap-1.5 w-full sm:w-auto cursor-pointer focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+                      >
+                        <span>Mulai Ujian</span>
+                        <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
+                      </Link>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
+        </>
+      )}
+
+      {/* Empty State: No Scheduled Exams */}
+      {!isLoading && !errorMessage && activeExams.length === 0 && (
+        <div className="bg-white rounded-2xl border border-slate-200/80 p-12 text-center shadow-card flex flex-col items-center justify-center">
+          <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-3">
+            <FileText className="w-6 h-6" aria-hidden="true" />
+          </div>
+          <h3 className="font-bold text-slate-900 text-base">Belum Ada Paket Ujian Aktif</h3>
+          <p className="text-xs text-slate-500 max-w-sm mx-auto mt-1 mb-4">
+            Saat ini belum ada paket ujian terjadwal yang ditugaskan untuk kelas Anda. Silakan hubungi guru pengampu atau periksa jadwal terbaru.
+          </p>
+          <button
+            type="button"
+            onClick={loadActiveExams}
+            className="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition-all cursor-pointer flex items-center gap-2 focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+          >
+            <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" />
+            <span>Periksa Jadwal Terbaru</span>
+          </button>
         </div>
-      </div>
+      )}
+
+      {/* Progressive Disclosure: CBT Security & Integrity Accordion */}
+      <details className="group bg-white rounded-2xl border border-slate-200/80 shadow-card overflow-hidden">
+        <summary className="p-4 sm:px-5 flex items-center justify-between cursor-pointer select-none hover:bg-slate-50/70 transition-colors list-none">
+          <div className="flex items-center gap-3">
+            <div className="w-7 h-7 rounded-lg bg-amber-50 text-amber-700 border border-amber-200/80 flex items-center justify-center shrink-0">
+              <ShieldCheck className="w-4 h-4" aria-hidden="true" />
+            </div>
+            <div>
+              <p className="text-xs font-bold text-slate-900 font-display">
+                Ketentuan Integritas & Pengawasan Ujian
+              </p>
+              <p className="text-[11px] text-slate-500">
+                Panduan mode layar penuh, toleransi browser, dan pengawasan kamera AI
+              </p>
+            </div>
+          </div>
+          <ChevronDown className="w-4 h-4 text-slate-500 group-open:rotate-180 transition-transform shrink-0" aria-hidden="true" />
+        </summary>
+        <div className="px-5 pb-5 pt-2 border-t border-slate-100 text-xs text-slate-600 leading-relaxed space-y-2">
+          <p>
+            Selama ujian berlangsung, aplikasi mewajibkan peserta berada dalam mode <strong>Layar Penuh (Full Screen)</strong>.
+          </p>
+          <ul className="list-disc pl-4 space-y-1 text-slate-600">
+            <li>Berpindah tab atau membuka aplikasi lain akan dicatat sebagai event peringatan.</li>
+            <li>AI proctoring memantau keberadaan wajah dan lingkungan pengerjaan tanpa mendiskualifikasi otomatis.</li>
+            <li>Guru pengawas berwenang penuh meninjau rekaman snapshot sebelum menentukan status kelulusan sesi Anda.</li>
+          </ul>
+        </div>
+      </details>
     </div>
   )
 }
+

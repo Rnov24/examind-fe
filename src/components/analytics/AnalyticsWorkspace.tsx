@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, FileSpreadsheet, FileText, Printer, Loader2 } from 'lucide-react'
+import { ArrowLeft, FileSpreadsheet, FileText, Printer, Loader2, AlertCircle, RotateCcw, X } from 'lucide-react'
 import api from '@/lib/api'
 
 interface ItemAnalysis {
@@ -50,6 +50,15 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
   const [isDownloadingExcel, setIsDownloadingExcel] = useState(false)
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [exportNotice, setExportNotice] = useState<{ type: 'error' | 'success'; text: string } | null>(null)
+
+  function showExportNotice(type: 'error' | 'success', text: string) {
+    setExportNotice({ type, text })
+    setTimeout(() => {
+      setExportNotice((curr) => (curr?.text === text ? null : curr))
+    }, 4500)
+  }
 
   const distributionBins = useMemo(() => {
     if (analyticsData?.score_distribution) {
@@ -93,8 +102,9 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
       link.click()
       document.body.removeChild(link)
       window.URL.revokeObjectURL(url)
+      showExportNotice('success', 'Rekap nilai format Excel berhasil diunduh.')
     } catch {
-      alert('Gagal mengunduh berkas Excel. Pastikan ujian memiliki data nilai.')
+      showExportNotice('error', 'Gagal mengunduh berkas Excel. Pastikan paket ujian telah memiliki data nilai siswa.')
     } finally {
       setIsDownloadingExcel(false)
     }
@@ -116,8 +126,9 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
       link.click()
       document.body.removeChild(link)
       window.URL.revokeObjectURL(url)
+      showExportNotice('success', 'Dokumen Berita Acara PDF berhasil diunduh.')
     } catch {
-      alert('Gagal mengunduh berkas Berita Acara PDF.')
+      showExportNotice('error', 'Gagal mengunduh berkas Berita Acara PDF. Pastikan ujian telah selesai.')
     } finally {
       setIsDownloadingPdf(false)
     }
@@ -139,11 +150,16 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
 
   async function loadAnalytics(id: number) {
     setIsLoading(true)
+    setErrorMessage(null)
     try {
       const res = await api.get(`/analytics/exam/${id}/items`)
       setAnalyticsData(res.data.data)
-    } catch (err) {
+    } catch (err: any) {
       console.error('Failed to load analytics:', err)
+      setErrorMessage(
+        err.response?.data?.message ||
+          'Gagal memuat data analisis psikometrik butir soal. Periksa koneksi ke server ujian CBT.'
+      )
     } finally {
       setIsLoading(false)
     }
@@ -223,6 +239,46 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
           </button>
         </div>
       </div>
+
+      {/* Export Notification */}
+      {exportNotice && (
+        <div
+          className={`p-4 rounded-xl border text-xs flex items-center justify-between gap-3 shadow-xs ${
+            exportNotice.type === 'success'
+              ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
+              : 'bg-rose-50 border-rose-200 text-rose-800'
+          }`}
+        >
+          <div className="flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 shrink-0" aria-hidden="true" />
+            <span className="font-semibold">{exportNotice.text}</span>
+          </div>
+          <button
+            onClick={() => setExportNotice(null)}
+            className="text-slate-400 hover:text-slate-600 text-xs font-bold cursor-pointer"
+            aria-label="Tutup notifikasi"
+          >
+            <X className="w-3.5 h-3.5" aria-hidden="true" />
+          </button>
+        </div>
+      )}
+
+      {/* Error state with retry */}
+      {errorMessage && (
+        <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs">
+          <div className="flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" aria-hidden="true" />
+            <span className="font-medium">{errorMessage}</span>
+          </div>
+          <button
+            onClick={() => loadAnalytics(examId)}
+            className="px-3.5 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer shrink-0"
+          >
+            <RotateCcw className="w-3.5 h-3.5" aria-hidden="true" />
+            <span>Coba Lagi</span>
+          </button>
+        </div>
+      )}
 
       {/* Printable Official Header (Shown Only on Print) */}
       <div className="hidden print:block border-b-2 border-slate-900 pb-4 mb-4">

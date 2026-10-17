@@ -232,6 +232,17 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
     }
   }
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (isModalOpen) setIsModalOpen(false)
+        else if (editingTask) setEditingTask(null)
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [isModalOpen, editingTask])
+
   // Open Task Configuration Modal
   const openTaskConfigModal = (task: TaskSecretItem) => {
     setEditingTask(task)
@@ -678,7 +689,12 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
       {/* MODAL 1: TASK SPECIFIC AI CONFIGURATION                  */}
       {/* ======================================================== */}
       {editingTask && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setEditingTask(null)
+          }}
+          className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
+        >
           <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-5 animate-in fade-in zoom-in-95 duration-150">
             <div className="flex items-start justify-between border-b border-slate-100 pb-3">
               <div>
@@ -843,7 +859,12 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
       {/* MODAL 2: ADD / EDIT GLOBAL SECRET                        */}
       {/* ======================================================== */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setIsModalOpen(false)
+          }}
+          className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4"
+        >
           <div className="bg-white border border-slate-200 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
             <div className="flex items-center justify-between border-b border-slate-200 pb-3">
               <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">

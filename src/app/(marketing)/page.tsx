@@ -47,7 +47,7 @@ export default function LandingPage() {
       { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
     )
 
-    const revealElements = document.querySelectorAll('[data-reveal]')
+    const revealElements = document.querySelectorAll('[data-reveal], [data-reveal-line]')
     revealElements.forEach((el) => observer.observe(el))
 
     return () => observer.disconnect()
@@ -695,104 +695,151 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* CARD SISWA */}
-            <div
-              data-reveal
-              style={{ '--reveal-delay': '0ms' } as React.CSSProperties}
-              className="p-6 rounded-xl bg-slate-50 border border-slate-200 space-y-4 hover:border-slate-300 hover:shadow-md transition-all flex flex-col justify-between"
-            >
-              <div className="space-y-3.5">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-800 border border-emerald-200 flex items-center justify-center font-bold shrink-0">
-                    <GraduationCap className="w-5 h-5" />
-                  </div>
-                  <h3 className="text-xl font-bold text-slate-900 tracking-tight">Siswa (Peserta Ujian)</h3>
+          {/* Ecosystem Baseline & Roles Container */}
+          <div className="relative pl-7 sm:pl-8 md:pl-0">
+            {/* Desktop Ecosystem Baseline (Horizontal) */}
+            <div className="hidden md:block relative mb-6">
+              <div
+                data-reveal-line
+                className="ecosystem-baseline-h absolute top-1/2 left-0 right-0 h-px bg-slate-200 -translate-y-1/2"
+              />
+              <div className="grid grid-cols-3 gap-6 relative">
+                <div className="flex items-center pl-6">
+                  <span className="w-3.5 h-3.5 rounded-full bg-emerald-500 ring-4 ring-white shrink-0" />
                 </div>
-                <p className="text-sm text-slate-600 leading-relaxed">
-                  Fokus mengerjakan ujian tanpa kecemasan teknis. Autosave IndexedDB menjamin jawaban tidak pernah hilang meski aliran listrik atau koneksi WiFi terputus. Setelah ujian, Socratic Tutor memandu pemahaman konsep secara mendalam.
-                </p>
+                <div className="flex items-center pl-6">
+                  <span className="w-3.5 h-3.5 rounded-full bg-indigo-600 ring-4 ring-white shrink-0" />
+                </div>
+                <div className="flex items-center pl-6">
+                  <span className="w-3.5 h-3.5 rounded-full bg-purple-600 ring-4 ring-white shrink-0" />
+                </div>
               </div>
-              <ul className="space-y-2.5 text-sm text-slate-700 pt-3 border-t border-slate-200">
-                <li className="flex items-start gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                  <span>Zero Data-Loss: Jawaban tersimpan di peramban seketika</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                  <span>Ketenangan Mental: Tanpa penutupan paksa ujian sepihak</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                  <span>Socratic Tutor: Pembahasan interaktif langkah demi langkah</span>
-                </li>
-              </ul>
             </div>
 
-            {/* CARD GURU */}
+            {/* Mobile Vertical Ecosystem Baseline Line */}
             <div
-              data-reveal
-              style={{ '--reveal-delay': '100ms' } as React.CSSProperties}
-              className="p-6 rounded-xl bg-slate-50 border border-slate-200 space-y-4 hover:border-slate-300 hover:shadow-md transition-all flex flex-col justify-between"
-            >
-              <div className="space-y-3.5">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-indigo-100 text-indigo-800 border border-indigo-200 flex items-center justify-center font-bold shrink-0">
-                    <BookOpen className="w-5 h-5" />
-                  </div>
-                  <h3 className="text-xl font-bold text-slate-900 tracking-tight">Guru & Tim Pengawas</h3>
-                </div>
-                <p className="text-sm text-slate-600 leading-relaxed">
-                  Memangkas hingga 80% beban administrasi koreksi. Generator soal berbasis kurikulum merumuskan paket soal dalam hitungan detik. AI mengevaluasi esai secara objektif, sementara guru tetap memegang otoritas penuh penyesuaian nilai.
-                </p>
-              </div>
-              <ul className="space-y-2.5 text-sm text-slate-700 pt-3 border-t border-slate-200">
-                <li className="flex items-start gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                  <span>Generator Paket Soal: Pilihan ganda & esai siap pakai</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                  <span>Live Proctoring: Pantau seluruh kelas dalam satu layar konsol</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                  <span>Otoritas Mutlak: Guru bebas merevisi nilai draf AI kapan saja</span>
-                </li>
-              </ul>
-            </div>
+              data-reveal-line
+              className="md:hidden ecosystem-baseline-v absolute left-3.5 top-6 bottom-8 w-px bg-slate-200"
+            />
 
-            {/* CARD SEKOLAH */}
-            <div
-              data-reveal
-              style={{ '--reveal-delay': '200ms' } as React.CSSProperties}
-              className="p-6 rounded-xl bg-slate-50 border border-slate-200 space-y-4 hover:border-slate-300 hover:shadow-md transition-all flex flex-col justify-between"
-            >
-              <div className="space-y-3.5">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-purple-100 text-purple-800 border border-purple-200 flex items-center justify-center font-bold shrink-0">
-                    <Building2 className="w-5 h-5" />
-                  </div>
-                  <h3 className="text-xl font-bold text-slate-900 tracking-tight">Kepala Sekolah & Tim Asesmen</h3>
+            {/* Roles Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* CARD SISWA */}
+              <div
+                data-reveal
+                style={{ '--reveal-delay': '0ms' } as React.CSSProperties}
+                className="relative p-6 rounded-xl bg-slate-50 border border-slate-200 hover:border-slate-300 transition-colors flex flex-col justify-between"
+              >
+                {/* Mobile Node Dot */}
+                <div className="md:hidden absolute -left-3.5 top-7 -translate-x-1/2 flex items-center justify-center">
+                  <span className="w-3.5 h-3.5 rounded-full bg-emerald-500 ring-4 ring-white shrink-0" />
                 </div>
-                <p className="text-sm text-slate-600 leading-relaxed">
-                  Menjamin reputasi integritas dan kepatuhan hukum institusi. Seluruh data biometrik terlindungi sesuai UU Pelindungan Data Pribadi (UU PDP). Cetak Berita Acara dan Transkrip Nilai resmi instansi dalam satu klik.
-                </p>
+
+                <div className="space-y-4">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-1.5 text-xs font-mono font-bold tracking-wider text-emerald-600 uppercase">
+                      <GraduationCap className="w-3.5 h-3.5" />
+                      <span>PESERTA UJIAN</span>
+                    </div>
+                    <h3 className="text-2xl font-bold text-slate-900 tracking-tight">Siswa (Peserta Ujian)</h3>
+                  </div>
+                  <p className="text-sm text-slate-600 leading-relaxed">
+                    Fokus mengerjakan ujian tanpa kecemasan teknis. Autosave IndexedDB menjamin jawaban tidak pernah hilang meski aliran listrik atau koneksi WiFi terputus. Setelah ujian, Socratic Tutor memandu pemahaman konsep secara mendalam.
+                  </p>
+                </div>
+                <ul className="space-y-2.5 text-sm text-slate-700 pt-6 mt-6 border-t border-slate-200">
+                  <li className="flex items-start gap-2.5">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <span>Zero Data-Loss: Jawaban tersimpan di peramban seketika</span>
+                  </li>
+                  <li className="flex items-start gap-2.5">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <span>Ketenangan Mental: Tanpa penutupan paksa ujian sepihak</span>
+                  </li>
+                  <li className="flex items-start gap-2.5">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <span>Socratic Tutor: Pembahasan interaktif langkah demi langkah</span>
+                  </li>
+                </ul>
               </div>
-              <ul className="space-y-2.5 text-sm text-slate-700 pt-3 border-t border-slate-200">
-                <li className="flex items-start gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                  <span>Kepatuhan Hukum: Tunduk penuh pada UU PDP No. 27/2022</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                  <span>Dokumentasi Legal: Berita Acara & Transkrip Nilai PDF resmi</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                  <span>Analitik Mutu: Komparasi capaian kompetensi antar-kelas</span>
-                </li>
-              </ul>
+
+              {/* CARD GURU */}
+              <div
+                data-reveal
+                style={{ '--reveal-delay': '100ms' } as React.CSSProperties}
+                className="relative p-6 rounded-xl bg-slate-50 border border-slate-200 hover:border-slate-300 transition-colors flex flex-col justify-between"
+              >
+                {/* Mobile Node Dot */}
+                <div className="md:hidden absolute -left-3.5 top-7 -translate-x-1/2 flex items-center justify-center">
+                  <span className="w-3.5 h-3.5 rounded-full bg-indigo-600 ring-4 ring-white shrink-0" />
+                </div>
+
+                <div className="space-y-4">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-1.5 text-xs font-mono font-bold tracking-wider text-indigo-600 uppercase">
+                      <BookOpen className="w-3.5 h-3.5" />
+                      <span>PENDIDIK</span>
+                    </div>
+                    <h3 className="text-2xl font-bold text-slate-900 tracking-tight">Guru & Tim Pengawas</h3>
+                  </div>
+                  <p className="text-sm text-slate-600 leading-relaxed">
+                    Memangkas hingga 80% beban administrasi koreksi. Generator soal berbasis kurikulum merumuskan paket soal dalam hitungan detik. AI mengevaluasi esai secara objektif, sementara guru tetap memegang otoritas penuh penyesuaian nilai.
+                  </p>
+                </div>
+                <ul className="space-y-2.5 text-sm text-slate-700 pt-6 mt-6 border-t border-slate-200">
+                  <li className="flex items-start gap-2.5">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <span>Generator Paket Soal: Pilihan ganda & esai siap pakai</span>
+                  </li>
+                  <li className="flex items-start gap-2.5">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <span>Live Proctoring: Pantau seluruh kelas dalam satu layar konsol</span>
+                  </li>
+                  <li className="flex items-start gap-2.5">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <span>Otoritas Mutlak: Guru bebas merevisi nilai draf AI kapan saja</span>
+                  </li>
+                </ul>
+              </div>
+
+              {/* CARD SEKOLAH */}
+              <div
+                data-reveal
+                style={{ '--reveal-delay': '200ms' } as React.CSSProperties}
+                className="relative p-6 rounded-xl bg-slate-50 border border-slate-200 hover:border-slate-300 transition-colors flex flex-col justify-between"
+              >
+                {/* Mobile Node Dot */}
+                <div className="md:hidden absolute -left-3.5 top-7 -translate-x-1/2 flex items-center justify-center">
+                  <span className="w-3.5 h-3.5 rounded-full bg-purple-600 ring-4 ring-white shrink-0" />
+                </div>
+
+                <div className="space-y-4">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-1.5 text-xs font-mono font-bold tracking-wider text-purple-600 uppercase">
+                      <Building2 className="w-3.5 h-3.5" />
+                      <span>INSTITUSI</span>
+                    </div>
+                    <h3 className="text-2xl font-bold text-slate-900 tracking-tight">Kepala Sekolah & Tim Asesmen</h3>
+                  </div>
+                  <p className="text-sm text-slate-600 leading-relaxed">
+                    Menjamin reputasi integritas dan kepatuhan hukum institusi. Seluruh data biometrik terlindungi sesuai UU Pelindungan Data Pribadi (UU PDP). Cetak Berita Acara dan Transkrip Nilai resmi instansi dalam satu klik.
+                  </p>
+                </div>
+                <ul className="space-y-2.5 text-sm text-slate-700 pt-6 mt-6 border-t border-slate-200">
+                  <li className="flex items-start gap-2.5">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <span>Kepatuhan Hukum: Tunduk penuh pada UU PDP No. 27/2022</span>
+                  </li>
+                  <li className="flex items-start gap-2.5">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <span>Dokumentasi Legal: Berita Acara & Transkrip Nilai PDF resmi</span>
+                  </li>
+                  <li className="flex items-start gap-2.5">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <span>Analitik Mutu: Komparasi capaian kompetensi antar-kelas</span>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
@@ -811,19 +858,24 @@ export default function LandingPage() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            {/* LEFT: MONITORING CONSOLE (FLATTENED) */}
             <div
               data-reveal
               style={{ '--reveal-delay': '0ms' } as React.CSSProperties}
-              className="lg:col-span-6 bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4"
+              className="lg:col-span-6 bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden"
             >
-              <div className="flex items-center justify-between pb-3 border-b border-slate-200 text-xs">
+              {/* Header Bar */}
+              <div className="px-5 py-3.5 bg-slate-50/70 border-b border-slate-200 flex items-center justify-between text-xs">
                 <span className="font-bold text-slate-900">Topologi Pengawasan Kamera Ganda</span>
                 <span className="text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded border border-emerald-200 font-mono font-bold">
                   ● Sinkronisasi Aktif
                 </span>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="p-4 bg-slate-50 rounded-lg border border-slate-200 space-y-2">
+
+              {/* Dual-Feed Area with Sync Bridge */}
+              <div className="relative grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-slate-200 bg-white">
+                {/* Kamera Primer (0°) */}
+                <div className="p-6 space-y-2">
                   <div className="flex items-center gap-2 text-indigo-700 font-mono text-xs font-bold">
                     <Camera className="w-4 h-4" />
                     <span>Kamera Primer (0°)</span>
@@ -834,7 +886,8 @@ export default function LandingPage() {
                   </p>
                 </div>
 
-                <div className="p-4 bg-slate-50 rounded-lg border border-slate-200 space-y-2">
+                {/* Kamera Sekunder (45°) */}
+                <div className="p-6 space-y-2">
                   <div className="flex items-center gap-2 text-emerald-700 font-mono text-xs font-bold">
                     <Smartphone className="w-4 h-4" />
                     <span>Kamera Sekunder (45°)</span>
@@ -844,46 +897,78 @@ export default function LandingPage() {
                     Memantau permukaan meja, keyboard, tangan, dan layar tanpa perlu memasang aplikasi tambahan.
                   </p>
                 </div>
+
+                {/* Sync Bridge: Horizontal on sm+, Vertical on <sm */}
+                <div
+                  className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-none"
+                  aria-hidden="true"
+                >
+                  <div className="bg-white border border-slate-200 shadow-xs rounded-full p-1.5 flex items-center justify-center">
+                    <div className="relative flex items-center justify-center w-4 h-14 sm:w-16 sm:h-4">
+                      {/* Horizontal track line (sm+) */}
+                      <div className="hidden sm:block absolute inset-x-1 top-1/2 -translate-y-1/2 h-0.5 bg-slate-200 rounded-full" />
+                      {/* Vertical track line (<sm) */}
+                      <div className="sm:hidden block absolute inset-y-1 left-1/2 -translate-x-1/2 w-0.5 bg-slate-200 rounded-full" />
+                      {/* Traveling sync pulse dot */}
+                      <span className="sync-pulse-dot w-2.5 h-2.5 rounded-full bg-[#c2ef4e] border border-emerald-600 shadow-[0_0_6px_rgba(194,239,78,0.9)]" />
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 text-xs text-slate-600 flex items-center justify-between">
+
+              {/* Console Footer Strip: Transmission Bar */}
+              <div className="px-5 py-3 bg-slate-50/70 border-t border-slate-200 text-xs text-slate-600 flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                 <span>Transmisi Data: Protokol WebSocket Terenkripsi SSL</span>
                 <span className="font-mono text-slate-900 font-bold text-xs">Latensi Teruji &lt; 200 ms</span>
               </div>
             </div>
 
+            {/* RIGHT: NUMBERED STEPS */}
             <div
               data-reveal
               style={{ '--reveal-delay': '120ms' } as React.CSSProperties}
-              className="lg:col-span-6 space-y-6"
+              className="lg:col-span-6 space-y-8"
             >
-              <div className="space-y-1.5">
-                <h3 className="text-base font-bold text-slate-900 flex items-center gap-2.5">
-                  <span className="w-6 h-6 rounded-md bg-slate-900 text-white flex items-center justify-center text-xs font-mono font-bold">1</span>
-                  Kemudahan Akses Tanpa Instalasi Aplikasi
-                </h3>
-                <p className="text-sm text-slate-600 leading-relaxed pl-8.5 max-w-xl">
-                  Peserta cukup membuka kamera bawaan ponsel dan memindai QR Code di layar ujian. Streaming langsung aktif di peramban tanpa membebani memori penyimpanan perangkat siswa.
-                </p>
+              <div className="flex items-start gap-3.5">
+                <span className="w-6 h-6 rounded-md bg-slate-900 text-white flex items-center justify-center text-xs font-mono font-bold shrink-0 mt-0.5">
+                  1
+                </span>
+                <div className="space-y-2">
+                  <h3 className="text-base font-bold text-slate-900">
+                    Kemudahan Akses Tanpa Instalasi Aplikasi
+                  </h3>
+                  <p className="text-sm text-slate-600 leading-relaxed max-w-xl">
+                    Peserta cukup membuka kamera bawaan ponsel dan memindai QR Code di layar ujian. Streaming langsung aktif di peramban tanpa membebani memori penyimpanan perangkat siswa.
+                  </p>
+                </div>
               </div>
 
-              <div className="space-y-1.5">
-                <h3 className="text-base font-bold text-slate-900 flex items-center gap-2.5">
-                  <span className="w-6 h-6 rounded-md bg-slate-900 text-white flex items-center justify-center text-xs font-mono font-bold">2</span>
-                  Cakupan Meja dan Layar Menyeluruh
-                </h3>
-                <p className="text-sm text-slate-600 leading-relaxed pl-8.5 max-w-xl">
-                  Penempatan sudut 45 derajat memastikan seluruh area kerja tangan peserta dan sisi layar terpantau jelas, menutup celah pemakaian catatan fisik maupun ponsel sekunder.
-                </p>
+              <div className="flex items-start gap-3.5">
+                <span className="w-6 h-6 rounded-md bg-slate-900 text-white flex items-center justify-center text-xs font-mono font-bold shrink-0 mt-0.5">
+                  2
+                </span>
+                <div className="space-y-2">
+                  <h3 className="text-base font-bold text-slate-900">
+                    Cakupan Meja dan Layar Menyeluruh
+                  </h3>
+                  <p className="text-sm text-slate-600 leading-relaxed max-w-xl">
+                    Penempatan sudut 45 derajat memastikan seluruh area kerja tangan peserta dan sisi layar terpantau jelas, menutup celah pemakaian catatan fisik maupun ponsel sekunder.
+                  </p>
+                </div>
               </div>
 
-              <div className="space-y-1.5">
-                <h3 className="text-base font-bold text-slate-900 flex items-center gap-2.5">
-                  <span className="w-6 h-6 rounded-md bg-slate-900 text-white flex items-center justify-center text-xs font-mono font-bold">3</span>
-                  Otoritas Penuh Pengawas Manusia
-                </h3>
-                <p className="text-sm text-slate-600 leading-relaxed pl-8.5 max-w-xl">
-                  AI berfungsi sebagai sistem peringatan dini, bukan penentu hukuman. Setiap peristiwa disajikan dalam bentuk bukti snapshot dan cap waktu agar pengawas dapat mengambil keputusan yang adil dan beretika.
-                </p>
+              <div className="flex items-start gap-3.5">
+                <span className="w-6 h-6 rounded-md bg-slate-900 text-white flex items-center justify-center text-xs font-mono font-bold shrink-0 mt-0.5">
+                  3
+                </span>
+                <div className="space-y-2">
+                  <h3 className="text-base font-bold text-slate-900">
+                    Otoritas Penuh Pengawas Manusia
+                  </h3>
+                  <p className="text-sm text-slate-600 leading-relaxed max-w-xl">
+                    AI berfungsi sebagai sistem peringatan dini, bukan penentu hukuman. Setiap peristiwa disajikan dalam bentuk bukti snapshot dan cap waktu agar pengawas dapat mengambil keputusan yang adil dan beretika.
+                  </p>
+                </div>
               </div>
             </div>
           </div>

@@ -256,6 +256,87 @@ h1, h2, h3, .heading-display {
   transform: translateY(0);
 }
 
+/* Ecosystem baseline draw-in scroll reveal */
+[data-reveal-line] {
+  opacity: 0;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition-property: opacity, transform;
+  transition-duration: 600ms;
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+[data-reveal-line].is-visible {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+@media (max-width: 767px) {
+  [data-reveal-line].ecosystem-baseline-v {
+    transform: scaleY(0);
+    transform-origin: top center;
+  }
+
+  [data-reveal-line].ecosystem-baseline-v.is-visible {
+    transform: scaleY(1);
+  }
+}
+
+/* Dual-camera sync pulse animation (transform + opacity only) */
+@keyframes sync-pulse-travel-x {
+  0% {
+    transform: translateX(-22px);
+    opacity: 0.35;
+  }
+  25% {
+    opacity: 1;
+  }
+  50% {
+    transform: translateX(22px);
+    opacity: 0.35;
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-22px);
+    opacity: 0.35;
+  }
+}
+
+@keyframes sync-pulse-travel-y {
+  0% {
+    transform: translateY(-18px);
+    opacity: 0.35;
+  }
+  25% {
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(18px);
+    opacity: 0.35;
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-18px);
+    opacity: 0.35;
+  }
+}
+
+.sync-pulse-dot {
+  will-change: transform, opacity;
+  animation: sync-pulse-travel-y 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@media (min-width: 640px) {
+  .sync-pulse-dot {
+    animation: sync-pulse-travel-x 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  }
+}
+
 /* Prefers-reduced-motion accessibility safeguard */
 @media (prefers-reduced-motion: reduce) {
   .anim-rise,
@@ -286,5 +367,25 @@ h1, h2, h3, .heading-display {
     transform: none !important;
     opacity: 1 !important;
   }
+
+  .sync-pulse-dot {
+    animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+
+  [data-reveal-line] {
+    transform: none !important;
+    opacity: 1 !important;
+    transition-property: opacity !important;
+    transition-duration: 1ms !important;
+    transition-delay: 0ms !important;
+  }
+
+  [data-reveal-line].is-visible {
+    transform: none !important;
+    opacity: 1 !important;
+  }
 }
+
 

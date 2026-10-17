@@ -362,7 +362,7 @@ export default function AIAssistantWidget() {
       {/* Mobile Backdrop */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-slate-900/30 backdrop-blur-xs z-40 sm:hidden"
+          className="fixed inset-0 bg-slate-950/60 z-40 sm:hidden animate-in fade-in duration-150"
           onClick={() => setIsOpen(false)}
           aria-hidden="true"
         />

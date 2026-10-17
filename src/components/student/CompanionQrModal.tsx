@@ -1,7 +1,7 @@
 'use client'
 
-import React, { useState } from 'react'
-import { Smartphone, X, Check } from 'lucide-react'
+import React, { useState, useEffect, useRef } from 'react'
+import { Smartphone, X, Check, Copy, ShieldCheck } from 'lucide-react'
 import { QRCodeSVG } from 'qrcode.react'
 
 interface CompanionQrModalProps {
@@ -20,6 +20,17 @@ export default function CompanionQrModal({
   onClose,
 }: CompanionQrModalProps) {
   const [copied, setCopied] = useState(false)
+  const onCloseRef = useRef(onClose)
+  onCloseRef.current = onClose
+
+  useEffect(() => {
+    if (!isOpen) return
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onCloseRef.current()
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [isOpen])
 
   if (!isOpen) return null
 
@@ -32,48 +43,72 @@ export default function CompanionQrModal({
   }
 
   return (
-    <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white border border-slate-200 rounded-xl p-6 max-w-sm w-full text-center space-y-4 shadow-2xl text-slate-900">
-        <div className="flex items-center justify-between pb-2 border-b border-slate-200">
-          <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-            <Smartphone className="w-4 h-4 text-slate-900" />
-            <span>Koneksikan Kamera HP (Cam 2)</span>
-          </h3>
+    <div
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose()
+      }}
+      className="fixed inset-0 bg-slate-950/60 z-50 flex items-center justify-center p-4 animate-in fade-in duration-150"
+    >
+      <div className="bg-white border border-slate-200/90 rounded-2xl p-6 sm:p-7 max-w-sm w-full text-center space-y-4 shadow-2xl text-slate-900 animate-in zoom-in-95 duration-150">
+        <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+          <div className="flex items-center gap-2.5 text-left">
+            <div className="w-9 h-9 rounded-xl bg-[#150f23] text-white flex items-center justify-center shrink-0">
+              <Smartphone className="w-4 h-4 text-[#c2ef4e]" aria-hidden="true" />
+            </div>
+            <div>
+              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-indigo-700 bg-indigo-50 px-1.5 py-0.5 rounded border border-indigo-200">
+                Dual-Cam AI
+              </span>
+              <h3 className="text-sm font-bold text-slate-900 font-display mt-0.5">
+                Kamera HP (Cam 2)
+              </h3>
+            </div>
+          </div>
           <button
             type="button"
             onClick={onClose}
             aria-label="Tutup modal"
-            className="text-slate-400 hover:text-slate-700 hover:bg-slate-100 p-1.5 rounded-lg transition-colors cursor-pointer"
+            className="text-slate-400 hover:text-slate-700 hover:bg-slate-100 p-2 rounded-xl transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-slate-900/10"
           >
-            <X className="w-4 h-4" />
+            <X className="w-4 h-4" aria-hidden="true" />
           </button>
         </div>
 
-        <p className="text-xs text-slate-500">
-          Pindai QR code ini menggunakan smartphone untuk memantau lingkungan sekitar dari samping/belakang:
+        <p className="text-xs text-slate-500 leading-relaxed text-left">
+          Pindai QR code ini menggunakan smartphone untuk memantau lingkungan sekitar dari sudut samping/belakang meja:
         </p>
 
-        <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-center mx-auto shadow-inner w-fit">
+        <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200/80 flex items-center justify-center mx-auto shadow-inner w-fit">
           <QRCodeSVG value={companionUrl} size={180} level="M" />
         </div>
 
-        <div className="bg-slate-50 rounded-lg p-2.5 border border-slate-200 text-left space-y-1 font-mono">
+        <div className="bg-slate-50 rounded-xl p-3 border border-slate-200/80 text-left space-y-1.5 font-mono text-xs">
           <div className="flex items-center justify-between text-[11px]">
             <span className="text-slate-500">Sesi ID:</span>
-            <span className="font-bold text-slate-900">#{sessionId}</span>
+            <span className="font-bold text-slate-900">#{sessionId || '-'}</span>
           </div>
           <div className="flex items-center justify-between text-[11px]">
             <span className="text-slate-500">Status Cam 2:</span>
-            <span className={isCompanionPaired ? 'text-emerald-700 font-bold' : 'text-amber-700 font-medium'}>
+            <span
+              className={`font-semibold flex items-center gap-1.5 ${
+                isCompanionPaired ? 'text-emerald-700 font-bold' : 'text-amber-700'
+              }`}
+            >
+              <span
+                className={`w-1.5 h-1.5 rounded-full ${
+                  isCompanionPaired ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'
+                }`}
+              />
               {isCompanionPaired ? 'Terhubung (Aktif)' : 'Menunggu Pindai...'}
             </span>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 pt-1">
           <button
+            type="button"
             onClick={copyUrl}
-            className="flex-1 py-2.5 rounded-lg bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs transition-colors border border-slate-300 shadow-xs cursor-pointer flex items-center justify-center gap-1.5"
+            className="flex-1 py-2.5 px-3 rounded-xl bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs transition-colors border border-slate-200 shadow-xs cursor-pointer flex items-center justify-center gap-1.5 focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
           >
             {copied ? (
               <>
@@ -81,12 +116,16 @@ export default function CompanionQrModal({
                 <span>Tautan Disalin!</span>
               </>
             ) : (
-              <span>Salin Tautan</span>
+              <>
+                <Copy className="w-3.5 h-3.5 text-slate-500" aria-hidden="true" />
+                <span>Salin Tautan</span>
+              </>
             )}
           </button>
           <button
+            type="button"
             onClick={onClose}
-            className="flex-1 py-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition-colors shadow-xs cursor-pointer"
+            className="flex-1 py-2.5 px-3 rounded-xl bg-[#150f23] hover:bg-slate-800 text-white font-bold text-xs transition-all shadow-md cursor-pointer font-display focus:ring-2 focus:ring-[#6a5fc1]/30 focus:outline-none"
           >
             Tutup
           </button>

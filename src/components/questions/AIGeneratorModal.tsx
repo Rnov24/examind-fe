@@ -1,7 +1,7 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
-import { Sparkles, X, Loader2, Save } from 'lucide-react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
+import { Sparkles, X, Loader2, Save, Check } from 'lucide-react'
 import api from '@/lib/api'
 
 interface Option {
@@ -75,24 +75,36 @@ export default function AIGeneratorModal({
   const [generatedData, setGeneratedData] = useState<GeneratedData | null>(null)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
+  const onCloseRef = useRef(onClose)
+  onCloseRef.current = onClose
+
   useEffect(() => {
     if (typeof window !== 'undefined') {
       setGeminiApiKey(localStorage.getItem('examind_gemini_key') || '')
     }
   }, [])
 
-  function handleApiKeyChange(val: string) {
-    setGeminiApiKey(val)
+  const persistApiKey = useCallback((val: string) => {
     if (typeof window !== 'undefined') {
-      if (val.trim()) {
-        localStorage.setItem('examind_gemini_key', val.trim())
+      const trimmed = val.trim()
+      if (trimmed) {
+        localStorage.setItem('examind_gemini_key', trimmed)
       } else {
         localStorage.removeItem('examind_gemini_key')
       }
     }
+  }, [])
+
+  function handleApiKeyChange(val: string) {
+    setGeminiApiKey(val)
+  }
+
+  function handleApiKeyBlur() {
+    persistApiKey(geminiApiKey)
   }
 
   async function handleGenerate() {
+    persistApiKey(geminiApiKey)
     setErrorMessage(null)
     if (!topicContent.trim()) {
       setErrorMessage('Silakan masukkan topik atau ringkasan materi terlebih dahulu.')
@@ -123,12 +135,12 @@ export default function AIGeneratorModal({
     if (!isOpen) return
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        onClose()
+        onCloseRef.current()
       }
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [isOpen, onClose])
+  }, [isOpen])
 
   async function handleSaveAllToBank() {
     if (!generatedData) return
@@ -182,17 +194,26 @@ export default function AIGeneratorModal({
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose()
       }}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 animate-in fade-in duration-150"
     >
-      <div className="bg-white rounded-xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-slate-200 max-h-[90vh] overflow-y-auto text-slate-900">
-        <div className="flex items-center justify-between pb-4 border-b border-slate-200 mb-6">
+      <div className="bg-white rounded-2xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-slate-200/90 max-h-[90vh] overflow-y-auto text-slate-900 animate-in zoom-in-95 duration-150">
+        <div className="flex items-center justify-between pb-4 border-b border-slate-100 mb-6">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-indigo-50 border border-indigo-200 flex items-center justify-center text-indigo-700 font-bold">
-              <Sparkles className="w-5 h-5" />
+            <div className="w-11 h-11 rounded-xl bg-[#150f23] flex items-center justify-center text-white shrink-0 shadow-xs ring-2 ring-[#150f23]/10">
+              <Sparkles className="w-5 h-5 text-[#c2ef4e]" aria-hidden="true" />
             </div>
             <div>
-              <h3 className="text-lg font-black text-slate-900">AI Question Generator Studio</h3>
-              <p className="text-xs text-slate-500">Generate draft soal PG & Esai lengkap dengan analisis distractor & rubrik 4D</p>
+              <div className="flex items-center gap-2">
+                <span className="px-2 py-0.5 rounded text-[10px] font-bold font-mono uppercase tracking-wider bg-indigo-50 text-indigo-700 border border-indigo-200">
+                  AI Question Studio
+                </span>
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 font-display tracking-tight mt-0.5">
+                AI Question Generator Studio
+              </h3>
+              <p className="text-xs text-slate-500">
+                Generate draft soal PG & Esai lengkap dengan analisis distractor & rubrik 4D
+              </p>
             </div>
           </div>
 
@@ -285,9 +306,10 @@ export default function AIGeneratorModal({
                 <input
                   value={geminiApiKey}
                   onChange={(e) => handleApiKeyChange(e.target.value)}
+                  onBlur={handleApiKeyBlur}
                   type="password"
                   placeholder="Masukkan Google Gemini API Key (AIzaSy...)"
-                  className="w-full px-3 py-2 rounded-lg bg-white border border-slate-300 text-xs font-mono text-slate-900 focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none placeholder:text-slate-400"
+                  className="w-full px-3 py-2 rounded-lg bg-white border border-slate-300 text-xs font-mono text-slate-900 focus:ring-2 focus:ring-[#6a5fc1]/25 focus:border-[#150f23] outline-none placeholder:text-slate-400 transition-all"
                 />
                 <p className="text-[10px] text-slate-500 mt-1">
                   Dapatkan API Key gratis di{' '}
@@ -382,9 +404,19 @@ export default function AIGeneratorModal({
                           <div className="flex-1">
                             <span>{opt.text}</span>
                             {opt.rationale && (
-                              <p className="text-[11px] text-slate-500 font-normal mt-0.5 italic">
-                                {opt.id === mcq.correct_option_id ? '✓ Alasan Kunci:' : '✗ Pengecoh:'}{' '}
-                                {opt.rationale}
+                              <p className="text-[11px] text-slate-500 font-normal mt-0.5 italic flex items-center gap-1 flex-wrap">
+                                {opt.id === mcq.correct_option_id ? (
+                                  <span className="inline-flex items-center gap-0.5 text-emerald-700 font-semibold not-italic">
+                                    <Check className="w-3 h-3 text-emerald-600 inline shrink-0" aria-hidden="true" />
+                                    Alasan Kunci:
+                                  </span>
+                                ) : (
+                                  <span className="inline-flex items-center gap-0.5 text-slate-600 font-semibold not-italic">
+                                    <X className="w-3 h-3 text-slate-400 inline shrink-0" aria-hidden="true" />
+                                    Pengecoh:
+                                  </span>
+                                )}{' '}
+                                <span>{opt.rationale}</span>
                               </p>
                             )}
                           </div>

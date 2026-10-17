@@ -700,7 +700,7 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
           onClick={(e) => {
             if (e.target === e.currentTarget) setEditingTask(null)
           }}
-          className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 bg-slate-950/60 flex items-center justify-center p-4 animate-in fade-in duration-150"
         >
           <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-5 animate-in fade-in zoom-in-95 duration-150">
             <div className="flex items-start justify-between border-b border-slate-100 pb-3">
@@ -718,7 +718,7 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
                 aria-label="Tutup konfigurasi task"
                 className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-slate-700 cursor-pointer"
               >
-                ✕
+                <X className="w-4 h-4" aria-hidden="true" />
               </button>
             </div>
 
@@ -870,7 +870,7 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
           onClick={(e) => {
             if (e.target === e.currentTarget) setIsModalOpen(false)
           }}
-          className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 bg-slate-950/60 flex items-center justify-center p-4 animate-in fade-in duration-150"
         >
           <div className="bg-white border border-slate-200 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
             <div className="flex items-center justify-between border-b border-slate-200 pb-3">

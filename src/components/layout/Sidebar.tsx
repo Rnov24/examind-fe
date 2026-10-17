@@ -158,7 +158,7 @@ export default function Sidebar() {
       {/* Mobile Drawer Backdrop */}
       <div
         onClick={() => setSidebarOpen(false)}
-        className={`fixed inset-0 z-40 bg-slate-950/40 backdrop-blur-[2px] transition-opacity duration-300 md:hidden motion-reduce:transition-none ${
+        className={`fixed inset-0 z-40 bg-slate-950/60 transition-opacity duration-300 md:hidden motion-reduce:transition-none ${
           sidebarOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`}
         aria-hidden="true"
@@ -196,9 +196,9 @@ export default function Sidebar() {
 
                 {/* SuperAdmin Infrastructure Health Card */}
                 {sidebarOpen && (
-                  <div className="mt-4 p-3 rounded-xl bg-slate-900 text-white text-[11px] space-y-2 shadow-card">
+                  <div className="mt-4 p-3 rounded-xl bg-slate-900 text-white text-[11px] space-y-2 shadow-card border border-slate-800">
                     <div className="flex items-center justify-between">
-                      <span className="font-mono text-[10px] text-slate-400 font-semibold uppercase">Cluster Engine</span>
+                      <span className="font-mono text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Cluster Engine</span>
                       <span className="text-[10px] font-mono text-[#c2ef4e] font-bold flex items-center gap-1">
                         <Database className="w-3 h-3 text-[#c2ef4e]" />
                         TiDB Serverless
@@ -210,8 +210,11 @@ export default function Sidebar() {
                         <span className="text-white">ap-southeast-1</span>
                       </div>
                       <div className="flex justify-between">
-                        <span>Latency:</span>
-                        <span className="text-emerald-400 font-bold">~28 ms</span>
+                        <span>Status DB:</span>
+                        <span className="text-emerald-400 font-semibold flex items-center gap-1">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                          Terhubung
+                        </span>
                       </div>
                       <div className="flex justify-between">
                         <span>AI Provider:</span>
@@ -239,30 +242,18 @@ export default function Sidebar() {
                 {renderLink('/analytics', 'Rekap Nilai', BarChart3)}
                 {renderLink('/superadmin/secrets', 'Pengaturan', Key)}
 
-                {/* Admin Capacity Meter */}
+                {/* Admin License Status Card */}
                 {sidebarOpen && (
                   <div className="mt-4 p-3 rounded-xl bg-slate-50 border border-slate-200/80 text-[11px] space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="font-bold text-slate-800 text-[10px] uppercase font-mono">Kapasitas Sekolah</span>
+                      <span className="font-bold text-slate-800 text-[10px] uppercase font-mono tracking-wider">Lisensi Institusi</span>
                       <span className="text-[10px] font-bold text-indigo-700 bg-indigo-50 px-1.5 py-0.5 rounded border border-indigo-200">
-                        Pro Plan
+                        Aktif
                       </span>
                     </div>
-                    <div className="space-y-1.5 text-[10px] text-slate-600 font-mono">
-                      <div>
-                        <div className="flex justify-between mb-0.5">
-                          <span>Siswa Terdaftar:</span>
-                          <strong className="text-slate-900">3 / 1,000</strong>
-                        </div>
-                        <div className="w-full bg-slate-200 rounded-full h-1 overflow-hidden">
-                          <div className="bg-indigo-600 h-1 rounded-full" style={{ width: '0.3%' }} />
-                        </div>
-                      </div>
-                      <div className="flex justify-between pt-1 border-t border-slate-100">
-                        <span>Guru Aktif:</span>
-                        <strong className="text-slate-900">2 / 100</strong>
-                      </div>
-                    </div>
+                    <p className="text-[10px] text-slate-600 leading-relaxed">
+                      Akses penuh manajemen kelas, bank soal, jadwal ujian, dan telemetri proctoring terpusat.
+                    </p>
                   </div>
                 )}
               </>
@@ -285,22 +276,21 @@ export default function Sidebar() {
                 {renderLink('/grading', 'Koreksi Esai', CheckCircle2)}
                 {renderLink('/analytics', 'Analisis Soal', BarChart3)}
 
-                {/* Teacher AI Monthly Credits Widget */}
+                {/* Teacher AI Studio Card */}
                 {sidebarOpen && (
                   <div className="mt-4 p-3 rounded-xl bg-gradient-to-br from-indigo-50/70 to-indigo-50/40 border border-indigo-200/80 text-[11px] space-y-2">
                     <div className="flex items-center justify-between">
                       <span className="font-bold text-indigo-950 flex items-center gap-1.5 text-xs">
                         <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
-                        Kredit AI Bulanan
+                        AI Studio
                       </span>
                       <span className="text-[10px] font-mono font-bold text-indigo-700 bg-white px-1.5 py-0.5 rounded shadow-2xs border border-indigo-200">
-                        97% Sisa
+                        Tersedia
                       </span>
                     </div>
-                    <div className="w-full bg-indigo-200/60 rounded-full h-1.5 overflow-hidden">
-                      <div className="bg-gradient-to-r from-indigo-600 to-[#c2ef4e] h-1.5 rounded-full" style={{ width: '97%' }} />
-                    </div>
-                    <p className="text-[10px] text-slate-500 font-mono">4,880 dari 5,000 prompt tersisa</p>
+                    <p className="text-[10px] text-slate-600 leading-relaxed">
+                      Generate draft soal PG & esai dengan rubrik 4 dimensi otomatis melalui Bank Soal.
+                    </p>
                   </div>
                 )}
               </>
@@ -328,11 +318,11 @@ export default function Sidebar() {
                         Integritas CBT
                       </span>
                       <span className="font-mono font-bold text-emerald-800 text-[10px] bg-emerald-100/80 px-1.5 py-0.5 rounded border border-emerald-200">
-                        100% Bersih
+                        Sistem Siap
                       </span>
                     </div>
                     <p className="text-[10px] text-emerald-800/80 leading-relaxed">
-                      Webcam depan aktif & status browser terkunci. Bebas dari catatan pelanggaran.
+                      Pengawasan kamera ganda dan proteksi layar penuh aktif selama sesi ujian berlangsung.
                     </p>
                   </div>
                 )}

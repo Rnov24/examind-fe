@@ -35,9 +35,10 @@ export default function AdminDashboardPage() {
     active_sessions: 0,
     completed_sessions: 0,
     disqualified_sessions: 0,
-    database_status: 'Connected (MySQL 3306)',
-    edge_cv_status: 'Online',
+    database_status: null as string | null,
+    edge_cv_status: null as string | null,
   })
+  const [isLoadingStats, setIsLoadingStats] = useState(true)
 
   const [userList, setUserList] = useState<any[]>([])
   const [selectedRole, setSelectedRole] = useState('all')
@@ -49,17 +50,8 @@ export default function AdminDashboardPage() {
   const [usersErrorMessage, setUsersErrorMessage] = useState<string | null>(null)
   const [togglingUserId, setTogglingUserId] = useState<number | null>(null)
 
-  const fullNameInputRef = useRef<HTMLInputElement | null>(null)
-
-  const [newUserForm, setNewUserForm] = useState({
-    full_name: '',
-    identifier: '',
-    role: 'student',
-    email: '',
-    password: '',
-  })
-
   const fetchStats = useCallback(async () => {
+    setIsLoadingStats(true)
     try {
       const res = await api.get('/admin/stats')
       if (res.data.data) {
@@ -67,6 +59,8 @@ export default function AdminDashboardPage() {
       }
     } catch (err) {
       console.error('Failed to load admin stats:', err)
+    } finally {
+      setIsLoadingStats(false)
     }
   }, [])
 
@@ -95,27 +89,6 @@ export default function AdminDashboardPage() {
     fetchUsers()
   }, [fetchStats, fetchUsers])
 
-  // Focus first input and handle Escape key for modal
-  useEffect(() => {
-    if (!showAddUserModal) return
-
-    const timer = setTimeout(() => {
-      fullNameInputRef.current?.focus()
-    }, 50)
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setShowAddUserModal(false)
-      }
-    }
-
-    window.addEventListener('keydown', handleKeyDown)
-    return () => {
-      clearTimeout(timer)
-      window.removeEventListener('keydown', handleKeyDown)
-    }
-  }, [showAddUserModal])
-
   const toggleUserStatus = async (targetUser: any) => {
     if (togglingUserId) return
     setTogglingUserId(targetUser.id)
@@ -132,21 +105,19 @@ export default function AdminDashboardPage() {
     }
   }
 
-  const submitAddUser = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const submitAddUser = async (formData: {
+    full_name: string
+    identifier: string
+    role: string
+    email: string
+    password: string
+  }) => {
     if (isSubmitting) return
     setIsSubmitting(true)
     setFormErrorMessage('')
     try {
-      await api.post('/admin/users', newUserForm)
+      await api.post('/admin/users', formData)
       setShowAddUserModal(false)
-      setNewUserForm({
-        full_name: '',
-        identifier: '',
-        role: 'student',
-        email: '',
-        password: '',
-      })
       await Promise.all([fetchStats(), fetchUsers(selectedRole, searchKeyword)])
     } catch (err: any) {
       setFormErrorMessage(err.response?.data?.message || 'Gagal mendaftarkan akun baru.')
@@ -241,13 +212,34 @@ export default function AdminDashboardPage() {
               <Database className="w-4 h-4 text-indigo-600" aria-hidden="true" />
             </div>
             <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" aria-hidden="true" />
-              <span className="text-sm font-bold text-slate-900 font-mono">
-                {stats.database_status || 'MySQL XAMPP (3306)'}
-              </span>
-              <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 font-mono">
-                Online
-              </span>
+              {isLoadingStats ? (
+                <>
+                  <span className="w-2 h-2 rounded-full bg-slate-400 animate-pulse" aria-hidden="true" />
+                  <span className="text-sm font-semibold text-slate-500 font-mono">
+                    Memeriksa status...
+                  </span>
+                </>
+              ) : stats.database_status ? (
+                <>
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" aria-hidden="true" />
+                  <span className="text-sm font-bold text-slate-900 font-mono">
+                    {stats.database_status}
+                  </span>
+                  <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 font-mono">
+                    Online
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span className="w-2 h-2 rounded-full bg-amber-500" aria-hidden="true" />
+                  <span className="text-sm font-semibold text-slate-600 font-mono">
+                    Tidak Terhubung
+                  </span>
+                  <span className="text-[10px] text-amber-700 font-medium bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200 font-mono">
+                    Offline
+                  </span>
+                </>
+              )}
             </div>
             <p className="text-[11px] text-slate-500">SQLAlchemy 2.0 • Standalone Engine</p>
           </div>
@@ -261,10 +253,28 @@ export default function AdminDashboardPage() {
               <CheckCircle2 className="w-4 h-4 text-emerald-600" aria-hidden="true" />
             </div>
             <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" aria-hidden="true" />
-              <span className="text-sm font-bold text-slate-900 font-mono">
-                {stats.edge_cv_status || 'Online (Ready)'}
-              </span>
+              {isLoadingStats ? (
+                <>
+                  <span className="w-2 h-2 rounded-full bg-slate-400 animate-pulse" aria-hidden="true" />
+                  <span className="text-sm font-semibold text-slate-500 font-mono">
+                    Memeriksa...
+                  </span>
+                </>
+              ) : stats.edge_cv_status ? (
+                <>
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" aria-hidden="true" />
+                  <span className="text-sm font-bold text-slate-900 font-mono">
+                    {stats.edge_cv_status}
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span className="w-2 h-2 rounded-full bg-slate-400" aria-hidden="true" />
+                  <span className="text-sm font-medium text-slate-600 font-mono">
+                    Siaga (Standby)
+                  </span>
+                </>
+              )}
             </div>
             <p className="text-[11px] text-slate-500">Face Detection & Dual-Cam Active</p>
           </div>
@@ -570,130 +580,210 @@ export default function AdminDashboardPage() {
         )}
       </div>
 
-      {/* Add User Modal with Escape & Backdrop Dismiss */}
-      {showAddUserModal && (
-        <div
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setShowAddUserModal(false)
-          }}
-          className="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-in fade-in duration-150"
-        >
-          <div className="bg-white border border-slate-200/90 rounded-2xl max-w-lg w-full p-6 sm:p-7 shadow-2xl space-y-5">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-              <div>
-                <h3 className="text-lg font-bold text-slate-900 font-display">
-                  Tambah Akun Pengguna
-                </h3>
-                <p className="text-xs text-slate-500">
-                  Daftarkan akun baru ke dalam sistem institusi sekolah
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setShowAddUserModal(false)}
-                title="Tutup modal"
-                aria-label="Tutup modal"
-                className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-slate-900/10"
-              >
-                <X className="w-5 h-5" aria-hidden="true" />
-              </button>
-            </div>
-
-            <form onSubmit={submitAddUser} className="space-y-4">
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Nama Lengkap</label>
-                <input
-                  ref={fullNameInputRef}
-                  value={newUserForm.full_name}
-                  onChange={(e) => setNewUserForm({ ...newUserForm, full_name: e.target.value })}
-                  required
-                  type="text"
-                  placeholder="Contoh: Budi Prasetyo, M.Pd"
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Identifier (NIP / NISN / Username)
-                  </label>
-                  <input
-                    value={newUserForm.identifier}
-                    onChange={(e) => setNewUserForm({ ...newUserForm, identifier: e.target.value })}
-                    required
-                    type="text"
-                    placeholder="19820310..."
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 font-mono"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Peran (Role)</label>
-                  <select
-                    value={newUserForm.role}
-                    onChange={(e) => setNewUserForm({ ...newUserForm, role: e.target.value })}
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 cursor-pointer"
-                  >
-                    <option value="student">Siswa (Student)</option>
-                    <option value="teacher">Guru (Teacher)</option>
-                    <option value="admin">Administrator</option>
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Alamat Email</label>
-                <input
-                  value={newUserForm.email}
-                  onChange={(e) => setNewUserForm({ ...newUserForm, email: e.target.value })}
-                  required
-                  type="email"
-                  placeholder="nama@sekolah.sch.id"
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Kata Sandi (Password)</label>
-                <input
-                  value={newUserForm.password}
-                  onChange={(e) => setNewUserForm({ ...newUserForm, password: e.target.value })}
-                  required
-                  type="password"
-                  placeholder="Minimal 6 karakter"
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900"
-                />
-              </div>
-
-              {formErrorMessage && (
-                <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 shrink-0" aria-hidden="true" />
-                  <span>{formErrorMessage}</span>
-                </div>
-              )}
-
-              <div className="flex items-center justify-end gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setShowAddUserModal(false)}
-                  className="px-4 py-2 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold text-xs bg-white cursor-pointer focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
-                >
-                  Batal
-                </button>
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="px-5 py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl shadow-xs disabled:opacity-50 cursor-pointer flex items-center gap-1.5 focus:ring-2 focus:ring-slate-900/10 focus:outline-none font-display tracking-wide"
-                >
-                  {isSubmitting && <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" />}
-                  <span>{isSubmitting ? 'Menyimpan...' : 'Simpan Akun Pengguna'}</span>
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      {/* Add User Modal */}
+      <AddUserModal
+        isOpen={showAddUserModal}
+        isSubmitting={isSubmitting}
+        errorMessage={formErrorMessage}
+        onClose={() => {
+          setShowAddUserModal(false)
+          setFormErrorMessage('')
+        }}
+        onSubmit={submitAddUser}
+      />
     </div>
   )
 }
+
+interface AddUserModalProps {
+  isOpen: boolean
+  isSubmitting: boolean
+  errorMessage: string
+  onClose: () => void
+  onSubmit: (form: {
+    full_name: string
+    identifier: string
+    role: string
+    email: string
+    password: string
+  }) => void
+}
+
+function AddUserModal({
+  isOpen,
+  isSubmitting,
+  errorMessage,
+  onClose,
+  onSubmit,
+}: AddUserModalProps) {
+  const [form, setForm] = useState({
+    full_name: '',
+    identifier: '',
+    role: 'student',
+    email: '',
+    password: '',
+  })
+  const fullNameInputRef = useRef<HTMLInputElement | null>(null)
+  const onCloseRef = useRef(onClose)
+  onCloseRef.current = onClose
+
+  const prevIsOpenRef = useRef(false)
+  useEffect(() => {
+    if (isOpen && !prevIsOpenRef.current) {
+      setForm({
+        full_name: '',
+        identifier: '',
+        role: 'student',
+        email: '',
+        password: '',
+      })
+      const timer = setTimeout(() => {
+        fullNameInputRef.current?.focus()
+      }, 50)
+      return () => clearTimeout(timer)
+    }
+    prevIsOpenRef.current = isOpen
+  }, [isOpen])
+
+  useEffect(() => {
+    if (!isOpen) return
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && !isSubmitting) onCloseRef.current()
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [isOpen, isSubmitting])
+
+  if (!isOpen) return null
+
+  return (
+    <div
+      onClick={(e) => {
+        if (e.target === e.currentTarget && !isSubmitting) onClose()
+      }}
+      className="fixed inset-0 bg-slate-950/60 z-50 flex items-center justify-center p-4 animate-in fade-in duration-150"
+    >
+      <div className="bg-white border border-slate-200/90 rounded-2xl max-w-lg w-full p-6 sm:p-7 shadow-2xl space-y-5 animate-in zoom-in-95 duration-150 text-slate-900">
+        <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+          <div>
+            <h3 className="text-lg font-bold text-slate-900 font-display">
+              Tambah Akun Pengguna
+            </h3>
+            <p className="text-xs text-slate-500">
+              Daftarkan akun baru ke dalam sistem institusi sekolah
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            title="Tutup modal"
+            aria-label="Tutup modal"
+            className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-slate-900/10"
+          >
+            <X className="w-5 h-5" aria-hidden="true" />
+          </button>
+        </div>
+
+        <form
+          onSubmit={(e) => {
+            e.preventDefault()
+            onSubmit(form)
+          }}
+          className="space-y-4 text-xs font-medium"
+        >
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1">Nama Lengkap</label>
+            <input
+              ref={fullNameInputRef}
+              value={form.full_name}
+              onChange={(e) => setForm((prev) => ({ ...prev, full_name: e.target.value }))}
+              required
+              type="text"
+              placeholder="Contoh: Budi Prasetyo, M.Pd"
+              className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]/25 focus:border-[#150f23] transition-all"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1">
+                Identifier (NIP / NISN / Username)
+              </label>
+              <input
+                value={form.identifier}
+                onChange={(e) => setForm((prev) => ({ ...prev, identifier: e.target.value }))}
+                required
+                type="text"
+                placeholder="19820310..."
+                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]/25 focus:border-[#150f23] font-mono transition-all"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1">Peran (Role)</label>
+              <select
+                value={form.role}
+                onChange={(e) => setForm((prev) => ({ ...prev, role: e.target.value }))}
+                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]/25 focus:border-[#150f23] cursor-pointer transition-all"
+              >
+                <option value="student">Siswa (Student)</option>
+                <option value="teacher">Guru (Teacher)</option>
+                <option value="admin">Administrator</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1">Alamat Email</label>
+            <input
+              value={form.email}
+              onChange={(e) => setForm((prev) => ({ ...prev, email: e.target.value }))}
+              required
+              type="email"
+              placeholder="nama@sekolah.sch.id"
+              className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]/25 focus:border-[#150f23] transition-all"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1">Kata Sandi (Password)</label>
+            <input
+              value={form.password}
+              onChange={(e) => setForm((prev) => ({ ...prev, password: e.target.value }))}
+              required
+              type="password"
+              placeholder="Minimal 6 karakter"
+              className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]/25 focus:border-[#150f23] transition-all"
+            />
+          </div>
+
+          {errorMessage && (
+            <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4 shrink-0" aria-hidden="true" />
+              <span>{errorMessage}</span>
+            </div>
+          )}
+
+          <div className="flex items-center justify-end gap-3 pt-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold text-xs bg-white cursor-pointer focus:ring-2 focus:ring-slate-900/10 focus:outline-none transition-colors"
+            >
+              Batal
+            </button>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="px-5 py-2.5 bg-[#150f23] hover:bg-slate-800 text-white font-bold text-xs rounded-xl shadow-md disabled:opacity-50 cursor-pointer flex items-center gap-2 focus:ring-2 focus:ring-[#6a5fc1]/30 focus:outline-none font-display tracking-wide transition-all"
+            >
+              {isSubmitting && <Loader2 className="w-3.5 h-3.5 animate-spin text-[#c2ef4e]" aria-hidden="true" />}
+              <span>{isSubmitting ? 'Menyimpan...' : 'Simpan Akun Pengguna'}</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}
+
 

@@ -10,7 +10,7 @@ import {
 } from 'lucide-react'
 import api from '@/lib/api'
 import TenantTable from '@/components/superadmin/TenantTable'
-import TenantModal from '@/components/superadmin/TenantModal'
+import TenantModal, { TenantFormData } from '@/components/superadmin/TenantModal'
 
 export default function SuperAdminTenantsPage() {
   const [tenantsList, setTenantsList] = useState<any[]>([])
@@ -20,16 +20,6 @@ export default function SuperAdminTenantsPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
-
-  const [createForm, setCreateForm] = useState({
-    name: '',
-    code: '',
-    subscription_plan: 'pro',
-    admin_identifier: '',
-    admin_full_name: '',
-    admin_email: '',
-    admin_password: 'Password123!',
-  })
 
   const loadTenants = useCallback(async (query = searchQuery, plan = filterPlan) => {
     try {
@@ -82,21 +72,11 @@ export default function SuperAdminTenantsPage() {
     }
   }
 
-  const handleCreateTenant = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleCreateTenant = async (formData: TenantFormData) => {
     try {
       setIsSubmitting(true)
-      await api.post('/superadmin/tenants', createForm)
+      await api.post('/superadmin/tenants', formData)
       setShowCreateModal(false)
-      setCreateForm({
-        name: '',
-        code: '',
-        subscription_plan: 'pro',
-        admin_identifier: '',
-        admin_full_name: '',
-        admin_email: '',
-        admin_password: 'Password123!',
-      })
       await loadTenants()
       alert('Sekolah baru berhasil didaftarkan!')
     } catch (err: any) {
@@ -195,10 +175,8 @@ export default function SuperAdminTenantsPage() {
       {/* Tenant Onboard Modal */}
       <TenantModal
         isOpen={showCreateModal}
-        form={createForm}
         isSubmitting={isSubmitting}
         onClose={() => setShowCreateModal(false)}
-        onChange={(updatedForm) => setCreateForm(updatedForm)}
         onSubmit={handleCreateTenant}
       />
     </div>

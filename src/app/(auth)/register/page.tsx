@@ -1,8 +1,8 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, Suspense } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import {
   GraduationCap,
   BookOpen,
@@ -12,6 +12,7 @@ import {
   AlertCircle,
   Loader2,
   ArrowLeft,
+  ArrowRight,
   Lock,
   Mail,
   User as UserIcon,
@@ -20,6 +21,7 @@ import {
   ShieldCheck,
   Check,
   Sparkles,
+  RefreshCw,
 } from 'lucide-react'
 import api from '@/lib/api'
 import { useAuthStore } from '@/stores/authStore'
@@ -41,9 +43,14 @@ interface CodeVerificationResult {
   description?: string
 }
 
-export default function RegisterPage() {
+function RegisterContent() {
   const router = useRouter()
-  const { hydrate } = useAuthStore()
+  const searchParams = useSearchParams()
+  const verifyParam = searchParams.get('verify')
+  const { hydrate, login } = useAuthStore()
+
+  // Step State (1: Registration Form, 2: OTP Verification Panel)
+  const [step, setStep] = useState<1 | 2>(1)
 
   // Form State
   const [role, setRole] = useState<'student' | 'teacher' | 'admin'>('student')
@@ -65,6 +72,33 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
+
+  // OTP Step 2 State
+  const [otpCode, setOtpCode] = useState('')
+  const [verifyingOtp, setVerifyingOtp] = useState(false)
+  const [sendingOtp, setSendingOtp] = useState(false)
+  const [cooldown, setCooldown] = useState(0)
+  const [otpError, setOtpError] = useState('')
+  const [otpSuccess, setOtpSuccess] = useState('')
+  const [resendSuccessMessage, setResendSuccessMessage] = useState('')
+
+  // Handle direct verification link: /register?verify=<email>
+  useEffect(() => {
+    if (verifyParam) {
+      setEmail(verifyParam)
+      setStep(2)
+      setCooldown(60)
+    }
+  }, [verifyParam])
+
+  // Cooldown timer for OTP resend
+  useEffect(() => {
+    if (cooldown <= 0) return
+    const timer = setInterval(() => {
+      setCooldown((prev) => (prev > 0 ? prev - 1 : 0))
+    }, 1000)
+    return () => clearInterval(timer)
+  }, [cooldown])
 
   // Load available schools on mount
   useEffect(() => {
@@ -164,9 +198,20 @@ export default function RegisterPage() {
         confirm_password: confirmPassword,
       })
 
-      const tokenData = res.data?.data
+      const resData = res.data?.data || res.data
+      if (resData?.requires_verification) {
+        setStep(2)
+        setCooldown(60)
+        setOtpCode('')
+        setOtpError('')
+        setOtpSuccess('')
+        setResendSuccessMessage('')
+        return
+      }
+
+      const tokenData = resData
       if (tokenData?.access_token) {
-        // Persist token & user profile in localStorage for instant login
+        // Persist token & user profile in localStorage for instant login (fallback)
         localStorage.setItem('examind_token', tokenData.access_token)
         localStorage.setItem('examind_user', JSON.stringify(tokenData.user))
         hydrate()
@@ -193,11 +238,87 @@ export default function RegisterPage() {
     } catch (err: any) {
       setErrorMessage(
         err.response?.data?.message ||
+          err.response?.data?.error?.details ||
           err.message ||
           'Gagal melakukan pendaftaran. Periksa kembali data dan kode registrasi Anda.'
       )
     } finally {
       setLoading(false)
+    }
+  }
+
+  // Handle OTP verification submission
+  const handleVerifyOtp = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault()
+    if (otpCode.length !== 6 || verifyingOtp) return
+
+    setVerifyingOtp(true)
+    setOtpError('')
+    setOtpSuccess('')
+
+    try {
+      await api.post('/auth/otp/verify', {
+        email: email.trim().toLowerCase(),
+        otp_code: otpCode.trim(),
+        purpose: 'email_verification',
+      })
+
+      if (password) {
+        setOtpSuccess('Verifikasi berhasil! Sedang masuk ke akun Anda...')
+        try {
+          const loggedUser = await login(email.trim().toLowerCase(), password)
+          setOtpSuccess('Pendaftaran berhasil! Mengalihkan ke dashboard Anda...')
+          setTimeout(() => {
+            const userRole = loggedUser?.role || role
+            if (userRole === 'student') router.push('/student/dashboard')
+            else if (userRole === 'teacher') router.push('/teacher/dashboard')
+            else if (userRole === 'admin') router.push('/admin/dashboard')
+            else router.push('/dashboard')
+          }, 1200)
+        } catch {
+          setOtpSuccess('Verifikasi berhasil, silakan masuk.')
+        }
+      } else {
+        setOtpSuccess('Verifikasi berhasil, silakan masuk.')
+      }
+    } catch (err: any) {
+      const resData = err.response?.data
+      setOtpError(
+        resData?.message ||
+          resData?.error?.details ||
+          err.message ||
+          'Kode OTP tidak valid atau telah kedaluwarsa. Silakan periksa kembali atau kirim ulang kode.'
+      )
+    } finally {
+      setVerifyingOtp(false)
+    }
+  }
+
+  // Handle resend OTP
+  const handleResendOtp = async () => {
+    if (cooldown > 0 || sendingOtp) return
+
+    setSendingOtp(true)
+    setOtpError('')
+    setResendSuccessMessage('')
+
+    try {
+      await api.post('/auth/otp/send', {
+        email: email.trim().toLowerCase(),
+        purpose: 'email_verification',
+      })
+      setCooldown(60)
+      setResendSuccessMessage(`Kode verifikasi baru berhasil dikirim ke ${email.trim().toLowerCase()}.`)
+    } catch (err: any) {
+      const resData = err.response?.data
+      setOtpError(
+        resData?.message ||
+          resData?.error?.details ||
+          err.message ||
+          'Gagal mengirim ulang kode verifikasi. Silakan coba lagi.'
+      )
+    } finally {
+      setSendingOtp(false)
     }
   }
 
@@ -249,7 +370,11 @@ export default function RegisterPage() {
 
       {/* Main Registration Card Area */}
       <main className="relative z-10 max-w-xl w-full mx-auto my-auto py-8">
-        <div className="bg-white/95 backdrop-blur-xl rounded-2xl border border-slate-200/90 shadow-subtle-elevated p-6 sm:p-8 space-y-6 text-slate-900">
+        {step === 1 ? (
+          <div
+            className="anim-rise bg-white/95 backdrop-blur-xl rounded-2xl border border-slate-200/90 shadow-subtle-elevated p-6 sm:p-8 space-y-6 text-slate-900"
+            style={{ '--anim-duration': '300ms' } as React.CSSProperties}
+          >
           {/* Header */}
           <div className="space-y-1.5 text-center">
             <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-slate-100 text-slate-800 border border-slate-200 font-mono">
@@ -646,11 +771,163 @@ export default function RegisterPage() {
                 href="/login"
                 className="font-bold text-indigo-600 hover:text-indigo-800 transition-colors inline-flex items-center gap-1 cursor-pointer"
               >
-                Masuk ke Portal Ujian &rarr;
+                <span>Masuk ke Portal Ujian</span>
+                <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </p>
           </div>
         </div>
+      ) : (
+        <div
+          className="anim-rise bg-white/95 backdrop-blur-xl rounded-2xl border border-slate-200/90 shadow-subtle-elevated p-6 sm:p-8 space-y-6 text-slate-900"
+          style={{ '--anim-duration': '300ms' } as React.CSSProperties}
+        >
+          {/* Header */}
+          <div className="space-y-1.5 text-center">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-slate-100 text-slate-800 border border-slate-200 font-mono">
+              <Mail className="w-3 h-3 text-indigo-600" />
+              Verifikasi Email Institusi
+            </div>
+            <h1 className="font-display text-2xl font-bold tracking-tight text-slate-900">
+              Verifikasi Alamat Email
+            </h1>
+            <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
+              Kode verifikasi dikirim ke <strong className="text-slate-900 font-semibold">{email}</strong>. Masukkan 6 digit kode OTP di bawah ini untuk mengaktifkan akun Anda.
+            </p>
+          </div>
+
+          {/* Resend Success Banner */}
+          {resendSuccessMessage && (
+            <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs flex items-center gap-2.5 shadow-xs animate-in fade-in">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+              <span>{resendSuccessMessage}</span>
+            </div>
+          )}
+
+          {/* Error Alert */}
+          {otpError && (
+            <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200/80 text-rose-900 text-xs flex items-center gap-2.5 shadow-xs animate-in fade-in">
+              <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+              <span>{otpError}</span>
+            </div>
+          )}
+
+          {/* Success Banner */}
+          {otpSuccess && (
+            <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs space-y-3 shadow-xs animate-in fade-in">
+              <div className="flex items-center gap-2.5 font-semibold text-sm">
+                <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+                <span>{otpSuccess}</span>
+              </div>
+              {!password && (
+                <Link
+                  href="/login"
+                  className="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs sm:text-sm transition-colors cursor-pointer shadow-xs"
+                >
+                  <span>Masuk ke Akun Anda</span>
+                  <ArrowRight className="w-4 h-4 text-[#c2ef4e]" />
+                </Link>
+              )}
+            </div>
+          )}
+
+          {/* OTP Input Form */}
+          {(!otpSuccess || password) && (
+            <form onSubmit={handleVerifyOtp} className="space-y-5">
+              <div className="space-y-2">
+                <label className="block text-xs font-bold text-slate-700 font-mono text-center">
+                  Kode Verifikasi (6 Digit):
+                </label>
+                <div className="relative max-w-xs mx-auto">
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength={6}
+                    autoComplete="one-time-code"
+                    value={otpCode}
+                    onChange={(e) => {
+                      const clean = e.target.value.replace(/\D/g, '').slice(0, 6)
+                      setOtpCode(clean)
+                      if (otpError) setOtpError('')
+                    }}
+                    placeholder="000000"
+                    disabled={verifyingOtp || Boolean(otpSuccess)}
+                    className="w-full text-center tracking-[0.6em] pl-[0.6em] py-3.5 rounded-xl bg-slate-50/80 border border-slate-300 text-2xl font-mono font-bold text-slate-900 placeholder:text-slate-300 focus:outline-none focus:bg-white focus:border-[#6a5fc1] focus:ring-2 focus:ring-[#6a5fc1]/25 transition-all shadow-xs disabled:opacity-50"
+                    autoFocus
+                  />
+                </div>
+                <p className="text-[11px] text-slate-400 text-center font-mono">
+                  Kode berlaku selama 10 menit
+                </p>
+              </div>
+
+              {/* Submit Button */}
+              <button
+                type="submit"
+                disabled={otpCode.length !== 6 || verifyingOtp || Boolean(otpSuccess)}
+                className="w-full py-3.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 active:bg-slate-950 text-white font-bold text-xs sm:text-sm transition-all disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer shadow-card hover:shadow-card-hover font-display tracking-wide"
+              >
+                {verifyingOtp ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin text-[#c2ef4e]" />
+                    <span>Memverifikasi Kode...</span>
+                  </>
+                ) : (
+                  <>
+                    <ShieldCheck className="w-4 h-4 text-[#c2ef4e]" />
+                    <span>Verifikasi</span>
+                  </>
+                )}
+              </button>
+
+              {/* Resend Cooldown Section */}
+              <div className="flex items-center justify-center pt-1">
+                <button
+                  type="button"
+                  onClick={handleResendOtp}
+                  disabled={cooldown > 0 || sendingOtp || Boolean(otpSuccess)}
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-600 hover:text-indigo-800 disabled:text-slate-400 transition-colors cursor-pointer disabled:cursor-not-allowed"
+                >
+                  {sendingOtp ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin text-indigo-600" />
+                      <span>Mengirim ulang kode...</span>
+                    </>
+                  ) : cooldown > 0 ? (
+                    <>
+                      <RefreshCw className="w-3.5 h-3.5" />
+                      <span>Kirim ulang dalam {cooldown} dtk</span>
+                    </>
+                  ) : (
+                    <>
+                      <RefreshCw className="w-3.5 h-3.5" />
+                      <span>Kirim ulang kode</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          )}
+
+          {/* Back Link to Step 1 */}
+          <div className="pt-3 border-t border-slate-100 text-center">
+            <button
+              type="button"
+              onClick={() => {
+                setStep(1)
+                setOtpError('')
+                setOtpSuccess('')
+                setResendSuccessMessage('')
+              }}
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 transition-colors cursor-pointer"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Ganti email / kembali</span>
+            </button>
+          </div>
+        </div>
+      )}
       </main>
 
       {/* Footer System Info */}
@@ -658,5 +935,19 @@ export default function RegisterPage() {
         &copy; 2026 EXAMIND Academic Assessment System. Pendaftaran Terproteksi Kode Otorisasi Provider.
       </footer>
     </div>
+  )
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-[#f8fafc] flex items-center justify-center">
+          <Loader2 className="w-6 h-6 animate-spin text-slate-900" />
+        </div>
+      }
+    >
+      <RegisterContent />
+    </Suspense>
   )
 }

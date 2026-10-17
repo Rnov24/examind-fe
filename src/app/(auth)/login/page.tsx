@@ -3,7 +3,8 @@
 import React, { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { AlertCircle, Loader2, Check } from 'lucide-react'
+import { AlertCircle, Loader2, Check, Mail, ArrowRight } from 'lucide-react'
+import api from '@/lib/api'
 import { useAuthStore } from '@/stores/authStore'
 
 function LoginForm() {
@@ -17,6 +18,9 @@ function LoginForm() {
   const [loginSuccess, setLoginSuccess] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const [sessionExpiredNotice, setSessionExpiredNotice] = useState(false)
+  const [unverifiedEmail, setUnverifiedEmail] = useState<string | null>(null)
+  const [sendingVerificationOtp, setSendingVerificationOtp] = useState(false)
+  const [otpSendError, setOtpSendError] = useState('')
 
   useEffect(() => {
     if (!isHydrated) {
@@ -49,12 +53,38 @@ function LoginForm() {
     setPassword(loginPass)
   }
 
+  const handleSendVerificationOtp = async () => {
+    if (!unverifiedEmail) return
+    setSendingVerificationOtp(true)
+    setOtpSendError('')
+
+    try {
+      await api.post('/auth/otp/send', {
+        email: unverifiedEmail.trim().toLowerCase(),
+        purpose: 'email_verification',
+      })
+      router.push(`/register?verify=${encodeURIComponent(unverifiedEmail.trim().toLowerCase())}`)
+    } catch (err: any) {
+      const resData = err.response?.data
+      setOtpSendError(
+        resData?.message ||
+          resData?.error?.details ||
+          err.message ||
+          'Gagal mengirim kode verifikasi. Silakan coba lagi.'
+      )
+    } finally {
+      setSendingVerificationOtp(false)
+    }
+  }
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setLoginSuccess(false)
     setErrorMessage('')
     setSessionExpiredNotice(false)
+    setUnverifiedEmail(null)
+    setOtpSendError('')
 
     try {
       const loggedUser = await login(identifier.trim(), password)
@@ -75,11 +105,27 @@ function LoginForm() {
       }
     } catch (err: any) {
       setLoginSuccess(false)
-      setErrorMessage(
-        err.response?.data?.message ||
-          err.message ||
-          'Gagal masuk. Periksa kembali identifier dan kata sandi.'
-      )
+      const resData = err.response?.data
+      const errorCode =
+        resData?.error?.code ||
+        resData?.error_code ||
+        resData?.code ||
+        resData?.detail?.error_code
+
+      if (errorCode === 'EMAIL_NOT_VERIFIED') {
+        const targetEmail =
+          (typeof resData?.error?.details === 'object' && resData?.error?.details?.email) ||
+          resData?.data?.email ||
+          resData?.email ||
+          identifier.trim()
+        setUnverifiedEmail(targetEmail)
+      } else {
+        setErrorMessage(
+          resData?.message ||
+            err.message ||
+            'Gagal masuk. Periksa kembali identifier dan kata sandi.'
+        )
+      }
     } finally {
       setLoading(false)
     }
@@ -142,6 +188,43 @@ function LoginForm() {
             <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-200/80 text-amber-900 text-xs flex items-center gap-2.5 shadow-xs">
               <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
               <span>Sesi Anda telah kedaluwarsa. Silakan masuk kembali.</span>
+            </div>
+          )}
+
+          {/* Unverified Email Notice */}
+          {unverifiedEmail && (
+            <div className="p-4 rounded-xl bg-amber-50 border border-amber-200/90 text-amber-900 text-xs space-y-2.5 shadow-xs animate-in fade-in">
+              <div className="flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
+                <span className="font-bold text-slate-900">Email belum diverifikasi.</span>
+              </div>
+              <p className="text-[11px] text-slate-600 leading-relaxed">
+                Akun terdaftar, namun alamat email Anda ({unverifiedEmail}) belum diverifikasi. Klik tombol di bawah untuk menerima kode OTP verifikasi.
+              </p>
+              {otpSendError && (
+                <div className="p-2 rounded-lg bg-rose-50 border border-rose-200 text-rose-800 text-[11px] flex items-center gap-1.5">
+                  <AlertCircle className="w-3.5 h-3.5 text-rose-600 shrink-0" />
+                  <span>{otpSendError}</span>
+                </div>
+              )}
+              <button
+                type="button"
+                onClick={handleSendVerificationOtp}
+                disabled={sendingVerificationOtp}
+                className="w-full py-2.5 px-3 rounded-lg bg-amber-600 hover:bg-amber-700 active:bg-amber-800 text-white font-bold text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50 shadow-xs"
+              >
+                {sendingVerificationOtp ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <span>Mengirim kode verifikasi...</span>
+                  </>
+                ) : (
+                  <>
+                    <Mail className="w-3.5 h-3.5" />
+                    <span>Kirim kode verifikasi</span>
+                  </>
+                )}
+              </button>
             </div>
           )}
 
@@ -225,7 +308,8 @@ function LoginForm() {
                   href="/register"
                   className="font-bold text-indigo-600 hover:text-indigo-800 transition-colors inline-flex items-center gap-1 cursor-pointer"
                 >
-                  Daftar dengan Kode Sekolah &rarr;
+                  <span>Daftar dengan Kode Sekolah</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               </p>
             </div>

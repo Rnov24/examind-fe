@@ -470,7 +470,7 @@ export default function GradeReviewWorkspace({
                       className={`px-2.5 py-0.5 rounded-lg text-xs font-bold uppercase font-mono shadow-xs ${
                         ans.question_type === 'multiple_choice'
                           ? 'bg-indigo-50 text-indigo-700 border border-indigo-200'
-                          : 'bg-purple-50 text-purple-700 border border-purple-200'
+                          : 'bg-slate-100 text-slate-700 border border-slate-200'
                       }`}
                     >
                       {ans.question_type === 'multiple_choice' ? 'Pilihan Ganda' : 'Esai'}

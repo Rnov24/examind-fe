@@ -178,8 +178,8 @@ export default function QuestionBankPage() {
 
           {banks.length === 0 && (
             <div className="col-span-full bg-white rounded-2xl p-12 text-center border border-slate-200/80 shadow-card">
-              <div className="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center mx-auto mb-3">
-                <BookOpen className="w-6 h-6 text-indigo-600" aria-hidden="true" />
+              <div className="w-12 h-12 rounded-2xl bg-slate-100 border border-slate-200 text-slate-500 flex items-center justify-center mx-auto mb-3">
+                <BookOpen className="w-6 h-6" aria-hidden="true" />
               </div>
               <h4 className="font-bold text-slate-900 text-sm">Belum Ada Bank Soal</h4>
               <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">

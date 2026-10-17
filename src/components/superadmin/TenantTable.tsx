@@ -152,14 +152,14 @@ export default function TenantTable({
                   </td>
                   <td className="p-4 whitespace-nowrap">
                     <span
-                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold font-mono border ${
+                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold font-mono border transition-colors duration-200 ${
                         t.is_active
                           ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
                           : 'bg-rose-50 text-rose-700 border-rose-200'
                       }`}
                     >
                       <span
-                        className={`w-1.5 h-1.5 rounded-full ${
+                        className={`w-1.5 h-1.5 rounded-full transition-colors duration-200 ${
                           t.is_active ? 'bg-emerald-500' : 'bg-rose-500'
                         }`}
                       ></span>
@@ -171,14 +171,14 @@ export default function TenantTable({
                       <button
                         type="button"
                         onClick={() => onChangePlan(t)}
-                        className="px-2.5 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 bg-white text-slate-700 font-bold text-[11px] transition-colors cursor-pointer focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+                        className="px-2.5 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 bg-white text-slate-700 font-bold text-[11px] transition-colors duration-200 cursor-pointer focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
                       >
                         Ubah Paket
                       </button>
                       <button
                         type="button"
                         onClick={() => onToggleStatus(t.id)}
-                        className={`px-2.5 py-1.5 rounded-lg font-bold text-[11px] transition-colors cursor-pointer border focus:ring-2 focus:ring-slate-900/10 focus:outline-none ${
+                        className={`px-2.5 py-1.5 rounded-lg font-bold text-[11px] transition-colors duration-200 cursor-pointer border focus:ring-2 focus:ring-slate-900/10 focus:outline-none ${
                           t.is_active
                             ? 'border-rose-200 text-rose-700 bg-rose-50 hover:bg-rose-100'
                             : 'border-emerald-200 text-emerald-700 bg-emerald-50 hover:bg-emerald-100'
@@ -194,7 +194,7 @@ export default function TenantTable({
                 <tr>
                   <td colSpan={7} className="p-12 text-center text-slate-500">
                     <div className="flex flex-col items-center justify-center max-w-sm mx-auto">
-                      <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-2.5">
+                      <div className="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200 text-slate-500 flex items-center justify-center mb-2.5">
                         <Building2 className="w-5 h-5" aria-hidden="true" />
                       </div>
                       {isFilterActive ? (

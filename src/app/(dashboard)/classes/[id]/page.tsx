@@ -210,7 +210,7 @@ export default function ClassDetailPage() {
                   <tr>
                     <td colSpan={5} className="text-center py-12 text-slate-500">
                       <div className="flex flex-col items-center justify-center max-w-sm mx-auto">
-                        <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-2.5">
+                        <div className="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200 text-slate-500 flex items-center justify-center mb-2.5">
                           <UserPlus className="w-5 h-5" aria-hidden="true" />
                         </div>
                         <p className="font-bold text-slate-900 text-sm">Belum Ada Siswa Terdaftar</p>

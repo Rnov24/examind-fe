@@ -197,7 +197,7 @@ export default function ClassListPage() {
 
           {classes.length === 0 && !errorMessage && (
             <div className="col-span-full bg-white rounded-2xl p-10 text-center border border-dashed border-slate-300 shadow-xs flex flex-col items-center justify-center">
-              <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-3">
+              <div className="w-12 h-12 rounded-xl bg-slate-100 border border-slate-200 text-slate-500 flex items-center justify-center mb-3">
                 <Users className="w-6 h-6" aria-hidden="true" />
               </div>
               <h4 className="font-bold text-slate-900 text-base">Belum Ada Kelas Akademik</h4>

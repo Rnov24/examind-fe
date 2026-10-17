@@ -130,8 +130,10 @@ export default function StudentDashboardPage() {
       {/* Main Content: Distilled to "What exam do I take next" */}
       {!isLoading && !errorMessage && heroExam && (
         <>
-          {/* PRIMARY HERO: The Next Exam to Take */}
-          <div className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950 text-white rounded-2xl p-6 sm:p-8 shadow-card border border-slate-800">
+          {/* PRIMARY HERO: The Next Exam to Take (Focal Moment: authored rise + subtle lime edge glow pulse on mount) */}
+          <div className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950 text-white rounded-2xl p-6 sm:p-8 shadow-card border border-slate-800 hero-exam-card">
+            {/* Subtle Lime Edge Glow Pulse on Mount (Transform + Opacity only) */}
+            <div className="pointer-events-none absolute inset-0 rounded-2xl border-2 border-[#c2ef4e]/60 hero-lime-glow" aria-hidden="true" />
             <div className="pointer-events-none absolute top-0 right-0 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl"></div>
             <div className="pointer-events-none absolute bottom-0 left-1/3 w-64 h-64 bg-[#c2ef4e]/10 rounded-full blur-3xl"></div>
 
@@ -208,11 +210,13 @@ export default function StudentDashboardPage() {
               </div>
 
               <div className="divide-y divide-slate-100">
-                {otherExams.map((exam) => (
-                  <div
-                    key={exam.id}
-                    className="p-4 sm:px-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 hover:bg-slate-50/80 transition-colors"
-                  >
+                {otherExams.map((exam, idx) => {
+                  const staggerClass = idx === 0 ? 'reveal-stagger-1' : idx === 1 ? 'reveal-stagger-2' : 'reveal-stagger-3'
+                  return (
+                    <div
+                      key={exam.id}
+                      className={`p-4 sm:px-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 hover:bg-slate-50/80 transition-colors ${staggerClass}`}
+                    >
                     <div className="space-y-1.5 min-w-0 flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-700 font-mono">
@@ -240,7 +244,8 @@ export default function StudentDashboardPage() {
                       </Link>
                     </div>
                   </div>
-                ))}
+                )
+              })}
               </div>
             </div>
           )}

@@ -358,7 +358,7 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
             <span className="font-display text-3xl font-extrabold text-slate-900 tracking-tight tabular-nums">
               {analyticsData?.pass_rate ?? analyticsData?.mastery_percentage ?? 0}%
             </span>
-            <span className="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-[#c2ef4e] text-slate-950 font-mono shadow-xs">
+            <span className="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 font-mono shadow-xs">
               TUNTAS
             </span>
           </div>
@@ -408,7 +408,7 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
               <div
                 className={`w-full rounded-t-xl transition-all duration-200 group-hover:scale-y-105 ${
                   bin.count === maxBinCount && bin.count > 0
-                    ? 'bg-[#c2ef4e] border-t-2 border-[#addc3b] shadow-xs'
+                    ? 'bg-indigo-600 border-t-2 border-indigo-400 shadow-xs'
                     : 'bg-slate-900 group-hover:bg-slate-800'
                 }`}
                 style={{ height: `${Math.max(14, (bin.count / maxBinCount) * 130)}px` }}
@@ -458,7 +458,7 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
                         className={`inline-block px-2.5 py-0.5 rounded-lg text-[11px] font-bold uppercase font-mono shadow-xs ${
                           item.question_type === 'multiple_choice'
                             ? 'bg-indigo-50 text-indigo-700 border border-indigo-200'
-                            : 'bg-purple-50 text-purple-700 border border-purple-200'
+                            : 'bg-slate-100 text-slate-700 border border-slate-200'
                         }`}
                       >
                         {item.question_type === 'multiple_choice' ? 'PG' : 'Esai'}

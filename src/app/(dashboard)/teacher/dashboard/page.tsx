@@ -213,15 +213,15 @@ export default function TeacherDashboardPage() {
                 {inProgressExams.map((exam) => (
                   <div
                     key={`in-prog-${exam.id}`}
-                    className="p-4 rounded-xl border border-rose-200 bg-rose-50/40 flex items-center justify-between gap-3 hover:bg-rose-50/70 transition-colors"
+                    className="p-4 rounded-xl border border-emerald-200 bg-emerald-50/40 flex items-center justify-between gap-3 hover:bg-emerald-50/70 transition-colors"
                   >
                     <div className="min-w-0 space-y-1">
                       <div className="flex items-center gap-2">
                         <span className="relative flex h-2 w-2" aria-hidden="true">
-                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-                          <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                         </span>
-                        <span className="text-[10px] font-bold uppercase font-mono text-rose-700 tracking-wider">
+                        <span className="text-[10px] font-bold uppercase font-mono text-emerald-700 tracking-wider">
                           Ujian Sedang Berlangsung
                         </span>
                       </div>
@@ -235,7 +235,7 @@ export default function TeacherDashboardPage() {
 
                     <Link
                       href={`/exams/${exam.id}/monitor`}
-                      className="px-3.5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shadow-xs transition-colors shrink-0 flex items-center gap-1.5 focus:ring-2 focus:ring-rose-500/20 focus:outline-none"
+                      className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition-colors shrink-0 flex items-center gap-1.5 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none"
                     >
                       <Radio className="w-3.5 h-3.5" aria-hidden="true" />
                       <span>Pantau Realtime</span>
@@ -284,7 +284,7 @@ export default function TeacherDashboardPage() {
           {/* Genuine KPI Overview (Non-redundant 3-col grid, marketing cards removed) */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-card flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-200/70 flex items-center justify-center font-bold shrink-0">
+              <div className="w-12 h-12 rounded-xl bg-slate-100 text-slate-700 border border-slate-200/80 flex items-center justify-center font-bold shrink-0">
                 <BookOpen className="w-5 h-5" aria-hidden="true" />
               </div>
               <div className="min-w-0">
@@ -299,7 +299,7 @@ export default function TeacherDashboardPage() {
             </div>
 
             <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-card flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200/70 flex items-center justify-center font-bold shrink-0">
+              <div className="w-12 h-12 rounded-xl bg-slate-100 text-slate-700 border border-slate-200/80 flex items-center justify-center font-bold shrink-0">
                 <FileSpreadsheet className="w-5 h-5" aria-hidden="true" />
               </div>
               <div className="min-w-0">
@@ -314,7 +314,7 @@ export default function TeacherDashboardPage() {
             </div>
 
             <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-card flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-purple-50 text-purple-700 border border-purple-200/70 flex items-center justify-center font-bold shrink-0">
+              <div className="w-12 h-12 rounded-xl bg-slate-100 text-slate-700 border border-slate-200/80 flex items-center justify-center font-bold shrink-0">
                 <Users className="w-5 h-5" aria-hidden="true" />
               </div>
               <div className="min-w-0">
@@ -386,10 +386,12 @@ export default function TeacherDashboardPage() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span
                           className={`inline-block px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider border font-mono ${
-                            exam.status === 'published' || exam.status === 'completed'
-                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                              : exam.status === 'in_progress'
-                              ? 'bg-rose-50 text-rose-700 border-rose-200'
+                            exam.status === 'in_progress'
+                              ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                              : exam.status === 'published'
+                              ? 'bg-indigo-50 text-indigo-700 border-indigo-200/80'
+                              : exam.status === 'completed'
+                              ? 'bg-slate-100 text-slate-700 border-slate-200'
                               : 'bg-slate-100 text-slate-700 border-slate-200'
                           }`}
                         >
@@ -405,7 +407,7 @@ export default function TeacherDashboardPage() {
                       <td className="px-6 py-4 text-right space-x-2 whitespace-nowrap">
                         <Link
                           href={`/exams/${exam.id}/monitor`}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200/80 font-bold text-[11px] transition-colors cursor-pointer shadow-2xs focus:ring-2 focus:ring-rose-500/20 focus:outline-none"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200/80 font-bold text-[11px] transition-colors cursor-pointer shadow-2xs focus:ring-2 focus:ring-emerald-500/20 focus:outline-none"
                         >
                           <Radio className="w-3 h-3" aria-hidden="true" />
                           <span>Live Monitor</span>
@@ -423,7 +425,7 @@ export default function TeacherDashboardPage() {
                     <tr>
                       <td colSpan={6} className="text-center py-12 text-slate-500">
                         <div className="flex flex-col items-center justify-center max-w-sm mx-auto">
-                          <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-2.5">
+                          <div className="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200 text-slate-500 flex items-center justify-center mb-2.5">
                             <FileSpreadsheet className="w-5 h-5" aria-hidden="true" />
                           </div>
                           <p className="font-bold text-slate-900 text-sm">Belum Ada Paket Ujian</p>

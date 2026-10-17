@@ -185,7 +185,7 @@ export default function SuperAdminPricingPage() {
         <div className="pointer-events-none absolute -bottom-16 -left-16 w-60 h-60 bg-indigo-50/50 rounded-full blur-2xl"></div>
 
         <div className="relative flex items-center gap-3.5">
-          <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-700 border border-amber-200/70 flex items-center justify-center font-bold shrink-0 shadow-xs ring-4 ring-amber-50/70">
+          <div className="w-12 h-12 rounded-xl bg-slate-100 text-slate-700 border border-slate-200/80 flex items-center justify-center font-bold shrink-0 shadow-xs">
             <Coins className="w-6 h-6" />
           </div>
           <div>
@@ -269,11 +269,11 @@ export default function SuperAdminPricingPage() {
       {/* TAB 1: SKEMA KREDIT AI (TOKENOMICS)                      */}
       {/* ======================================================== */}
       {activeTab === 'credits' && (
-        <div className="space-y-6">
+        <div className="space-y-6 tab-content-enter">
           {/* Tokenomics Explainer Banner */}
-          <div className="p-5 rounded-2xl bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent border border-amber-200/80 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="p-5 rounded-2xl bg-gradient-to-r from-indigo-500/10 via-indigo-500/5 to-transparent border border-indigo-200/80 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex items-start gap-3.5">
-              <div className="p-2.5 rounded-xl bg-amber-500 text-white shadow-xs shrink-0 mt-0.5">
+              <div className="p-2.5 rounded-xl bg-indigo-600 text-white shadow-xs shrink-0 mt-0.5">
                 <Cpu className="w-5 h-5" />
               </div>
               <div className="space-y-1">
@@ -286,9 +286,9 @@ export default function SuperAdminPricingPage() {
               </div>
             </div>
             <div className="shrink-0 flex items-center gap-3">
-              <div className="p-3 bg-white rounded-xl border border-amber-200 shadow-xs text-center">
+              <div className="p-3 bg-white rounded-xl border border-indigo-200 shadow-xs text-center">
                 <span className="text-[10px] font-mono text-slate-500 font-bold block uppercase">Standar Rasio</span>
-                <span className="font-display text-base font-extrabold text-amber-700">1 Kredit = 1 Token Unit</span>
+                <span className="font-display text-base font-extrabold text-indigo-700">1 Kredit = 1 Token Unit</span>
               </div>
             </div>
           </div>
@@ -404,7 +404,7 @@ export default function SuperAdminPricingPage() {
       {/* TAB 2: TIER PAKET LANGGANAN (PRICING TIERS)              */}
       {/* ======================================================== */}
       {activeTab === 'plans' && (
-        <div className="space-y-6">
+        <div className="space-y-6 tab-content-enter">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {pricingPlans.map((plan) => {
               const isPopular = plan.is_popular
@@ -507,7 +507,7 @@ export default function SuperAdminPricingPage() {
       {/* TAB 3: MANAJEMEN PROMO & VOUCHER                         */}
       {/* ======================================================== */}
       {activeTab === 'promos' && (
-        <div className="space-y-6">
+        <div className="space-y-6 tab-content-enter">
           <div className="bg-white rounded-2xl border border-slate-200/80 shadow-card overflow-hidden">
             <div className="p-5 border-b border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
@@ -594,14 +594,14 @@ export default function SuperAdminPricingPage() {
                       </td>
                       <td className="py-3.5 px-4">
                         <span
-                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold transition-colors duration-200 ${
                             p.is_active
                               ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                               : 'bg-slate-100 text-slate-500 border border-slate-200'
                           }`}
                         >
                           <span
-                            className={`w-1.5 h-1.5 rounded-full ${
+                            className={`w-1.5 h-1.5 rounded-full transition-colors duration-200 ${
                               p.is_active ? 'bg-emerald-500' : 'bg-slate-400'
                             }`}
                           />
@@ -611,7 +611,7 @@ export default function SuperAdminPricingPage() {
                       <td className="py-3.5 px-4 text-right">
                         <button
                           onClick={() => handleTogglePromo(p.id)}
-                          className={`px-3 py-1 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${
+                          className={`px-3 py-1 rounded-lg text-xs font-semibold border transition-colors duration-200 cursor-pointer ${
                             p.is_active
                               ? 'border-rose-200 hover:bg-rose-50 text-rose-700'
                               : 'border-emerald-200 hover:bg-emerald-50 text-emerald-700'

@@ -146,11 +146,11 @@ export default function SuperAdminDashboardPage() {
     <div className="space-y-6 max-w-6xl mx-auto font-sans">
       {/* Header */}
       <div className="relative overflow-hidden bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-card flex flex-col sm:flex-row sm:items-center justify-between gap-5">
-        <div className="pointer-events-none absolute -top-16 -right-16 w-72 h-72 bg-purple-50/70 rounded-full blur-3xl"></div>
+        <div className="pointer-events-none absolute -top-16 -right-16 w-72 h-72 bg-indigo-50/60 rounded-full blur-3xl"></div>
         <div className="pointer-events-none absolute -bottom-16 -left-16 w-60 h-60 bg-indigo-50/50 rounded-full blur-2xl"></div>
 
         <div className="relative flex items-center gap-3.5 min-w-0">
-          <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-200/70 flex items-center justify-center font-bold shrink-0 shadow-xs ring-4 ring-indigo-50/70">
+          <div className="w-12 h-12 rounded-xl bg-slate-100 text-slate-700 border border-slate-200/80 flex items-center justify-center font-bold shrink-0 shadow-xs ring-4 ring-slate-100/70">
             <Building2 className="w-6 h-6" aria-hidden="true" />
           </div>
           <div className="min-w-0">
@@ -219,6 +219,9 @@ export default function SuperAdminDashboardPage() {
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" aria-hidden="true" />
               <span className="text-sm font-bold text-slate-900 font-mono">TiDB Serverless</span>
+              <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 font-mono">
+                Online
+              </span>
             </div>
             <p className="text-[11px] text-slate-500">ap-southeast-1 • Latency ~28ms</p>
           </div>
@@ -233,6 +236,9 @@ export default function SuperAdminDashboardPage() {
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" aria-hidden="true" />
               <span className="text-sm font-bold text-slate-900 font-mono">Gemini 2.5 Flash</span>
+              <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 font-mono">
+                Active
+              </span>
             </div>
             <p className="text-[11px] text-slate-500">Task Router & Fallback Vault Active</p>
           </div>
@@ -276,7 +282,7 @@ export default function SuperAdminDashboardPage() {
           className="p-3.5 rounded-2xl bg-white border border-slate-200/80 hover:border-slate-300 transition-all flex items-center justify-between group shadow-card focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
         >
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 group-hover:scale-105 transition-transform">
+            <div className="p-2 rounded-xl bg-slate-100 text-slate-700 border border-slate-200/80 group-hover:scale-105 transition-transform">
               <TrendingUp className="w-4 h-4" aria-hidden="true" />
             </div>
             <div>
@@ -284,7 +290,7 @@ export default function SuperAdminDashboardPage() {
               <p className="text-[10px] text-slate-500">Laporan invoice & pendapatan tenant</p>
             </div>
           </div>
-          <span className="text-xs font-bold text-emerald-700 font-mono">&rarr;</span>
+          <span className="text-xs font-bold text-slate-400 group-hover:text-slate-700 font-mono transition-colors">&rarr;</span>
         </Link>
 
         <Link
@@ -292,7 +298,7 @@ export default function SuperAdminDashboardPage() {
           className="p-3.5 rounded-2xl bg-white border border-slate-200/80 hover:border-slate-300 transition-all flex items-center justify-between group shadow-card focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
         >
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-amber-50 text-amber-700 border border-amber-200 group-hover:scale-105 transition-transform">
+            <div className="p-2 rounded-xl bg-slate-100 text-slate-700 border border-slate-200/80 group-hover:scale-105 transition-transform">
               <Coins className="w-4 h-4" aria-hidden="true" />
             </div>
             <div>
@@ -300,7 +306,7 @@ export default function SuperAdminDashboardPage() {
               <p className="text-[10px] text-slate-500">Tier paket, kuota token & promo</p>
             </div>
           </div>
-          <span className="text-xs font-bold text-amber-700 font-mono">&rarr;</span>
+          <span className="text-xs font-bold text-slate-400 group-hover:text-slate-700 font-mono transition-colors">&rarr;</span>
         </Link>
 
         <Link
@@ -308,7 +314,7 @@ export default function SuperAdminDashboardPage() {
           className="p-3.5 rounded-2xl bg-white border border-slate-200/80 hover:border-slate-300 transition-all flex items-center justify-between group shadow-card focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
         >
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-200 group-hover:scale-105 transition-transform">
+            <div className="p-2 rounded-xl bg-slate-100 text-slate-700 border border-slate-200/80 group-hover:scale-105 transition-transform">
               <Key className="w-4 h-4" aria-hidden="true" />
             </div>
             <div>
@@ -316,14 +322,14 @@ export default function SuperAdminDashboardPage() {
               <p className="text-[10px] text-slate-500">Provider, model & KMS vault keys</p>
             </div>
           </div>
-          <span className="text-xs font-bold text-indigo-700 font-mono">&rarr;</span>
+          <span className="text-xs font-bold text-slate-400 group-hover:text-slate-700 font-mono transition-colors">&rarr;</span>
         </Link>
       </div>
 
       {/* Global SaaS Platform Metrics Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-card flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-200/70 flex items-center justify-center font-bold shrink-0">
+          <div className="w-12 h-12 rounded-xl bg-slate-100 text-slate-700 border border-slate-200/80 flex items-center justify-center font-bold shrink-0">
             <Building2 className="w-6 h-6" aria-hidden="true" />
           </div>
           <div className="min-w-0">
@@ -340,7 +346,7 @@ export default function SuperAdminDashboardPage() {
         </div>
 
         <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-card flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-200/70 flex items-center justify-center font-bold shrink-0">
+          <div className="w-12 h-12 rounded-xl bg-slate-100 text-slate-700 border border-slate-200/80 flex items-center justify-center font-bold shrink-0">
             <GraduationCap className="w-6 h-6" aria-hidden="true" />
           </div>
           <div className="min-w-0">
@@ -357,7 +363,7 @@ export default function SuperAdminDashboardPage() {
         </div>
 
         <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-card flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-200/70 flex items-center justify-center font-bold shrink-0">
+          <div className="w-12 h-12 rounded-xl bg-slate-100 text-slate-700 border border-slate-200/80 flex items-center justify-center font-bold shrink-0">
             <Users className="w-6 h-6" aria-hidden="true" />
           </div>
           <div className="min-w-0">

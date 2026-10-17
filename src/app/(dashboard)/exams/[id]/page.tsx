@@ -263,7 +263,7 @@ export default function ExamDetailPage() {
                       className={`px-2.5 py-0.5 rounded-lg text-[11px] font-bold uppercase font-mono shadow-xs ${
                         eq.question?.question_type === 'multiple_choice'
                           ? 'bg-indigo-50 text-indigo-700 border border-indigo-200'
-                          : 'bg-purple-50 text-purple-700 border border-purple-200'
+                          : 'bg-slate-100 text-slate-700 border border-slate-200'
                       }`}
                     >
                       {eq.question?.question_type === 'multiple_choice' ? 'Pilihan Ganda' : 'Esai'}
@@ -312,7 +312,7 @@ export default function ExamDetailPage() {
 
             {(!examDetail?.exam_questions || examDetail.exam_questions.length === 0) && (
               <div className="p-12 text-center flex flex-col items-center justify-center">
-                <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-3">
+                <div className="w-12 h-12 rounded-xl bg-slate-100 border border-slate-200 text-slate-500 flex items-center justify-center mb-3">
                   <CheckSquare className="w-6 h-6" aria-hidden="true" />
                 </div>
                 <h4 className="font-bold text-slate-900 text-base">Belum Ada Soal di Paket Ujian Ini</h4>

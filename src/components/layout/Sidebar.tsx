@@ -106,16 +106,16 @@ export default function Sidebar() {
       return {
         label: 'Administrator Sekolah',
         subtext: user?.tenant_name || 'SMA Negeri 1 Indonesia Unggul',
-        badgeClass: 'bg-blue-50 text-blue-700 border border-blue-200',
-        monogramBg: 'bg-blue-600',
+        badgeClass: 'bg-slate-100 text-slate-800 border border-slate-200',
+        monogramBg: 'bg-slate-900',
       }
     }
     if (isTeacher) {
       return {
         label: 'Guru Pengampu',
         subtext: user?.identifier ? `NIP: ${user.identifier}` : 'Fisika & Matematika',
-        badgeClass: 'bg-purple-50 text-purple-700 border border-purple-200',
-        monogramBg: 'bg-purple-600',
+        badgeClass: 'bg-indigo-50 text-indigo-700 border border-indigo-200',
+        monogramBg: 'bg-indigo-600',
       }
     }
     return {
@@ -360,7 +360,7 @@ export default function Sidebar() {
               {renderLink('/analytics', 'Analisis Butir & IRT', BarChart3, { text: 'Daya Beda' })}
 
               {/* Teacher AI Monthly Credits Widget */}
-              <div className="mt-4 p-3 rounded-xl bg-gradient-to-br from-indigo-50/70 to-purple-50/70 border border-indigo-200/80 text-[11px] space-y-2">
+              <div className="mt-4 p-3 rounded-xl bg-gradient-to-br from-indigo-50/70 to-indigo-50/40 border border-indigo-200/80 text-[11px] space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-indigo-950 flex items-center gap-1.5 text-xs">
                     <Sparkles className="w-3.5 h-3.5 text-indigo-600" />

@@ -92,7 +92,7 @@ export default function SuperAdminFinancePage() {
       {/* Top Header */}
       <div className="relative overflow-hidden bg-white rounded-2xl border border-slate-200/80 p-6 md:p-8 shadow-card flex flex-col sm:flex-row sm:items-center justify-between gap-6">
         <div className="pointer-events-none absolute -top-16 -right-16 w-72 h-72 bg-emerald-50/70 rounded-full blur-3xl"></div>
-        <div className="pointer-events-none absolute -bottom-16 -left-16 w-60 h-60 bg-blue-50/50 rounded-full blur-2xl"></div>
+        <div className="pointer-events-none absolute -bottom-16 -left-16 w-60 h-60 bg-indigo-50/40 rounded-full blur-2xl"></div>
 
         <div className="relative flex items-center gap-3.5">
           <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200/70 flex items-center justify-center font-bold shrink-0 shadow-xs ring-4 ring-emerald-50/70">
@@ -141,7 +141,7 @@ export default function SuperAdminFinancePage() {
             <span className="text-xs font-bold uppercase tracking-wider text-slate-500 font-mono">
               Monthly Recurring Revenue (MRR)
             </span>
-            <div className="p-2 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200/70">
+            <div className="p-2 rounded-xl bg-slate-100 text-slate-700 border border-slate-200/80">
               <DollarSign className="w-4 h-4" />
             </div>
           </div>
@@ -160,7 +160,7 @@ export default function SuperAdminFinancePage() {
             <span className="text-xs font-bold uppercase tracking-wider text-slate-500 font-mono">
               Annual Run Rate (ARR)
             </span>
-            <div className="p-2 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-200/70">
+            <div className="p-2 rounded-xl bg-slate-100 text-slate-700 border border-slate-200/80">
               <CreditCard className="w-4 h-4" />
             </div>
           </div>
@@ -176,7 +176,7 @@ export default function SuperAdminFinancePage() {
             <span className="text-xs font-bold uppercase tracking-wider text-slate-500 font-mono">
               Average Revenue Per School (ARPU)
             </span>
-            <div className="p-2 rounded-xl bg-blue-50 text-blue-700 border border-blue-200/70">
+            <div className="p-2 rounded-xl bg-slate-100 text-slate-700 border border-slate-200/80">
               <Building2 className="w-4 h-4" />
             </div>
           </div>
@@ -192,7 +192,7 @@ export default function SuperAdminFinancePage() {
             <span className="text-xs font-bold uppercase tracking-wider text-slate-500 font-mono">
               Sekolah Berlangganan Aktif
             </span>
-            <div className="p-2 rounded-xl bg-amber-50 text-amber-700 border border-amber-200/70">
+            <div className="p-2 rounded-xl bg-slate-100 text-slate-700 border border-slate-200/80">
               <ShieldCheck className="w-4 h-4" />
             </div>
           </div>
@@ -243,7 +243,7 @@ export default function SuperAdminFinancePage() {
                         style={{ height: `${heightPercent}%` }}
                         className={`w-full rounded-t-xl transition-all duration-300 ${
                           isCurrent
-                            ? 'bg-gradient-to-t from-slate-900 to-indigo-600 shadow-md ring-2 ring-[#c2ef4e]/60'
+                            ? 'bg-gradient-to-t from-slate-900 to-indigo-600 shadow-md ring-2 ring-indigo-500/60'
                             : 'bg-slate-200 group-hover:bg-slate-300'
                         }`}
                       />

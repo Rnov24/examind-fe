@@ -37,7 +37,7 @@ export default function Navbar() {
     const role = user?.role
     if (role === 'superadmin') return 'bg-indigo-50 text-indigo-700 border-indigo-200'
     if (role === 'admin') return 'bg-slate-100 text-slate-800 border-slate-200'
-    if (role === 'teacher') return 'bg-sky-50 text-sky-700 border-sky-200'
+    if (role === 'teacher') return 'bg-indigo-50 text-indigo-700 border-indigo-200'
     return 'bg-emerald-50 text-emerald-700 border-emerald-200'
   })()
 

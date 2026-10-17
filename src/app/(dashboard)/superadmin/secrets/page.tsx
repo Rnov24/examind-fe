@@ -13,12 +13,12 @@ export default function SecretsPage() {
     <div className="space-y-6">
       {/* Header */}
       <div className="relative overflow-hidden bg-white rounded-2xl border border-slate-200/80 p-6 md:p-8 shadow-card flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-        <div className="pointer-events-none absolute -top-16 -right-16 w-72 h-72 bg-purple-50/70 rounded-full blur-3xl"></div>
+        <div className="pointer-events-none absolute -top-16 -right-16 w-72 h-72 bg-indigo-50/60 rounded-full blur-3xl"></div>
         <div className="pointer-events-none absolute -bottom-16 -left-16 w-60 h-60 bg-indigo-50/50 rounded-full blur-2xl"></div>
 
         <div className="relative flex items-center gap-3.5">
-          <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-200/70 flex items-center justify-center font-bold shrink-0 shadow-xs ring-4 ring-indigo-50/70">
-            <Key className="w-6 h-6 text-indigo-600" />
+          <div className="w-12 h-12 rounded-xl bg-slate-100 text-slate-700 border border-slate-200/80 flex items-center justify-center font-bold shrink-0 shadow-xs">
+            <Key className="w-6 h-6 text-slate-700" />
           </div>
           <div>
             <div className="flex items-center gap-2 flex-wrap">

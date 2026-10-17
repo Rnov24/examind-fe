@@ -308,7 +308,7 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
           <div>
             <h3 className="font-extrabold text-base tracking-tight text-slate-900 flex items-center gap-2 flex-wrap">
               <span>Task-Specific AI Routing & Vault Hot-Reload</span>
-              <span className="px-2.5 py-0.5 rounded text-[10px] font-bold bg-[#c2ef4e] text-slate-950 font-mono shadow-xs">
+              <span className="px-2.5 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 font-mono shadow-xs">
                 Fernet AES-128 Active
               </span>
             </h3>
@@ -640,14 +640,14 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
                     </td>
                     <td className="p-4">
                       <span
-                        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold font-mono border ${
+                        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold font-mono border transition-colors duration-200 ${
                           s.is_active
                             ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
                             : 'bg-rose-50 text-rose-700 border-rose-200'
                         }`}
                       >
                         <span
-                          className={`w-1.5 h-1.5 rounded-full ${s.is_active ? 'bg-emerald-500' : 'bg-rose-500'}`}
+                          className={`w-1.5 h-1.5 rounded-full transition-colors duration-200 ${s.is_active ? 'bg-emerald-500' : 'bg-rose-500'}`}
                         ></span>
                         {s.is_active ? 'Aktif' : 'Nonaktif'}
                       </span>
@@ -656,7 +656,7 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
                       <div className="flex items-center justify-end gap-1.5">
                         <button
                           onClick={() => handleToggleStatus(s.key_name)}
-                          className="px-2.5 py-1 rounded-md text-[11px] font-bold border border-slate-200 hover:bg-slate-100 bg-white text-slate-700 cursor-pointer"
+                          className="px-2.5 py-1 rounded-md text-[11px] font-bold border border-slate-200 hover:bg-slate-100 bg-white text-slate-700 cursor-pointer transition-colors duration-200"
                         >
                           {s.is_active ? 'Nonaktifkan' : 'Aktifkan'}
                         </button>

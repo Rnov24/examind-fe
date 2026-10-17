@@ -314,11 +314,11 @@ export default function ExamResultPage() {
                     className={`px-2.5 py-0.5 rounded-full text-xs font-bold uppercase font-mono ${
                       ans.question_type === 'multiple_choice'
                         ? 'bg-indigo-50 text-indigo-700 border border-indigo-200'
-                        : 'bg-purple-50 text-purple-700 border border-purple-200'
+                        : 'bg-slate-100 text-slate-700 border border-slate-200'
                     }`}
-                  >
-                    {ans.question_type === 'multiple_choice' ? 'Pilihan Ganda' : 'Esai'}
-                  </span>
+                    >
+                      {ans.question_type === 'multiple_choice' ? 'Pilihan Ganda' : 'Esai'}
+                    </span>
                 </div>
 
                 <div className="flex items-center gap-2">

@@ -134,10 +134,10 @@ export default function ExamListPage() {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span
                         className={`inline-block px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-wider font-mono border shadow-xs ${
-                          e.status === 'published'
+                          e.status === 'in_progress'
                             ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
-                            : e.status === 'in_progress'
-                            ? 'bg-rose-50 text-rose-700 border-rose-200'
+                            : e.status === 'published'
+                            ? 'bg-indigo-50 text-indigo-700 border-indigo-200'
                             : 'bg-slate-100 text-slate-700 border-slate-200'
                         }`}
                       >

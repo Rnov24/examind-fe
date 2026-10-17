@@ -200,7 +200,7 @@ export default function QuestionBankDetailPage() {
                     className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase font-mono ${
                       q.question_type === 'multiple_choice'
                         ? 'bg-indigo-50 text-indigo-700 border border-indigo-200'
-                        : 'bg-purple-50 text-purple-700 border border-purple-200'
+                        : 'bg-slate-100 text-slate-700 border border-slate-200'
                     }`}
                   >
                     {q.question_type === 'multiple_choice' ? 'Pilihan Ganda' : 'Esai'}
@@ -283,7 +283,7 @@ export default function QuestionBankDetailPage() {
 
           {(!bankDetail?.questions || bankDetail.questions.length === 0) && (
             <div className="bg-white rounded-2xl p-12 text-center border border-dashed border-slate-300 text-slate-900 shadow-xs flex flex-col items-center justify-center">
-              <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-3">
+              <div className="w-12 h-12 rounded-xl bg-slate-100 border border-slate-200 text-slate-500 flex items-center justify-center mb-3">
                 <BookOpen className="w-6 h-6" aria-hidden="true" />
               </div>
               <h4 className="font-bold text-slate-900 text-base">Bank Soal Masih Kosong</h4>

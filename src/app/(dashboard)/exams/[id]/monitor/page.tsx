@@ -409,7 +409,7 @@ export default function LiveMonitoringPage() {
                     student.status === 'aborted'
                       ? 'bg-rose-50 text-rose-700 border border-rose-200'
                       : student.integrity_score >= 90
-                      ? 'bg-[#c2ef4e]/20 text-slate-900 border border-[#c2ef4e]'
+                      ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
                       : student.integrity_score >= 70
                       ? 'bg-amber-50 text-amber-700 border border-amber-200'
                       : 'bg-rose-50 text-rose-700 border border-rose-200'

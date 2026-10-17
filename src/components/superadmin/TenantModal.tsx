@@ -31,6 +31,12 @@ export default function TenantModal({
   onSubmit,
 }: TenantModalProps) {
   const schoolNameInputRef = useRef<HTMLInputElement | null>(null)
+  // Hold the latest onClose in a ref so the effect below only re-runs when
+  // isOpen changes — not on every parent re-render (inline onClose identity
+  // changes each keystroke, which used to re-trigger auto-focus and steal
+  // the cursor back to the school name field).
+  const onCloseRef = useRef(onClose)
+  onCloseRef.current = onClose
 
   useEffect(() => {
     if (!isOpen) return
@@ -41,7 +47,7 @@ export default function TenantModal({
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        onClose()
+        onCloseRef.current()
       }
     }
 
@@ -50,7 +56,7 @@ export default function TenantModal({
       clearTimeout(timer)
       window.removeEventListener('keydown', handleKeyDown)
     }
-  }, [isOpen, onClose])
+  }, [isOpen])
 
   if (!isOpen) return null
 
@@ -86,7 +92,7 @@ export default function TenantModal({
           </button>
         </div>
 
-        <form onSubmit={onSubmit} className="space-y-4 text-xs font-medium">
+        <form onSubmit={onSubmit} autoComplete="off" className="space-y-4 text-xs font-medium">
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1 col-span-2">
               <label className="font-bold text-slate-700">Nama Resmi Sekolah</label>
@@ -96,6 +102,7 @@ export default function TenantModal({
                 onChange={(e) => onChange({ ...form, name: e.target.value })}
                 required
                 type="text"
+                autoComplete="off"
                 placeholder="Contoh: SMAN 2 Kota Bandung"
                 className="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 placeholder:text-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none"
               />
@@ -108,6 +115,7 @@ export default function TenantModal({
                 onChange={(e) => onChange({ ...form, code: e.target.value })}
                 required
                 type="text"
+                autoComplete="off"
                 placeholder="sman2bdg"
                 className="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 font-mono focus:bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none uppercase"
               />
@@ -137,6 +145,7 @@ export default function TenantModal({
                   onChange={(e) => onChange({ ...form, admin_identifier: e.target.value })}
                   required
                   type="text"
+                  autoComplete="off"
                   placeholder="admin_sman2bdg"
                   className="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 focus:bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none font-mono"
                 />
@@ -149,6 +158,7 @@ export default function TenantModal({
                   onChange={(e) => onChange({ ...form, admin_full_name: e.target.value })}
                   required
                   type="text"
+                  autoComplete="off"
                   placeholder="Drs. Mulyadi (Kepala TU)"
                   className="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 focus:bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none"
                 />
@@ -161,6 +171,7 @@ export default function TenantModal({
                   onChange={(e) => onChange({ ...form, admin_email: e.target.value })}
                   required
                   type="email"
+                  autoComplete="off"
                   placeholder="admin@sman2bdg.sch.id"
                   className="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 focus:bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none"
                 />
@@ -173,6 +184,7 @@ export default function TenantModal({
                   onChange={(e) => onChange({ ...form, admin_password: e.target.value })}
                   required
                   type="password"
+                  autoComplete="new-password"
                   placeholder="Minimal 8 karakter"
                   className="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 focus:bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none"
                 />

@@ -221,7 +221,14 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
     e.preventDefault()
     setIsSubmitting(true)
     try {
-      await api.post('/superadmin/secrets', form)
+      // Backend SecretCreateOrUpdate expects `service_name`; the form tracks it as `provider`.
+      await api.post('/superadmin/secrets', {
+        key_name: form.key_name,
+        service_name: form.provider,
+        value: form.value,
+        description: form.description,
+        is_active: form.is_active,
+      })
       showToast('success', `Kunci API ${form.key_name} berhasil disimpan dan di-reload!`)
       setIsModalOpen(false)
       loadSecrets()

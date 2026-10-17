@@ -181,7 +181,8 @@ export default function Sidebar() {
             {isSuperAdmin && (
               <>
                 {renderSectionHeader('Menu Utama')}
-                {renderLink('/superadmin/dashboard', 'Tenant', Building2)}
+                {renderLink('/superadmin/dashboard', 'Dashboard', LayoutDashboard)}
+                {renderLink('/superadmin/tenants', 'Sekolah', Building2)}
                 {renderLink('/admin/dashboard', 'Portal Admin', ShieldCheck)}
 
                 {renderSectionHeader('Keuangan')}

@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Smartphone, X } from 'lucide-react'
+import { Smartphone, X, Check } from 'lucide-react'
 import { QRCodeSVG } from 'qrcode.react'
 
 interface CompanionQrModalProps {
@@ -73,9 +73,16 @@ export default function CompanionQrModal({
         <div className="flex items-center gap-2">
           <button
             onClick={copyUrl}
-            className="flex-1 py-2.5 rounded-lg bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs transition-colors border border-slate-300 shadow-xs cursor-pointer"
+            className="flex-1 py-2.5 rounded-lg bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs transition-colors border border-slate-300 shadow-xs cursor-pointer flex items-center justify-center gap-1.5"
           >
-            {copied ? 'Tautan Disalin! ✓' : 'Salin Tautan'}
+            {copied ? (
+              <>
+                <Check className="w-3.5 h-3.5 text-emerald-600" aria-hidden="true" />
+                <span>Tautan Disalin!</span>
+              </>
+            ) : (
+              <span>Salin Tautan</span>
+            )}
           </button>
           <button
             onClick={onClose}

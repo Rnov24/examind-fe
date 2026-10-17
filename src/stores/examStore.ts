@@ -13,9 +13,19 @@ export interface ExamQuestion {
   saved_response?: string
 }
 
+export interface ExamMeta {
+  id: number
+  title: string
+  description?: string
+  duration_minutes?: number
+  proctoring_level?: 'disabled' | 'single_camera' | 'dual_camera' | string
+  total_questions?: number
+  [key: string]: any
+}
+
 interface ExamState {
   sessionId: number | null
-  examMeta: any | null
+  examMeta: ExamMeta | null
   questions: ExamQuestion[]
   currentIndex: number
   answersMap: Record<number, string>
@@ -35,8 +45,8 @@ interface ExamState {
 
   // Actions
   setCurrentIndex: (index: number) => void
-  loadExam: (examId: number) => Promise<void>
-  startExamSession: (examId: number) => Promise<void>
+  loadExam: (examId: number) => Promise<any>
+  startExamSession: (examId: number) => Promise<any>
   setAnswer: (questionId: number, response: string) => void
   syncToServer: (examId: number) => Promise<void>
   startTimer: () => void
@@ -124,6 +134,7 @@ export const useExamStore = create<ExamState>((set, get) => ({
 
     get().startTimer()
     get().startAutosaveLoop(examId)
+    return data
   },
 
   setAnswer: (questionId: number, response: string) => {

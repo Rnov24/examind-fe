@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Loader2, X } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Camera, Video, Smartphone, ShieldAlert, Loader2, X } from 'lucide-react'
 import api from '@/lib/api'
 
 interface ClassOption {
@@ -22,7 +22,8 @@ export default function ExamCreatePage() {
   const [durationMinutes, setDurationMinutes] = useState(90)
   const [startTime, setStartTime] = useState('')
   const [endTime, setEndTime] = useState('')
-  const [proctoringLevel, setProctoringLevel] = useState('dual_camera')
+  const [isProctoringEnabled, setIsProctoringEnabled] = useState(true)
+  const [cameraMode, setCameraMode] = useState<'dual_camera' | 'single_camera'>('dual_camera')
   const [explanationPolicy, setExplanationPolicy] = useState('after_exam_closed')
   const [randomizeQuestions, setRandomizeQuestions] = useState(true)
   const [randomizeOptions, setRandomizeOptions] = useState(true)
@@ -79,7 +80,7 @@ export default function ExamCreatePage() {
         duration_minutes: durationMinutes,
         start_time: new Date(startTime).toISOString(),
         end_time: new Date(endTime).toISOString(),
-        proctoring_level: proctoringLevel,
+        proctoring_level: isProctoringEnabled ? cameraMode : 'disabled',
         explanation_policy: explanationPolicy,
         randomize_questions: randomizeQuestions,
         randomize_options: randomizeOptions,
@@ -220,43 +221,153 @@ export default function ExamCreatePage() {
             </div>
           </div>
 
-          {/* Policy Settings */}
+          {/* AI Proctoring Camera Card */}
+          <div className="p-5 bg-slate-50 rounded-2xl border border-slate-200/90 space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-start gap-3.5">
+                <div
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors shadow-xs ${
+                    isProctoringEnabled ? 'bg-slate-900 text-[#c2ef4e]' : 'bg-slate-200 text-slate-500'
+                  }`}
+                >
+                  <Camera className="w-5 h-5" aria-hidden="true" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2.5">
+                    <label htmlFor="proctoring-toggle" className="text-sm font-bold text-slate-900 font-display cursor-pointer">
+                      AI Proctoring Kamera
+                    </label>
+                    <span
+                      className={`px-2.5 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider font-mono border shadow-xs ${
+                        isProctoringEnabled
+                          ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                          : 'bg-slate-200/80 text-slate-600 border-slate-300'
+                      }`}
+                    >
+                      {isProctoringEnabled ? 'Aktif' : 'Nonaktif'}
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                    Pengawasan integritas ujian otomatis melalui analisis kamera untuk memverifikasi kehadiran peserta.
+                  </p>
+                </div>
+              </div>
+
+              {/* Accessible Switch Control */}
+              <button
+                id="proctoring-toggle"
+                type="button"
+                role="switch"
+                aria-checked={isProctoringEnabled}
+                onClick={() => setIsProctoringEnabled(!isProctoringEnabled)}
+                className={`relative inline-flex h-7 w-12 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-slate-900/20 self-start sm:self-center ${
+                  isProctoringEnabled ? 'bg-slate-900' : 'bg-slate-300'
+                }`}
+              >
+                <span className="sr-only">Aktifkan AI Proctoring Kamera</span>
+                <span
+                  aria-hidden="true"
+                  className={`pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${
+                    isProctoringEnabled ? 'translate-x-5' : 'translate-x-0'
+                  }`}
+                />
+              </button>
+            </div>
+
+            {/* Mode selection when proctoring is enabled */}
+            {isProctoringEnabled ? (
+              <div className="pt-4 border-t border-slate-200/80 space-y-3">
+                <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider font-mono">
+                  Mode Kamera Pengawasan
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <label
+                    className={`flex items-start gap-3 p-3.5 rounded-xl border cursor-pointer transition-all select-none ${
+                      cameraMode === 'dual_camera'
+                        ? 'bg-white border-slate-900 shadow-sm ring-1 ring-slate-900'
+                        : 'bg-white/70 border-slate-200 hover:border-slate-300 text-slate-700'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="cameraMode"
+                      value="dual_camera"
+                      checked={cameraMode === 'dual_camera'}
+                      onChange={() => setCameraMode('dual_camera')}
+                      className="mt-1 w-4 h-4 text-slate-900 focus:ring-slate-900 border-slate-300 accent-slate-900"
+                    />
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-1.5">
+                        <Smartphone className="w-3.5 h-3.5 text-slate-700" aria-hidden="true" />
+                        <span className="text-xs font-bold text-slate-900">Dual-Camera</span>
+                        <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-700 font-semibold border border-indigo-200">
+                          Rekomendasi
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-slate-500 leading-relaxed">
+                        Kamera laptop (wajah depan) + kamera ponsel kedua via QR (meja & lingkungan kerja).
+                      </p>
+                    </div>
+                  </label>
+
+                  <label
+                    className={`flex items-start gap-3 p-3.5 rounded-xl border cursor-pointer transition-all select-none ${
+                      cameraMode === 'single_camera'
+                        ? 'bg-white border-slate-900 shadow-sm ring-1 ring-slate-900'
+                        : 'bg-white/70 border-slate-200 hover:border-slate-300 text-slate-700'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="cameraMode"
+                      value="single_camera"
+                      checked={cameraMode === 'single_camera'}
+                      onChange={() => setCameraMode('single_camera')}
+                      className="mt-1 w-4 h-4 text-slate-900 focus:ring-slate-900 border-slate-300 accent-slate-900"
+                    />
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-1.5">
+                        <Video className="w-3.5 h-3.5 text-slate-700" aria-hidden="true" />
+                        <span className="text-xs font-bold text-slate-900">Single-Camera</span>
+                      </div>
+                      <p className="text-[11px] text-slate-500 leading-relaxed">
+                        Hanya menggunakan kamera depan laptop/komputer untuk memantau kehadiran wajah peserta.
+                      </p>
+                    </div>
+                  </label>
+                </div>
+              </div>
+            ) : (
+              <div className="pt-3 border-t border-slate-200/80">
+                <div className="flex items-center gap-2.5 text-xs text-slate-600 bg-white/80 p-3.5 rounded-xl border border-slate-200 shadow-xs">
+                  <ShieldAlert className="w-4 h-4 text-slate-500 shrink-0" aria-hidden="true" />
+                  <span>
+                    Ujian berlangsung tanpa rekaman video. Protokol keamanan layar penuh (fullscreen) dan pemantauan perpindahan tab tetap aktif.
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Explanation and Randomization Policies */}
           <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-4">
             <h4 className="text-xs font-bold uppercase tracking-wider text-slate-800 font-mono">
-              Kebijakan Pengawasan & Pembahasan
+              Kebijakan Pembahasan & Pengacakan
             </h4>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1 font-mono">
-                  Tingkat Pengawasan AI
-                </label>
-                <select
-                  value={proctoringLevel}
-                  onChange={(e) => setProctoringLevel(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs font-medium focus:bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none bg-white text-slate-900"
-                >
-                  <option value="dual_camera">Dual-Camera (Kamera Laptop + HP Sekunder)</option>
-                  <option value="single_camera">Single-Camera (Hanya Kamera Depan Laptop)</option>
-                  <option value="disabled">Nonaktifkan Proctoring</option>
-                </select>
-                <p className="text-[11px] text-slate-500 mt-1 font-mono">Dual-camera merekam wajah dan meja peserta.</p>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1 font-mono">
-                  Kebijakan Rilis Pembahasan
-                </label>
-                <select
-                  value={explanationPolicy}
-                  onChange={(e) => setExplanationPolicy(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs font-medium focus:bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none bg-white text-slate-900"
-                >
-                  <option value="after_exam_closed">Setelah Ujian Ditutup / Dinilai</option>
-                  <option value="instant">Seketika Setelah Siswa Mengumpulkan</option>
-                </select>
-                <p className="text-[11px] text-slate-500 mt-1 font-mono">Kapan siswa dapat mengakses penjelasan AI.</p>
-              </div>
+            <div>
+              <label className="block text-xs font-semibold text-slate-600 mb-1 font-mono">
+                Kebijakan Rilis Pembahasan
+              </label>
+              <select
+                value={explanationPolicy}
+                onChange={(e) => setExplanationPolicy(e.target.value)}
+                className="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs font-medium focus:bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none bg-white text-slate-900"
+              >
+                <option value="after_exam_closed">Setelah Ujian Ditutup / Dinilai Guru</option>
+                <option value="instant">Seketika Setelah Siswa Mengumpulkan</option>
+              </select>
+              <p className="text-[11px] text-slate-500 mt-1 font-mono">Menentukan kapan siswa dapat membaca penjelasan konsep AI.</p>
             </div>
 
             <div className="flex items-center gap-6 pt-2">
@@ -291,10 +402,19 @@ export default function ExamCreatePage() {
             <button
               type="submit"
               disabled={loading || !classId}
-              className="px-6 py-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-xs disabled:opacity-50 cursor-pointer transition-colors flex items-center gap-1.5 focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+              className="px-6 py-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-xs disabled:opacity-50 cursor-pointer transition-colors flex items-center gap-2 focus:ring-2 focus:ring-slate-900/10 focus:outline-none font-display"
             >
-              {loading && <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" />}
-              <span>{loading ? 'Menyimpan...' : 'Lanjut ke Pemilihan Butir Soal →'}</span>
+              {loading ? (
+                <>
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" />
+                  <span>Menyimpan...</span>
+                </>
+              ) : (
+                <>
+                  <span>Lanjut ke Pemilihan Butir Soal</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-[#c2ef4e]" aria-hidden="true" />
+                </>
+              )}
             </button>
           </div>
         </form>

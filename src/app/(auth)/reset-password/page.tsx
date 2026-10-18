@@ -15,6 +15,7 @@ import {
   KeyRound,
 } from 'lucide-react'
 import api from '@/lib/api'
+import { ExamindLogo } from '@/components/brand/ExamindLogo'
 
 function ResetPasswordContent() {
   const router = useRouter()
@@ -163,15 +164,12 @@ function ResetPasswordContent() {
 
       {/* Top Header Bar */}
       <header className="relative z-10 max-w-5xl w-full mx-auto flex items-center justify-between py-2">
-        <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-9 h-9 rounded-xl bg-slate-900 text-white font-black text-sm flex items-center justify-center shadow-card group-hover:bg-[#c2ef4e] group-hover:text-slate-950 transition-colors">
-            EX
-          </div>
-          <div>
-            <span className="font-display font-extrabold text-base tracking-tight text-slate-900 block leading-none">
-              EXAMIND
+        <Link href="/" className="flex items-center gap-3 group" aria-label="EXAMIND Beranda">
+          <ExamindLogo variant="lockup" theme="color" className="h-8 w-auto shrink-0" priority />
+          <div className="border-l border-slate-200/80 pl-3 hidden sm:block">
+            <span className="text-[11px] text-slate-500 font-medium block leading-none">
+              Platform Ujian AI Sekolah
             </span>
-            <span className="text-[11px] text-slate-500 font-medium">Platform Ujian AI Sekolah</span>
           </div>
         </Link>
 

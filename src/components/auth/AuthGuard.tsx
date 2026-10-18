@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { useAuthStore } from '@/stores/authStore'
+import { ExamindLogo } from '@/components/brand/ExamindLogo'
 
 interface AuthGuardProps {
   children: React.ReactNode
@@ -44,9 +45,7 @@ export default function AuthGuard({ children, allowedRoles }: AuthGuardProps) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center font-display font-black text-xs">
-            EX
-          </div>
+          <ExamindLogo variant="symbol" theme="color" className="h-10 w-auto" priority />
           <div className="flex items-center gap-2 text-xs font-medium text-slate-500">
             <span className="w-2 h-2 rounded-full bg-indigo-600 animate-ping"></span>
             Memverifikasi sesi...

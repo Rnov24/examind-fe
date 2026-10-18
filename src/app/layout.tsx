@@ -5,8 +5,10 @@ export const metadata: Metadata = {
   title: 'EXAMIND — AI-Powered Online Examination Platform',
   description: 'Sistem Ujian Online Berbasis AI, CBT Integritas Tinggi dengan Pengawasan AI Dual-Kamera.',
   icons: {
-    icon: '/vite.svg',
+    icon: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
   },
+  manifest: '/manifest.json',
 }
 
 export const viewport: Viewport = {

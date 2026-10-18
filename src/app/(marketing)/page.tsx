@@ -22,6 +22,7 @@ import {
   Menu,
 } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
+import { ExamindLogo } from '@/components/brand/ExamindLogo'
 
 export default function LandingPage() {
   const { user, isHydrated, hydrate, isAuthenticated } = useAuthStore()
@@ -182,12 +183,11 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           {/* Brand Logo */}
           <a href="#hero" className="flex items-center gap-3 group" aria-label="EXAMIND Beranda">
-            <div className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center font-black tracking-wider text-sm shadow-sm group-hover:bg-[#c2ef4e] group-hover:text-slate-950 transition-colors">
-              EX
-            </div>
-            <div className="flex flex-col">
-              <span className="font-bold text-base tracking-tight text-slate-900 leading-none">EXAMIND</span>
-              <span className="text-[11px] font-medium text-slate-500 tracking-wider uppercase mt-0.5">Platform Ujian AI</span>
+            <ExamindLogo variant="lockup" theme="color" className="h-8 w-auto shrink-0" priority />
+            <div className="border-l border-slate-200/80 pl-3 hidden sm:flex flex-col">
+              <span className="text-[10px] font-bold text-slate-500 tracking-wider uppercase font-mono">
+                Platform Ujian AI
+              </span>
             </div>
           </a>
 
@@ -1241,10 +1241,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
           <div className="space-y-3 md:col-span-1">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center font-black text-sm">
-                EX
-              </div>
-              <span className="font-bold text-slate-900 text-base tracking-tight">EXAMIND</span>
+              <ExamindLogo variant="lockup" theme="color" className="h-8 w-auto shrink-0" />
             </div>
             <p className="text-sm text-slate-600 leading-relaxed">
               Platform Ujian Daring AI Berintegritas Institusional. Mengamankan ujian sekolah dengan martabat, keadilan, dan teknologi pedagogis.

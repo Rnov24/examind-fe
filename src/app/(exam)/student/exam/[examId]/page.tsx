@@ -23,6 +23,7 @@ import QuestionCard from '@/components/student/QuestionCard'
 import CompanionQrModal from '@/components/student/CompanionQrModal'
 import ExamSubmitModal from '@/components/student/ExamSubmitModal'
 import SecurityWarningModal from '@/components/student/SecurityWarningModal'
+import { ExamindLogo } from '@/components/brand/ExamindLogo'
 
 export default function ExamWorkspacePage() {
   const params = useParams()
@@ -308,9 +309,7 @@ export default function ExamWorkspacePage() {
       <header className="h-16 border-b border-slate-200/90 bg-white/95 backdrop-blur-md px-4 sm:px-6 flex items-center justify-between sticky top-0 z-30 shadow-xs">
         {/* Left: Brand, Exam Title & Student Info */}
         <div className="flex items-center gap-3 min-w-0">
-          <div className="w-9 h-9 rounded-xl bg-slate-900 flex items-center justify-center font-black text-white text-xs shadow-card group hover:bg-[#c2ef4e] hover:text-slate-950 transition-colors shrink-0 font-mono">
-            EX
-          </div>
+          <ExamindLogo variant="symbol" theme="color" className="h-9 w-auto shrink-0" priority />
           <div className="min-w-0">
             <h1 className="font-display text-sm sm:text-base font-bold text-slate-900 tracking-tight leading-tight truncate">
               {examStore.examMeta?.title || 'Ujian EXAMIND'}

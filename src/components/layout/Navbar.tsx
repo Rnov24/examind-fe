@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { LogOut, PanelLeft } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useUiStore } from '@/stores/uiStore'
+import { ExamindLogo } from '@/components/brand/ExamindLogo'
 
 export default function Navbar() {
   const router = useRouter()
@@ -67,16 +68,10 @@ export default function Navbar() {
           <PanelLeft className="w-5 h-5" aria-hidden="true" />
         </button>
 
-        <Link href="/dashboard" className="flex items-center gap-2.5 sm:gap-3 group min-w-0">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-slate-900 to-slate-800 text-white flex items-center justify-center font-display font-black text-xs tracking-wider shadow-sm ring-1 ring-slate-800/60 group-hover:ring-[#c2ef4e]/60 transition-all relative overflow-hidden shrink-0">
-            <span className="relative z-10">EX</span>
-            <span className="absolute -bottom-1 -right-1 w-2.5 h-2.5 bg-[#c2ef4e] rounded-full blur-[1px]"></span>
-          </div>
-          <div className="min-w-0">
+        <Link href="/dashboard" className="flex items-center gap-2.5 sm:gap-3 group min-w-0" aria-label="EXAMIND Dashboard">
+          <ExamindLogo variant="lockup" theme="color" className="h-7 w-auto shrink-0" priority />
+          <div className="min-w-0 border-l border-slate-200/80 pl-2.5 sm:pl-3">
             <div className="flex items-center gap-1.5 sm:gap-2">
-              <span className="font-display font-extrabold text-slate-900 leading-none text-base tracking-tight group-hover:text-indigo-600 transition-colors">
-                EXAMIND
-              </span>
               <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-[#c2ef4e] text-slate-950 font-mono tracking-wider shrink-0">
                 CBT
               </span>

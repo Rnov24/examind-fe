@@ -143,9 +143,9 @@ export default function TenantTable({
                 <TableCell className="whitespace-nowrap">
                   <Badge
                     variant={
-                      t.subscription_plan === 'enterprise'
-                        ? 'violet'
-                        : t.subscription_plan === 'pro'
+                      t.subscription_plan?.toLowerCase() === 'enterprise'
+                        ? 'emerald'
+                        : t.subscription_plan?.toLowerCase() === 'pro'
                         ? 'violet'
                         : 'neutral'
                     }
@@ -160,9 +160,9 @@ export default function TenantTable({
                     <span className="font-bold text-slate-900">{t.total_students}</span>
                     <span className="text-slate-500">/ {t.max_students}</span>
                   </div>
-                  <div className="w-24 h-1.5 rounded-full bg-slate-100 border border-slate-200 overflow-hidden mt-1">
+                  <div className="w-24 h-1.5 rounded-full bg-slate-100 border border-slate-200 overflow-hidden mt-1 shadow-inner">
                     <div
-                      className="h-full bg-slate-900 rounded-full"
+                      className="h-full bg-gradient-to-r from-indigo-500 to-[#6a5fc1] rounded-full transition-all duration-300"
                       style={{
                         width: `${Math.min(100, (t.total_students / (t.max_students || 1)) * 100)}%`,
                       }}

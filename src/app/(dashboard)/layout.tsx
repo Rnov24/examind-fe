@@ -13,7 +13,11 @@ export default function DashboardLayout({
   children: React.ReactNode
 }) {
   const pathname = usePathname()
-  const isDashboardRoute = pathname === '/superadmin/dashboard'
+  const isDashboardRoute =
+    pathname.startsWith('/superadmin/') ||
+    pathname === '/analytics' ||
+    pathname.startsWith('/analytics/') ||
+    pathname.includes('/analytics')
 
   return (
     <AuthGuard>

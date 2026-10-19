@@ -156,21 +156,21 @@ export function TenantActivityTable({
                 const planBadgeColor = (() => {
                   const p = tenant.subscription_plan?.toLowerCase()
                   if (p === 'enterprise')
-                    return 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                    return 'bg-emerald-100 text-emerald-900 border-emerald-300 font-black'
                   if (p === 'pro')
-                    return 'bg-indigo-50 text-indigo-800 border-indigo-200'
-                  return 'bg-slate-100 text-slate-800 border-slate-200'
+                    return 'bg-indigo-100 text-indigo-900 border-indigo-300 font-black'
+                  return 'bg-slate-100 text-slate-800 border-slate-300 font-bold'
                 })()
 
                 return (
                   <tr
                     key={tenant.id}
-                    className="hover:bg-slate-50/60 transition-colors group"
+                    className="hover:bg-slate-50/70 transition-colors group"
                   >
                     {/* School Name & Domain */}
                     <td className="py-3.5 px-5">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-slate-100 border border-slate-200/80 flex items-center justify-center text-slate-700 font-bold shrink-0">
+                        <div className="w-9 h-9 rounded-xl bg-violet-50 text-[#6a5fc1] border border-violet-200/80 flex items-center justify-center font-bold shrink-0 shadow-2xs group-hover:bg-[#150f23] group-hover:text-[#c2ef4e] transition-colors">
                           <Building2 className="w-4 h-4" aria-hidden="true" />
                         </div>
                         <div className="min-w-0">
@@ -185,46 +185,40 @@ export function TenantActivityTable({
                     </td>
 
                     {/* CBT Code */}
-                    <td className="py-3.5 px-4 font-mono text-[11px] font-semibold text-slate-600">
+                    <td className="py-3.5 px-4 font-mono text-[11px] font-bold text-slate-700">
                       {tenant.code}
                     </td>
 
                     {/* License Plan */}
                     <td className="py-3.5 px-4">
                       <span
-                        className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold font-mono uppercase border ${planBadgeColor}`}
+                        className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] uppercase border shadow-2xs ${planBadgeColor}`}
                       >
                         {tenant.subscription_plan || 'STARTER'}
                       </span>
                     </td>
 
                     {/* Students count */}
-                    <td className="py-3.5 px-4 font-mono font-medium text-slate-700">
+                    <td className="py-3.5 px-4 font-mono font-bold text-slate-800">
                       {(tenant.total_students ?? 0).toLocaleString('id-ID')}{' '}
-                      <span className="text-slate-400 text-[10px]">
+                      <span className="text-slate-400 text-[10px] font-normal">
                         / {tenant.max_students ?? 500}
                       </span>
                     </td>
 
-                    {/* Status Dot */}
+                    {/* Status Pill */}
                     <td className="py-3.5 px-4">
-                      <div className="flex items-center gap-2">
-                        <span
-                          className={`w-2 h-2 rounded-full ${
-                            tenant.is_active
-                              ? 'bg-emerald-500 animate-pulse'
-                              : 'bg-slate-300'
-                          }`}
-                          aria-hidden="true"
-                        />
-                        <span
-                          className={`font-medium ${
-                            tenant.is_active ? 'text-emerald-700' : 'text-slate-400'
-                          }`}
-                        >
-                          {tenant.is_active ? 'Aktif Beroperasi' : 'Nonaktif'}
+                      {tenant.is_active ? (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-2xs">
+                          <span className="w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-emerald-200 animate-pulse" aria-hidden="true" />
+                          Aktif Beroperasi
                         </span>
-                      </div>
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-slate-100 text-slate-600 border border-slate-200">
+                          <span className="w-1.5 h-1.5 rounded-full bg-slate-400" aria-hidden="true" />
+                          Nonaktif
+                        </span>
+                      )}
                     </td>
 
                     {/* Actions */}

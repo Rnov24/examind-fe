@@ -28,7 +28,7 @@ export function TelemetryStrip({
     >
       <div className="flex items-center gap-2.5">
         <div
-          className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"
+          className="w-2.5 h-2.5 rounded-full bg-emerald-500 ring-4 ring-emerald-100 animate-pulse"
           aria-hidden="true"
         />
         <span className="font-display font-bold text-slate-900">
@@ -36,31 +36,35 @@ export function TelemetryStrip({
         </span>
       </div>
 
-      <div className="flex items-center gap-5 sm:gap-7 flex-wrap font-mono text-[11px]">
+      <div className="flex items-center gap-3 sm:gap-4 flex-wrap font-mono text-[11px]">
         <div className="flex items-center gap-1.5">
-          <span className="text-slate-400">Database:</span>
-          <span className="font-semibold text-slate-900 flex items-center gap-1">
+          <span className="text-slate-500 font-sans">Database:</span>
+          <span className="font-bold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-900 border border-emerald-200/80 flex items-center gap-1 shadow-2xs">
             <Database className="w-3 h-3 text-emerald-600" aria-hidden="true" />
             {dbStatus}
           </span>
         </div>
 
         <div className="flex items-center gap-1.5">
-          <span className="text-slate-400">Layanan AI:</span>
-          <span className="font-semibold text-slate-900 flex items-center gap-1">
+          <span className="text-slate-500 font-sans">Layanan AI:</span>
+          <span className="font-bold px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-900 border border-indigo-200/80 flex items-center gap-1 shadow-2xs">
             <Sparkles className="w-3 h-3 text-indigo-600" aria-hidden="true" />
             {aiModel}
           </span>
         </div>
 
         <div className="flex items-center gap-1.5">
-          <span className="text-slate-400">Proctoring Dual-Cam:</span>
-          <span className="font-semibold text-emerald-600">{proctoringStatus}</span>
+          <span className="text-slate-500 font-sans">Proctoring Dual-Cam:</span>
+          <span className="font-bold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-800 border border-emerald-200/80 shadow-2xs">
+            {proctoringStatus}
+          </span>
         </div>
 
         <div className="flex items-center gap-1.5">
-          <span className="text-slate-400">Latensi:</span>
-          <span className="font-semibold text-slate-800">{latency}</span>
+          <span className="text-slate-500 font-sans">Latensi:</span>
+          <span className="font-bold px-2 py-0.5 rounded-md bg-slate-100 text-slate-800 border border-slate-200 shadow-2xs">
+            {latency}
+          </span>
         </div>
       </div>
 

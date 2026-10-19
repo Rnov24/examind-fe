@@ -29,7 +29,7 @@ import {
   TelemetryBarChart,
   QuickActionGrid,
   TenantActivityTable,
-  NavTabItem,
+  getSuperAdminNavTabs,
 } from '@/components/dashboard'
 import { useBentoBlock, invalidateBentoCache } from '@/lib/bentoCache'
 import { useAuthStore } from '@/stores/authStore'
@@ -99,18 +99,8 @@ export default function SuperAdminDashboardPage() {
   const finance = financeBlock.data
   const tenantsList = tenantsBlock.data || []
 
-  // Top Navigation Tabs matching Finexy design language
-  const navTabs: NavTabItem[] = useMemo(
-    () => [
-      { id: 'overview', label: 'Ringkasan', href: '/superadmin/dashboard' },
-      { id: 'tenants', label: 'Sekolah', href: '/superadmin/tenants', badge: stats?.total_tenants },
-      { id: 'finance', label: 'Keuangan', href: '/superadmin/finance' },
-      { id: 'pricing', label: 'Harga & Kuota', href: '/superadmin/pricing' },
-      { id: 'secrets', label: 'Sistem', href: '/superadmin/secrets' },
-      { id: 'analytics', label: 'Audit Nilai', href: '/analytics' },
-    ],
-    [stats?.total_tenants]
-  )
+  // Top Navigation Tabs matching unified superadmin design
+  const navTabs = useMemo(() => getSuperAdminNavTabs(stats?.total_tenants), [stats?.total_tenants])
 
   // Filtered tenants for recent activities table
   const filteredTenants = useMemo(() => {
@@ -169,10 +159,10 @@ export default function SuperAdminDashboardPage() {
             <DashboardCard className="p-6">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-slate-500 tracking-tight">
+                  <span className="text-xs font-bold text-slate-600 tracking-tight">
                     Pendapatan Berulang (MRR)
                   </span>
-                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
+                  <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200/80 shadow-2xs">
                     IDR • Bulanan
                   </span>
                 </div>
@@ -181,29 +171,29 @@ export default function SuperAdminDashboardPage() {
                   <div className="font-display text-3xl font-extrabold text-slate-900 tracking-tight tabular-nums">
                     Rp {(finance?.mrr ?? 0).toLocaleString('id-ID')}
                   </div>
-                  <div className="flex items-center gap-1.5 text-xs text-emerald-600 font-semibold font-mono mt-1">
-                    <span className="flex items-center gap-0.5">
-                      <ArrowUpRight className="w-3.5 h-3.5" aria-hidden="true" />
+                  <div className="flex items-center gap-1.5 text-xs text-emerald-700 font-semibold font-mono mt-1">
+                    <span className="flex items-center gap-0.5 font-bold">
+                      <ArrowUpRight className="w-3.5 h-3.5 stroke-[2.5]" aria-hidden="true" />
                       14%
                     </span>
-                    <span className="text-slate-400 font-normal font-sans">
+                    <span className="text-slate-500 font-normal font-sans">
                       dibandingkan bulan lalu
                     </span>
                   </div>
                 </div>
 
-                {/* Softened dual action buttons */}
+                {/* Vibrant balanced action buttons */}
                 <div className="grid grid-cols-2 gap-3 pt-2">
                   <Link
                     href="/superadmin/finance"
-                    className="py-2.5 px-3 rounded-full bg-slate-100 hover:bg-slate-200/80 border border-slate-200 text-slate-800 text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 text-center shadow-2xs"
+                    className="py-2.5 px-3 rounded-full bg-[#150f23] hover:bg-slate-800 text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 text-center shadow-xs cursor-pointer"
                   >
                     <span>Tagihan</span>
-                    <ArrowUpRight className="w-3.5 h-3.5 text-slate-500" aria-hidden="true" />
+                    <ArrowUpRight className="w-3.5 h-3.5 text-[#c2ef4e]" aria-hidden="true" />
                   </Link>
                   <Link
                     href="/superadmin/pricing"
-                    className="py-2.5 px-3 rounded-full bg-slate-100 hover:bg-slate-200/80 border border-slate-200 text-slate-700 text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 text-center"
+                    className="py-2.5 px-3 rounded-full bg-slate-100 hover:bg-slate-200/80 border border-slate-200 text-slate-800 text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 text-center cursor-pointer"
                   >
                     <span>Tarif Kuota</span>
                   </Link>
@@ -233,6 +223,7 @@ export default function SuperAdminDashboardPage() {
                 percentageLabel="71%"
                 statusLeft="Quota Reset: 12 hari lagi"
                 statusRight="Kapasitas Normal"
+                tone="violet"
                 className="pt-1"
               />
             </DashboardCard>
@@ -240,11 +231,11 @@ export default function SuperAdminDashboardPage() {
 
           {/* MIDDLE COLUMN: 2x2 STAT GRID (col-span-5) */}
           <div className="lg:col-span-5 grid grid-cols-1 sm:grid-cols-2 gap-5">
-            {/* HERO CARD - Soft daylight treatment */}
+            {/* HERO CARD - Vibrant daylight treatment */}
             <HeroCard
               title="Sekolah Terdaftar"
               value={stats?.total_tenants ?? 0}
-              icon={<Building2 className="w-5 h-5 text-[#6a5fc1]" aria-hidden="true" />}
+              icon={<Building2 className="w-5 h-5 text-[#c2ef4e]" aria-hidden="true" />}
               trend={{
                 value: `${stats?.active_tenants ?? 0} Aktif`,
                 positive: true,
@@ -259,6 +250,7 @@ export default function SuperAdminDashboardPage() {
               title="Peserta Didik (Siswa)"
               value={(stats?.total_global_students ?? 0).toLocaleString('id-ID')}
               icon={<GraduationCap className="w-5 h-5 text-indigo-600" aria-hidden="true" />}
+              tone="indigo"
               subtitle={`Dari ${(stats?.total_global_users ?? 0).toLocaleString('id-ID')} total akun`}
               trend={{ value: '100%', positive: true, label: 'aktif ujian' }}
               className="min-h-[180px]"
@@ -268,7 +260,8 @@ export default function SuperAdminDashboardPage() {
             <StatCard
               title="Tenaga Pendidik (Guru)"
               value={(stats?.total_global_teachers ?? 0).toLocaleString('id-ID')}
-              icon={<Users className="w-5 h-5 text-slate-700" aria-hidden="true" />}
+              icon={<Users className="w-5 h-5 text-amber-600" aria-hidden="true" />}
+              tone="amber"
               subtitle="Pendidik di seluruh sekolah"
               trend={{ value: '+8%', positive: true, label: 'bulan ini' }}
               className="min-h-[180px]"
@@ -279,6 +272,7 @@ export default function SuperAdminDashboardPage() {
               title="Annual Run Rate (ARR)"
               value={`Rp ${(finance?.arr ?? 0).toLocaleString('id-ID')}`}
               icon={<TrendingUp className="w-5 h-5 text-emerald-600" aria-hidden="true" />}
+              tone="emerald"
               subtitle="Proyeksi pendapatan tahunan"
               trend={{ value: '+18%', positive: true, label: 'pertumbuhan' }}
               className="min-h-[180px]"
@@ -292,13 +286,13 @@ export default function SuperAdminDashboardPage() {
                     title: 'Kunci API & Keamanan',
                     subtitle: 'Konfigurasi Gemini & DB',
                     href: '/superadmin/secrets',
-                    icon: <Cpu className="w-4 h-4" aria-hidden="true" />,
+                    icon: <Cpu className="w-4 h-4 text-indigo-600" aria-hidden="true" />,
                   },
                   {
                     title: 'Audit Nilai & Ujian',
                     subtitle: 'Telemetri integritas proctoring',
                     href: '/analytics',
-                    icon: <Activity className="w-4 h-4" aria-hidden="true" />,
+                    icon: <Activity className="w-4 h-4 text-emerald-600" aria-hidden="true" />,
                   },
                 ]}
               />

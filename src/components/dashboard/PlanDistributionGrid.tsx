@@ -21,23 +21,29 @@ export function PlanDistributionGrid({
     {
       name: 'Enterprise',
       count: distribution?.enterprise ?? 0,
-      badgeColor: 'bg-emerald-500',
+      containerClass: 'bg-gradient-to-br from-emerald-50/80 via-white to-emerald-50/30 border-emerald-200/90 hover:border-emerald-300',
+      dotClass: 'bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.5)]',
+      countClass: 'text-emerald-950',
       tagText: 'Prioritas AI',
-      tagColor: 'text-emerald-700',
+      tagClass: 'text-emerald-800 bg-emerald-100/80 font-bold',
     },
     {
       name: 'Pro',
       count: distribution?.pro ?? 0,
-      badgeColor: 'bg-indigo-500',
+      containerClass: 'bg-gradient-to-br from-indigo-50/80 via-white to-indigo-50/30 border-indigo-200/90 hover:border-indigo-300',
+      dotClass: 'bg-indigo-500 shadow-[0_0_6px_rgba(99,102,241,0.5)]',
+      countClass: 'text-indigo-950',
       tagText: 'Kamera Ganda',
-      tagColor: 'text-indigo-700',
+      tagClass: 'text-indigo-800 bg-indigo-100/80 font-bold',
     },
     {
       name: 'Starter',
       count: distribution?.starter ?? 0,
-      badgeColor: 'bg-slate-400',
+      containerClass: 'bg-gradient-to-br from-slate-50/90 via-white to-slate-50/40 border-slate-200/90 hover:border-slate-300',
+      dotClass: 'bg-slate-400',
+      countClass: 'text-slate-900',
       tagText: 'Dasar CBT',
-      tagColor: 'text-slate-500',
+      tagClass: 'text-slate-700 bg-slate-100 font-semibold',
     },
   ]
 
@@ -46,16 +52,18 @@ export function PlanDistributionGrid({
       {items.map((item) => (
         <div
           key={item.name}
-          className="p-3 rounded-xl bg-slate-50/80 border border-slate-100 space-y-1 hover:bg-slate-50 transition-colors"
+          className={`p-3 rounded-xl border space-y-1.5 transition-all shadow-2xs hover:shadow-xs ${item.containerClass}`}
         >
-          <div className="flex items-center justify-between text-[10px] font-mono text-slate-500 font-semibold">
+          <div className="flex items-center justify-between text-[10px] font-mono text-slate-600 font-bold">
             <span>{item.name}</span>
-            <span className={`w-1.5 h-1.5 rounded-full ${item.badgeColor}`} aria-hidden="true" />
+            <span className={`w-2 h-2 rounded-full ${item.dotClass}`} aria-hidden="true" />
           </div>
-          <div className="font-display text-lg font-extrabold text-slate-900 tabular-nums">
+          <div className={`font-display text-xl font-black tabular-nums ${item.countClass}`}>
             {item.count}
           </div>
-          <p className={`text-[9px] font-medium ${item.tagColor}`}>{item.tagText}</p>
+          <span className={`text-[9px] px-1.5 py-0.5 rounded-md inline-block ${item.tagClass}`}>
+            {item.tagText}
+          </span>
         </div>
       ))}
     </div>

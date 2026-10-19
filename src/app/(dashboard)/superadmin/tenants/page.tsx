@@ -1,26 +1,35 @@
 'use client'
 
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useMemo } from 'react'
 import {
   Building2,
   Plus,
   CheckCircle2,
   Sparkles,
+  RefreshCw,
 } from 'lucide-react'
 import api from '@/lib/api'
 import TenantTable from '@/components/superadmin/TenantTable'
 import TenantModal, { TenantFormData } from '@/components/superadmin/TenantModal'
-import { BentoBlock } from '@/components/ui/BentoBlock'
-import { BentoMetricSkeleton, BentoTableSkeleton } from '@/components/ui/Skeleton'
+import {
+  DashboardShell,
+  StatCard,
+  DashboardCard,
+  getSuperAdminNavTabs,
+} from '@/components/dashboard'
+import { BentoTableSkeleton } from '@/components/ui/Skeleton'
 import { useBentoBlock, invalidateBentoCache } from '@/lib/bentoCache'
+import { useAuthStore } from '@/stores/authStore'
 
 export default function SuperAdminTenantsPage() {
+  const { user } = useAuthStore()
+  const [activeTab, setActiveTab] = useState('tenants')
   const [searchQuery, setSearchQuery] = useState('')
   const [filterPlan, setFilterPlan] = useState('')
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  // 1. Parallel Fetch: Platform Stats for Top Bento Metrics
+  // 1. Parallel Fetch: Platform Stats for Top Metrics
   const statsBlock = useBentoBlock<any>({
     key: 'superadmin:stats',
     fetcher: async () => {
@@ -100,120 +109,129 @@ export default function SuperAdminTenantsPage() {
   const stats = statsBlock.data
   const tenantsList = tenantsBlock.data || []
 
-  return (
-    <div className="space-y-6 max-w-6xl mx-auto font-sans">
-      {/* Header - Renders immediately without blocking */}
-      <div className="relative overflow-hidden bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-card flex flex-col sm:flex-row sm:items-center justify-between gap-5">
-        <div className="relative flex items-center gap-3.5 min-w-0">
-          <div className="w-12 h-12 rounded-xl bg-slate-100 text-slate-700 border border-slate-200/80 flex items-center justify-center font-bold shrink-0 shadow-xs ring-4 ring-slate-100/70">
-            <Building2 className="w-6 h-6" aria-hidden="true" />
-          </div>
-          <div className="min-w-0">
-            <h1 className="font-display text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight truncate">
-              Kelola Sekolah
-            </h1>
-            <p className="text-xs text-slate-500 font-medium mt-0.5">
-              Daftar sekolah terdaftar, pengelolaan paket langganan, dan status operasional.
-            </p>
-          </div>
-        </div>
+  // Top Navigation Tabs matching unified superadmin design
+  const navTabs = useMemo(() => getSuperAdminNavTabs(stats?.total_tenants), [stats?.total_tenants])
 
-        {/* Primary Action: Tambah Sekolah Baru */}
-        <div className="relative flex items-center gap-2.5 shrink-0 w-full sm:w-auto">
+  return (
+    <DashboardShell
+      navTabs={navTabs}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      greetingName={user?.full_name || 'Super Admin'}
+      greetingSubtitle="Daftar sekolah terdaftar, pengelolaan paket langganan, dan status operasional."
+      greetingAction={
+        <div className="flex items-center gap-2.5">
+          <button
+            type="button"
+            onClick={() => {
+              statsBlock.retry()
+              tenantsBlock.retry()
+            }}
+            disabled={statsBlock.isRefreshing || tenantsBlock.isRefreshing}
+            title="Muat ulang data sekolah"
+            aria-label="Muat ulang data sekolah"
+            className="p-2.5 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 transition-all shadow-xs cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#150f23] disabled:opacity-50"
+          >
+            <RefreshCw
+              className={`w-4 h-4 ${
+                statsBlock.isRefreshing || tenantsBlock.isRefreshing
+                  ? 'animate-spin text-emerald-600'
+                  : ''
+              }`}
+              aria-hidden="true"
+            />
+          </button>
           <button
             type="button"
             onClick={() => setShowCreateModal(true)}
-            className="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-card hover:shadow-card-hover flex items-center justify-center gap-2 transition-all cursor-pointer font-display tracking-wide w-full sm:w-auto focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+            className="px-5 py-2.5 rounded-full bg-[#150f23] hover:bg-slate-800 text-white font-bold text-xs shadow-card hover:shadow-card-hover flex items-center justify-center gap-2 transition-all cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-[#150f23] focus:outline-none"
           >
             <Plus className="w-4 h-4 text-[#c2ef4e]" aria-hidden="true" />
             <span>Tambah Sekolah Baru</span>
           </button>
         </div>
+      }
+    >
+      <div className="space-y-6">
+        {/* Top Metric Cards with Rich Semantic Tones */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+          {/* Card 1: Total Sekolah */}
+          <StatCard
+            title="Total Sekolah Terdaftar"
+            value={stats?.total_tenants ?? 0}
+            icon={<Building2 className="w-5 h-5 text-indigo-600" aria-hidden="true" />}
+            tone="indigo"
+            subtitle="Institusi pendidikan terdaftar di platform"
+            className="min-h-[160px]"
+          />
+
+          {/* Card 2: Sekolah Aktif */}
+          <StatCard
+            title="Sekolah Aktif Beroperasi"
+            value={stats?.active_tenants ?? 0}
+            icon={<CheckCircle2 className="w-5 h-5 text-emerald-600" aria-hidden="true" />}
+            tone="emerald"
+            subtitle="Menyelenggarakan kegiatan CBT aktif"
+            trend={{
+              value: `${Math.round(
+                ((stats?.active_tenants || 0) / Math.max(stats?.total_tenants || 1, 1)) * 100
+              )}%`,
+              positive: true,
+              label: 'rasio aktif',
+            }}
+            className="min-h-[160px]"
+          />
+
+          {/* Card 3: Distribusi Paket */}
+          <StatCard
+            title="Paket Enterprise & Pro"
+            value={(stats?.plan_distribution?.enterprise ?? 0) + (stats?.plan_distribution?.pro ?? 0)}
+            icon={<Sparkles className="w-5 h-5 text-[#6a5fc1]" aria-hidden="true" />}
+            tone="violet"
+            subtitle={`${stats?.plan_distribution?.enterprise ?? 0} Enterprise • ${
+              stats?.plan_distribution?.pro ?? 0
+            } Pro • ${stats?.plan_distribution?.starter ?? 0} Starter`}
+            trend={{ value: 'Prioritas AI', positive: true }}
+            className="min-h-[160px]"
+          />
+        </div>
+
+        {/* Main Directory & Management Table */}
+        <DashboardCard
+          title="Direktori & Manajemen Sekolah"
+          subtitle="Daftar institusi, filter paket, dan pembaruan kuota AI"
+          icon={<Building2 className="w-4 h-4 text-[#6a5fc1]" aria-hidden="true" />}
+          noPadding
+        >
+          {tenantsBlock.status === 'loading' ? (
+            <div className="p-8">
+              <BentoTableSkeleton rows={6} staggerIndex={0} />
+            </div>
+          ) : tenantsBlock.status === 'error' ? (
+            <div className="p-8 text-center space-y-3">
+              <p className="text-xs text-rose-600 font-medium">Gagal memuat data sekolah.</p>
+              <button
+                type="button"
+                onClick={() => tenantsBlock.retry()}
+                className="px-4 py-2 rounded-full bg-slate-100 hover:bg-slate-200 text-xs font-semibold text-slate-800 transition-colors"
+              >
+                Muat Ulang Sekolah
+              </button>
+            </div>
+          ) : (
+            <TenantTable
+              tenants={tenantsList}
+              search={searchQuery}
+              plan={filterPlan}
+              onSearchUpdate={handleSearchUpdate}
+              onPlanUpdate={handlePlanUpdate}
+              onCreateTenant={() => setShowCreateModal(true)}
+              onChangePlan={promptChangePlan}
+              onToggleStatus={toggleStatus}
+            />
+          )}
+        </DashboardCard>
       </div>
-
-      {/* Top Bento Metrics: Independent blocks loaded in parallel */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-        {/* Bento 1: Total Sekolah */}
-        <BentoBlock
-          title="Total Sekolah"
-          icon={<Building2 className="w-4 h-4 text-slate-400" aria-hidden="true" />}
-          status={statsBlock.status}
-          error={statsBlock.error}
-          onRetry={statsBlock.retry}
-          staggerIndex={0}
-          skeleton={<BentoMetricSkeleton staggerIndex={0} />}
-        >
-          <div className="space-y-2">
-            <div className="font-display text-3xl font-extrabold text-slate-900 tracking-tight tabular-nums">
-              {stats?.total_tenants ?? 0}
-            </div>
-            <p className="text-xs text-slate-500">Institusi pendidikan terdaftar di platform</p>
-          </div>
-        </BentoBlock>
-
-        {/* Bento 2: Sekolah Aktif */}
-        <BentoBlock
-          title="Sekolah Aktif"
-          icon={<CheckCircle2 className="w-4 h-4 text-emerald-600" aria-hidden="true" />}
-          status={statsBlock.status}
-          error={statsBlock.error}
-          onRetry={statsBlock.retry}
-          staggerIndex={1}
-          skeleton={<BentoMetricSkeleton staggerIndex={1} />}
-        >
-          <div className="space-y-2">
-            <div className="font-display text-3xl font-extrabold text-emerald-600 tracking-tight tabular-nums">
-              {stats?.active_tenants ?? 0}
-            </div>
-            <p className="text-xs text-slate-500">Aktif menyelenggarakan ujian dan kegiatan CBT</p>
-          </div>
-        </BentoBlock>
-
-        {/* Bento 3: Distribusi Paket */}
-        <BentoBlock
-          title="Paket Enterprise & Pro"
-          icon={<Sparkles className="w-4 h-4 text-indigo-600" aria-hidden="true" />}
-          status={statsBlock.status}
-          error={statsBlock.error}
-          onRetry={statsBlock.retry}
-          staggerIndex={2}
-          skeleton={<BentoMetricSkeleton staggerIndex={2} />}
-        >
-          <div className="space-y-2">
-            <div className="font-display text-3xl font-extrabold text-slate-900 tracking-tight tabular-nums">
-              {(stats?.plan_distribution?.enterprise ?? 0) + (stats?.plan_distribution?.pro ?? 0)}
-            </div>
-            <p className="text-xs text-slate-500">
-              {stats?.plan_distribution?.enterprise ?? 0} Enterprise, {stats?.plan_distribution?.pro ?? 0} Pro, {stats?.plan_distribution?.starter ?? 0} Starter
-            </p>
-          </div>
-        </BentoBlock>
-      </div>
-
-      {/* Main Bento Block: Tenant Directory & Table */}
-      <BentoBlock
-        title="Direktori & Manajemen Sekolah"
-        subtitle="Daftar institusi, filter paket, dan pembaruan kuota AI"
-        icon={<Building2 className="w-4 h-4 text-indigo-600" aria-hidden="true" />}
-        status={tenantsBlock.status}
-        error={tenantsBlock.error}
-        onRetry={tenantsBlock.retry}
-        retryLabel="Muat Ulang Sekolah"
-        staggerIndex={3}
-        noPadding
-        skeleton={<BentoTableSkeleton rows={6} staggerIndex={3} />}
-      >
-        <TenantTable
-          tenants={tenantsList}
-          search={searchQuery}
-          plan={filterPlan}
-          onSearchUpdate={handleSearchUpdate}
-          onPlanUpdate={handlePlanUpdate}
-          onCreateTenant={() => setShowCreateModal(true)}
-          onChangePlan={promptChangePlan}
-          onToggleStatus={toggleStatus}
-        />
-      </BentoBlock>
 
       {/* Tenant Onboard Modal */}
       <TenantModal
@@ -222,6 +240,6 @@ export default function SuperAdminTenantsPage() {
         onClose={() => setShowCreateModal(false)}
         onSubmit={handleCreateTenant}
       />
-    </div>
+    </DashboardShell>
   )
 }

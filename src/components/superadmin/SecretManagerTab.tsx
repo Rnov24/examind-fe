@@ -519,7 +519,21 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-center gap-2">
-                      <div className="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center shrink-0 text-slate-700">
+                      <div
+                        className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 border shadow-2xs ${
+                          p.id === 'gemini'
+                            ? 'bg-indigo-50 text-indigo-600 border-indigo-200/80'
+                            : p.id === 'openai'
+                            ? 'bg-emerald-50 text-emerald-600 border-emerald-200/80'
+                            : p.id === 'claude'
+                            ? 'bg-amber-50 text-amber-700 border-amber-200/80'
+                            : p.id === 'deepseek'
+                            ? 'bg-violet-50 text-[#6a5fc1] border-violet-200/80'
+                            : p.id === 'resend'
+                            ? 'bg-rose-50 text-rose-600 border-rose-200/80'
+                            : 'bg-slate-100 text-slate-700 border-slate-200'
+                        }`}
+                      >
                         <IconComp className="w-3.5 h-3.5" />
                       </div>
                       <div>
@@ -714,18 +728,19 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
                         {s.description || '-'}
                       </td>
 
-                      {/* Status: Single Calm Line */}
-                      <td className="py-3.5 px-4">
-                        <div className="flex items-center gap-1.5 font-medium text-[11px]">
-                          <span
-                            className={`w-1.5 h-1.5 rounded-full ${
-                              s.is_active ? 'bg-emerald-500' : 'bg-slate-400'
-                            }`}
-                          />
-                          <span className={s.is_active ? 'text-emerald-700 font-bold' : 'text-slate-500 font-medium'}>
-                            {s.is_active ? 'Aktif' : 'Nonaktif'}
+                      {/* Status */}
+                      <td className="py-3.5 px-4 whitespace-nowrap">
+                        {s.is_active ? (
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-2xs">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 ring-2 ring-emerald-200" />
+                            Aktif
                           </span>
-                        </div>
+                        ) : (
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-medium bg-slate-100 text-slate-600 border border-slate-200">
+                            <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
+                            Nonaktif
+                          </span>
+                        )}
                       </td>
 
                       {/* Progressive Disclosure Actions */}
@@ -835,15 +850,18 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
                       <h4 className="font-display text-sm font-bold text-slate-900 pt-1">{task.name}</h4>
                     </div>
 
-                    <div className="flex items-center gap-1.5 font-medium text-[11px]">
-                      <span
-                        className={`w-1.5 h-1.5 rounded-full ${
-                          task.is_active ? 'bg-emerald-500' : 'bg-slate-400'
-                        }`}
-                      />
-                      <span className={task.is_active ? 'text-emerald-700 font-bold' : 'text-slate-500'}>
-                        {task.is_active ? 'Engine Aktif' : 'Nonaktif'}
-                      </span>
+                    <div>
+                      {task.is_active ? (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-2xs">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 ring-2 ring-emerald-200" />
+                          Engine Aktif
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-medium bg-slate-100 text-slate-600 border border-slate-200">
+                          <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
+                          Nonaktif
+                        </span>
+                      )}
                     </div>
                   </div>
 

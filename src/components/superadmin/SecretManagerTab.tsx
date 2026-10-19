@@ -26,6 +26,7 @@ import {
   Check,
   Search,
   Key,
+  Waypoints,
 } from 'lucide-react'
 import api from '@/lib/api'
 
@@ -72,6 +73,7 @@ const PROVIDER_METAS: ProviderMeta[] = [
   { id: 'claude', name: 'Anthropic Claude', keyName: 'CLAUDE_API_KEY', protocol: 'Messages API', icon: Layers },
   { id: 'deepseek', name: 'DeepSeek AI', keyName: 'DEEPSEEK_API_KEY', protocol: 'OpenAI-compat', icon: Server },
   { id: 'resend', name: 'Resend Email', keyName: 'RESEND_API_KEY', protocol: 'SMTP / REST', icon: Zap },
+  { id: 'openrouter', name: 'OpenRouter', keyName: 'OPENROUTER_API_KEY', protocol: 'Decisions API', icon: Waypoints },
   { id: 'ollama', name: 'Ollama Local', keyName: 'OLLAMA_BASE_URL', protocol: 'On-Premise', icon: Database },
 ]
 
@@ -531,6 +533,8 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
                             ? 'bg-violet-50 text-[#6a5fc1] border-violet-200/80'
                             : p.id === 'resend'
                             ? 'bg-rose-50 text-rose-600 border-rose-200/80'
+                            : p.id === 'openrouter'
+                            ? 'bg-cyan-50 text-cyan-700 border-cyan-200/80'
                             : 'bg-slate-100 text-slate-700 border-slate-200'
                         }`}
                       >

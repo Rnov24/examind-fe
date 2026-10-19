@@ -104,6 +104,11 @@ const PROVIDER_MODELS: Record<string, { id: string; label: string; desc: string 
     { id: 'qwen2.5-coder-32b', label: 'Qwen 2.5 Coder 32B', desc: 'Evaluasi soal pemrograman & algoritma' },
     { id: 'mistral-nemo', label: 'Mistral NeMo 12B', desc: 'Model lokal hemat resource untuk edge proctoring' },
   ],
+  openrouter: [
+    { id: 'respan/span-01-lite', label: 'Respan Span-01 Lite', desc: 'Decisions API untuk short-answer grading & guardrail' },
+    { id: 'openai/gpt-4o-mini', label: 'GPT-4o Mini (via OR)', desc: 'Hemat biaya via OpenRouter' },
+    { id: 'anthropic/claude-3.5-sonnet', label: 'Claude 3.5 Sonnet (via OR)', desc: 'Akurasi tinggi via OpenRouter' },
+  ],
 }
 
 const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
@@ -1338,6 +1343,15 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
                     </option>
                   ))}
                 </select>
+                <label className="block font-bold text-slate-700 mb-1 mt-3">Nama Model Kustom (opsional)</label>
+                <input
+                  type="text"
+                  placeholder="cth: respan/span-01 — isi untuk menimpa pilihan di atas"
+                  value={taskForm.model}
+                  onChange={(e) => setTaskForm({ ...taskForm, model: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 font-mono text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-slate-900"
+                />
+                <p className="text-[10px] text-slate-500 mt-1">Ketik manual untuk memakai model di luar daftar — menimpa pilihan dropdown di atas.</p>
               </div>
 
               {/* Dedicated API Key (Optional) */}

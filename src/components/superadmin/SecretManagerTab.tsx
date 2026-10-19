@@ -205,7 +205,7 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
   }
 
   const getSecretForProvider = (providerId: string, defaultKey: string) => {
-    return secrets.find((s) => s.key_name === defaultKey || s.provider.toLowerCase() === providerId.toLowerCase())
+    return secrets.find((s) => s.key_name === defaultKey || (s.provider ?? '').toLowerCase() === providerId.toLowerCase())
   }
 
   const testSecretConnection = async (provider: string, keyName: string) => {
@@ -378,8 +378,8 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
     if (!searchQuery.trim()) return true
     const q = searchQuery.toLowerCase()
     return (
-      s.key_name.toLowerCase().includes(q) ||
-      s.provider.toLowerCase().includes(q) ||
+      (s.key_name ?? '').toLowerCase().includes(q) ||
+      (s.provider ?? '').toLowerCase().includes(q) ||
       (s.description && s.description.toLowerCase().includes(q))
     )
   })

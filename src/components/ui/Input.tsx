@@ -1,6 +1,7 @@
 import React, { forwardRef } from 'react'
 import { Search, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { tokens } from '@/components/system/tokens'
 
 export type InputSize = 'sm' | 'md' | 'lg'
 
@@ -17,10 +18,11 @@ export interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElem
 }
 
 const inputSizeStyles: Record<InputSize, string> = {
-  sm: 'h-8.5 px-3 text-xs rounded-xl',
-  md: 'h-10 px-3.5 text-xs sm:text-sm rounded-xl',
-  lg: 'h-12 px-4 text-sm sm:text-base rounded-xl',
+  sm: cn('h-8.5 px-3 text-xs', tokens.radius.lg),
+  md: cn('h-10 px-3.5 text-xs sm:text-sm', tokens.radius.lg),
+  lg: cn('h-12 px-4 text-sm sm:text-base', tokens.radius.lg),
 }
+
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   (
@@ -79,9 +81,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             disabled={disabled}
             className={cn(
               'w-full bg-slate-50/70 border border-slate-200 text-slate-900 placeholder:text-slate-400 font-sans tracking-tight',
-              'transition-all duration-150',
+              tokens.transition.fast,
               'hover:border-slate-300 hover:bg-slate-50',
-              'focus:bg-white focus:outline-none focus:border-[#150f23] focus:ring-2 focus:ring-[#6a5fc1]/25',
+              'focus:bg-white focus:outline-none',
+              tokens.border.focus,
               'disabled:bg-slate-100 disabled:text-slate-400 disabled:border-slate-200 disabled:cursor-not-allowed',
               leftIcon && (addonLeft ? 'pl-16' : 'pl-10'),
               rightIcon && (addonRight ? 'pr-16' : 'pr-10'),
@@ -94,6 +97,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             )}
             {...props}
           />
+
 
           {rightIcon && (
             <div
@@ -148,7 +152,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
               type="button"
               onClick={onClear}
               aria-label="Bersihkan pencarian"
-              className="p-1 hover:text-slate-700 rounded-md transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]/30"
+              className={cn("p-1 hover:text-slate-700 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]/30", tokens.radius.sm)}
             >
               <X className="w-3.5 h-3.5" aria-hidden="true" />
             </button>
@@ -205,10 +209,13 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           rows={rows}
           disabled={disabled}
           className={cn(
-            'w-full p-3.5 bg-slate-50/70 border border-slate-200 text-slate-900 placeholder:text-slate-400 font-sans tracking-tight rounded-xl',
-            'transition-all duration-150 resize-y',
+            'w-full p-3.5 bg-slate-50/70 border border-slate-200 text-slate-900 placeholder:text-slate-400 font-sans tracking-tight',
+            tokens.radius.lg,
+            tokens.transition.fast,
+            'resize-y',
             'hover:border-slate-300 hover:bg-slate-50',
-            'focus:bg-white focus:outline-none focus:border-[#150f23] focus:ring-2 focus:ring-[#6a5fc1]/25',
+            'focus:bg-white focus:outline-none',
+            tokens.border.focus,
             'disabled:bg-slate-100 disabled:text-slate-400 disabled:border-slate-200 disabled:cursor-not-allowed',
             error &&
               'border-rose-300 bg-rose-50/30 text-rose-900 placeholder:text-rose-300 focus:border-rose-500 focus:ring-rose-500/25',
@@ -216,6 +223,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           )}
           {...props}
         />
+
 
         {error ? (
           <p className="text-[11px] font-medium text-rose-600 tracking-tight font-sans mt-1">

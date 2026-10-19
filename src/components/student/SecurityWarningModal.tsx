@@ -19,7 +19,12 @@ export default function SecurityWarningModal({
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 bg-slate-950/60 z-50 flex items-center justify-center p-4 animate-in fade-in duration-150">
+    <div
+      className="fixed inset-0 bg-slate-950/60 z-50 flex items-center justify-center p-4 animate-in fade-in duration-150"
+      role="alertdialog"
+      aria-modal="true"
+      aria-labelledby="security-warning-title"
+    >
       <div className="bg-white border-2 border-rose-500 rounded-2xl p-6 sm:p-8 max-w-lg w-full text-center space-y-5 shadow-2xl animate-in zoom-in-95 duration-150 text-slate-900">
         <div className="w-16 h-16 rounded-2xl bg-rose-50 border border-rose-200 text-rose-600 flex items-center justify-center mx-auto shadow-sm ring-4 ring-rose-50/80">
           <ShieldAlert className="w-8 h-8" aria-hidden="true" />
@@ -29,7 +34,7 @@ export default function SecurityWarningModal({
           <span className="px-3 py-1 rounded-full bg-rose-100 text-rose-800 border border-rose-200 font-bold text-[11px] uppercase tracking-wider inline-block font-mono">
             Peringatan Pengawasan CBT
           </span>
-          <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight font-display">
+          <h2 id="security-warning-title" className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight font-display">
             Aktivitas Terindikasi Pelanggaran
           </h2>
           <p className="text-xs text-slate-600 leading-relaxed max-w-md mx-auto">

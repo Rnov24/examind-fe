@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo, useCallback } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import {
@@ -13,6 +13,14 @@ import {
   BarChart3,
   X,
   Loader2,
+  CheckCircle2,
+  Sparkles,
+  BookOpen,
+  Search,
+  Filter,
+  Square,
+  AlertCircle,
+  FileQuestion,
 } from 'lucide-react'
 import api from '@/lib/api'
 
@@ -25,6 +33,7 @@ interface Question {
   id: number
   question_type: string
   prompt: string
+  difficulty?: string
   options_json?: Option[]
   correct_answer?: string
   default_points?: number
@@ -44,6 +53,7 @@ interface ExamDetail {
   duration_minutes: number
   total_points: number
   status: string
+  proctoring_level?: string
   exam_questions?: ExamQuestionItem[]
 }
 
@@ -63,8 +73,15 @@ export default function ExamDetailPage() {
   const [selectedBankId, setSelectedBankId] = useState<number | null>(null)
   const [bankQuestions, setBankQuestions] = useState<Question[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [isPublishing, setIsPublishing] = useState(false)
 
-  async function loadExam() {
+  // Multi-select inside modal
+  const [modalSearch, setModalSearch] = useState('')
+  const [modalTypeFilter, setModalTypeFilter] = useState<'all' | 'multiple_choice' | 'essay'>('all')
+  const [selectedModalQuestionIds, setSelectedModalQuestionIds] = useState<Set<number>>(new Set())
+  const [isBatchAdding, setIsBatchAdding] = useState(false)
+
+  const loadExam = useCallback(async () => {
     if (!examId) return
     setIsLoading(true)
     try {
@@ -75,30 +92,46 @@ export default function ExamDetailPage() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [examId])
 
-  async function loadBanks() {
+  const loadBanks = useCallback(async () => {
     try {
       const res = await api.get('/questions/banks')
-      setAvailableBanks(res.data.data || [])
+      const banks = res.data.data || []
+      setAvailableBanks(banks)
+      if (banks.length > 0 && !selectedBankId) {
+        setSelectedBankId(banks[0].id)
+      }
     } catch (err) {
       console.error('Failed to load banks:', err)
     }
-  }
+  }, [selectedBankId])
 
-  async function loadBankQuestions(bankIdVal: number) {
+  const loadBankQuestions = useCallback(async (bankIdVal: number) => {
     if (!bankIdVal) return
     try {
       const res = await api.get(`/questions/banks/${bankIdVal}`)
       const existingIds = new Set((examDetail?.exam_questions || []).map((eq) => eq.question_id))
       const questions = (res.data.data?.questions || []).filter((q: Question) => !existingIds.has(q.id))
       setBankQuestions(questions)
+      setSelectedModalQuestionIds(new Set())
     } catch (err) {
       console.error('Failed to load bank questions:', err)
     }
-  }
+  }, [examDetail?.exam_questions])
 
-  async function handleAddQuestion(q: Question) {
+  useEffect(() => {
+    loadExam()
+    loadBanks()
+  }, [loadExam, loadBanks])
+
+  useEffect(() => {
+    if (selectedBankId) {
+      loadBankQuestions(selectedBankId)
+    }
+  }, [selectedBankId, loadBankQuestions])
+
+  async function handleAddSingleQuestion(q: Question) {
     const nextOrder = (examDetail?.exam_questions?.length || 0) + 1
     try {
       await api.post(`/exams/${examId}/questions`, {
@@ -115,71 +148,206 @@ export default function ExamDetailPage() {
     }
   }
 
+  // Batch add multiple selected questions
+  async function handleBatchAddQuestions() {
+    if (selectedModalQuestionIds.size === 0) return
+    setIsBatchAdding(true)
+    try {
+      let currentOrder = (examDetail?.exam_questions?.length || 0) + 1
+      const idsToAdd = Array.from(selectedModalQuestionIds)
+      for (const qid of idsToAdd) {
+        const q = bankQuestions.find((item) => item.id === qid)
+        if (q) {
+          await api.post(`/exams/${examId}/questions`, {
+            question_id: q.id,
+            order_index: currentOrder++,
+            allocated_points: q.default_points || 10.0,
+          })
+        }
+      }
+      setSelectedModalQuestionIds(new Set())
+      await loadExam()
+      if (selectedBankId) {
+        await loadBankQuestions(selectedBankId)
+      }
+      setShowAddQuestionModal(false)
+    } catch (err) {
+      console.error('Failed to batch add questions:', err)
+      alert('Gagal menambahkan beberapa soal ke paket ujian.')
+    } finally {
+      setIsBatchAdding(false)
+    }
+  }
+
   async function handleRemoveQuestion(qid: number) {
     if (!confirm('Hapus butir soal ini dari paket ujian?')) return
     try {
       await api.delete(`/exams/${examId}/questions/${qid}`)
       await loadExam()
+      if (selectedBankId) {
+        await loadBankQuestions(selectedBankId)
+      }
     } catch (err) {
       console.error('Failed to remove question:', err)
     }
   }
 
   async function handlePublish() {
-    if (!confirm('Publikasikan paket ujian ini untuk kelas target sekarang?')) return
+    const questionCount = examDetail?.exam_questions?.length || 0
+    if (questionCount === 0) {
+      alert('Paket ujian harus memiliki minimal 1 butir soal sebelum dipublikasikan.')
+      return
+    }
+
+    if (!confirm('Publikasikan paket ujian ini sekarang? Siswa di rombel kelas akan dapat melihat jadwal ujian ini.')) {
+      return
+    }
+
+    setIsPublishing(true)
     try {
       await api.post(`/exams/${examId}/publish`)
       await loadExam()
     } catch (err: any) {
       alert(err.response?.data?.message || 'Gagal mempublikasikan ujian.')
+    } finally {
+      setIsPublishing(false)
     }
   }
 
-  useEffect(() => {
-    loadExam()
-    loadBanks()
-  }, [examId])
+  // Filter bank questions in modal
+  const filteredModalQuestions = useMemo(() => {
+    return bankQuestions.filter((q) => {
+      const matchesSearch = q.prompt.toLowerCase().includes(modalSearch.toLowerCase())
+      const matchesType =
+        modalTypeFilter === 'all'
+          ? true
+          : modalTypeFilter === 'multiple_choice'
+          ? q.question_type === 'multiple_choice'
+          : q.question_type !== 'multiple_choice'
+      return matchesSearch && matchesType
+    })
+  }, [bankQuestions, modalSearch, modalTypeFilter])
+
+  function toggleModalQuestionSelect(qid: number) {
+    setSelectedModalQuestionIds((prev) => {
+      const next = new Set(prev)
+      if (next.has(qid)) {
+        next.delete(qid)
+      } else {
+        next.add(qid)
+      }
+      return next
+    })
+  }
+
+  function toggleSelectAllModalQuestions() {
+    if (selectedModalQuestionIds.size === filteredModalQuestions.length && filteredModalQuestions.length > 0) {
+      setSelectedModalQuestionIds(new Set())
+    } else {
+      setSelectedModalQuestionIds(new Set(filteredModalQuestions.map((q) => q.id)))
+    }
+  }
+
+  const totalPoints = examDetail?.total_points || 0
+  const isTargetAchieved = totalPoints === 100
+  const pointsRemaining = Math.max(0, 100 - totalPoints)
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-5xl mx-auto font-sans">
+      {/* Wizard Step Tracker Header */}
+      <div className="bg-white rounded-2xl border border-slate-200/80 p-4 sm:p-5 shadow-card">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {/* Step 1 Done */}
+          <Link
+            href="/exams"
+            className="p-3 rounded-xl border border-emerald-200 bg-emerald-50/60 text-slate-700 flex items-center gap-3 hover:bg-emerald-50 transition-colors"
+          >
+            <div className="w-7 h-7 rounded-lg bg-emerald-600 text-white font-mono font-bold text-xs flex items-center justify-center shrink-0">
+              <CheckCircle2 className="w-4 h-4" aria-hidden="true" />
+            </div>
+            <div className="min-w-0">
+              <span className="text-[10px] uppercase font-mono font-bold tracking-wider block text-emerald-800">
+                Langkah 1 (Selesai)
+              </span>
+              <span className="text-xs font-bold truncate block text-slate-800">
+                Parameter & Jadwal
+              </span>
+            </div>
+          </Link>
+
+          {/* Step 2 Done */}
+          <div className="p-3 rounded-xl border border-emerald-200 bg-emerald-50/60 text-slate-700 flex items-center gap-3">
+            <div className="w-7 h-7 rounded-lg bg-emerald-600 text-white font-mono font-bold text-xs flex items-center justify-center shrink-0">
+              <CheckCircle2 className="w-4 h-4" aria-hidden="true" />
+            </div>
+            <div className="min-w-0">
+              <span className="text-[10px] uppercase font-mono font-bold tracking-wider block text-emerald-800">
+                Langkah 2 (Selesai)
+              </span>
+              <span className="text-xs font-bold truncate block text-slate-800">
+                Pengawasan & Kebijakan
+              </span>
+            </div>
+          </div>
+
+          {/* Step 3 Active */}
+          <div className="p-3 rounded-xl border border-slate-900 bg-slate-900 text-white flex items-center gap-3 shadow-md">
+            <div className="w-7 h-7 rounded-lg bg-[#c2ef4e] text-slate-950 font-mono font-bold text-xs flex items-center justify-center shrink-0">
+              3
+            </div>
+            <div className="min-w-0">
+              <span className="text-[10px] uppercase font-mono font-bold tracking-wider block text-[#c2ef4e]">
+                Langkah 3 (Aktif)
+              </span>
+              <span className="text-xs font-bold truncate block">
+                Alokasi Soal & Publikasi
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Exam Title & Action Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-card">
-        <div className="flex items-center gap-3.5">
+        <div className="flex items-center gap-3.5 min-w-0">
           <Link
             href="/exams"
             title="Kembali ke Daftar Ujian"
             aria-label="Kembali ke Daftar Ujian"
-            className="p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 transition-colors shadow-xs focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+            className="p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 transition-colors shadow-xs focus:ring-2 focus:ring-slate-900/10 focus:outline-none shrink-0"
           >
             <ArrowLeft className="w-4 h-4" aria-hidden="true" />
           </Link>
-          <div>
-            <div className="flex items-center gap-2.5 flex-wrap">
-              <h2 className="font-display text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
-                {examDetail?.title}
-              </h2>
+          <div className="min-w-0">
+            <div className="flex items-center gap-2.5 flex-wrap mb-1">
               <span
-                className={`px-2.5 py-0.5 rounded-lg text-xs font-bold uppercase tracking-wider font-mono shadow-xs ${
+                className={`px-2.5 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider font-mono shadow-2xs ${
                   examDetail?.status === 'published'
                     ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                    : examDetail?.status === 'in_progress'
+                    ? 'bg-[#c2ef4e] text-slate-950'
                     : 'bg-slate-100 text-slate-700 border border-slate-200'
                 }`}
               >
-                {examDetail?.status}
+                Status: {examDetail?.status === 'published' ? 'Terjadwal' : examDetail?.status === 'in_progress' ? 'Berlangsung' : examDetail?.status || 'Draft'}
+              </span>
+              <span className="text-xs text-slate-500 font-mono">
+                Kelas: {examDetail?.class_name || 'Umum'} • Durasi: {examDetail?.duration_minutes} Menit
               </span>
             </div>
-            <p className="text-xs text-slate-500 font-medium font-mono mt-0.5">
-              Kelas: {examDetail?.class_name} • Durasi: {examDetail?.duration_minutes} Menit • Total:{' '}
-              <strong className="text-slate-800 tabular-nums">{examDetail?.total_points ?? 0}</strong> Poin
-            </p>
+            <h1 className="font-display text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight truncate">
+              {examDetail?.title || 'Memuat Paket Ujian...'}
+            </h1>
           </div>
         </div>
 
-        <div className="flex items-center flex-wrap gap-2.5">
+        {/* Action Header */}
+        <div className="flex items-center flex-wrap gap-2.5 w-full sm:w-auto shrink-0">
           {examDetail?.status === 'draft' && (
             <>
               <button
                 onClick={() => setShowAddQuestionModal(true)}
-                className="px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-xs flex items-center gap-2 cursor-pointer transition-colors focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+                className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-xs flex items-center justify-center gap-2 cursor-pointer transition-colors focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
               >
                 <Plus className="w-4 h-4 text-slate-600" aria-hidden="true" />
                 <span>Pilih Soal dari Bank</span>
@@ -187,9 +355,14 @@ export default function ExamDetailPage() {
 
               <button
                 onClick={handlePublish}
-                className="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-card hover:shadow-card-hover flex items-center gap-2 cursor-pointer transition-all font-display tracking-wide focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+                disabled={isPublishing}
+                className="flex-1 sm:flex-none px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-card hover:shadow-card-hover flex items-center justify-center gap-2 cursor-pointer transition-all font-display tracking-wide focus:ring-2 focus:ring-slate-900/10 focus:outline-none disabled:opacity-50"
               >
-                <Send className="w-4 h-4 text-[#c2ef4e]" aria-hidden="true" />
+                {isPublishing ? (
+                  <Loader2 className="w-4 h-4 animate-spin text-[#c2ef4e]" aria-hidden="true" />
+                ) : (
+                  <Send className="w-4 h-4 text-[#c2ef4e]" aria-hidden="true" />
+                )}
                 <span>Publikasikan Ujian</span>
               </button>
             </>
@@ -208,7 +381,7 @@ export default function ExamDetailPage() {
           {examDetail && examDetail.status !== 'draft' && (
             <>
               <Link
-                href={`/exams/${examDetail.id}/grading`}
+                href={`/grading/${examDetail.id}`}
                 className="px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
               >
                 <CheckSquare className="w-4 h-4 text-slate-600" aria-hidden="true" />
@@ -220,47 +393,106 @@ export default function ExamDetailPage() {
                 className="px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
               >
                 <BarChart3 className="w-4 h-4 text-slate-600" aria-hidden="true" />
-                <span>Analisis Soal</span>
+                <span>Analisis Butir Soal</span>
               </Link>
             </>
           )}
         </div>
       </div>
 
-      {/* Questions Allocated Table */}
-      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-card overflow-hidden text-slate-900">
-        <div className="p-6 border-b border-slate-100 flex items-center justify-between">
-          <div>
-            <h3 className="font-display text-base font-bold text-slate-900">
-              Alokasi Butir Soal Ujian ({examDetail?.exam_questions?.length || 0} Butir)
-            </h3>
-            <p className="text-xs text-slate-500 font-mono">
-              Total Akumulasi Poin:{' '}
-              <strong className="text-slate-800 tabular-nums">
-                {examDetail?.total_points || 0} / 100 Poin
-              </strong>
-            </p>
+      {/* Target Points Meter Card */}
+      <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-card space-y-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div className="space-y-0.5">
+            <span className="text-[10px] font-bold uppercase tracking-wider font-mono text-slate-500">
+              Progres Alokasi Target Poin Asesmen
+            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-xl font-black text-slate-900 font-display tabular-nums">
+                {totalPoints} / 100 Poin
+              </span>
+              <span className="text-xs text-slate-500 font-mono">
+                ({examDetail?.exam_questions?.length || 0} Butir Soal)
+              </span>
+            </div>
+          </div>
+
+          <div className="text-left sm:text-right">
+            {isTargetAchieved ? (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-bold font-mono">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" aria-hidden="true" />
+                <span>Target 100 Poin Terpenuhi! Siap Rilis</span>
+              </span>
+            ) : totalPoints < 100 ? (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-amber-50 text-amber-800 border border-amber-200 text-xs font-bold font-mono">
+                <AlertCircle className="w-3.5 h-3.5 text-amber-600" aria-hidden="true" />
+                <span>Kurang {pointsRemaining} Poin Menuju 100</span>
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-200 text-xs font-bold font-mono">
+                <span>Total Poin: {totalPoints}</span>
+              </span>
+            )}
           </div>
         </div>
 
+        {/* Visual Progress Bar */}
+        <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+          <div
+            className={`h-full rounded-full transition-all duration-300 ${
+              isTargetAchieved
+                ? 'bg-emerald-500'
+                : totalPoints < 100
+                ? 'bg-amber-500'
+                : 'bg-indigo-600'
+            }`}
+            style={{ width: `${Math.min(100, (totalPoints / 100) * 100)}%` }}
+          />
+        </div>
+      </div>
+
+      {/* Questions Allocated Container */}
+      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-card overflow-hidden text-slate-900">
+        <div className="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between">
+          <div>
+            <h2 className="font-display text-base font-bold text-slate-900">
+              Daftar Butir Soal Terpasang ({examDetail?.exam_questions?.length || 0} Butir)
+            </h2>
+            <p className="text-xs text-slate-500 font-mono">
+              Urutan butir soal dapat diacak otomatis saat ujian sesuai kebijakan.
+            </p>
+          </div>
+
+          {examDetail?.status === 'draft' && (examDetail?.exam_questions?.length || 0) > 0 && (
+            <button
+              onClick={() => setShowAddQuestionModal(true)}
+              className="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs transition-colors cursor-pointer flex items-center gap-1.5"
+            >
+              <Plus className="w-3.5 h-3.5 text-slate-700" aria-hidden="true" />
+              <span>Tambah Soal</span>
+            </button>
+          )}
+        </div>
+
         {isLoading ? (
-          <div className="flex items-center justify-center p-16">
-            <Loader2 className="w-8 h-8 text-indigo-600 animate-spin" />
+          <div className="flex flex-col items-center justify-center p-16 space-y-3">
+            <Loader2 className="w-8 h-8 text-indigo-600 animate-spin" aria-hidden="true" />
+            <p className="text-xs font-bold text-slate-700">Memuat butir soal ujian...</p>
           </div>
         ) : (
           <div className="divide-y divide-slate-100 font-medium">
             {(examDetail?.exam_questions || []).map((eq, idx) => (
               <div
                 key={eq.id}
-                className="p-6 hover:bg-slate-50/80 transition-colors space-y-3"
+                className="p-5 sm:p-6 hover:bg-slate-50/70 transition-colors space-y-3"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-center gap-2.5">
-                    <span className="w-8 h-8 rounded-xl bg-slate-900 text-white font-bold text-xs flex items-center justify-center font-mono shadow-xs">
+                    <span className="w-7 h-7 rounded-xl bg-slate-900 text-white font-bold text-xs flex items-center justify-center font-mono shadow-xs">
                       {idx + 1}
                     </span>
                     <span
-                      className={`px-2.5 py-0.5 rounded-lg text-[11px] font-bold uppercase font-mono shadow-xs ${
+                      className={`px-2.5 py-0.5 rounded-lg text-[11px] font-bold uppercase font-mono shadow-2xs ${
                         eq.question?.question_type === 'multiple_choice'
                           ? 'bg-indigo-50 text-indigo-700 border border-indigo-200'
                           : 'bg-slate-100 text-slate-700 border border-slate-200'
@@ -271,13 +503,13 @@ export default function ExamDetailPage() {
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <span className="text-xs font-bold text-slate-900 bg-slate-100 border border-slate-200/80 px-3 py-1 rounded-xl font-mono tabular-nums shadow-xs">
+                    <span className="text-xs font-bold text-slate-900 bg-slate-100 border border-slate-200 px-3 py-1 rounded-xl font-mono tabular-nums shadow-2xs">
                       {eq.allocated_points} Poin
                     </span>
                     {examDetail?.status === 'draft' && (
                       <button
                         onClick={() => handleRemoveQuestion(eq.question_id)}
-                        className="p-1.5 text-slate-500 hover:text-rose-600 rounded-lg cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-rose-500/20"
+                        className="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-rose-500/20"
                         title="Hapus butir soal dari ujian"
                         aria-label="Hapus butir soal dari ujian"
                       >
@@ -298,7 +530,7 @@ export default function ExamDetailPage() {
                         key={opt.id}
                         className={`p-3 rounded-xl border text-xs transition-colors ${
                           opt.id === eq.question?.correct_answer
-                            ? 'bg-emerald-50 border-emerald-300 text-emerald-900 font-bold shadow-xs'
+                            ? 'bg-emerald-50 border-emerald-300 text-emerald-900 font-bold shadow-2xs'
                             : 'bg-slate-50 border-slate-200/80 text-slate-700'
                         }`}
                       >
@@ -310,24 +542,38 @@ export default function ExamDetailPage() {
               </div>
             ))}
 
+            {/* Actionable Empty State */}
             {(!examDetail?.exam_questions || examDetail.exam_questions.length === 0) && (
-              <div className="p-12 text-center flex flex-col items-center justify-center">
-                <div className="w-12 h-12 rounded-xl bg-slate-100 border border-slate-200 text-slate-500 flex items-center justify-center mb-3">
-                  <CheckSquare className="w-6 h-6" aria-hidden="true" />
+              <div className="p-10 sm:p-12 text-center flex flex-col items-center justify-center space-y-4">
+                <div className="w-14 h-14 rounded-2xl bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center">
+                  <CheckSquare className="w-7 h-7" aria-hidden="true" />
                 </div>
-                <h4 className="font-bold text-slate-900 text-base">Belum Ada Soal di Paket Ujian Ini</h4>
-                <p className="text-xs text-slate-500 mt-1 max-w-sm mb-4">
-                  Pilih butir soal pilihan ganda atau esai dari bank soal yang sudah dibuat sebelumnya.
-                </p>
+                <div className="space-y-1 max-w-md">
+                  <h3 className="font-bold text-slate-900 text-base font-display">
+                    Belum Ada Butir Soal Terpasang
+                  </h3>
+                  <p className="text-xs text-slate-500 leading-relaxed">
+                    Paket ujian ini belum memiliki naskah soal. Silakan pilih butir soal dari master bank soal yang sudah dibuat sebelumnya.
+                  </p>
+                </div>
+
                 {examDetail?.status === 'draft' && (
-                  <button
-                    type="button"
-                    onClick={() => setShowAddQuestionModal(true)}
-                    className="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition-all flex items-center gap-2 cursor-pointer focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
-                  >
-                    <Plus className="w-4 h-4" aria-hidden="true" />
-                    <span>Pilih Soal dari Bank</span>
-                  </button>
+                  <div className="flex items-center gap-3 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => setShowAddQuestionModal(true)}
+                      className="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-card hover:shadow-card-hover transition-all flex items-center gap-2 cursor-pointer focus:ring-2 focus:ring-slate-900/10 focus:outline-none font-display"
+                    >
+                      <Plus className="w-4 h-4 text-[#c2ef4e]" aria-hidden="true" />
+                      <span>Pilih Soal dari Bank</span>
+                    </button>
+                    <Link
+                      href="/questions"
+                      className="px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-xs transition-colors"
+                    >
+                      Buka Master Bank Soal
+                    </Link>
+                  </div>
                 )}
               </div>
             )}
@@ -335,14 +581,23 @@ export default function ExamDetailPage() {
         )}
       </div>
 
-      {/* Modal Attach Questions from Bank */}
+      {/* Modal: Attach Questions from Bank with Multi-Select & Search */}
       {showAddQuestionModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
-          <div className="bg-white rounded-xl max-w-2xl w-full p-6 shadow-2xl border border-slate-200 max-h-[85vh] overflow-y-auto space-y-4 text-slate-900">
-            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+        <div
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setShowAddQuestionModal(false)
+          }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-150"
+        >
+          <div className="bg-white rounded-2xl max-w-3xl w-full p-6 sm:p-7 shadow-2xl border border-slate-200 max-h-[90vh] overflow-y-auto space-y-4 text-slate-900">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div>
-                <h3 className="text-lg font-black text-slate-900">Pilih Butir Soal dari Bank Soal</h3>
-                <p className="text-xs text-slate-500">Pilih soal yang ingin dimasukkan ke dalam paket ujian ini</p>
+                <h3 className="text-lg font-bold text-slate-900 font-display">
+                  Pilih Butir Soal dari Bank
+                </h3>
+                <p className="text-xs text-slate-500">
+                  Pilih satu atau beberapa butir soal sekaligus untuk dimasukkan ke paket ujian ini
+                </p>
               </div>
               <button
                 type="button"
@@ -355,63 +610,167 @@ export default function ExamDetailPage() {
               </button>
             </div>
 
+            {/* Bank Select & Filters */}
             <div className="space-y-3">
-              <div>
-                <label className="block text-xs font-bold text-slate-800 uppercase mb-1 font-mono">
-                  Pilih Bank Soal
-                </label>
-                <select
-                  value={selectedBankId ?? ''}
-                  onChange={(e) => {
-                    const val = e.target.value ? Number(e.target.value) : null
-                    setSelectedBankId(val)
-                    if (val) loadBankQuestions(val)
-                  }}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-sm font-medium focus:bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none"
-                >
-                  <option value="">-- Pilih Bank Soal --</option>
-                  {availableBanks.map((b) => (
-                    <option key={b.id} value={b.id}>
-                      {b.title} ({b.subject})
-                    </option>
-                  ))}
-                </select>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-bold text-slate-800 uppercase mb-1 font-mono">
+                    Pilih Bank Soal
+                  </label>
+                  <select
+                    value={selectedBankId ?? ''}
+                    onChange={(e) => {
+                      const val = e.target.value ? Number(e.target.value) : null
+                      setSelectedBankId(val)
+                    }}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-xs font-semibold focus:bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none"
+                  >
+                    <option value="">-- Pilih Bank Soal --</option>
+                    {availableBanks.map((b) => (
+                      <option key={b.id} value={b.id}>
+                        {b.title} ({b.subject})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-800 uppercase mb-1 font-mono">
+                    Cari & Saring Butir
+                  </label>
+                  <div className="relative">
+                    <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" aria-hidden="true" />
+                    <input
+                      type="text"
+                      value={modalSearch}
+                      onChange={(e) => setModalSearch(e.target.value)}
+                      placeholder="Cari teks soal..."
+                      className="w-full pl-9 pr-3 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-xl text-slate-900 font-medium placeholder:text-slate-400 focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 outline-none"
+                    />
+                  </div>
+                </div>
               </div>
 
-              {bankQuestions.length > 0 && (
-                <div className="space-y-2 max-h-64 overflow-y-auto border border-slate-200 rounded-xl p-2 bg-slate-50">
-                  {bankQuestions.map((q) => (
-                    <div
-                      key={q.id}
-                      className="p-3 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 flex items-start justify-between gap-3 text-xs"
+              {/* Selection Bar inside Modal */}
+              {filteredModalQuestions.length > 0 && (
+                <div className="flex items-center justify-between p-2.5 bg-slate-50 rounded-xl border border-slate-200 text-xs">
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={toggleSelectAllModalQuestions}
+                      className="inline-flex items-center gap-1.5 font-bold text-slate-700 hover:text-slate-900 cursor-pointer"
                     >
-                      <div className="space-y-1">
-                        <span className="px-2 py-0.5 bg-indigo-50 text-indigo-700 border border-indigo-200 rounded text-[10px] font-bold uppercase font-mono">
-                          {q.question_type === 'multiple_choice' ? 'PG' : 'Esai'}
-                        </span>
-                        <p className="font-semibold text-slate-900 line-clamp-2">{q.prompt}</p>
-                      </div>
+                      {selectedModalQuestionIds.size === filteredModalQuestions.length ? (
+                        <CheckSquare className="w-4 h-4 text-indigo-600" aria-hidden="true" />
+                      ) : (
+                        <Square className="w-4 h-4 text-slate-400" aria-hidden="true" />
+                      )}
+                      <span>Pilih Semua ({filteredModalQuestions.length})</span>
+                    </button>
+                    {selectedModalQuestionIds.size > 0 && (
+                      <span className="text-slate-500 font-mono">
+                        • {selectedModalQuestionIds.size} butir terpilih
+                      </span>
+                    )}
+                  </div>
 
-                      <button
-                        onClick={() => handleAddQuestion(q)}
-                        className="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shrink-0 cursor-pointer transition-colors focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+                  {selectedModalQuestionIds.size > 0 && (
+                    <button
+                      type="button"
+                      disabled={isBatchAdding}
+                      onClick={handleBatchAddQuestions}
+                      className="px-3.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition-colors cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
+                    >
+                      {isBatchAdding && <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" />}
+                      <span>Tambahkan {selectedModalQuestionIds.size} Soal Terpilih</span>
+                    </button>
+                  )}
+                </div>
+              )}
+
+              {/* Bank Questions Scroll List */}
+              {filteredModalQuestions.length > 0 ? (
+                <div className="space-y-2 max-h-72 overflow-y-auto border border-slate-200 rounded-xl p-2 bg-slate-50/50">
+                  {filteredModalQuestions.map((q) => {
+                    const isSelected = selectedModalQuestionIds.has(q.id)
+                    return (
+                      <div
+                        key={q.id}
+                        className={`p-3 rounded-xl border transition-colors flex items-start justify-between gap-3 text-xs ${
+                          isSelected ? 'bg-indigo-50/60 border-indigo-300' : 'bg-white border-slate-200 hover:bg-slate-50'
+                        }`}
                       >
-                        + Tambah
-                      </button>
-                    </div>
-                  ))}
+                        <div className="flex items-start gap-2.5 min-w-0">
+                          <button
+                            type="button"
+                            onClick={() => toggleModalQuestionSelect(q.id)}
+                            className="mt-0.5 text-slate-400 hover:text-indigo-600 cursor-pointer shrink-0"
+                            aria-label="Pilih butir soal ini"
+                          >
+                            {isSelected ? (
+                              <CheckSquare className="w-4 h-4 text-indigo-600" aria-hidden="true" />
+                            ) : (
+                              <Square className="w-4 h-4 text-slate-300" aria-hidden="true" />
+                            )}
+                          </button>
+                          <div className="space-y-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className="px-2 py-0.5 bg-indigo-50 text-indigo-700 border border-indigo-200 rounded text-[10px] font-bold uppercase font-mono">
+                                {q.question_type === 'multiple_choice' ? 'PG' : 'Esai'}
+                              </span>
+                              <span className="text-[10px] font-mono text-slate-500">
+                                {q.default_points || 10} Poin
+                              </span>
+                            </div>
+                            <p className="font-semibold text-slate-900 line-clamp-2 leading-relaxed">
+                              {q.prompt}
+                            </p>
+                          </div>
+                        </div>
+
+                        <button
+                          onClick={() => handleAddSingleQuestion(q)}
+                          className="px-3 py-1.5 rounded-lg bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 font-bold text-xs shrink-0 cursor-pointer transition-colors focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+                        >
+                          + Tambah
+                        </button>
+                      </div>
+                    )
+                  })}
+                </div>
+              ) : (
+                <div className="p-8 text-center text-xs text-slate-500 border border-dashed border-slate-200 rounded-xl bg-slate-50">
+                  {selectedBankId
+                    ? 'Semua soal dari bank ini sudah dimasukkan ke ujian atau tidak ada soal yang cocok.'
+                    : 'Pilih bank soal di atas untuk menampilkan daftar butir soal.'}
                 </div>
               )}
             </div>
 
-            <div className="pt-4 border-t border-slate-200 flex items-center justify-end">
-              <button
-                type="button"
-                onClick={() => setShowAddQuestionModal(false)}
-                className="px-5 py-2.5 rounded-lg text-xs font-bold text-slate-700 hover:bg-slate-50 border border-slate-300 cursor-pointer transition-colors focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
-              >
-                Tutup
-              </button>
+            <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
+              <span className="text-xs text-slate-500 font-mono">
+                {selectedModalQuestionIds.size} butir soal dipilih
+              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowAddQuestionModal(false)}
+                  className="px-4 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50 border border-slate-200 cursor-pointer transition-colors"
+                >
+                  Tutup
+                </button>
+                {selectedModalQuestionIds.size > 0 && (
+                  <button
+                    type="button"
+                    disabled={isBatchAdding}
+                    onClick={handleBatchAddQuestions}
+                    className="px-5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition-colors cursor-pointer flex items-center gap-1.5 disabled:opacity-50 font-display"
+                  >
+                    {isBatchAdding && <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" />}
+                    <span>Tambahkan ke Ujian</span>
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>

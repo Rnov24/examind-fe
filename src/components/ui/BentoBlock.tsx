@@ -5,6 +5,7 @@ import { AlertTriangle, RefreshCw } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { BentoBlockStatus } from '@/lib/bentoCache'
 import { BentoMetricSkeleton } from '@/components/ui/Skeleton'
+import { tokens } from '@/components/system/tokens'
 
 export interface BentoBlockProps {
   /** Title of the bento card */
@@ -75,7 +76,12 @@ export function BentoBlock({
   return (
     <div
       className={cn(
-        'bg-white rounded-2xl border border-slate-200/80 shadow-card flex flex-col justify-between overflow-hidden transition-all duration-200',
+        tokens.surface.card,
+        tokens.radius.xl,
+        tokens.border.default,
+        tokens.shadow.card,
+        'flex flex-col justify-between overflow-hidden',
+        tokens.transition.normal,
         className
       )}
     >
@@ -111,7 +117,7 @@ export function BentoBlock({
       )}
 
       {/* Main Body */}
-      <div className={cn(!noPadding && 'p-5 sm:p-6', 'flex-1', contentClassName)}>
+      <div className={cn(!noPadding && tokens.spacing.cardPaddingMd, 'flex-1', contentClassName)}>
         {/* State 1: Loading Skeleton */}
         {isBlockLoading && (
           <div className="w-full">
@@ -125,8 +131,8 @@ export function BentoBlock({
 
         {/* State 2: Error with Inline Retry */}
         {!isBlockLoading && isBlockError && (
-          <div className="w-full py-6 px-4 rounded-xl bg-rose-50/70 border border-rose-200/80 text-center space-y-3">
-            <div className="w-10 h-10 rounded-xl bg-rose-100/80 text-rose-700 border border-rose-200 flex items-center justify-center mx-auto shadow-xs">
+          <div className={cn('w-full py-6 px-4 bg-rose-50/70 border border-rose-200/80 text-center space-y-3', tokens.radius.lg)}>
+            <div className={cn('w-10 h-10 bg-rose-100/80 text-rose-700 border border-rose-200 flex items-center justify-center mx-auto', tokens.radius.lg, tokens.shadow.subtle)}>
               <AlertTriangle className="w-5 h-5" aria-hidden="true" />
             </div>
             <div className="space-y-1">
@@ -141,7 +147,11 @@ export function BentoBlock({
               <button
                 type="button"
                 onClick={onRetry}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition-colors cursor-pointer focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+                className={cn(
+                  'inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition-colors cursor-pointer focus:ring-2 focus:ring-slate-900/10 focus:outline-none',
+                  tokens.radius.md,
+                  tokens.shadow.subtle
+                )}
               >
                 <RefreshCw className="w-3 h-3 text-[#c2ef4e]" aria-hidden="true" />
                 <span>{retryLabel}</span>
@@ -165,3 +175,4 @@ export function BentoBlock({
 }
 
 export default BentoBlock
+

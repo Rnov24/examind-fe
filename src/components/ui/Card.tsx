@@ -1,5 +1,6 @@
 import React from 'react'
 import { cn } from '@/lib/utils'
+import { tokens } from '@/components/system/tokens'
 
 export type CardVariant = 'default' | 'subtle' | 'midnight' | 'paper' | 'elevated'
 export type CardPadding = 'none' | 'sm' | 'md' | 'lg'
@@ -13,27 +14,27 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const variantStyles: Record<CardVariant, string> = {
-  default: 'bg-white border border-slate-200/90 shadow-xs text-slate-900',
-  subtle: 'bg-slate-50/70 border border-slate-200/70 text-slate-900',
-  midnight: 'bg-[#150f23] border border-[#362d59] shadow-midnight-elevated text-white',
-  paper: 'bg-white border border-slate-200 shadow-card text-slate-900',
-  elevated: 'bg-white border border-slate-200/80 shadow-subtle-elevated text-slate-900',
+  default: cn(tokens.surface.card, tokens.border.default, tokens.shadow.subtle, 'text-slate-900'),
+  subtle: cn(tokens.surface.subtle, 'border border-slate-200/70 text-slate-900'),
+  midnight: cn(tokens.surface.midnight, tokens.border.midnight, tokens.shadow.midnight, 'text-white'),
+  paper: cn(tokens.surface.card, 'border border-slate-200', tokens.shadow.card, 'text-slate-900'),
+  elevated: cn(tokens.surface.card, tokens.border.default, tokens.shadow.elevated, 'text-slate-900'),
 }
 
 const accentBarStyles: Record<CardAccent, string> = {
   none: '',
-  lime: 'before:absolute before:top-0 before:left-0 before:right-0 before:h-[3px] before:bg-[#c2ef4e] before:z-10',
-  violet: 'before:absolute before:top-0 before:left-0 before:right-0 before:h-[3px] before:bg-[#6a5fc1] before:z-10',
-  midnight: 'before:absolute before:top-0 before:left-0 before:right-0 before:h-[3px] before:bg-[#150f23] before:z-10',
-  emerald: 'before:absolute before:top-0 before:left-0 before:right-0 before:h-[3px] before:bg-[#10b981] before:z-10',
-  rose: 'before:absolute before:top-0 before:left-0 before:right-0 before:h-[3px] before:bg-[#e11d48] before:z-10',
+  lime: cn(tokens.accentBarBase, tokens.semantic.lime.accentBar),
+  violet: cn(tokens.accentBarBase, tokens.semantic.violet.accentBar),
+  midnight: cn(tokens.accentBarBase, tokens.semantic.midnight.accentBar),
+  emerald: cn(tokens.accentBarBase, tokens.semantic.emerald.accentBar),
+  rose: cn(tokens.accentBarBase, tokens.semantic.rose.accentBar),
 }
 
 const paddingStyles: Record<CardPadding, string> = {
   none: '',
-  sm: 'p-4',
-  md: 'p-5 sm:p-6',
-  lg: 'p-6 sm:p-8',
+  sm: tokens.spacing.cardPaddingSm,
+  md: tokens.spacing.cardPaddingMd,
+  lg: tokens.spacing.cardPaddingLg,
 }
 
 export function Card({
@@ -48,7 +49,9 @@ export function Card({
   return (
     <div
       className={cn(
-        'rounded-2xl relative overflow-hidden transition-all duration-150',
+        tokens.radius.xl,
+        'relative overflow-hidden',
+        tokens.transition.fast,
         variantStyles[variant],
         accentBarStyles[accent],
         paddingStyles[padding],
@@ -90,7 +93,7 @@ export function CardHeader({
     >
       <div className="space-y-1 min-w-0 flex-1">
         {eyebrow && (
-          <div className="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+          <div className={cn(tokens.typography.eyebrow, 'mb-1')}>
             {eyebrow}
           </div>
         )}
@@ -117,7 +120,8 @@ export function CardTitle({
   return (
     <Component
       className={cn(
-        'font-display font-extrabold text-slate-900 tracking-tight text-base sm:text-lg leading-snug',
+        tokens.typography.title,
+        'leading-snug',
         className
       )}
       {...props}
@@ -134,7 +138,7 @@ export function CardDescription({
 }: React.HTMLAttributes<HTMLParagraphElement>) {
   return (
     <p
-      className={cn('text-xs sm:text-sm text-slate-500 font-sans leading-relaxed mt-0.5', className)}
+      className={cn(tokens.typography.bodyMuted, 'mt-0.5', className)}
       {...props}
     >
       {children}
@@ -148,7 +152,7 @@ export function CardContent({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className={cn('p-5 sm:p-6', className)} {...props}>
+    <div className={cn(tokens.spacing.cardPaddingMd, className)} {...props}>
       {children}
     </div>
   )
@@ -206,25 +210,29 @@ export function StatCard({
   return (
     <div
       className={cn(
-        'bg-white p-5 rounded-2xl border border-slate-200/90 shadow-xs flex items-center gap-4 transition-all duration-150 relative overflow-hidden',
+        'bg-white p-5 flex items-center gap-4 relative overflow-hidden',
+        tokens.radius.xl,
+        tokens.border.default,
+        tokens.shadow.subtle,
+        tokens.transition.fast,
         accentBarStyles[accent],
         className
       )}
       {...props}
     >
       {icon && (
-        <div className="w-11 h-11 rounded-xl bg-slate-50 text-slate-700 border border-slate-200/80 flex items-center justify-center font-bold shrink-0 shadow-2xs">
+        <div className={cn('w-11 h-11 bg-slate-50 text-slate-700 flex items-center justify-center font-bold shrink-0', tokens.radius.lg, tokens.border.default, tokens.shadow.micro)}>
           {icon}
         </div>
       )}
       <div className="min-w-0 flex-1">
         <div className="flex items-center justify-between gap-2">
-          <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block font-mono">
+          <span className={cn(tokens.typography.eyebrow, 'block')}>
             {title}
           </span>
           {badge}
         </div>
-        <div className="text-2xl sm:text-3xl font-black text-slate-900 font-display tabular-nums tracking-tight truncate block mt-0.5">
+        <div className={cn(tokens.typography.hero, 'tabular-nums truncate block mt-0.5')}>
           {value}
         </div>
         {(description || trend) && (
@@ -232,7 +240,8 @@ export function StatCard({
             {trend && (
               <span
                 className={cn(
-                  'text-[10px] font-mono font-bold px-1.5 py-0.2 rounded',
+                  'text-[10px] font-mono font-bold px-1.5 py-0.2',
+                  tokens.radius.xs,
                   trend.isPositive !== false
                     ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/60'
                     : 'bg-rose-50 text-rose-700 border border-rose-200/60'
@@ -243,7 +252,7 @@ export function StatCard({
               </span>
             )}
             {description && (
-              <span className="text-[11px] text-slate-500 truncate">
+              <span className={cn(tokens.typography.caption, 'truncate')}>
                 {description}
               </span>
             )}

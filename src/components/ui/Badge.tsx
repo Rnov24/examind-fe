@@ -1,5 +1,6 @@
 import React from 'react'
 import { cn } from '@/lib/utils'
+import { tokens } from '@/components/system/tokens'
 
 export type BadgeVariant =
   | 'lime'
@@ -25,47 +26,39 @@ export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
 
 /**
  * EXAMIND Academic Status & Telemetry Badge Styles
- * Adheres to DESIGN.md tokens & WCAG AA contrast floor
+ * Adheres to canonical design tokens & WCAG AA contrast floor
  */
 const variantStyles: Record<BadgeVariant, string> = {
-  lime:
-    'bg-[#c2ef4e] text-[#150f23] border border-[#a8dc2c] font-black uppercase tracking-wider shadow-2xs',
-  violet:
-    'bg-indigo-50/90 text-[#4f46e5] border border-indigo-200/90 font-bold tracking-tight',
-  emerald:
-    'bg-emerald-50 text-emerald-800 border border-emerald-200/90 font-bold tracking-tight',
-  amber:
-    'bg-amber-50 text-amber-900 border border-amber-300/80 font-bold tracking-tight',
-  rose:
-    'bg-rose-50 text-rose-800 border border-rose-200/90 font-bold tracking-tight',
-  midnight:
-    'bg-[#150f23] text-white border border-[#2a1e47] font-bold tracking-wider shadow-2xs',
-  neutral:
-    'bg-slate-100 text-slate-700 border border-slate-200/90 font-medium tracking-tight',
-  outline:
-    'bg-white text-slate-700 border border-slate-200/90 shadow-2xs font-semibold tracking-tight',
-  stamp:
-    'bg-white text-[#150f23] border-2 border-[#150f23] font-black uppercase tracking-widest text-[9px] shadow-xs',
+  lime: cn(tokens.semantic.lime.badge, 'font-black uppercase tracking-wider', tokens.shadow.micro),
+  violet: cn(tokens.semantic.violet.badge, 'font-bold tracking-tight'),
+  emerald: cn(tokens.semantic.emerald.badge, 'font-bold tracking-tight'),
+  amber: cn(tokens.semantic.amber.badge, 'font-bold tracking-tight'),
+  rose: cn(tokens.semantic.rose.badge, 'font-bold tracking-tight'),
+  midnight: cn(tokens.semantic.midnight.badge, 'font-bold tracking-wider', tokens.shadow.micro),
+  neutral: cn(tokens.semantic.neutral.badge, 'font-medium tracking-tight'),
+  outline: cn('bg-white text-slate-700', tokens.border.default, tokens.shadow.micro, 'font-semibold tracking-tight'),
+  stamp: cn('bg-white text-[#150f23] border-2 border-[#150f23] font-black uppercase tracking-widest text-[9px]', tokens.shadow.subtle),
 }
 
 const dotColors: Record<BadgeVariant, string> = {
-  lime: 'bg-[#150f23]',
-  violet: 'bg-[#4f46e5]',
-  emerald: 'bg-emerald-500',
-  amber: 'bg-amber-500',
-  rose: 'bg-rose-500',
-  midnight: 'bg-[#c2ef4e]',
-  neutral: 'bg-slate-500',
+  lime: tokens.semantic.lime.dot,
+  violet: tokens.semantic.violet.dot,
+  emerald: tokens.semantic.emerald.dot,
+  amber: tokens.semantic.amber.dot,
+  rose: tokens.semantic.rose.dot,
+  midnight: tokens.semantic.midnight.dot,
+  neutral: tokens.semantic.neutral.dot,
   outline: 'bg-slate-400',
-  stamp: 'bg-[#150f23]',
+  stamp: tokens.semantic.lime.dot,
 }
 
 const sizeStyles: Record<BadgeSize, string> = {
-  xs: 'text-[9px] px-1.5 py-0.5 rounded gap-1',
-  sm: 'text-[10px] px-2 py-0.5 rounded-md gap-1.5',
-  md: 'text-xs px-2.5 py-1 rounded-lg gap-1.5',
-  lg: 'text-xs px-3 py-1.5 rounded-xl gap-2 font-bold',
+  xs: cn('text-[9px] px-1.5 py-0.5 gap-1', tokens.radius.xs),
+  sm: cn('text-[10px] px-2 py-0.5 gap-1.5', tokens.radius.sm),
+  md: cn('text-xs px-2.5 py-1 gap-1.5', tokens.radius.md),
+  lg: cn('text-xs px-3 py-1.5 gap-2 font-bold', tokens.radius.lg),
 }
+
 
 export function Badge({
   className,
@@ -124,7 +117,7 @@ export function Chip({ keyword = false, variant = 'lime', ...props }: ChipProps)
     <Badge
       variant={keyword ? 'lime' : variant}
       className={cn(
-        keyword && 'px-2 py-0.5 font-black uppercase tracking-wider text-[10px] rounded shadow-2xs',
+        keyword && cn('px-2 py-0.5 font-black uppercase tracking-wider text-[10px]', tokens.radius.xs, tokens.shadow.micro),
         props.className
       )}
       {...props}
@@ -157,7 +150,9 @@ export function Stamp({
   return (
     <span
       className={cn(
-        'inline-flex items-center font-mono font-black uppercase text-[10px] tracking-widest px-2.5 py-0.5 rounded shadow-2xs select-none',
+        'inline-flex items-center font-mono font-black uppercase text-[10px] tracking-widest px-2.5 py-0.5 select-none',
+        tokens.radius.xs,
+        tokens.shadow.micro,
         stampVariants[variant],
         className
       )}
@@ -169,3 +164,4 @@ export function Stamp({
 }
 
 export default Badge
+

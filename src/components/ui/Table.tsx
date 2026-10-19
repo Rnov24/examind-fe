@@ -1,5 +1,6 @@
 import React, { forwardRef, createContext, useContext } from 'react'
 import { cn } from '@/lib/utils'
+import { tokens } from '@/components/system/tokens'
 
 export type TableAccent = 'none' | 'lime' | 'violet' | 'midnight'
 export type TableDensity = 'compact' | 'normal' | 'relaxed'
@@ -16,9 +17,9 @@ export interface TableContainerProps extends React.HTMLAttributes<HTMLDivElement
 
 const tableAccentStyles: Record<TableAccent, string> = {
   none: '',
-  lime: 'before:absolute before:top-0 before:left-0 before:right-0 before:h-[3px] before:bg-[#c2ef4e] before:z-10',
-  violet: 'before:absolute before:top-0 before:left-0 before:right-0 before:h-[3px] before:bg-[#6a5fc1] before:z-10',
-  midnight: 'before:absolute before:top-0 before:left-0 before:right-0 before:h-[3px] before:bg-[#150f23] before:z-10',
+  lime: cn(tokens.accentBarBase, tokens.semantic.lime.accentBar),
+  violet: cn(tokens.accentBarBase, tokens.semantic.violet.accentBar),
+  midnight: cn(tokens.accentBarBase, tokens.semantic.midnight.accentBar),
 }
 
 export const TableContainer = forwardRef<HTMLDivElement, TableContainerProps>(
@@ -26,7 +27,11 @@ export const TableContainer = forwardRef<HTMLDivElement, TableContainerProps>(
     <div
       ref={ref}
       className={cn(
-        'bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden relative',
+        tokens.surface.card,
+        tokens.radius.xl,
+        tokens.border.default,
+        tokens.shadow.subtle,
+        'overflow-hidden relative',
         tableAccentStyles[accent],
         className
       )}
@@ -37,6 +42,7 @@ export const TableContainer = forwardRef<HTMLDivElement, TableContainerProps>(
   )
 )
 TableContainer.displayName = 'TableContainer'
+
 
 export interface TableProps extends React.TableHTMLAttributes<HTMLTableElement> {
   density?: TableDensity

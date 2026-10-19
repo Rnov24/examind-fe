@@ -48,6 +48,9 @@ export default function CompanionQrModal({
         if (e.target === e.currentTarget) onClose()
       }}
       className="fixed inset-0 bg-slate-950/60 z-50 flex items-center justify-center p-4 animate-in fade-in duration-150"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="companion-modal-title"
     >
       <div className="bg-white border border-slate-200/90 rounded-2xl p-6 sm:p-7 max-w-sm w-full text-center space-y-4 shadow-2xl text-slate-900 animate-in zoom-in-95 duration-150">
         <div className="flex items-center justify-between pb-3 border-b border-slate-100">
@@ -59,7 +62,7 @@ export default function CompanionQrModal({
               <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-indigo-700 bg-indigo-50 px-1.5 py-0.5 rounded border border-indigo-200">
                 Dual-Cam AI
               </span>
-              <h3 className="text-sm font-bold text-slate-900 font-display mt-0.5">
+              <h3 id="companion-modal-title" className="text-sm font-bold text-slate-900 font-display mt-0.5">
                 Kamera HP (Cam 2)
               </h3>
             </div>

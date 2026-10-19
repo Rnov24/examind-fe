@@ -2,6 +2,8 @@
 
 import React from 'react'
 import { ArrowUp, ArrowDown } from 'lucide-react'
+import { cn } from '@/lib/utils'
+import { tokens } from '@/components/system/tokens'
 import { StatTrend } from './types'
 
 interface HeroCardProps {
@@ -25,7 +27,13 @@ export function HeroCard({
 }: HeroCardProps) {
   return (
     <div
-      className={`rounded-2xl bg-gradient-to-br from-violet-50/80 via-white to-lime-50/40 border border-violet-200/90 p-5 shadow-card hover:shadow-card-hover transition-all relative overflow-hidden flex flex-col justify-between ${className}`}
+      className={cn(
+        tokens.radius.xl,
+        'bg-gradient-to-br from-violet-50/80 via-white to-lime-50/40 border border-violet-200/90 p-5',
+        tokens.shadow.cardHover,
+        'transition-all relative overflow-hidden flex flex-col justify-between',
+        className
+      )}
     >
       {/* Ambient glow tints */}
       <div
@@ -40,16 +48,21 @@ export function HeroCard({
       <div className="relative z-10">
         {/* Top: Title & Icon */}
         <div className="flex items-center justify-between gap-3">
-          <span className="text-xs font-bold text-slate-600 tracking-tight">
+          <span className="text-xs font-bold text-slate-600 tracking-tight font-sans">
             {title}
           </span>
-          <div className="w-10 h-10 rounded-xl bg-[#150f23] text-[#c2ef4e] border border-slate-900 shadow-sm flex items-center justify-center shrink-0">
+          <div
+            className={cn(
+              'w-10 h-10 bg-[#150f23] text-[#c2ef4e] border border-slate-900 shadow-sm flex items-center justify-center shrink-0',
+              tokens.radius.lg
+            )}
+          >
             {icon}
           </div>
         </div>
 
-        {/* Value in crisp violet */}
-        <div className="font-display text-2xl sm:text-3xl font-black text-[#150f23] tracking-tight tabular-nums mt-3">
+        {/* Value in crisp midnight violet */}
+        <div className={cn(tokens.typography.hero, 'text-[#150f23] tabular-nums mt-3')}>
           {value}
         </div>
       </div>
@@ -57,7 +70,14 @@ export function HeroCard({
       {/* Bottom: Lime Highlight Chip & Trend */}
       <div className="relative z-10 mt-4 pt-2.5 border-t border-violet-100 flex items-center justify-between text-xs">
         {trend && (
-          <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold font-mono bg-[#c2ef4e] text-slate-950 border border-lime-400 shadow-2xs">
+          <div
+            className={cn(
+              'inline-flex items-center gap-1 px-2.5 py-0.5 text-[11px] font-bold font-mono',
+              tokens.semantic.lime.badge,
+              tokens.radius.full,
+              tokens.shadow.micro
+            )}
+          >
             {trend.positive !== false ? (
               <ArrowUp className="w-3 h-3 text-slate-950 shrink-0 stroke-[2.5]" aria-hidden="true" />
             ) : (

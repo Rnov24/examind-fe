@@ -167,7 +167,7 @@ export default function SuperAdminFinancePage() {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       greetingName={user?.full_name || 'Super Admin'}
-      greetingSubtitle="Pemantauan Monthly Recurring Revenue (MRR), ARR tahunan, alokasi tier, dan buku besar invoice institusi."
+      greetingSubtitle="Pemantauan pendapatan langganan bulanan, proyeksi tahunan, alokasi paket, dan buku besar tagihan sekolah."
       greetingAction={
         <div className="flex items-center gap-2.5">
           <button
@@ -186,7 +186,7 @@ export default function SuperAdminFinancePage() {
             className="px-5 py-2.5 rounded-full bg-[#150f23] hover:bg-slate-800 text-white font-bold text-xs shadow-card hover:shadow-card-hover flex items-center gap-2 transition-all cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-[#150f23] focus:outline-none"
           >
             <Download className="w-4 h-4 text-[#c2ef4e]" aria-hidden="true" />
-            <span>Ekspor Buku Besar</span>
+            <span>Unduh Buku Besar CSV</span>
           </button>
         </div>
       }
@@ -196,7 +196,7 @@ export default function SuperAdminFinancePage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* MRR */}
           <StatCard
-            title="Monthly Recurring Revenue (MRR)"
+            title="Pendapatan Langganan Bulanan (MRR)"
             value={mrrCount.displayValue}
             icon={<DollarSign className="w-5 h-5 text-emerald-600" aria-hidden="true" />}
             tone="emerald"
@@ -215,7 +215,7 @@ export default function SuperAdminFinancePage() {
 
           {/* ARR */}
           <StatCard
-            title="Annual Run Rate (ARR)"
+            title="Proyeksi Pendapatan Tahunan (ARR)"
             value={arrCount.displayValue}
             icon={<CreditCard className="w-5 h-5 text-indigo-600" aria-hidden="true" />}
             tone="indigo"
@@ -226,18 +226,18 @@ export default function SuperAdminFinancePage() {
 
           {/* ARPU */}
           <StatCard
-            title="Average Revenue / School (ARPU)"
+            title="Rata-rata Pendapatan per Sekolah (ARPU)"
             value={arpuCount.displayValue}
             icon={<Building2 className="w-5 h-5 text-amber-600" aria-hidden="true" />}
             tone="amber"
-            subtitle="Rata-rata pengeluaran per institusi aktif"
+            subtitle="Rata-rata pengeluaran per sekolah aktif"
             className="min-h-[160px]"
           />
 
           {/* Paying Schools */}
           <StatCard
             title="Sekolah Berlangganan Aktif"
-            value={`${financeData?.paying_tenants ?? financeData?.active_tenants ?? 0} Institusi`}
+            value={`${financeData?.paying_tenants ?? financeData?.active_tenants ?? 0} Sekolah`}
             icon={<ShieldCheck className="w-5 h-5 text-[#6a5fc1]" aria-hidden="true" />}
             tone="violet"
             subtitle={
@@ -353,7 +353,7 @@ export default function SuperAdminFinancePage() {
             >
               <div className="space-y-3.5 pt-1">
                 {/* Pro Tier */}
-                <div className="p-3.5 rounded-xl border border-indigo-200/90 bg-indigo-50/50 space-y-2 shadow-2xs">
+                <div className="p-3.5 rounded-xl border border-indigo-100 bg-indigo-50/70 space-y-2">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <span className="w-2.5 h-2.5 rounded-full bg-indigo-600" />
@@ -380,7 +380,7 @@ export default function SuperAdminFinancePage() {
                 </div>
 
                 {/* Enterprise Tier */}
-                <div className="p-3.5 rounded-xl border border-violet-200/90 bg-violet-50/50 space-y-2 shadow-2xs">
+                <div className="p-3.5 rounded-xl border border-violet-100 bg-violet-50/70 space-y-2">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <span className="w-2.5 h-2.5 rounded-full bg-[#6a5fc1]" />
@@ -407,7 +407,7 @@ export default function SuperAdminFinancePage() {
                 </div>
 
                 {/* Starter Tier */}
-                <div className="p-3.5 rounded-xl border border-slate-200/90 bg-slate-50/70 space-y-2 shadow-2xs">
+                <div className="p-3.5 rounded-xl border border-slate-100 bg-slate-50/90 space-y-2">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <span className="w-2.5 h-2.5 rounded-full bg-emerald-600" />
@@ -451,7 +451,7 @@ export default function SuperAdminFinancePage() {
         {/* Invoices & Billing Ledger Table */}
         <DashboardCard
           title="Buku Besar Faktur & Tagihan"
-          subtitle="Riwayat transaksi pembayaran langganan SaaS institusi sekolah"
+          subtitle="Riwayat transaksi pembayaran paket langganan sekolah mitra"
           noPadding
         >
           <div className="p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -467,19 +467,96 @@ export default function SuperAdminFinancePage() {
               <input
                 type="text"
                 placeholder="Cari nomor faktur / sekolah..."
+                aria-label="Cari nomor faktur atau sekolah"
                 value={searchInvoice}
                 onChange={(e) => setSearchInvoice(e.target.value)}
-                className="pl-8 pr-3.5 py-1.5 rounded-full border border-slate-200 bg-slate-50 text-xs text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-violet-400 w-64 transition-all"
+                className="pl-8 pr-3.5 py-1.5 rounded-full border border-slate-200 bg-slate-50 text-xs text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-violet-400 w-full sm:w-64 transition-all"
               />
             </div>
           </div>
 
-          <div className="overflow-x-auto touch-pan-x">
+          {/* Mobile Card List Strategy (<md) */}
+          <div className="md:hidden divide-y divide-slate-100 font-sans p-4 space-y-3">
+            {filteredInvoices.length === 0 ? (
+              <div className="py-8 text-center text-slate-400 text-xs">
+                Tidak ada faktur tagihan yang sesuai.
+              </div>
+            ) : (
+              filteredInvoices.map((inv) => (
+                <div key={inv.id} className="pt-3 first:pt-0 space-y-2.5">
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <span className="font-mono text-xs font-bold text-slate-900 block">
+                        #{inv.id}
+                      </span>
+                      <h4 className="font-bold text-slate-900 text-xs mt-0.5 font-sans">
+                        {inv.tenant_name}
+                      </h4>
+                      <span className="text-[10px] text-slate-400 font-mono">{inv.code}</span>
+                    </div>
+
+                    <div>
+                      {inv.status === 'paid' ? (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-2xs">
+                          <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                          Lunas
+                        </span>
+                      ) : inv.status === 'past_due' ? (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200 shadow-2xs">
+                          <Clock className="w-3 h-3 text-amber-600" />
+                          Jatuh Tempo
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-200 uppercase">
+                          {inv.status || 'Draft'}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 text-[11px] font-mono p-2.5 bg-slate-50 rounded-xl border border-slate-100">
+                    <div>
+                      <span className="text-[9px] text-slate-400 font-sans uppercase font-bold block">Paket</span>
+                      <span className="font-bold text-indigo-700 uppercase">{inv.plan}</span>
+                    </div>
+                    <div>
+                      <span className="text-[9px] text-slate-400 font-sans uppercase font-bold block">Nominal Tagihan</span>
+                      <span className="font-bold text-slate-900">
+                        {formatIDR(inv.amount)}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-[9px] text-slate-400 font-sans uppercase font-bold block">Tanggal Terbit</span>
+                      <span className="text-slate-600">{inv.date || '-'}</span>
+                    </div>
+                    <div>
+                      <span className="text-[9px] text-slate-400 font-sans uppercase font-bold block">Metode Pembayaran</span>
+                      <span className="text-slate-600 truncate block">
+                        {inv.payment_method && inv.payment_method !== '-' ? inv.payment_method : 'Belum ditentukan'}
+                      </span>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setSelectedInvoice(inv)}
+                    className="w-full min-h-[44px] px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-800 font-bold text-xs shadow-xs flex items-center justify-center gap-2 cursor-pointer transition-colors"
+                  >
+                    <FileText className="w-3.5 h-3.5 text-slate-500" />
+                    <span>Lihat Rincian Faktur</span>
+                  </button>
+                </div>
+              ))
+            )}
+          </div>
+
+          {/* Desktop Table (hidden on mobile, visible on md+) */}
+          <div className="hidden md:block overflow-x-auto touch-pan-x">
             <table className="w-full text-left border-collapse text-xs">
               <thead>
                 <tr className="bg-slate-50/70 border-b border-slate-100 font-mono text-slate-500 uppercase tracking-wider text-[11px]">
                   <th className="py-3 px-5 font-bold">No. Faktur</th>
-                  <th className="py-3 px-4 font-bold">Institusi Sekolah</th>
+                  <th className="py-3 px-4 font-bold">Nama Sekolah</th>
                   <th className="py-3 px-4 font-bold">Paket</th>
                   <th className="py-3 px-4 font-bold">Metode Bayar</th>
                   <th className="py-3 px-4 font-bold">Tanggal</th>
@@ -647,18 +724,18 @@ export default function SuperAdminFinancePage() {
             </div>
 
             {/* Modal Actions */}
-            <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-100">
+            <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 pt-2 border-t border-slate-100">
               <button
                 type="button"
                 onClick={() => setSelectedInvoice(null)}
-                className="px-4 py-2 rounded-full border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold text-xs cursor-pointer"
+                className="min-h-[44px] px-4 py-2.5 rounded-full border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold text-xs cursor-pointer flex items-center justify-center"
               >
                 Tutup
               </button>
               <button
                 type="button"
                 onClick={() => window.print()}
-                className="px-5 py-2 rounded-full bg-[#150f23] hover:bg-slate-800 text-white font-bold text-xs flex items-center gap-1.5 shadow-card cursor-pointer"
+                className="min-h-[44px] px-5 py-2.5 rounded-full bg-[#150f23] hover:bg-slate-800 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-card cursor-pointer"
               >
                 <Printer className="w-3.5 h-3.5 text-[#c2ef4e]" />
                 <span>Cetak Bukti Tagihan</span>

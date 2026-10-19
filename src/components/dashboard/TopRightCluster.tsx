@@ -8,11 +8,10 @@ import {
   HelpCircle,
   ChevronDown,
   LogOut,
-  User,
-  ShieldCheck,
-  CheckCircle2,
   X,
 } from 'lucide-react'
+import { cn } from '@/lib/utils'
+import { tokens } from '@/components/system/tokens'
 import { useAuthStore } from '@/stores/authStore'
 
 interface TopRightClusterProps {
@@ -64,8 +63,15 @@ export function TopRightCluster({ className = '' }: TopRightClusterProps) {
     router.push('/login')
   }
 
+  const circularButtonClass = cn(
+    'w-10 h-10 bg-white flex items-center justify-center text-slate-500 hover:text-slate-900 hover:border-slate-300 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#150f23]',
+    tokens.radius.full,
+    tokens.border.default,
+    tokens.shadow.subtle
+  )
+
   return (
-    <div className={`flex items-center gap-2 sm:gap-2.5 ${className}`}>
+    <div className={cn('flex items-center gap-2 sm:gap-2.5', className)}>
       {/* Quick Search Button */}
       <div className="relative">
         <button
@@ -73,7 +79,7 @@ export function TopRightCluster({ className = '' }: TopRightClusterProps) {
           onClick={() => setSearchOpen(true)}
           title="Cari institusi, soal, atau ujian"
           aria-label="Buka pencarian global"
-          className="w-10 h-10 rounded-full bg-white border border-slate-200/80 shadow-xs flex items-center justify-center text-slate-500 hover:text-slate-900 hover:border-slate-300 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#150f23]"
+          className={circularButtonClass}
         >
           <Search className="w-4 h-4" aria-hidden="true" />
         </button>
@@ -85,10 +91,14 @@ export function TopRightCluster({ className = '' }: TopRightClusterProps) {
             onClick={() => setSearchOpen(false)}
           >
             <div
-              className="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-lg p-4 space-y-3"
+              className={cn(
+                'bg-white border border-slate-200 w-full max-w-lg p-4 space-y-3',
+                tokens.radius.xl,
+                tokens.shadow.modal
+              )}
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-50 border border-slate-200/80">
+              <div className={cn('flex items-center gap-2 px-3 py-2 bg-slate-50', tokens.radius.lg, tokens.border.default)}>
                 <Search className="w-4 h-4 text-slate-400 shrink-0" aria-hidden="true" />
                 <input
                   type="text"
@@ -107,7 +117,7 @@ export function TopRightCluster({ className = '' }: TopRightClusterProps) {
               </div>
               <div className="text-[11px] text-slate-500 px-2 py-1 flex items-center justify-between">
                 <span>Pencarian Cepat Navigasi Platform</span>
-                <span className="font-mono text-[10px] bg-slate-100 px-1.5 py-0.5 rounded text-slate-600">
+                <span className={cn('font-mono text-[10px] bg-slate-100 px-1.5 py-0.5 text-slate-600', tokens.radius.xs)}>
                   ESC untuk keluar
                 </span>
               </div>
@@ -123,28 +133,28 @@ export function TopRightCluster({ className = '' }: TopRightClusterProps) {
           onClick={() => setNotificationOpen((prev) => !prev)}
           title="Notifikasi Sistem"
           aria-label="Notifikasi Sistem"
-          className="w-10 h-10 rounded-full bg-white border border-slate-200/80 shadow-xs flex items-center justify-center text-slate-500 hover:text-slate-900 hover:border-slate-300 transition-all relative cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#150f23]"
+          className={circularButtonClass}
         >
           <Bell className="w-4 h-4" aria-hidden="true" />
           {/* Active notification indicator dot (lime) */}
           <span
-            className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-[#c2ef4e] ring-2 ring-white"
+            className={cn('absolute top-2.5 right-2.5 w-2 h-2 rounded-full ring-2 ring-white', tokens.semantic.lime.badge)}
             aria-hidden="true"
           />
         </button>
 
         {notificationOpen && (
-          <div className="absolute right-0 mt-2 w-72 sm:w-80 bg-white rounded-2xl border border-slate-200/80 shadow-xl p-3 z-50 space-y-2">
+          <div className={cn('absolute right-0 mt-2 w-72 sm:w-80 bg-white p-3 z-50 space-y-2', tokens.radius.xl, tokens.border.default, tokens.shadow.modal)}>
             <div className="flex items-center justify-between pb-2 border-b border-slate-100 px-1">
               <span className="font-display font-bold text-xs text-slate-900">
                 Pemberitahuan Sistem
               </span>
-              <span className="text-[10px] font-mono text-[#150f23] font-bold bg-[#c2ef4e]/40 px-1.5 py-0.5 rounded">
+              <span className={cn('text-[10px] font-mono text-[#150f23] font-bold bg-[#c2ef4e]/40 px-1.5 py-0.5', tokens.radius.xs)}>
                 2 Baru
               </span>
             </div>
             <div className="space-y-1.5 text-xs">
-              <div className="p-2 rounded-xl bg-slate-50 hover:bg-slate-100/70 transition-colors">
+              <div className={cn('p-2 bg-slate-50 hover:bg-slate-100/70 transition-colors', tokens.radius.lg)}>
                 <p className="font-semibold text-slate-900 text-[11px]">
                   Sinkronisasi TiDB Serverless
                 </p>
@@ -152,7 +162,7 @@ export function TopRightCluster({ className = '' }: TopRightClusterProps) {
                   Cluster terhubung stabil di region ap-southeast-1.
                 </p>
               </div>
-              <div className="p-2 rounded-xl bg-slate-50 hover:bg-slate-100/70 transition-colors">
+              <div className={cn('p-2 bg-slate-50 hover:bg-slate-100/70 transition-colors', tokens.radius.lg)}>
                 <p className="font-semibold text-slate-900 text-[11px]">
                   Audit Integritas AI Ujian
                 </p>
@@ -165,13 +175,13 @@ export function TopRightCluster({ className = '' }: TopRightClusterProps) {
         )}
       </div>
 
-      {/* Info / Help Button */}
+      {/* Info / Help Button (Hidden on <sm to maintain 360px header budget) */}
       <button
         type="button"
         onClick={() => alert('EXAMIND CBT v1.0 — Platform Ujian AI Sekolah Berintegritas Tinggi')}
         title="Tentang Platform EXAMIND"
         aria-label="Informasi Platform"
-        className="w-10 h-10 rounded-full bg-white border border-slate-200/80 shadow-xs flex items-center justify-center text-slate-500 hover:text-slate-900 hover:border-slate-300 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#150f23]"
+        className={cn(circularButtonClass, 'hidden sm:flex')}
       >
         <HelpCircle className="w-4 h-4" aria-hidden="true" />
       </button>
@@ -183,19 +193,24 @@ export function TopRightCluster({ className = '' }: TopRightClusterProps) {
           onClick={() => setProfileOpen((prev) => !prev)}
           aria-expanded={profileOpen}
           aria-label="Menu Profil Pengguna"
-          className="bg-white rounded-full p-1.5 pr-3 sm:pr-4 border border-slate-200/80 shadow-xs flex items-center gap-2.5 sm:gap-3 hover:border-slate-300 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#150f23]"
+          className={cn(
+            'bg-white p-1.5 pr-3 sm:pr-4 flex items-center gap-2.5 sm:gap-3 hover:border-slate-300 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#150f23]',
+            tokens.radius.full,
+            tokens.border.default,
+            tokens.shadow.subtle
+          )}
         >
           {/* Avatar circle */}
-          <div className="w-8 h-8 rounded-full bg-[#150f23] text-[#c2ef4e] flex items-center justify-center text-xs font-bold font-display shadow-2xs shrink-0">
+          <div className={cn('w-8 h-8 bg-[#150f23] text-[#c2ef4e] flex items-center justify-center text-xs font-bold font-display shrink-0', tokens.radius.full, tokens.shadow.micro)}>
             {userInitials}
           </div>
 
           {/* User Name & Role */}
           <div className="text-left hidden md:block min-w-0 max-w-[120px] lg:max-w-[160px]">
-            <p className="text-xs font-bold text-slate-900 leading-tight truncate">
+            <p className="text-xs font-bold text-slate-900 leading-tight truncate font-sans">
               {user?.full_name || 'Super Admin'}
             </p>
-            <p className="text-[10px] text-slate-500 font-medium leading-tight truncate mt-0.5">
+            <p className={cn(tokens.typography.caption, 'leading-tight truncate mt-0.5')}>
               {roleLabel}
             </p>
           </div>
@@ -210,14 +225,14 @@ export function TopRightCluster({ className = '' }: TopRightClusterProps) {
 
         {/* Profile Dropdown Menu */}
         {profileOpen && (
-          <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl border border-slate-200/80 shadow-xl p-3 z-50 space-y-2 select-none animate-in fade-in-50 zoom-in-95 duration-150">
-            <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
+          <div className={cn('absolute right-0 mt-2 w-64 bg-white p-3 z-50 space-y-2 select-none animate-in fade-in-50 zoom-in-95 duration-150', tokens.radius.xl, tokens.border.default, tokens.shadow.modal)}>
+            <div className={cn('p-2.5 bg-slate-50 border border-slate-100 space-y-1', tokens.radius.lg)}>
               <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-full bg-[#150f23] text-[#c2ef4e] flex items-center justify-center text-[10px] font-bold">
+                <div className={cn('w-7 h-7 bg-[#150f23] text-[#c2ef4e] flex items-center justify-center text-[10px] font-bold', tokens.radius.full)}>
                   {userInitials}
                 </div>
                 <div className="min-w-0">
-                  <p className="text-xs font-bold text-slate-900 truncate">
+                  <p className="text-xs font-bold text-slate-900 truncate font-sans">
                     {user?.full_name || 'Super Admin'}
                   </p>
                   <p className="text-[10px] text-slate-500 font-mono truncate">
@@ -227,7 +242,7 @@ export function TopRightCluster({ className = '' }: TopRightClusterProps) {
               </div>
               <div className="pt-1.5 flex items-center justify-between text-[10px]">
                 <span className="font-semibold text-slate-500">Peran Akun:</span>
-                <span className="font-mono font-bold px-2 py-0.5 rounded-full bg-slate-200 text-slate-800">
+                <span className={cn('font-mono font-bold px-2 py-0.5 bg-slate-200 text-slate-800', tokens.radius.full)}>
                   {roleLabel}
                 </span>
               </div>
@@ -237,7 +252,7 @@ export function TopRightCluster({ className = '' }: TopRightClusterProps) {
               <button
                 type="button"
                 onClick={handleLogout}
-                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                className={cn('w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer', tokens.radius.lg)}
               >
                 <LogOut className="w-4 h-4 shrink-0" aria-hidden="true" />
                 <span>Keluar dari Akun</span>

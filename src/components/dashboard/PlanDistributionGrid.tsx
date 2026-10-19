@@ -1,6 +1,8 @@
 'use client'
 
 import React from 'react'
+import { cn } from '@/lib/utils'
+import { tokens } from '@/components/system/tokens'
 
 export interface PlanDistributionData {
   enterprise?: number
@@ -21,26 +23,26 @@ export function PlanDistributionGrid({
     {
       name: 'Enterprise',
       count: distribution?.enterprise ?? 0,
-      containerClass: 'bg-gradient-to-br from-emerald-50/80 via-white to-emerald-50/30 border-emerald-200/90 hover:border-emerald-300',
-      dotClass: 'bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.5)]',
+      containerClass: 'bg-emerald-50/70 border-emerald-100 hover:bg-emerald-50',
+      dotClass: tokens.semantic.emerald.dot,
       countClass: 'text-emerald-950',
       tagText: 'Prioritas AI',
-      tagClass: 'text-emerald-800 bg-emerald-100/80 font-bold',
+      tagClass: 'text-emerald-800 bg-emerald-100/90 font-bold',
     },
     {
       name: 'Pro',
       count: distribution?.pro ?? 0,
-      containerClass: 'bg-gradient-to-br from-indigo-50/80 via-white to-indigo-50/30 border-indigo-200/90 hover:border-indigo-300',
-      dotClass: 'bg-indigo-500 shadow-[0_0_6px_rgba(99,102,241,0.5)]',
-      countClass: 'text-indigo-950',
+      containerClass: 'bg-violet-50/70 border-violet-100 hover:bg-violet-50',
+      dotClass: tokens.semantic.violet.dot,
+      countClass: 'text-[#150f23]',
       tagText: 'Kamera Ganda',
-      tagClass: 'text-indigo-800 bg-indigo-100/80 font-bold',
+      tagClass: 'text-[#6a5fc1] bg-violet-100/90 font-bold',
     },
     {
       name: 'Starter',
       count: distribution?.starter ?? 0,
-      containerClass: 'bg-gradient-to-br from-slate-50/90 via-white to-slate-50/40 border-slate-200/90 hover:border-slate-300',
-      dotClass: 'bg-slate-400',
+      containerClass: 'bg-slate-50/90 border-slate-100 hover:bg-slate-100/70',
+      dotClass: tokens.semantic.neutral.dot,
       countClass: 'text-slate-900',
       tagText: 'Dasar CBT',
       tagClass: 'text-slate-700 bg-slate-100 font-semibold',
@@ -48,20 +50,24 @@ export function PlanDistributionGrid({
   ]
 
   return (
-    <div className={`grid grid-cols-3 gap-2.5 pt-1 ${className}`}>
+    <div className={cn('grid grid-cols-3 gap-2.5', className)}>
       {items.map((item) => (
         <div
           key={item.name}
-          className={`p-3 rounded-xl border space-y-1.5 transition-all shadow-2xs hover:shadow-xs ${item.containerClass}`}
+          className={cn(
+            'p-3 border transition-colors',
+            tokens.radius.lg,
+            item.containerClass
+          )}
         >
           <div className="flex items-center justify-between text-[10px] font-mono text-slate-600 font-bold">
             <span>{item.name}</span>
-            <span className={`w-2 h-2 rounded-full ${item.dotClass}`} aria-hidden="true" />
+            <span className={cn('w-2 h-2', tokens.radius.full, item.dotClass)} aria-hidden="true" />
           </div>
-          <div className={`font-display text-xl font-black tabular-nums ${item.countClass}`}>
+          <div className={cn(tokens.typography.title, 'text-xl font-black tabular-nums my-1', item.countClass)}>
             {item.count}
           </div>
-          <span className={`text-[9px] px-1.5 py-0.5 rounded-md inline-block ${item.tagClass}`}>
+          <span className={cn('text-[9px] px-1.5 py-0.5 inline-block font-sans', tokens.radius.sm, item.tagClass)}>
             {item.tagText}
           </span>
         </div>

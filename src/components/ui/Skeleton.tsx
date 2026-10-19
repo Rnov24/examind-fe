@@ -1,5 +1,6 @@
 import React from 'react'
 import { cn } from '@/lib/utils'
+import { tokens } from '@/components/system/tokens'
 
 export type SkeletonVariant = 'text' | 'heading' | 'circular' | 'card' | 'button' | 'badge' | 'input'
 
@@ -8,14 +9,15 @@ export interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const variantStyles: Record<SkeletonVariant, string> = {
-  text: 'h-4 w-full rounded-md',
-  heading: 'h-6 w-3/4 rounded-lg',
-  circular: 'rounded-full shrink-0',
-  card: 'h-40 w-full rounded-2xl',
-  button: 'h-10 w-28 rounded-xl',
-  badge: 'h-5 w-16 rounded-md',
-  input: 'h-10 w-full rounded-xl',
+  text: cn('h-4 w-full', tokens.radius.sm),
+  heading: cn('h-6 w-3/4', tokens.radius.md),
+  circular: cn('shrink-0', tokens.radius.full),
+  card: cn('h-40 w-full', tokens.radius.xl),
+  button: cn('h-10 w-28', tokens.radius.lg),
+  badge: cn('h-5 w-16', tokens.radius.sm),
+  input: cn('h-10 w-full', tokens.radius.lg),
 }
+
 
 export function Skeleton({
   className,

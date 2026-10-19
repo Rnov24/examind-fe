@@ -128,7 +128,7 @@ export default function SuperAdminDashboardPage() {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       greetingName={user?.full_name || 'Super Admin'}
-      greetingSubtitle="Pantau integritas ujian, kelola institusi, dan tinjau status operasional platform."
+      greetingSubtitle="Pantau integritas ujian, kelola sekolah mitra, dan tinjau status operasional platform."
       greetingAction={
         <button
           type="button"
@@ -151,178 +151,109 @@ export default function SuperAdminDashboardPage() {
           }}
         />
 
-        {/* ROW 2: 3-COLUMN CORE DASHBOARD GRID */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* LEFT COLUMN (col-span-4) */}
-          <div className="lg:col-span-4 space-y-6 flex flex-col justify-between">
-            {/* 1. Total Balance / MRR Card */}
-            <DashboardCard className="p-6">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-slate-600 tracking-tight">
-                    Pendapatan Berulang (MRR)
-                  </span>
-                  <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200/80 shadow-2xs">
-                    IDR • Bulanan
-                  </span>
-                </div>
-
-                <div>
-                  <div className="font-display text-3xl font-extrabold text-slate-900 tracking-tight tabular-nums">
-                    Rp {(finance?.mrr ?? 0).toLocaleString('id-ID')}
-                  </div>
-                  <div className="flex items-center gap-1.5 text-xs text-emerald-700 font-semibold font-mono mt-1">
-                    <span className="flex items-center gap-0.5 font-bold">
-                      <ArrowUpRight className="w-3.5 h-3.5 stroke-[2.5]" aria-hidden="true" />
-                      14%
-                    </span>
-                    <span className="text-slate-500 font-normal font-sans">
-                      dibandingkan bulan lalu
-                    </span>
-                  </div>
-                </div>
-
-                {/* Vibrant balanced action buttons */}
-                <div className="grid grid-cols-2 gap-3 pt-2">
-                  <Link
-                    href="/superadmin/finance"
-                    className="py-2.5 px-3 rounded-full bg-[#150f23] hover:bg-slate-800 text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 text-center shadow-xs cursor-pointer"
-                  >
-                    <span>Tagihan</span>
-                    <ArrowUpRight className="w-3.5 h-3.5 text-[#c2ef4e]" aria-hidden="true" />
-                  </Link>
-                  <Link
-                    href="/superadmin/pricing"
-                    className="py-2.5 px-3 rounded-full bg-slate-100 hover:bg-slate-200/80 border border-slate-200 text-slate-800 text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 text-center cursor-pointer"
-                  >
-                    <span>Tarif Kuota</span>
-                  </Link>
-                </div>
-              </div>
-            </DashboardCard>
-
-            {/* 2. Wallets / License Plans Distribution */}
-            <DashboardCard
-              title="Paket Lisensi Sekolah"
-              subtitle={`Total ${stats?.total_tenants ?? 0} institusi terdaftar`}
-              icon={<Wallet className="w-4 h-4 text-slate-700" aria-hidden="true" />}
-            >
-              <PlanDistributionGrid distribution={stats?.plan_distribution} />
-            </DashboardCard>
-
-            {/* 3. AI Token Quota Capacity */}
-            <DashboardCard
-              title="Kapasitas Token AI Platform"
-              subtitle="Alokasi kredit penilaian esai & generate soal"
-              icon={<Sparkles className="w-4 h-4 text-indigo-600" aria-hidden="true" />}
-            >
-              <DashboardProgressBar
-                value={1420000}
-                max={2000000}
-                label="1.420.000 / 2.000.000 Token"
-                percentageLabel="71%"
-                statusLeft="Quota Reset: 12 hari lagi"
-                statusRight="Kapasitas Normal"
-                tone="violet"
-                className="pt-1"
-              />
-            </DashboardCard>
-          </div>
-
-          {/* MIDDLE COLUMN: 2x2 STAT GRID (col-span-5) */}
-          <div className="lg:col-span-5 grid grid-cols-1 sm:grid-cols-2 gap-5">
-            {/* HERO CARD - Vibrant daylight treatment */}
+        {/* ROW 2: PRIMARY FOCAL POINT — ACADEMIC INFRASTRUCTURE HERO & STATS */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-5">
+          {/* Focal Point 1: Hero Card Sekolah Terdaftar */}
+          <div className="col-span-1 sm:col-span-2 lg:col-span-4">
             <HeroCard
               title="Sekolah Terdaftar"
               value={stats?.total_tenants ?? 0}
               icon={<Building2 className="w-5 h-5 text-[#c2ef4e]" aria-hidden="true" />}
               trend={{
-                value: `${stats?.active_tenants ?? 0} Aktif`,
+                value: `${stats?.active_tenants ?? 0} Sekolah Aktif`,
                 positive: true,
                 label: 'beroperasi',
               }}
-              highlightText="Infrastruktur Utama"
-              className="min-h-[180px]"
+              highlightText="Infrastruktur CBT Utama"
+              className="h-full min-h-[170px]"
             />
+          </div>
 
-            {/* Stat Card 2: Peserta Didik */}
+          {/* Focal Point 2: Stat Card Peserta Didik (Siswa) */}
+          <div className="col-span-1 lg:col-span-4">
             <StatCard
               title="Peserta Didik (Siswa)"
               value={(stats?.total_global_students ?? 0).toLocaleString('id-ID')}
               icon={<GraduationCap className="w-5 h-5 text-indigo-600" aria-hidden="true" />}
               tone="indigo"
-              subtitle={`Dari ${(stats?.total_global_users ?? 0).toLocaleString('id-ID')} total akun`}
+              subtitle={`Dari ${(stats?.total_global_users ?? 0).toLocaleString('id-ID')} akun terdaftar di platform`}
               trend={{ value: '100%', positive: true, label: 'aktif ujian' }}
-              className="min-h-[180px]"
+              className="h-full min-h-[170px]"
             />
+          </div>
 
-            {/* Stat Card 3: Tenaga Pendidik */}
+          {/* Focal Point 3: Stat Card Tenaga Pendidik (Guru) */}
+          <div className="col-span-1 lg:col-span-4">
             <StatCard
               title="Tenaga Pendidik (Guru)"
               value={(stats?.total_global_teachers ?? 0).toLocaleString('id-ID')}
               icon={<Users className="w-5 h-5 text-amber-600" aria-hidden="true" />}
               tone="amber"
-              subtitle="Pendidik di seluruh sekolah"
+              subtitle="Pendidik aktif penyusun bank soal CBT"
               trend={{ value: '+8%', positive: true, label: 'bulan ini' }}
-              className="min-h-[180px]"
+              className="h-full min-h-[170px]"
             />
+          </div>
+        </div>
 
-            {/* Stat Card 4: ARR Proyeksi Tahunan */}
-            <StatCard
-              title="Annual Run Rate (ARR)"
-              value={`Rp ${(finance?.arr ?? 0).toLocaleString('id-ID')}`}
-              icon={<TrendingUp className="w-5 h-5 text-emerald-600" aria-hidden="true" />}
-              tone="emerald"
-              subtitle="Proyeksi pendapatan tahunan"
-              trend={{ value: '+18%', positive: true, label: 'pertumbuhan' }}
-              className="min-h-[180px]"
-            />
+        {/* ROW 3: INFRASTRUCTURE & PLATFORM CAPACITY */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* Left Block: License Plans & AI Tokens Allocation (col-span-7) */}
+          <div className="lg:col-span-7">
+            <DashboardCard
+              title="Alokasi Lisensi & Kapasitas Token AI"
+              subtitle="Distribusi tingkatan layanan sekolah mitra dan kuota pemrosesan model LLM"
+              icon={<Sparkles className="w-4 h-4 text-indigo-600" aria-hidden="true" />}
+            >
+              <div className="space-y-5">
+                <div>
+                  <div className="flex items-center justify-between text-xs text-slate-500 font-medium mb-2.5">
+                    <span>Sebaran Paket Sekolah Mitra</span>
+                    <span className="font-mono font-semibold text-slate-700">
+                      Total {stats?.total_tenants ?? 0} Sekolah
+                    </span>
+                  </div>
+                  <PlanDistributionGrid distribution={stats?.plan_distribution} />
+                </div>
 
-            {/* Sub-card below 2x2: Quick Management Shortcuts */}
-            <div className="sm:col-span-2">
-              <QuickActionGrid
-                items={[
-                  {
-                    title: 'Kunci API & Keamanan',
-                    subtitle: 'Konfigurasi Gemini & DB',
-                    href: '/superadmin/secrets',
-                    icon: <Cpu className="w-4 h-4 text-indigo-600" aria-hidden="true" />,
-                  },
-                  {
-                    title: 'Audit Nilai & Ujian',
-                    subtitle: 'Telemetri integritas proctoring',
-                    href: '/analytics',
-                    icon: <Activity className="w-4 h-4 text-emerald-600" aria-hidden="true" />,
-                  },
-                ]}
-              />
-            </div>
+                <div className="border-t border-slate-100 pt-4">
+                  <div className="flex items-center justify-between text-xs text-slate-500 font-medium mb-1">
+                    <span>Kuota Token AI Platform</span>
+                    <span className="font-mono font-semibold text-violet-700">71% Terpakai</span>
+                  </div>
+                  <DashboardProgressBar
+                    value={1420000}
+                    max={2000000}
+                    label="1.420.000 / 2.000.000 Token"
+                    percentageLabel="71%"
+                    statusLeft="Reset Kuota: 12 hari lagi"
+                    statusRight="Kapasitas Optimal"
+                    tone="violet"
+                    className="pt-1"
+                  />
+                </div>
+              </div>
+            </DashboardCard>
           </div>
 
-          {/* RIGHT COLUMN: SYSTEM HEALTH & TELEMETRY (col-span-3) */}
-          <div className="lg:col-span-3 space-y-6 flex flex-col justify-between">
+          {/* Right Block: CBT Server Telemetry & Health (col-span-5) */}
+          <div className="lg:col-span-5">
             <DashboardCard
-              title="Telemetri Server CBT"
-              subtitle="Beban trafik & integritas cluster"
+              title="Telemetri Server Ujian CBT"
+              subtitle="Beban trafik komputasi dan integritas klaster ujian"
               icon={<ShieldCheck className="w-4 h-4 text-emerald-600" aria-hidden="true" />}
               action={
-                <span className="text-[10px] font-mono font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                <span className="text-[10px] font-mono font-bold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
                   Optimal
                 </span>
               }
             >
-              <div className="space-y-4 pt-1">
-                {/* Visual Chart Bars primitive */}
+              <div className="space-y-4">
                 <TelemetryBarChart />
 
-                {/* Telemetry Breakdown Details */}
-                <div className="space-y-2 text-xs divide-y divide-slate-100">
+                <div className="space-y-2 text-xs divide-y divide-slate-100 pt-1">
                   <div className="flex items-center justify-between pt-1">
-                    <span className="text-slate-500">Kapasitas AI Rata-rata:</span>
-                    <span className="font-mono font-bold text-slate-900">99.8% Uptime</span>
-                  </div>
-                  <div className="flex items-center justify-between pt-2">
-                    <span className="text-slate-500">ARPU per Sekolah:</span>
+                    <span className="text-slate-500">Rata-rata Pendapatan per Sekolah (ARPU):</span>
                     <span className="font-mono font-bold text-slate-900">
                       Rp {(finance?.arpu ?? 0).toLocaleString('id-ID')}
                     </span>
@@ -340,7 +271,126 @@ export default function SuperAdminDashboardPage() {
           </div>
         </div>
 
-        {/* ROW 3: RECENT ACTIVITIES TABLE */}
+        {/* ROW 4: SECONDARY — FINANCIAL OVERVIEW & QUICK ACTIONS */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* Left Block: Financial Summary (col-span-8) */}
+          <div className="lg:col-span-8">
+            <DashboardCard
+              title="Ringkasan Finansial Layanan Sekolah"
+              subtitle="Pemantauan pendapatan langganan bulanan, proyeksi tahunan, dan rata-rata per sekolah"
+              icon={<Wallet className="w-4 h-4 text-slate-700" aria-hidden="true" />}
+            >
+              <div className="space-y-4">
+                {/* 3 Unified Financial Metrics */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-1">
+                  <div className="p-3.5 rounded-xl bg-slate-50/80 border border-slate-100 space-y-1">
+                    <span className="text-[11px] font-bold text-slate-600 block">
+                      Pendapatan Bulanan (MRR)
+                    </span>
+                    <div className="font-display text-xl font-extrabold text-slate-900 tabular-nums">
+                      Rp {(finance?.mrr ?? 0).toLocaleString('id-ID')}
+                    </div>
+                    <div className="flex items-center gap-1 text-[11px] text-emerald-700 font-semibold font-mono">
+                      <ArrowUpRight className="w-3 h-3 stroke-[2.5]" aria-hidden="true" />
+                      <span>+14% vs bulan lalu</span>
+                    </div>
+                  </div>
+
+                  <div className="p-3.5 rounded-xl bg-slate-50/80 border border-slate-100 space-y-1">
+                    <span className="text-[11px] font-bold text-slate-600 block">
+                      Proyeksi Tahunan (ARR)
+                    </span>
+                    <div className="font-display text-xl font-extrabold text-slate-900 tabular-nums">
+                      Rp {(finance?.arr ?? 0).toLocaleString('id-ID')}
+                    </div>
+                    <div className="flex items-center gap-1 text-[11px] text-emerald-700 font-semibold font-mono">
+                      <ArrowUpRight className="w-3 h-3 stroke-[2.5]" aria-hidden="true" />
+                      <span>+18% pertumbuhan</span>
+                    </div>
+                  </div>
+
+                  <div className="p-3.5 rounded-xl bg-slate-50/80 border border-slate-100 space-y-1">
+                    <span className="text-[11px] font-bold text-slate-600 block">
+                      Rata-rata per Sekolah (ARPU)
+                    </span>
+                    <div className="font-display text-xl font-extrabold text-slate-900 tabular-nums">
+                      Rp {(finance?.arpu ?? 0).toLocaleString('id-ID')}
+                    </div>
+                    <div className="text-[11px] text-slate-500 font-mono">
+                      Per sekolah aktif
+                    </div>
+                  </div>
+                </div>
+
+                {/* Footer Action Links */}
+                <div className="flex items-center justify-end gap-3 pt-2 border-t border-slate-100">
+                  <Link
+                    href="/superadmin/pricing"
+                    className="px-4 py-2 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold transition-colors cursor-pointer"
+                  >
+                    Atur Tarif &amp; Kuota Paket
+                  </Link>
+                  <Link
+                    href="/superadmin/finance"
+                    className="px-4 py-2 rounded-full bg-[#150f23] hover:bg-slate-800 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-xs cursor-pointer"
+                  >
+                    <span>Buka Buku Besar Tagihan</span>
+                    <ArrowUpRight className="w-3.5 h-3.5 text-[#c2ef4e]" aria-hidden="true" />
+                  </Link>
+                </div>
+              </div>
+            </DashboardCard>
+          </div>
+
+          {/* Right Block: Quick Action Shortcuts (col-span-4) */}
+          <div className="lg:col-span-4">
+            <DashboardCard
+              title="Akses Cepat Pengaturan"
+              subtitle="Pusat konfigurasi keamanan & audit ujian"
+              icon={<Cpu className="w-4 h-4 text-indigo-600" aria-hidden="true" />}
+            >
+              <div className="space-y-3 pt-1">
+                <Link
+                  href="/superadmin/secrets"
+                  className="p-3.5 rounded-xl bg-slate-50/80 hover:bg-violet-50/60 border border-slate-100 hover:border-violet-200/80 transition-all flex items-center justify-between group cursor-pointer"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-xl bg-white border border-slate-200/80 text-indigo-600 flex items-center justify-center shrink-0 shadow-2xs group-hover:bg-[#150f23] group-hover:text-[#c2ef4e] transition-colors">
+                      <Cpu className="w-4 h-4" aria-hidden="true" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-slate-900 group-hover:text-[#6a5fc1] transition-colors">
+                        Kunci API &amp; Keamanan
+                      </p>
+                      <p className="text-[10px] text-slate-500">Konfigurasi Gemini &amp; DB</p>
+                    </div>
+                  </div>
+                  <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-[#6a5fc1] transition-colors" />
+                </Link>
+
+                <Link
+                  href="/analytics"
+                  className="p-3.5 rounded-xl bg-slate-50/80 hover:bg-emerald-50/60 border border-slate-100 hover:border-emerald-200/80 transition-all flex items-center justify-between group cursor-pointer"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-xl bg-white border border-slate-200/80 text-emerald-600 flex items-center justify-center shrink-0 shadow-2xs group-hover:bg-[#150f23] group-hover:text-[#c2ef4e] transition-colors">
+                      <Activity className="w-4 h-4" aria-hidden="true" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">
+                        Audit Nilai &amp; Ujian
+                      </p>
+                      <p className="text-[10px] text-slate-500">Telemetri integritas proctoring</p>
+                    </div>
+                  </div>
+                  <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-emerald-700 transition-colors" />
+                </Link>
+              </div>
+            </DashboardCard>
+          </div>
+        </div>
+
+        {/* ROW 5: RECENT ACTIVITIES TABLE */}
         <TenantActivityTable
           tenants={filteredTenants}
           isLoading={tenantsBlock.status === 'loading'}

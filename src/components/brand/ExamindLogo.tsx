@@ -1,5 +1,7 @@
 import React from 'react'
 import Image, { type ImageProps } from 'next/image'
+import { cn } from '@/lib/utils'
+import { tokens } from '@/components/system/tokens'
 
 export type ExamindLogoVariant = 'symbol' | 'lockup' | 'stacked'
 export type ExamindLogoTheme = 'color' | 'white' | 'violet'
@@ -62,10 +64,11 @@ export function ExamindLogo({
       height={asset.height}
       priority={priority}
       unoptimized
-      className={`select-none ${className}`}
+      className={cn('select-none shrink-0', className)}
       {...rest}
     />
   )
 }
 
 export default ExamindLogo
+

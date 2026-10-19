@@ -3,6 +3,7 @@
 import React, { useEffect, useRef } from 'react'
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { tokens } from '@/components/system/tokens'
 
 export type ModalSize = 'sm' | 'md' | 'lg' | 'xl'
 export type ModalAccent = 'none' | 'lime' | 'violet' | 'midnight'
@@ -26,10 +27,11 @@ const modalSizeStyles: Record<ModalSize, string> = {
 
 const modalAccentStyles: Record<ModalAccent, string> = {
   none: '',
-  lime: 'before:absolute before:top-0 before:left-0 before:right-0 before:h-[3px] before:bg-[#c2ef4e] before:z-20',
-  violet: 'before:absolute before:top-0 before:left-0 before:right-0 before:h-[3px] before:bg-[#6a5fc1] before:z-20',
-  midnight: 'before:absolute before:top-0 before:left-0 before:right-0 before:h-[3px] before:bg-[#150f23] before:z-20',
+  lime: cn(tokens.accentBarBase, 'before:z-20', tokens.semantic.lime.accentBar),
+  violet: cn(tokens.accentBarBase, 'before:z-20', tokens.semantic.violet.accentBar),
+  midnight: cn(tokens.accentBarBase, 'before:z-20', tokens.semantic.midnight.accentBar),
 }
+
 
 export function Modal({
   isOpen,

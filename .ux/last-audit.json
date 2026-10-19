@@ -1,0 +1,75 @@
+{
+  "command": "ux-audit",
+  "timestamp": "2026-10-19T19:00:00+07:00",
+  "surface": "EXAMIND Frontend Full Sweep (Superadmin, Marketing, Auth, Exam)",
+  "findings": [
+    {
+      "lens": "ACT",
+      "severity": "Critical",
+      "title": "Ubah Paket Langganan Menggunakan window.prompt()",
+      "principle": "Norman Gulf of Execution & Error Prevention",
+      "evidence": "src/app/(dashboard)/superadmin/tenants/page.tsx:66 memanggil prompt() mentah yang memblokir antarmuka peramban.",
+      "fix": "Ganti dengan komponen Modal seleksi paket terintegrasi data batas siswa dan harga."
+    },
+    {
+      "lens": "RECOVER",
+      "severity": "Critical",
+      "title": "Aksi Penangguhan Sekolah Tanpa Dialog Konfirmasi",
+      "principle": "Norman Error Prevention & Nielsen Safety Exits",
+      "evidence": "src/components/superadmin/TenantTable.tsx:199 tombol Tangguhkan langsung mengeksekusi patch status ke API tanpa safeguard.",
+      "fix": "Sematkan modal konfirmasi tindakan destruktif dengan ringkasan dampak terhadap akun aktif."
+    },
+    {
+      "lens": "RECOVER",
+      "severity": "Critical",
+      "title": "Penyampaian Kegagalan Kumpul Ujian dengan window.alert()",
+      "principle": "Peak-End Rule & Non-blocking Error Recovery",
+      "evidence": "src/app/(exam)/student/exam/[examId]/page.tsx:240 memunculkan window.alert saat submit gagal di momen ujian berisiko tinggi.",
+      "fix": "Ganti dengan pesan error inline di dalam ExamSubmitModal dengan tombol coba lagi dan penjaminan autosave lokal."
+    },
+    {
+      "lens": "DISCOVER",
+      "severity": "Critical",
+      "title": "Jebakan Modal Tanpa Atribut Semantik WAI-ARIA di Brankas Kunci",
+      "principle": "WCAG 2.1.1 Keyboard & WAI-ARIA Dialog Pattern",
+      "evidence": "src/components/superadmin/SecretManagerTab.tsx:935, 984, 1126 modal kustom memakai div polos tanpa role=dialog atau aria-modal.",
+      "fix": "Gunakan primitif Modal terstandarisasi yang menangani focus trap dan tombol Escape otomatis."
+    },
+    {
+      "lens": "FRAME",
+      "severity": "Critical",
+      "title": "Route Drift Saat Mengganti Pilihan Ujian Psikometrik",
+      "principle": "Nielsen Consistency and Standards",
+      "evidence": "src/components/analytics/AnalyticsWorkspace.tsx:192 berpindah ke rute modul guru /exams/[id]/analytics dan merusak shell superadmin.",
+      "fix": "Pertahankan rute induk /analytics dengan parameter query atau state internal."
+    },
+    {
+      "lens": "DISCOVER",
+      "severity": "Critical",
+      "title": "Penggunaan Emoji Mentah pada Chat Tutor AI (Telah Diperbaiki)",
+      "principle": "EXAMIND Craft Floor Rule (Lucide only, no emoji/unicode icons)",
+      "evidence": "src/components/student/QuestionExplanationChat.tsx:211, 218 memuat emoji 🌟 dan 💡 di pesan tutor.",
+      "fix": "Ganti dengan ikon Lucide Sparkles dan Lightbulb institusional."
+    },
+    {
+      "lens": "ACT",
+      "severity": "Critical",
+      "title": "Div Interaktif Tanpa Semantik Keyboard atau Role ARIA",
+      "principle": "WCAG 2.1.1 Keyboard Navigation",
+      "evidence": "src/app/(marketing)/page.tsx:1294 dan src/components/marketing/InstitutionalStamp.tsx:72 memiliki onClick pada div tanpa role.",
+      "fix": "Gunakan tag button resmi atau berikan role=button, tabIndex=0, dan key listener."
+    }
+  ],
+  "severity_counts": {
+    "critical": 7,
+    "major": 10,
+    "minor": 8,
+    "total": 25
+  },
+  "dominant_lens": "RECOVER",
+  "strategic_moves": [
+    "Bangun Toast Notifikasi dan Modal Konfirmasi Destruktif Terstandarisasi untuk menggantikan seluruh popup window.alert() dan window.prompt().",
+    "Perkuat ruang ujian siswa (Student Exam Flow) dengan retry asinkron terisolasi dan perbaikan semantik pilihan ganda (Radio Group).",
+    "Gantikan jargon teknis di landing page dengan bukti kepatuhan hukum dan kredibilitas kelembagaan pendidikan Indonesia."
+  ]
+}

@@ -1,6 +1,8 @@
 'use client'
 
 import React from 'react'
+import { cn } from '@/lib/utils'
+import { tokens } from '@/components/system/tokens'
 
 export interface DashboardProgressBarProps {
   value: number
@@ -42,7 +44,7 @@ export function DashboardProgressBar({
   })()
 
   return (
-    <div className={`space-y-2.5 ${className}`}>
+    <div className={cn('space-y-2.5', className)}>
       {(label || displayPercentage) && (
         <div className="flex items-center justify-between text-xs">
           {label && (
@@ -55,13 +57,21 @@ export function DashboardProgressBar({
       )}
 
       {/* Daylight progress bar with restrained rich gradient and lime accent cap */}
-      <div className="h-3 w-full bg-slate-100 rounded-full overflow-hidden p-0.5 border border-slate-200/80 shadow-inner">
+      <div
+        className={cn(
+          'h-3 w-full bg-slate-100 overflow-hidden p-0.5 border border-slate-200/80 shadow-inner',
+          tokens.radius.full
+        )}
+      >
         <div
-          className={`h-full rounded-full relative transition-all duration-500 ease-out ${barGradient}`}
+          className={cn('h-full relative transition-all duration-500 ease-out', tokens.radius.full, barGradient)}
           style={{ width: `${percentage}%` }}
         >
           <div
-            className="absolute right-0 top-0 bottom-0 w-3 bg-[#c2ef4e] rounded-full shadow-[0_0_6px_rgba(194,239,78,0.6)]"
+            className={cn(
+              'absolute right-0 top-0 bottom-0 w-3 bg-[#c2ef4e] shadow-[0_0_6px_rgba(194,239,78,0.6)]',
+              tokens.radius.full
+            )}
             aria-hidden="true"
           />
         </div>
@@ -72,7 +82,7 @@ export function DashboardProgressBar({
           {statusLeft && <span>{statusLeft}</span>}
           {statusRight && (
             <span className="text-emerald-700 font-bold flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              <span className={cn('w-1.5 h-1.5 bg-emerald-500', tokens.radius.full)} />
               {statusRight}
             </span>
           )}

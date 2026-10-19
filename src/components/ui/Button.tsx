@@ -1,6 +1,7 @@
 import React, { forwardRef } from 'react'
 import { Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { tokens } from '@/components/system/tokens'
 
 export type ButtonVariant =
   | 'primary'
@@ -33,7 +34,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 
 /**
  * EXAMIND Institutional Button Variant Matrix
- * Strict adherence to DESIGN.md Two-Polarity Canvas:
+ * Strict adherence to tokens & Two-Polarity Canvas:
  * - primary: Midnight-Violet (#150f23) with precision hairline border
  * - secondary: Daylight-White with slate hairline and crisp hover state
  * - lime: Electric Highlighter (#c2ef4e) with high-contrast text and signature glow
@@ -42,23 +43,58 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
  * - inverted: Daylight-White on Midnight canvas with Lime focus ring
  */
 const variantStyles: Record<ButtonVariant, string> = {
-  primary:
-    'bg-[#150f23] text-white border border-[#2a1e47] shadow-xs hover:bg-[#1f1633] hover:border-[#3d2c63] hover:shadow-card active:bg-[#150f23] active:scale-[0.985] focus-visible:ring-2 focus-visible:ring-[#6a5fc1] focus-visible:ring-offset-2 focus-visible:ring-offset-white',
-  secondary:
-    'bg-white text-slate-800 border border-slate-200/90 shadow-xs hover:bg-slate-50/90 hover:text-slate-950 hover:border-slate-300 hover:shadow-xs active:bg-slate-100 active:scale-[0.985] focus-visible:ring-2 focus-visible:ring-[#6a5fc1] focus-visible:ring-offset-2 focus-visible:ring-offset-white',
-  lime:
-    'bg-[#c2ef4e] text-[#150f23] border border-[#a8dc2c] font-black hover:bg-[#b5e640] hover:shadow-glow-lime active:bg-[#a0d426] active:scale-[0.985] focus-visible:ring-2 focus-visible:ring-[#150f23] focus-visible:ring-offset-2 focus-visible:ring-offset-white',
-  violet:
-    'bg-[#6a5fc1] text-white border border-[#584dae] shadow-xs hover:bg-[#5b50b3] hover:shadow-glow-indigo active:bg-[#4f44a4] active:scale-[0.985] focus-visible:ring-2 focus-visible:ring-[#6a5fc1] focus-visible:ring-offset-2 focus-visible:ring-offset-white',
-  destructive:
-    'bg-rose-50 text-rose-700 border border-rose-200/90 shadow-2xs hover:bg-rose-100 hover:text-rose-900 hover:border-rose-300 active:bg-rose-200/80 active:scale-[0.985] focus-visible:ring-2 focus-visible:ring-rose-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white',
-  inverted:
-    'bg-white text-[#150f23] border border-white/90 shadow-xs hover:bg-slate-100 hover:text-slate-950 hover:shadow-card active:bg-slate-200 active:scale-[0.985] focus-visible:ring-2 focus-visible:ring-[#c2ef4e] focus-visible:ring-offset-2 focus-visible:ring-offset-[#150f23]',
-  ghost:
-    'bg-transparent text-slate-600 border border-transparent hover:bg-slate-100/80 hover:text-slate-900 active:bg-slate-200/70 active:scale-[0.985] focus-visible:ring-2 focus-visible:ring-[#6a5fc1]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-white',
-  outline:
-    'bg-transparent text-slate-700 border border-slate-200/90 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300 active:bg-slate-100 active:scale-[0.985] focus-visible:ring-2 focus-visible:ring-[#6a5fc1] focus-visible:ring-offset-2 focus-visible:ring-offset-white',
+  primary: cn(
+    tokens.semantic.midnight.solid,
+    tokens.shadow.subtle,
+    'hover:bg-[#1f1633] hover:border-[#3d2c63] hover:shadow-card active:bg-[#150f23] active:scale-[0.985]',
+    'focus-visible:ring-2 focus-visible:ring-[#6a5fc1] focus-visible:ring-offset-2 focus-visible:ring-offset-white'
+  ),
+  secondary: cn(
+    'bg-white text-slate-800',
+    tokens.border.default,
+    tokens.shadow.subtle,
+    'hover:bg-slate-50/90 hover:text-slate-950 hover:border-slate-300 hover:shadow-xs active:bg-slate-100 active:scale-[0.985]',
+    'focus-visible:ring-2 focus-visible:ring-[#6a5fc1] focus-visible:ring-offset-2 focus-visible:ring-offset-white'
+  ),
+  lime: cn(
+    tokens.semantic.lime.solid,
+    'font-black',
+    tokens.semantic.lime.hover,
+    'active:bg-[#a0d426] active:scale-[0.985]',
+    'focus-visible:ring-2 focus-visible:ring-[#150f23] focus-visible:ring-offset-2 focus-visible:ring-offset-white'
+  ),
+  violet: cn(
+    tokens.semantic.violet.solid,
+    tokens.shadow.subtle,
+    tokens.semantic.violet.hover,
+    'active:bg-[#4f44a4] active:scale-[0.985]',
+    'focus-visible:ring-2 focus-visible:ring-[#6a5fc1] focus-visible:ring-offset-2 focus-visible:ring-offset-white'
+  ),
+  destructive: cn(
+    'bg-rose-50 text-rose-700 border border-rose-200/90',
+    tokens.shadow.micro,
+    'hover:bg-rose-100 hover:text-rose-900 hover:border-rose-300 active:bg-rose-200/80 active:scale-[0.985]',
+    'focus-visible:ring-2 focus-visible:ring-rose-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white'
+  ),
+  inverted: cn(
+    'bg-white text-[#150f23] border border-white/90',
+    tokens.shadow.subtle,
+    'hover:bg-slate-100 hover:text-slate-950 hover:shadow-card active:bg-slate-200 active:scale-[0.985]',
+    'focus-visible:ring-2 focus-visible:ring-[#c2ef4e] focus-visible:ring-offset-2 focus-visible:ring-offset-[#150f23]'
+  ),
+  ghost: cn(
+    'bg-transparent text-slate-600 border border-transparent',
+    'hover:bg-slate-100/80 hover:text-slate-900 active:bg-slate-200/70 active:scale-[0.985]',
+    'focus-visible:ring-2 focus-visible:ring-[#6a5fc1]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-white'
+  ),
+  outline: cn(
+    'bg-transparent text-slate-700',
+    tokens.border.default,
+    'hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300 active:bg-slate-100 active:scale-[0.985]',
+    'focus-visible:ring-2 focus-visible:ring-[#6a5fc1] focus-visible:ring-offset-2 focus-visible:ring-offset-white'
+  ),
 }
+
 
 /**
  * Height & Padding Scale:
@@ -68,15 +104,16 @@ const variantStyles: Record<ButtonVariant, string> = {
  * lg: 48px height, 20px px, 14/15px font
  */
 const sizeStyles: Record<ButtonSize, string> = {
-  xs: 'h-7 px-2.5 text-[11px] font-bold rounded-lg gap-1.5',
-  sm: 'h-8.5 px-3.5 text-xs font-bold rounded-xl gap-2',
-  md: 'h-10 px-4 text-xs sm:text-sm font-bold rounded-xl gap-2',
-  lg: 'h-12 px-5 text-sm sm:text-base font-extrabold rounded-xl gap-2.5',
-  'icon-xs': 'h-7 w-7 p-0 rounded-lg justify-center',
-  'icon-sm': 'h-8.5 w-8.5 p-0 rounded-xl justify-center',
-  'icon-md': 'h-10 w-10 p-0 rounded-xl justify-center',
-  'icon-lg': 'h-12 w-12 p-0 rounded-xl justify-center',
+  xs: cn('h-7 px-2.5 text-[11px] font-bold gap-1.5', tokens.radius.md),
+  sm: cn('h-8.5 px-3.5 text-xs font-bold gap-2', tokens.radius.lg),
+  md: cn('h-10 px-4 text-xs sm:text-sm font-bold gap-2', tokens.radius.lg),
+  lg: cn('h-12 px-5 text-sm sm:text-base font-extrabold gap-2.5', tokens.radius.lg),
+  'icon-xs': cn('h-7 w-7 p-0 justify-center', tokens.radius.md),
+  'icon-sm': cn('h-8.5 w-8.5 p-0 justify-center', tokens.radius.lg),
+  'icon-md': cn('h-10 w-10 p-0 justify-center', tokens.radius.lg),
+  'icon-lg': cn('h-12 w-12 p-0 justify-center', tokens.radius.lg),
 }
+
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (

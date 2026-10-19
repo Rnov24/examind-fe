@@ -1,0 +1,26 @@
+{
+  "command": "ux-system",
+  "timestamp": "2026-10-19T19:26:00+07:00",
+  "source": "EXAMIND DESIGN.md + Institutional CBT Examination Platform Brief",
+  "stack": "Next.js 15 (React 19) + TypeScript + Tailwind CSS",
+  "output_path": "src/components/system",
+  "dials": {
+    "variance": 4,
+    "motion": 3,
+    "density": 5
+  },
+  "tokens": {
+    "brand_accent": "#c2ef4e",
+    "authority_canvas": "#150f23",
+    "ai_pedagogical": "#6a5fc1",
+    "neutral_scale_steps": 11,
+    "type_scale_steps": 7,
+    "spacing_scale_unit": "4px",
+    "radius_scale_steps": 7
+  },
+  "files_written": [
+    "src/components/system/tokens.ts",
+    "src/components/system/index.ts",
+    "src/components/system/README.md"
+  ]
+}

@@ -323,7 +323,7 @@ function LoginForm() {
               <span className="text-[10px] text-slate-400 font-mono">1-Klik Isi Data</span>
             </div>
 
-            <div className="grid grid-cols-2 gap-2 text-xs">
+            <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 gap-2 text-xs">
               <button
                 type="button"
                 onClick={() => fillDemo('andi.pratama@student.sman1unggul.sch.id', 'Siswa123!')}
@@ -394,7 +394,7 @@ function LoginForm() {
       </main>
 
       {/* Footer */}
-      <footer className="relative z-10 max-w-5xl w-full mx-auto text-center py-4 text-xs text-slate-400">
+      <footer className="relative z-10 max-w-5xl w-full mx-auto text-center py-4 text-xs text-slate-500">
         <p>EXAMIND Platform • Dilindungi Protokol Dual-Proctoring & Standar Ujian Digital Nasional</p>
       </footer>
     </div>

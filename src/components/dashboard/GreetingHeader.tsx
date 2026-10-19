@@ -1,6 +1,8 @@
 'use client'
 
 import React, { useMemo } from 'react'
+import { cn } from '@/lib/utils'
+import { tokens } from '@/components/system/tokens'
 
 interface GreetingHeaderProps {
   name?: string
@@ -25,14 +27,14 @@ export function GreetingHeader({
 
   return (
     <div
-      className={`flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-2 ${className}`}
+      className={cn('flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-2', className)}
     >
       <div className="min-w-0">
-        <h1 className="font-display text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+        <h1 className={cn(tokens.typography.hero, 'text-slate-900')}>
           {greeting}, <span className="text-[#150f23]">{name}</span>
         </h1>
         {subtitle && (
-          <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1 leading-relaxed">
+          <p className={cn(tokens.typography.bodyMuted, 'font-medium mt-1 leading-relaxed')}>
             {subtitle}
           </p>
         )}

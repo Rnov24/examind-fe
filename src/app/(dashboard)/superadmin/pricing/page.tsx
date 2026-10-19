@@ -12,6 +12,7 @@ import {
   Layers,
   Copy,
   Check,
+  X,
 } from 'lucide-react'
 import api from '@/lib/api'
 import {
@@ -183,7 +184,7 @@ export default function SuperAdminPricingPage() {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       greetingName={user?.full_name || 'Super Admin'}
-      greetingSubtitle="Kelola tarif konsumsi kredit per task LLM, struktur paket institusi, dan manajemen kode voucher promo."
+      greetingSubtitle="Kelola tarif konsumsi kredit task AI, struktur paket langganan sekolah mitra, dan manajemen voucher promo."
       greetingAction={
         <div className="flex items-center gap-2.5">
           <button
@@ -209,11 +210,11 @@ export default function SuperAdminPricingPage() {
     >
       <div className="space-y-6">
         {/* Navigation Sub-Tabs */}
-        <div className="bg-white rounded-full p-1.5 border border-slate-200/80 shadow-xs inline-flex items-center gap-1 max-w-full overflow-x-auto">
+        <div className="bg-white rounded-full p-1.5 border border-slate-200/80 shadow-xs inline-flex items-center gap-1 max-w-full overflow-x-auto touch-pan-x scrollbar-none">
           <button
             type="button"
             onClick={() => setSubTab('credits')}
-            className={`px-4 py-2 rounded-full text-xs font-bold flex items-center gap-2 transition-all cursor-pointer font-display ${
+            className={`shrink-0 min-h-[40px] px-4 py-2 rounded-full text-xs font-bold flex items-center gap-2 transition-all cursor-pointer font-display ${
               subTab === 'credits'
                 ? 'bg-[#150f23] text-white shadow-xs'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
@@ -226,27 +227,27 @@ export default function SuperAdminPricingPage() {
           <button
             type="button"
             onClick={() => setSubTab('plans')}
-            className={`px-4 py-2 rounded-full text-xs font-bold flex items-center gap-2 transition-all cursor-pointer font-display ${
+            className={`shrink-0 min-h-[40px] px-4 py-2 rounded-full text-xs font-bold flex items-center gap-2 transition-all cursor-pointer font-display ${
               subTab === 'plans'
                 ? 'bg-[#150f23] text-white shadow-xs'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
             }`}
           >
             <Layers className="w-3.5 h-3.5 text-indigo-400" />
-            <span>Tier Paket Langganan</span>
+            <span>Pilihan Paket Langganan</span>
           </button>
 
           <button
             type="button"
             onClick={() => setSubTab('promos')}
-            className={`px-4 py-2 rounded-full text-xs font-bold flex items-center gap-2 transition-all cursor-pointer font-display ${
+            className={`shrink-0 min-h-[40px] px-4 py-2 rounded-full text-xs font-bold flex items-center gap-2 transition-all cursor-pointer font-display ${
               subTab === 'promos'
                 ? 'bg-[#150f23] text-white shadow-xs'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
             }`}
           >
             <Ticket className="w-3.5 h-3.5 text-rose-400" />
-            <span>Manajemen Promo & Voucher ({promos.length})</span>
+            <span>Voucher &amp; Kode Promo ({promos.length})</span>
           </button>
         </div>
 
@@ -287,7 +288,30 @@ export default function SuperAdminPricingPage() {
               }
               noPadding
             >
-              <div className="overflow-x-auto touch-pan-x">
+              {/* Mobile Card List Strategy (<md) */}
+              <div className="md:hidden divide-y divide-slate-100 p-4 space-y-3 font-sans">
+                {taskRates.map((tr) => (
+                  <div key={tr.task} className="pt-3 first:pt-0 space-y-2">
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <h4 className="font-bold text-slate-900 text-xs font-sans">{tr.label}</h4>
+                        <span className="text-[10px] text-slate-400 font-mono">{tr.task}</span>
+                      </div>
+                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200 font-mono shrink-0">
+                        <Coins className="w-3 h-3 text-amber-600" />
+                        {tr.credits} Kredit
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-600 leading-relaxed">{tr.description}</p>
+                    <div className="text-[11px] font-mono text-slate-500 font-semibold pt-1 border-t border-slate-100/60">
+                      Estimasi Biaya Server: ~Rp {tr.credits * 45} / call
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Desktop Table (hidden on mobile, visible on md+) */}
+              <div className="hidden md:block overflow-x-auto touch-pan-x">
                 <table className="w-full text-left border-collapse text-xs">
                   <thead>
                     <tr className="bg-slate-50/70 border-b border-slate-100 font-mono text-slate-500 uppercase tracking-wider text-[11px]">
@@ -470,7 +494,7 @@ export default function SuperAdminPricingPage() {
                             : 'bg-white border border-slate-200 text-slate-800 hover:bg-slate-50'
                         }`}
                       >
-                        Konfigurasi Limit Paket
+                        Atur Batas Paket
                       </button>
                     </div>
                   </div>
@@ -488,7 +512,99 @@ export default function SuperAdminPricingPage() {
               subtitle="Voucher diskon biaya langganan dan injeksi kuota kredit AI tambahan untuk onboarding sekolah"
               noPadding
             >
-              <div className="overflow-x-auto touch-pan-x">
+              {/* Mobile Card List Strategy (<md) */}
+              <div className="md:hidden divide-y divide-slate-100 p-4 space-y-3 font-sans">
+                {promos.length === 0 ? (
+                  <div className="py-6 text-center text-slate-400 text-xs">
+                    Belum ada voucher promo terdaftar.
+                  </div>
+                ) : (
+                  promos.map((p) => (
+                    <div key={p.id} className="pt-3 first:pt-0 space-y-2.5">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono font-black text-slate-900 px-2.5 py-1 bg-slate-100 rounded-lg text-xs tracking-wider border border-slate-200">
+                            {p.code}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => copyToClipboard(p.code)}
+                            className="p-1 hover:bg-slate-200 rounded text-slate-500 transition-colors cursor-pointer"
+                            title="Salin Kode Promo"
+                          >
+                            {copiedCode === p.code ? (
+                              <Check className="w-3.5 h-3.5 text-emerald-600" />
+                            ) : (
+                              <Copy className="w-3.5 h-3.5" />
+                            )}
+                          </button>
+                        </div>
+
+                        <span
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold shadow-2xs transition-colors duration-200 shrink-0 ${
+                            p.is_active
+                              ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                              : 'bg-slate-100 text-slate-600 border border-slate-200'
+                          }`}
+                        >
+                          <span
+                            className={`w-1.5 h-1.5 rounded-full ${
+                              p.is_active ? 'bg-emerald-500' : 'bg-slate-400'
+                            }`}
+                          />
+                          {p.is_active ? 'Aktif' : 'Nonaktif'}
+                        </span>
+                      </div>
+
+                      {p.description && (
+                        <p className="text-xs text-slate-600">{p.description}</p>
+                      )}
+
+                      <div className="grid grid-cols-2 gap-2 text-[11px] font-mono p-2.5 bg-slate-50 rounded-xl border border-slate-100">
+                        <div>
+                          <span className="text-[9px] text-slate-400 font-sans uppercase font-bold block">Benefit Diskon</span>
+                          <span className="font-bold text-slate-900">
+                            {p.discount_type === 'percentage' && `${p.discount_value}% OFF Tagihan`}
+                            {p.discount_type === 'fixed' && `Potongan ${formatIDR(p.discount_value)}`}
+                            {p.discount_type === 'credit_bonus' && 'Bonus Kredit'}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-[9px] text-slate-400 font-sans uppercase font-bold block">Bonus Kredit AI</span>
+                          {p.credit_bonus > 0 ? (
+                            <span className="font-bold text-amber-700">+{p.credit_bonus.toLocaleString('id-ID')}</span>
+                          ) : (
+                            <span className="text-slate-400">-</span>
+                          )}
+                        </div>
+                        <div>
+                          <span className="text-[9px] text-slate-400 font-sans uppercase font-bold block">Kuota Terpakai</span>
+                          <span className="font-bold text-slate-800">{p.used_count} / {p.max_uses}</span>
+                        </div>
+                        <div>
+                          <span className="text-[9px] text-slate-400 font-sans uppercase font-bold block">Masa Berlaku</span>
+                          <span className="text-slate-600">{p.valid_until}</span>
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => handleTogglePromo(p.id)}
+                        className={`w-full min-h-[44px] px-4 py-2.5 rounded-xl text-xs font-bold border transition-colors cursor-pointer flex items-center justify-center ${
+                          p.is_active
+                            ? 'border-rose-200 hover:bg-rose-50 text-rose-700'
+                            : 'border-emerald-200 hover:bg-emerald-50 text-emerald-700'
+                        }`}
+                      >
+                        {p.is_active ? 'Nonaktifkan Kode Promo' : 'Aktifkan Kode Promo'}
+                      </button>
+                    </div>
+                  ))
+                )}
+              </div>
+
+              {/* Desktop Table (hidden on mobile, visible on md+) */}
+              <div className="hidden md:block overflow-x-auto touch-pan-x">
                 <table className="w-full text-left border-collapse text-xs">
                   <thead>
                     <tr className="bg-slate-50/70 border-b border-slate-100 font-mono text-slate-500 uppercase tracking-wider text-[11px]">
@@ -532,7 +648,7 @@ export default function SuperAdminPricingPage() {
                         <td className="py-3.5 px-4">
                           {p.credit_bonus > 0 ? (
                             <span className="inline-flex items-center gap-1 font-mono font-bold text-amber-700 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200 text-[11px] shadow-2xs">
-                              <Coins className="w-3 h-3 text-amber-600" />
+                              <Coins className="w-3.5 h-3.5 text-amber-600" />
                               +{p.credit_bonus.toLocaleString('id-ID')}
                             </span>
                           ) : (
@@ -612,7 +728,7 @@ export default function SuperAdminPricingPage() {
                 title="Tutup modal kode promo"
                 aria-label="Tutup modal kode promo"
               >
-                ✕
+                <X className="w-4 h-4" aria-hidden="true" />
               </button>
             </div>
 
@@ -705,20 +821,20 @@ export default function SuperAdminPricingPage() {
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100">
+              <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 pt-3 border-t border-slate-100">
                 <button
                   type="button"
                   onClick={() => setShowPromoModal(false)}
-                  className="px-4 py-2.5 rounded-full border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold cursor-pointer"
+                  className="min-h-[44px] px-4 py-2.5 rounded-full border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold cursor-pointer flex items-center justify-center"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmittingPromo}
-                  className="px-5 py-2.5 rounded-full bg-[#150f23] hover:bg-slate-800 text-white font-bold shadow-card flex items-center gap-2 cursor-pointer"
+                  className="min-h-[44px] px-5 py-2.5 rounded-full bg-[#150f23] hover:bg-slate-800 text-white font-bold shadow-card flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  {isSubmittingPromo ? 'Menyimpan...' : 'Simpan Promo'}
+                  {isSubmittingPromo ? 'Menyimpan...' : 'Simpan Kode Promo'}
                 </button>
               </div>
             </form>

@@ -118,7 +118,7 @@ export default function SuperAdminTenantsPage() {
       activeTab={activeTab}
       onTabChange={setActiveTab}
       greetingName={user?.full_name || 'Super Admin'}
-      greetingSubtitle="Daftar sekolah terdaftar, pengelolaan paket langganan, dan status operasional."
+      greetingSubtitle="Daftar sekolah mitra terdaftar, pengelolaan paket langganan, dan status operasional CBT."
       greetingAction={
         <div className="flex items-center gap-2.5">
           <button
@@ -161,7 +161,7 @@ export default function SuperAdminTenantsPage() {
             value={stats?.total_tenants ?? 0}
             icon={<Building2 className="w-5 h-5 text-indigo-600" aria-hidden="true" />}
             tone="indigo"
-            subtitle="Institusi pendidikan terdaftar di platform"
+            subtitle="Sekolah mitra terdaftar di platform CBT"
             className="min-h-[160px]"
           />
 
@@ -199,7 +199,7 @@ export default function SuperAdminTenantsPage() {
         {/* Main Directory & Management Table */}
         <DashboardCard
           title="Direktori & Manajemen Sekolah"
-          subtitle="Daftar institusi, filter paket, dan pembaruan kuota AI"
+          subtitle="Daftar sekolah mitra, filter paket, dan status operasional CBT"
           icon={<Building2 className="w-4 h-4 text-[#6a5fc1]" aria-hidden="true" />}
           noPadding
         >
@@ -209,7 +209,7 @@ export default function SuperAdminTenantsPage() {
             </div>
           ) : tenantsBlock.status === 'error' ? (
             <div className="p-8 text-center space-y-3">
-              <p className="text-xs text-rose-600 font-medium">Gagal memuat data sekolah.</p>
+              <p className="text-xs text-rose-600 font-medium">Gagal memuat data sekolah mitra. Periksa koneksi jaringan lalu coba lagi.</p>
               <button
                 type="button"
                 onClick={() => tenantsBlock.retry()}

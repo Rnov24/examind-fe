@@ -415,7 +415,7 @@ function ResetPasswordContent() {
       </main>
 
       {/* Footer System Info */}
-      <footer className="relative z-10 text-center py-4 text-xs text-slate-400">
+      <footer className="relative z-10 text-center py-4 text-xs text-slate-500">
         &copy; 2026 EXAMIND Academic Assessment System. Dilengkapi Keamanan Resend Transactional Email.
       </footer>
     </div>

@@ -1,0 +1,39 @@
+{
+  "brand": {
+    "name": "EXAMIND",
+    "description": "Platform ujian online (CBT) berbasis kecerdasan buatan untuk sekolah dan institusi pendidikan di Indonesia",
+    "primary_color": "#150f23",
+    "accent_lime": "#c2ef4e",
+    "accent_violet": "#6a5fc1",
+    "surface": "#ffffff",
+    "typography": "Plus Jakarta Sans",
+    "logo_component": "src/components/brand/ExamindLogo.tsx"
+  },
+  "references": [
+    "Finexy dashboard aesthetic (floating ribbon, pill tabs, calm daylight fintech)",
+    "EXAMIND product dashboard design system (tokens.ts, Ribbon.tsx, TopPillNav.tsx)"
+  ],
+  "product_type": "AI online-exam (CBT) platform for Indonesian schools",
+  "audience": "Kepala sekolah, wakil kepala sekolah kurikulum, dan admin sekolah penentu platform CBT",
+  "one_sentence_pitch": "Ujian online yang aman, diawasi AI, dan gampang dipakai.",
+  "style": "calm daylight fintech, editorial hero, confident but not garang",
+  "voice": "direct, warm, brief Indonesian",
+  "stack": "Next.js + Tailwind",
+  "imagery": "no stock photos of fake students - use product UI mockups, abstract shapes, or described generations; never fake testimonials with invented names",
+  "must_haves": [
+    "hero with real product screenshot/mock and pill tabs switcher",
+    "feature grid (AI proctoring dual-camera, auto-grading rubrik 4D, question bank CBT)",
+    "pricing teaser with official B2B school procurement context",
+    "FAQ accordion",
+    "footer sitemap"
+  ],
+  "avoid": [
+    "dark mode",
+    "orange",
+    "emoji icons",
+    "unicode glyphs as icons",
+    "lorem ipsum",
+    "invented statistics"
+  ],
+  "wow_moment": "Finexy floating ribbon / pill tabs aesthetic in a daylight fintech canvas, with interactive dual-camera proctoring live simulation, Rubrik 4D AI grading interactive preview, and tactile precision controls"
+}

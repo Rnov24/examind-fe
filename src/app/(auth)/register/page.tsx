@@ -409,7 +409,7 @@ function RegisterContent() {
               <label className="block text-xs font-bold text-slate-700 mb-2 font-mono">
                 Pilih Peran Akun:
               </label>
-              <div className="grid grid-cols-3 gap-2.5">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                 {/* Siswa */}
                 <button
                   type="button"
@@ -505,10 +505,12 @@ function RegisterContent() {
 
               {/* School Dropdown */}
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label htmlFor="register-school-select" className="block text-xs font-semibold text-slate-700 mb-1">
                   Sekolah / Institusi:
                 </label>
                 <select
+                  id="register-school-select"
+                  aria-label="Sekolah / Institusi"
                   value={selectedTenantId}
                   onChange={(e) => {
                     const id = e.target.value ? Number(e.target.value) : ''
@@ -701,9 +703,10 @@ function RegisterContent() {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
+                      aria-label={showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'}
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
                     >
-                      {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                      {showPassword ? <EyeOff className="w-3.5 h-3.5" aria-hidden="true" /> : <Eye className="w-3.5 h-3.5" aria-hidden="true" />}
                     </button>
                   </div>
                   {password && (
@@ -929,7 +932,7 @@ function RegisterContent() {
       </main>
 
       {/* Footer System Info */}
-      <footer className="relative z-10 text-center py-4 text-xs text-slate-400">
+      <footer className="relative z-10 text-center py-4 text-xs text-slate-500">
         &copy; 2026 EXAMIND Academic Assessment System. Pendaftaran Terproteksi Kode Otorisasi Provider.
       </footer>
     </div>

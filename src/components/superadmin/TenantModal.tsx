@@ -107,7 +107,7 @@ export default function TenantModal({
         badge={
           <div className="flex items-center gap-2">
             <Badge variant="neutral" size="xs">
-              Multi-Tenant
+              Sekolah Mitra
             </Badge>
             <span className="flex items-center gap-1 text-[11px] font-semibold text-emerald-700">
               <ShieldCheck className="w-3.5 h-3.5" aria-hidden="true" />
@@ -115,8 +115,8 @@ export default function TenantModal({
             </span>
           </div>
         }
-        title="Onboard Sekolah Baru"
-        description="Daftarkan institusi sekolah baru ke dalam sistem terisolasi multi-tenant."
+        title="Daftarkan Sekolah Baru"
+        description="Daftarkan sekolah baru ke dalam sistem terisolasi data EXAMIND."
         onClose={onClose}
       />
 
@@ -137,7 +137,7 @@ export default function TenantModal({
 
             <div>
               <Input
-                label="Kode Unik Institusi"
+                label="Kode Unik Sekolah"
                 value={form.code}
                 onChange={(e) => setForm((prev) => ({ ...prev, code: e.target.value }))}
                 required
@@ -266,7 +266,7 @@ export default function TenantModal({
             isLoading={isSubmitting}
             leftIcon={<ShieldCheck className="w-4 h-4 text-[#c2ef4e]" aria-hidden="true" />}
           >
-            Konfirmasi Onboard
+            Daftarkan Sekolah
           </Button>
         </ModalFooter>
       </form>

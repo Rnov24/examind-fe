@@ -10,10 +10,21 @@ import {
   AlertTriangle,
   ShieldAlert,
   Maximize,
+  Minimize2,
   Bell,
   LayoutGrid,
   CameraOff,
   ShieldCheck,
+  Keyboard,
+  X,
+  Filter,
+  Eye,
+  Check,
+  Save,
+  HelpCircle,
+  Flag,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useExamStore } from '@/stores/examStore'
@@ -44,6 +55,12 @@ export default function ExamWorkspacePage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [faceDetected, setFaceDetected] = useState(true)
 
+  // UX Enhancements: Non-distracting camera, navigator filters, mobile drawer, keyboard guide
+  const [isCameraMinimized, setIsCameraMinimized] = useState(false)
+  const [navigatorFilter, setNavigatorFilter] = useState<'all' | 'unanswered' | 'doubt' | 'answered'>('all')
+  const [showMobileNavigator, setShowMobileNavigator] = useState(false)
+  const [showKeyboardShortcuts, setShowKeyboardShortcuts] = useState(false)
+
   // Human-in-the-Loop Security State
   const [isExamStarted, setIsExamStarted] = useState(false)
   const isExamStartedRef = useRef(false)
@@ -60,13 +77,22 @@ export default function ExamWorkspacePage() {
   const currentQuestion = examStore.getCurrentQuestion()
 
   const formattedTime = useMemo(() => {
-    const total = examStore.timeRemainingSeconds
+    const total = Math.max(0, examStore.timeRemainingSeconds)
     const m = Math.floor(total / 60)
     const s = total % 60
     return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`
   }, [examStore.timeRemainingSeconds])
 
-  const isTimerUrgent = examStore.timeRemainingSeconds <= 300
+  // Steady calm warning without erratic pulsing
+  const isTimerUrgent = examStore.timeRemainingSeconds <= 300 && examStore.timeRemainingSeconds > 0
+
+  const doubtCount = useMemo(() => {
+    return Object.values(doubtMap).filter(Boolean).length
+  }, [doubtMap])
+
+  const unansweredCount = useMemo(() => {
+    return Math.max(0, examStore.totalQuestions - examStore.answeredCount)
+  }, [examStore.totalQuestions, examStore.answeredCount])
 
   const currentAnswer = useMemo(() => {
     if (!currentQuestion) return undefined
@@ -99,10 +125,10 @@ export default function ExamWorkspacePage() {
 
   // Timer auto-submit on zero
   useEffect(() => {
-    if (isExamStarted && examStore.timeRemainingSeconds <= 0) {
+    if (isExamStarted && examStore.timeRemainingSeconds <= 0 && examStore.totalQuestions > 0) {
       handleFinalSubmit()
     }
-  }, [examStore.timeRemainingSeconds, isExamStarted])
+  }, [examStore.timeRemainingSeconds, isExamStarted, examStore.totalQuestions])
 
   function toggleDoubt(qid: number) {
     setDoubtMap((prev) => ({ ...prev, [qid]: !prev[qid] }))
@@ -130,6 +156,83 @@ export default function ExamWorkspacePage() {
       examStore.setCurrentIndex(examStore.currentIndex - 1)
     }
   }
+
+  /* Keyboard Navigation Handler */
+  useEffect(() => {
+    function handleGlobalKeyDown(e: KeyboardEvent) {
+      if (!isExamStartedRef.current) return
+
+      const target = e.target as HTMLElement | null
+      const isInput =
+        target?.tagName === 'TEXTAREA' ||
+        target?.tagName === 'INPUT' ||
+        target?.isContentEditable
+
+      // Don't intercept shortcuts when typing essays or inside text fields
+      if (isInput) return
+
+      if (
+        isSecurityModalOpenRef.current ||
+        showSubmitModal ||
+        showQrModal ||
+        showKeyboardShortcuts ||
+        proctoringStore.warningModalOpen
+      ) {
+        if (e.key === 'Escape') {
+          setShowKeyboardShortcuts(false)
+          setShowMobileNavigator(false)
+        }
+        return
+      }
+
+      if (e.key === '?' || (e.shiftKey && e.key === '/')) {
+        e.preventDefault()
+        setShowKeyboardShortcuts((prev) => !prev)
+        return
+      }
+
+      if (e.key === 'ArrowRight' || e.key === 'n' || e.key === 'N') {
+        e.preventDefault()
+        nextQuestion()
+      } else if (e.key === 'ArrowLeft' || e.key === 'p' || e.key === 'P') {
+        e.preventDefault()
+        prevQuestion()
+      } else if (e.key === 'r' || e.key === 'R' || e.key === 'f' || e.key === 'F') {
+        e.preventDefault()
+        if (currentQuestion) toggleDoubt(currentQuestion.id)
+      } else if (['1', '2', '3', '4', '5'].includes(e.key)) {
+        if (currentQuestion?.question_type === 'multiple_choice' && currentQuestion.options_json) {
+          const idx = parseInt(e.key, 10) - 1
+          if (currentQuestion.options_json[idx]) {
+            e.preventDefault()
+            handleSelectOption(currentQuestion.options_json[idx].id)
+          }
+        }
+      } else if (['a', 'b', 'c', 'd', 'e', 'A', 'B', 'C', 'D', 'E'].includes(e.key)) {
+        if (currentQuestion?.question_type === 'multiple_choice' && currentQuestion.options_json) {
+          const letter = e.key.toUpperCase()
+          const match = currentQuestion.options_json.find(
+            (opt) => opt.id.toUpperCase() === letter
+          )
+          if (match) {
+            e.preventDefault()
+            handleSelectOption(match.id)
+          }
+        }
+      }
+    }
+
+    window.addEventListener('keydown', handleGlobalKeyDown)
+    return () => window.removeEventListener('keydown', handleGlobalKeyDown)
+  }, [
+    currentQuestion,
+    showSubmitModal,
+    showQrModal,
+    showKeyboardShortcuts,
+    proctoringStore.warningModalOpen,
+    examStore.currentIndex,
+    examStore.totalQuestions,
+  ])
 
   /* Fullscreen & Security Controllers */
   function triggerSecurityWarning(reason: string, details: string) {
@@ -249,7 +352,8 @@ export default function ExamWorkspacePage() {
       const examData = await examStore.loadExam(examId)
       examStore.startTimer()
 
-      const pLevel = examData?.exam?.proctoring_level || examStore.examMeta?.proctoring_level || 'dual_camera'
+      const pLevel =
+        examData?.exam?.proctoring_level || examStore.examMeta?.proctoring_level || 'dual_camera'
       const pEnabled = pLevel !== 'disabled'
 
       // Only initialize Proctoring WS & Edge Camera if proctoring is active
@@ -260,7 +364,7 @@ export default function ExamWorkspacePage() {
 
         try {
           edgeEngineRef.current = new ProctoringEdgeEngine({
-            onViolation: (eventType, severity, snapshot) => {
+            onViolation: (eventType) => {
               if (eventType === 'face_absent' && isExamStartedRef.current) {
                 triggerSecurityWarning('face_absent', 'Wajah tidak terdeteksi di kamera depan')
               }
@@ -303,36 +407,97 @@ export default function ExamWorkspacePage() {
     }
   }, [examId])
 
+  // Question Navigator Button Classes Helper
+  function getQuestionBtnClasses(
+    isCurrent: boolean,
+    isAnswered: boolean,
+    isDoubt: boolean
+  ) {
+    let classes =
+      'relative h-11 rounded-xl text-xs font-mono transition-all duration-150 flex items-center justify-center border cursor-pointer select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#150f23] active:scale-95 '
+
+    if (isCurrent) {
+      classes += 'ring-2 ring-[#150f23] ring-offset-2 scale-105 z-10 shadow-md font-black '
+    }
+
+    if (isDoubt && isAnswered) {
+      classes += 'bg-amber-50 border-amber-400 text-amber-950 font-bold hover:bg-amber-100 '
+    } else if (isDoubt) {
+      classes += 'bg-amber-50/60 border-dashed border-amber-400 text-amber-900 font-bold hover:bg-amber-100 '
+    } else if (isAnswered) {
+      classes += 'bg-emerald-50 border-emerald-300 text-emerald-950 font-bold hover:bg-emerald-100 '
+    } else {
+      classes += 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 font-medium '
+    }
+
+    return classes
+  }
+
+  // Filter questions for the navigator
+  const visibleQuestions = useMemo(() => {
+    return examStore.questions.map((q, idx) => {
+      const ans = examStore.answersMap[q.id]
+      const isAnswered = Boolean(ans && ans.trim() !== '')
+      const isDoubt = Boolean(doubtMap[q.id])
+      const isCurrent = idx === examStore.currentIndex
+
+      let isVisible = true
+      if (navigatorFilter === 'unanswered') isVisible = !isAnswered
+      else if (navigatorFilter === 'doubt') isVisible = isDoubt
+      else if (navigatorFilter === 'answered') isVisible = isAnswered
+
+      return {
+        q,
+        idx,
+        isAnswered,
+        isDoubt,
+        isCurrent,
+        isVisible,
+      }
+    })
+  }, [examStore.questions, examStore.answersMap, examStore.currentIndex, doubtMap, navigatorFilter])
+
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col select-none font-sans">
-      {/* Top Bar (Full width, slim) */}
-      <header className="h-16 border-b border-slate-200/90 bg-white/95 backdrop-blur-md px-4 sm:px-6 flex items-center justify-between sticky top-0 z-30 shadow-xs">
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col select-none font-sans pb-16 lg:pb-0">
+      {/* Top Bar (Full width, slim, daylight fintech aesthetic) */}
+      <header className="h-16 border-b border-slate-200/90 bg-white/95 backdrop-blur-md px-3 sm:px-6 flex items-center justify-between sticky top-0 z-30 shadow-xs">
         {/* Left: Brand, Exam Title & Student Info */}
-        <div className="flex items-center gap-3 min-w-0">
-          <ExamindLogo variant="symbol" theme="color" className="h-9 w-auto shrink-0" priority />
+        <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+          <ExamindLogo variant="symbol" theme="color" className="h-8 sm:h-9 w-auto shrink-0" priority />
           <div className="min-w-0">
-            <h1 className="font-display text-sm sm:text-base font-bold text-slate-900 tracking-tight leading-tight truncate">
+            <h1 className="font-display text-xs sm:text-base font-bold text-slate-900 tracking-tight leading-tight truncate">
               {examStore.examMeta?.title || 'Ujian EXAMIND'}
             </h1>
-            <p className="text-[11px] text-slate-500 font-mono truncate">
-              {authStore.user?.full_name ? `Peserta: ${authStore.user.full_name}` : 'Peserta Ujian'}{' '}
-              {authStore.user?.identifier ? `• ${authStore.user.identifier}` : ''}
+            <p className="text-[10px] sm:text-[11px] text-slate-500 font-mono truncate">
+              {authStore.user?.full_name ? authStore.user.full_name : 'Peserta Ujian'}
+              {authStore.user?.identifier ? ` • ${authStore.user.identifier}` : ''}
             </p>
           </div>
         </div>
 
-        {/* Center: Timer Pill, Progress, Sync & Proctoring Notice */}
-        <div className="flex items-center gap-2.5 sm:gap-3">
-          {/* Urgent / Standard Timer Pill */}
+        {/* Center: Calm Timer Pill, Progress, Sync & Proctoring Notice */}
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* Steady Calm Timer Pill */}
           <div
-            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl border font-mono font-bold text-xs sm:text-sm tracking-wide shadow-xs tabular-nums ${
+            className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1.5 rounded-xl border font-mono font-bold text-xs sm:text-sm tracking-wide shadow-xs tabular-nums transition-colors ${
               isTimerUrgent
-                ? 'bg-rose-50 border-rose-300 text-rose-700 animate-pulse'
+                ? 'bg-rose-50 border-rose-300 text-rose-900'
                 : 'bg-slate-100/90 border-slate-200 text-slate-900'
             }`}
+            title={isTimerUrgent ? 'Sisa waktu pengerjaan kurang dari 5 menit' : 'Sisa waktu pengerjaan'}
           >
-            <Clock className={`w-4 h-4 shrink-0 ${isTimerUrgent ? 'text-rose-600' : 'text-slate-700'}`} aria-hidden="true" />
+            <Clock
+              className={`w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 ${
+                isTimerUrgent ? 'text-rose-600' : 'text-slate-700'
+              }`}
+              aria-hidden="true"
+            />
             <span>{formattedTime}</span>
+            {isTimerUrgent && (
+              <span className="hidden md:inline-block text-[10px] uppercase font-bold text-rose-700 bg-rose-100 px-1.5 py-0.2 rounded border border-rose-200">
+                Sisa 5m
+              </span>
+            )}
           </div>
 
           {/* Progress: Terjawab X / N */}
@@ -343,18 +508,27 @@ export default function ExamWorkspacePage() {
             <span>{examStore.totalQuestions}</span>
           </div>
 
-          {/* Sync Indicator */}
-          <div className="hidden md:flex items-center gap-2 text-xs font-semibold px-3 py-1.5 rounded-xl bg-slate-100/80 border border-slate-200 shadow-xs">
+          {/* Sync Indicator (Visible on mobile as dot, expanded on desktop) */}
+          <div
+            className="flex items-center gap-1.5 sm:gap-2 text-xs font-semibold px-2.5 sm:px-3 py-1.5 rounded-xl bg-slate-100/80 border border-slate-200 shadow-xs"
+            title={`Status sinkronisasi: ${
+              examStore.syncStatus === 'synced'
+                ? 'Semua jawaban tersinkron ke server & memori lokal'
+                : examStore.syncStatus === 'offline'
+                ? 'Mode offline: Jawaban aman tersimpan di perangkat'
+                : 'Sedang menyinkronkan jawaban...'
+            }`}
+          >
             <span
-              className={`w-2 h-2 rounded-full ${
+              className={`w-2 h-2 rounded-full shrink-0 ${
                 examStore.syncStatus === 'synced'
-                  ? 'bg-emerald-500 animate-pulse'
-                  : examStore.syncStatus === 'saved_local' || examStore.syncStatus === 'syncing'
-                  ? 'bg-amber-500'
-                  : 'bg-rose-500'
+                  ? 'bg-emerald-500'
+                  : examStore.syncStatus === 'offline'
+                  ? 'bg-rose-500'
+                  : 'bg-amber-500 animate-pulse'
               }`}
             />
-            <span className="text-slate-600 font-mono text-[11px]">
+            <span className="text-slate-600 font-mono text-[11px] hidden md:inline">
               {examStore.syncStatus === 'synced'
                 ? 'Tersinkron'
                 : examStore.syncStatus === 'syncing'
@@ -367,20 +541,34 @@ export default function ExamWorkspacePage() {
 
           {/* Proctoring Disabled Notification Badge */}
           {!isCameraProctoringEnabled && (
-            <div className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-[11px] font-mono text-slate-600 shadow-xs">
+            <div className="hidden xl:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-[11px] font-mono text-slate-600 shadow-xs">
               <CameraOff className="w-3.5 h-3.5 text-slate-500" aria-hidden="true" />
-              <span>Proctoring kamera nonaktif untuk ujian ini</span>
+              <span>Mode Mandiri (CBT Reguler)</span>
             </div>
           )}
         </div>
 
-        {/* Right: Camera Status (if enabled) & Submit Button */}
-        <div className="flex items-center gap-2.5">
+        {/* Right: Keyboard Help, Camera Status & Submit Button */}
+        <div className="flex items-center gap-2">
+          {/* Keyboard shortcuts trigger */}
+          <button
+            type="button"
+            onClick={() => setShowKeyboardShortcuts(true)}
+            className="hidden lg:flex items-center gap-1 px-2.5 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 text-xs font-mono font-medium shadow-xs cursor-pointer transition-colors"
+            title="Buka panduan pintasan keyboard (Tekan ?)"
+          >
+            <Keyboard className="w-3.5 h-3.5 text-slate-500" aria-hidden="true" />
+            <span>Pintasan</span>
+            <kbd className="text-[10px] text-slate-400 bg-slate-100 px-1 rounded border border-slate-200">
+              ?
+            </kbd>
+          </button>
+
           {isCameraProctoringEnabled && (
-            <div className="flex items-center gap-2 font-mono">
+            <div className="hidden sm:flex items-center gap-1.5 font-mono">
               {/* Primary Webcam Status Badge */}
               <span
-                className={`px-2.5 py-1 rounded-lg text-xs font-bold flex items-center gap-1.5 border shadow-xs ${
+                className={`px-2 py-1 rounded-lg text-xs font-bold flex items-center gap-1.5 border shadow-xs ${
                   proctoringStore.primaryCamActive
                     ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
                     : 'bg-rose-50 border-rose-200 text-rose-700'
@@ -394,8 +582,9 @@ export default function ExamWorkspacePage() {
               {/* Secondary Companion Status Button (Dual Camera only) */}
               {isDualCamera && (
                 <button
+                  type="button"
                   onClick={() => setShowQrModal(true)}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-bold flex items-center gap-1.5 border transition-all cursor-pointer shadow-xs ${
+                  className={`px-2 py-1 rounded-lg text-xs font-bold flex items-center gap-1.5 border transition-all cursor-pointer shadow-xs ${
                     proctoringStore.companionPaired
                       ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
                       : 'bg-amber-50 border-amber-300 text-amber-800 hover:bg-amber-100'
@@ -413,8 +602,9 @@ export default function ExamWorkspacePage() {
 
           {/* Submit Button */}
           <button
+            type="button"
             onClick={() => setShowSubmitModal(true)}
-            className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-card hover:shadow-card-hover transition-all flex items-center gap-2 cursor-pointer font-display tracking-wide focus:outline-none focus:ring-2 focus:ring-slate-900/10"
+            className="px-3.5 sm:px-4 py-2 rounded-xl bg-[#150f23] hover:bg-slate-800 text-white font-bold text-xs shadow-card hover:shadow-card-hover transition-all flex items-center gap-1.5 sm:gap-2 cursor-pointer font-display tracking-wide focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6a5fc1]"
           >
             <CheckCircle2 className="w-4 h-4 text-[#c2ef4e]" aria-hidden="true" />
             <span>Kumpulkan</span>
@@ -423,7 +613,7 @@ export default function ExamWorkspacePage() {
       </header>
 
       {/* Main Bento Workspace */}
-      <div className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 flex flex-col justify-between">
+      <div className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-6 pb-20 lg:pb-6 flex flex-col justify-between">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
           {/* Main Tile (~2/3 on desktop): Current Question Exam Paper */}
           <main className="lg:col-span-8 flex flex-col w-full order-1">
@@ -435,6 +625,7 @@ export default function ExamWorkspacePage() {
                 isDoubt={!!doubtMap[currentQuestion.id]}
                 currentAnswer={currentAnswer}
                 essayValue={essayInput}
+                syncStatus={examStore.syncStatus}
                 onSelectOption={handleSelectOption}
                 onUpdateEssayValue={handleEssayInputUpdate}
                 onToggleDoubt={() => toggleDoubt(currentQuestion.id)}
@@ -450,62 +641,135 @@ export default function ExamWorkspacePage() {
 
           {/* Side Column (~1/3 on desktop): Camera Tile (if enabled) + Navigator Tile */}
           <aside className="lg:col-span-4 flex flex-col gap-5 w-full order-2">
-            {/* Camera Tile: Live Preview (Conditional based on proctoring_level) */}
-            {isCameraProctoringEnabled && (
-              <div className="rounded-2xl overflow-hidden border border-slate-200/90 bg-slate-900 aspect-video relative shadow-card group">
-                <video
-                  ref={videoPreviewRef}
-                  className="w-full h-full object-cover"
-                  autoPlay
-                  playsInline
-                  muted
-                />
-
-                {/* Top Overlay: LIVE & Face Detection Status */}
-                <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between pointer-events-none">
-                  <div className="px-2 py-0.5 rounded-md bg-rose-600 text-white font-mono font-black text-[10px] flex items-center gap-1.5 shadow-xs uppercase tracking-wider">
-                    <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-                    <span>LIVE</span>
+            {/* Camera Tile: Live Preview or Minimized Comfort Mode */}
+            {isCameraProctoringEnabled ? (
+              isCameraMinimized ? (
+                /* Minimized Comfort Card (Video stream stays alive in PiP) */
+                <div className="rounded-2xl border border-slate-200/90 bg-[#150f23] text-white p-3.5 shadow-card flex items-center justify-between gap-3 animate-in fade-in duration-150">
+                  <div className="flex items-center gap-3 min-w-0">
+                    {/* Small corner video stream keepalive */}
+                    <div className="relative w-14 h-10 rounded-lg overflow-hidden border border-white/20 bg-black shrink-0">
+                      <video
+                        ref={videoPreviewRef}
+                        className="w-full h-full object-cover"
+                        autoPlay
+                        playsInline
+                        muted
+                      />
+                      <span className="absolute top-1 left-1 w-2 h-2 rounded-full bg-emerald-500 ring-1 ring-black" />
+                    </div>
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-emerald-400 bg-emerald-950/70 border border-emerald-500/30 px-1.5 py-0.2 rounded">
+                          AI Live
+                        </span>
+                        <span className="text-xs font-bold text-white truncate font-display">
+                          Kamera 1 Aktif
+                        </span>
+                      </div>
+                      <p className="text-[10px] font-mono text-slate-300 truncate mt-0.5">
+                        {faceDetected ? 'Wajah Terdeteksi Normal' : 'Wajah Tidak Terdeteksi!'}
+                      </p>
+                    </div>
                   </div>
 
-                  <div
-                    className={`px-2.5 py-0.5 rounded-md text-[10px] font-mono font-bold flex items-center gap-1.5 backdrop-blur-md border shadow-xs ${
-                      faceDetected
-                        ? 'bg-black/60 text-[#c2ef4e] border-white/10'
-                        : 'bg-rose-900/80 text-rose-200 border-rose-500/30 animate-pulse'
-                    }`}
+                  <button
+                    type="button"
+                    onClick={() => setIsCameraMinimized(false)}
+                    className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer shrink-0 border border-white/10"
+                    title="Perbesar Pratinjau Video"
+                    aria-label="Perbesar Pratinjau Video"
                   >
-                    <span
-                      className={`w-1.5 h-1.5 rounded-full ${faceDetected ? 'bg-[#c2ef4e]' : 'bg-rose-400'}`}
-                    />
-                    <span>{faceDetected ? 'Wajah Terdeteksi' : 'Wajah Tidak Terdeteksi'}</span>
-                  </div>
+                    <Maximize className="w-4 h-4 text-[#c2ef4e]" aria-hidden="true" />
+                  </button>
                 </div>
+              ) : (
+                /* Expanded Video Tile */
+                <div className="rounded-2xl overflow-hidden border border-slate-200/90 bg-slate-900 aspect-video relative shadow-card group transition-all">
+                  <video
+                    ref={videoPreviewRef}
+                    className="w-full h-full object-cover"
+                    autoPlay
+                    playsInline
+                    muted
+                  />
 
-                {/* Bottom Overlay: Device details & Companion Action */}
-                <div className="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between pointer-events-auto">
-                  <span className="text-[10px] font-mono text-slate-300 bg-black/60 backdrop-blur-md px-2 py-0.5 rounded border border-white/10">
-                    Kamera 1 (0° Laptop)
-                  </span>
-                  {isDualCamera && (
-                    <button
-                      onClick={() => setShowQrModal(true)}
-                      className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold flex items-center gap-1 transition-all cursor-pointer backdrop-blur-md border shadow-xs ${
-                        proctoringStore.companionPaired
-                          ? 'bg-emerald-950/80 text-emerald-300 border-emerald-500/30'
-                          : 'bg-amber-950/80 text-amber-300 border-amber-500/30 hover:bg-amber-900/90'
+                  {/* Top Overlay: LIVE & Face Detection Status */}
+                  <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between pointer-events-none">
+                    <div className="px-2 py-0.5 rounded-md bg-rose-600 text-white font-mono font-black text-[10px] flex items-center gap-1.5 shadow-xs uppercase tracking-wider">
+                      <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                      <span>LIVE</span>
+                    </div>
+
+                    <div
+                      className={`px-2.5 py-0.5 rounded-md text-[10px] font-mono font-bold flex items-center gap-1.5 backdrop-blur-md border shadow-xs ${
+                        faceDetected
+                          ? 'bg-black/60 text-[#c2ef4e] border-white/10'
+                          : 'bg-rose-900/80 text-rose-200 border-rose-500/30'
                       }`}
                     >
-                      <Smartphone className="w-3 h-3" aria-hidden="true" />
-                      <span>{proctoringStore.companionPaired ? 'Cam 2: Aktif' : 'Sambungkan Cam 2'}</span>
-                    </button>
-                  )}
+                      <span
+                        className={`w-1.5 h-1.5 rounded-full ${
+                          faceDetected ? 'bg-[#c2ef4e]' : 'bg-rose-400 animate-pulse'
+                        }`}
+                      />
+                      <span>{faceDetected ? 'Wajah Terdeteksi' : 'Wajah Tidak Terdeteksi'}</span>
+                    </div>
+                  </div>
+
+                  {/* Bottom Overlay: Device details, Comfort Minimize, Companion Action */}
+                  <div className="absolute bottom-2.5 left-2.5 right-2.5 flex items-center justify-between pointer-events-auto">
+                    <span className="text-[10px] font-mono text-slate-300 bg-black/60 backdrop-blur-md px-2 py-0.5 rounded border border-white/10">
+                      Kamera 1 (0° Laptop)
+                    </span>
+
+                    <div className="flex items-center gap-1.5">
+                      {isDualCamera && (
+                        <button
+                          type="button"
+                          onClick={() => setShowQrModal(true)}
+                          className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold flex items-center gap-1 transition-all cursor-pointer backdrop-blur-md border shadow-xs ${
+                            proctoringStore.companionPaired
+                              ? 'bg-emerald-950/80 text-emerald-300 border-emerald-500/30'
+                              : 'bg-amber-950/80 text-amber-300 border-amber-500/30 hover:bg-amber-900/90'
+                          }`}
+                        >
+                          <Smartphone className="w-3 h-3" aria-hidden="true" />
+                          <span>{proctoringStore.companionPaired ? 'Cam 2: OK' : 'Scan Cam 2'}</span>
+                        </button>
+                      )}
+
+                      {/* Comfort Mode: Minimize Video Button */}
+                      <button
+                        type="button"
+                        onClick={() => setIsCameraMinimized(true)}
+                        className="px-2 py-0.5 rounded text-[10px] font-mono font-medium text-slate-200 bg-black/60 hover:bg-black/80 backdrop-blur-md border border-white/10 flex items-center gap-1 cursor-pointer transition-colors"
+                        title="Kecilkan pratinjau video agar tidak mengalihkan perhatian"
+                      >
+                        <Minimize2 className="w-3 h-3 text-slate-300" aria-hidden="true" />
+                        <span className="hidden sm:inline">Kecilkan</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )
+            ) : (
+              /* Proctoring Disabled Graceful Banner */
+              <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-card flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200 text-slate-700 flex items-center justify-center shrink-0">
+                  <ShieldCheck className="w-5 h-5 text-slate-700" aria-hidden="true" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-slate-900 font-display">Mode Ujian Mandiri</h4>
+                  <p className="text-[11px] text-slate-500 font-mono">
+                    Kamera pengawas nonaktif untuk sesi ini. Integritas layar penuh tetap diawasi.
+                  </p>
                 </div>
               </div>
             )}
 
             {/* "Daftar Soal" Navigator Tile */}
-            <div className="rounded-2xl border border-slate-200/90 bg-white p-5 sm:p-6 shadow-card flex flex-col space-y-5">
+            <div className="rounded-2xl border border-slate-200/90 bg-white p-5 sm:p-6 shadow-card flex flex-col space-y-4">
               {/* Navigator Header */}
               <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                 <div className="flex items-center gap-2">
@@ -535,71 +799,125 @@ export default function ExamWorkspacePage() {
                 </div>
               </div>
 
-              {/* Number Grid: State Buttons */}
-              <div className="grid grid-cols-5 gap-2">
-                {examStore.questions.map((q, idx) => {
-                  const isCurrent = idx === examStore.currentIndex
-                  const ans = examStore.answersMap[q.id]
-                  const isAnswered = ans && ans.trim() !== ''
-                  const isDoubt = Boolean(doubtMap[q.id])
+              {/* Filter Tabs for Easy Triage */}
+              <div className="flex items-center gap-1 p-1 bg-slate-100/90 rounded-xl border border-slate-200/70 text-[11px] font-mono">
+                <button
+                  type="button"
+                  onClick={() => setNavigatorFilter('all')}
+                  className={`flex-1 py-1 rounded-lg font-bold transition-all cursor-pointer ${
+                    navigatorFilter === 'all'
+                      ? 'bg-white text-slate-900 shadow-2xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  Semua ({examStore.totalQuestions})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setNavigatorFilter('unanswered')}
+                  className={`flex-1 py-1 rounded-lg font-bold transition-all cursor-pointer ${
+                    navigatorFilter === 'unanswered'
+                      ? 'bg-white text-rose-700 shadow-2xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  Belum ({unansweredCount})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setNavigatorFilter('doubt')}
+                  className={`flex-1 py-1 rounded-lg font-bold transition-all cursor-pointer ${
+                    navigatorFilter === 'doubt'
+                      ? 'bg-white text-amber-800 shadow-2xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  Ragu ({doubtCount})
+                </button>
+              </div>
 
-                  let stateClasses = ''
-                  if (isCurrent) {
-                    stateClasses =
-                      'ring-2 ring-[#c2ef4e] ring-offset-2 bg-slate-900 text-[#c2ef4e] font-black border-slate-900 shadow-md scale-105 z-10'
-                  } else if (isDoubt) {
-                    stateClasses =
-                      'bg-amber-50 border-amber-300 text-amber-900 font-bold hover:bg-amber-100'
-                  } else if (isAnswered) {
-                    stateClasses =
-                      'bg-emerald-50 border-emerald-300 text-emerald-800 font-bold hover:bg-emerald-100'
-                  } else {
-                    stateClasses =
-                      'bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300 font-medium'
-                  }
+              {/* Number Grid: State Buttons */}
+              <div className="grid grid-cols-5 gap-2 max-h-72 overflow-y-auto p-0.5">
+                {visibleQuestions.map(({ q, idx, isAnswered, isDoubt, isCurrent, isVisible }) => {
+                  if (!isVisible) return null
 
                   return (
                     <button
                       key={q.id}
                       type="button"
                       onClick={() => examStore.setCurrentIndex(idx)}
-                      className={`h-11 rounded-xl text-xs transition-all relative flex items-center justify-center border cursor-pointer font-mono ${stateClasses}`}
+                      className={getQuestionBtnClasses(isCurrent, isAnswered, isDoubt)}
                       title={`Soal ${idx + 1}: ${
-                        isCurrent
-                          ? 'Sedang Dikerjakan'
+                        isDoubt && isAnswered
+                          ? 'Ragu-ragu (Sudah Terjawab)'
                           : isDoubt
-                          ? 'Ragu-ragu'
+                          ? 'Ragu-ragu (Belum Terjawab)'
                           : isAnswered
                           ? 'Sudah Terjawab'
                           : 'Belum Dijawab'
+                      }${isCurrent ? ' • Sedang Aktif' : ''}`}
+                      aria-label={`Soal ${idx + 1}: ${
+                        isDoubt && isAnswered
+                          ? 'Ragu-ragu tapi sudah terjawab'
+                          : isDoubt
+                          ? 'Ragu-ragu dan belum dijawab'
+                          : isAnswered
+                          ? 'Sudah terjawab'
+                          : 'Belum dijawab'
                       }`}
                     >
                       <span>{idx + 1}</span>
+
+                      {/* Flag marker for doubt */}
                       {isDoubt && (
-                        <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-amber-500" />
+                        <span
+                          className="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-amber-500 ring-1 ring-white"
+                          aria-hidden="true"
+                        />
+                      )}
+
+                      {/* Verified dot if doubt + answered */}
+                      {isDoubt && isAnswered && (
+                        <span
+                          className="absolute top-1 left-1 w-2 h-2 rounded-full bg-emerald-500 ring-1 ring-white"
+                          aria-hidden="true"
+                        />
+                      )}
+
+                      {/* Current Active Indicator Pip */}
+                      {isCurrent && (
+                        <span
+                          className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-4 h-1 rounded-full bg-[#150f23]"
+                          aria-hidden="true"
+                        />
                       )}
                     </button>
                   )
                 })}
               </div>
 
-              {/* Legend */}
+              {/* Comprehensive Legend: Unmistakable 4 states */}
               <div className="grid grid-cols-2 gap-2 pt-3 border-t border-slate-100 text-[11px] font-mono text-slate-600">
                 <div className="flex items-center gap-2">
-                  <span className="w-3.5 h-3.5 rounded-md bg-slate-900 ring-2 ring-[#c2ef4e] shrink-0" />
-                  <span>Sedang Aktif</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="w-3.5 h-3.5 rounded-md bg-emerald-50 border border-emerald-300 text-emerald-700 shrink-0 flex items-center justify-center font-bold text-[9px]">
-                    OK
+                  <span className="w-3.5 h-3.5 rounded-md bg-emerald-50 border border-emerald-300 text-emerald-800 shrink-0 flex items-center justify-center font-bold text-[9px]">
+                    ✓
                   </span>
                   <span>Terjawab</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="w-3.5 h-3.5 rounded-md bg-amber-50 border border-amber-300 text-amber-700 shrink-0 flex items-center justify-center font-bold text-[9px]">
+                  <span className="w-3.5 h-3.5 rounded-md bg-amber-50 border border-amber-400 text-amber-800 shrink-0 relative flex items-center justify-center font-bold text-[9px]">
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500 absolute -top-0.5 -right-0.5" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 absolute -top-0.5 -left-0.5" />
                     ?
                   </span>
-                  <span>Ragu-ragu</span>
+                  <span>Ragu (Terjawab)</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="w-3.5 h-3.5 rounded-md bg-amber-50/60 border border-dashed border-amber-400 text-amber-800 shrink-0 relative flex items-center justify-center font-bold text-[9px]">
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500 absolute -top-0.5 -right-0.5" />
+                    ?
+                  </span>
+                  <span>Ragu (Kosong)</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="w-3.5 h-3.5 rounded-md bg-white border border-slate-300 shrink-0" />
@@ -608,7 +926,7 @@ export default function ExamWorkspacePage() {
               </div>
 
               {/* Status Note */}
-              <div className="pt-2 text-[11px] text-slate-400 text-center leading-relaxed font-mono border-t border-slate-50">
+              <div className="pt-2 text-[11px] text-slate-500 text-center leading-relaxed font-mono border-t border-slate-50">
                 Tersinkron otomatis setiap 30 detik • Autosave aktif
               </div>
             </div>
@@ -616,20 +934,271 @@ export default function ExamWorkspacePage() {
         </div>
       </div>
 
+      {/* Mobile Sticky Bottom Action Dock (<lg) */}
+      <nav
+        aria-label="Navigasi Ujian Seluler"
+        className="fixed bottom-0 left-0 right-0 z-30 lg:hidden bg-white/95 backdrop-blur-md border-t border-slate-200/90 px-3 py-2 flex items-center justify-between gap-2 shadow-elevated"
+      >
+        <button
+          type="button"
+          onClick={prevQuestion}
+          disabled={examStore.currentIndex === 0}
+          className="min-h-[44px] px-3 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-30 text-slate-700 font-bold text-xs flex items-center justify-center gap-1 font-mono transition-all active:scale-95 cursor-pointer disabled:cursor-not-allowed"
+        >
+          <ChevronLeft className="w-4 h-4" aria-hidden="true" />
+          <span>Sebelumnya</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setShowMobileNavigator(true)}
+          className="min-h-[44px] px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200/80 border border-slate-300 text-slate-900 font-mono font-bold text-xs flex items-center justify-center gap-1.5 shadow-2xs transition-all cursor-pointer active:scale-95"
+        >
+          <LayoutGrid className="w-3.5 h-3.5 text-slate-700" aria-hidden="true" />
+          <span>Soal {examStore.currentIndex + 1} / {examStore.totalQuestions}</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={nextQuestion}
+          disabled={examStore.currentIndex === examStore.totalQuestions - 1}
+          className="min-h-[44px] px-3.5 py-2 rounded-xl bg-[#150f23] hover:bg-slate-800 disabled:opacity-30 text-white font-bold text-xs flex items-center justify-center gap-1 font-mono transition-all active:scale-95 cursor-pointer disabled:cursor-not-allowed"
+        >
+          <span>Selanjutnya</span>
+          <ChevronRight className="w-4 h-4 text-[#c2ef4e]" aria-hidden="true" />
+        </button>
+      </nav>
+
+      {/* Mobile Navigator Drawer / Bottom Sheet */}
+      {showMobileNavigator && (
+        <div
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setShowMobileNavigator(false)
+          }}
+          className="fixed inset-0 bg-slate-950/60 z-50 flex flex-col justify-end lg:hidden animate-in fade-in duration-150 backdrop-blur-xs"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="mobile-navigator-title"
+        >
+          <div className="bg-white rounded-t-3xl border-t border-slate-200/90 p-5 space-y-4 max-h-[85vh] overflow-y-auto animate-in slide-in-from-bottom duration-200 shadow-2xl">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div className="flex items-center gap-2">
+                <LayoutGrid className="w-4 h-4 text-slate-700" aria-hidden="true" />
+                <h3 id="mobile-navigator-title" className="font-display text-sm font-bold text-slate-900">
+                  Daftar Soal Ujian
+                </h3>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-mono font-bold text-slate-700 tabular-nums bg-slate-100 px-2 py-0.5 rounded-lg border border-slate-200">
+                  {examStore.answeredCount} / {examStore.totalQuestions}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setShowMobileNavigator(false)}
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+                  aria-label="Tutup daftar soal"
+                >
+                  <X className="w-4 h-4" aria-hidden="true" />
+                </button>
+              </div>
+            </div>
+
+            {/* Filter Tabs on Mobile */}
+            <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-xl text-xs font-mono">
+              <button
+                type="button"
+                onClick={() => setNavigatorFilter('all')}
+                className={`flex-1 py-1.5 rounded-lg font-bold text-center ${
+                  navigatorFilter === 'all'
+                    ? 'bg-white text-slate-900 shadow-xs'
+                    : 'text-slate-600'
+                }`}
+              >
+                Semua ({examStore.totalQuestions})
+              </button>
+              <button
+                type="button"
+                onClick={() => setNavigatorFilter('unanswered')}
+                className={`flex-1 py-1.5 rounded-lg font-bold text-center ${
+                  navigatorFilter === 'unanswered'
+                    ? 'bg-white text-rose-700 shadow-xs'
+                    : 'text-slate-600'
+                }`}
+              >
+                Belum ({unansweredCount})
+              </button>
+              <button
+                type="button"
+                onClick={() => setNavigatorFilter('doubt')}
+                className={`flex-1 py-1.5 rounded-lg font-bold text-center ${
+                  navigatorFilter === 'doubt'
+                    ? 'bg-white text-amber-800 shadow-xs'
+                    : 'text-slate-600'
+                }`}
+              >
+                Ragu ({doubtCount})
+              </button>
+            </div>
+
+            {/* Mobile Number Grid */}
+            <div className="grid grid-cols-5 gap-2.5 py-1">
+              {visibleQuestions.map(({ q, idx, isAnswered, isDoubt, isCurrent, isVisible }) => {
+                if (!isVisible) return null
+
+                return (
+                  <button
+                    key={q.id}
+                    type="button"
+                    onClick={() => {
+                      examStore.setCurrentIndex(idx)
+                      setShowMobileNavigator(false)
+                    }}
+                    className={getQuestionBtnClasses(isCurrent, isAnswered, isDoubt)}
+                  >
+                    <span>{idx + 1}</span>
+                    {isDoubt && (
+                      <span className="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-amber-500 ring-1 ring-white" />
+                    )}
+                    {isDoubt && isAnswered && (
+                      <span className="absolute top-1 left-1 w-2 h-2 rounded-full bg-emerald-500 ring-1 ring-white" />
+                    )}
+                    {isCurrent && (
+                      <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-4 h-1 rounded-full bg-[#150f23]" />
+                    )}
+                  </button>
+                )
+              })}
+            </div>
+
+            {/* Legend on Mobile */}
+            <div className="grid grid-cols-2 gap-2 pt-3 border-t border-slate-100 text-[11px] font-mono text-slate-600">
+              <div className="flex items-center gap-2">
+                <span className="w-3.5 h-3.5 rounded-md bg-emerald-50 border border-emerald-300 text-emerald-800 flex items-center justify-center font-bold text-[9px]">
+                  ✓
+                </span>
+                <span>Terjawab</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-3.5 h-3.5 rounded-md bg-amber-50 border border-amber-400 text-amber-800 relative flex items-center justify-center font-bold text-[9px]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500 absolute -top-0.5 -right-0.5" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 absolute -top-0.5 -left-0.5" />
+                  ?
+                </span>
+                <span>Ragu (Terjawab)</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-3.5 h-3.5 rounded-md bg-amber-50/60 border border-dashed border-amber-400 text-amber-800 relative flex items-center justify-center font-bold text-[9px]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500 absolute -top-0.5 -right-0.5" />
+                  ?
+                </span>
+                <span>Ragu (Kosong)</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-3.5 h-3.5 rounded-md bg-white border border-slate-300" />
+                <span>Belum Dijawab</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Keyboard Shortcuts Helper Modal */}
+      {showKeyboardShortcuts && (
+        <div
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setShowKeyboardShortcuts(false)
+          }}
+          className="fixed inset-0 bg-slate-950/60 z-50 flex items-center justify-center p-4 animate-in fade-in duration-150 backdrop-blur-xs"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="shortcuts-title"
+        >
+          <div className="bg-white border border-slate-200/90 rounded-2xl p-6 max-w-sm w-full space-y-4 shadow-2xl animate-in zoom-in-95 duration-150 text-slate-900">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-700">
+                  <Keyboard className="w-4 h-4" aria-hidden="true" />
+                </div>
+                <div>
+                  <h3 id="shortcuts-title" className="text-sm font-bold text-slate-900 font-display">
+                    Pintasan Keyboard
+                  </h3>
+                  <p className="text-[10px] text-slate-500 font-mono">Untuk efisiensi pengerjaan ujian</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowKeyboardShortcuts(false)}
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+                aria-label="Tutup panduan pintasan"
+              >
+                <X className="w-4 h-4" aria-hidden="true" />
+              </button>
+            </div>
+
+            <div className="space-y-2 text-xs font-mono">
+              <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-200/80">
+                <span className="text-slate-700">Pilih Opsi Jawaban</span>
+                <span className="font-bold text-slate-900 bg-white px-2 py-0.5 rounded border border-slate-300">
+                  A – E / 1 – 5
+                </span>
+              </div>
+              <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-200/80">
+                <span className="text-slate-700">Soal Berikutnya</span>
+                <span className="font-bold text-slate-900 bg-white px-2 py-0.5 rounded border border-slate-300">
+                  → atau N
+                </span>
+              </div>
+              <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-200/80">
+                <span className="text-slate-700">Soal Sebelumnya</span>
+                <span className="font-bold text-slate-900 bg-white px-2 py-0.5 rounded border border-slate-300">
+                  ← atau P
+                </span>
+              </div>
+              <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-200/80">
+                <span className="text-slate-700">Tandai Ragu-ragu</span>
+                <span className="font-bold text-slate-900 bg-white px-2 py-0.5 rounded border border-slate-300">
+                  R atau F
+                </span>
+              </div>
+              <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-200/80">
+                <span className="text-slate-700">Tutup Dialog / Modal</span>
+                <span className="font-bold text-slate-900 bg-white px-2 py-0.5 rounded border border-slate-300">
+                  Esc
+                </span>
+              </div>
+            </div>
+
+            <p className="text-[11px] text-slate-500 leading-relaxed">
+              Catatan: Pintasan otomatis dinonaktifkan saat Anda sedang mengetik di dalam lembar jawaban esai.
+            </p>
+
+            <button
+              type="button"
+              onClick={() => setShowKeyboardShortcuts(false)}
+              className="w-full py-2.5 rounded-xl bg-[#150f23] text-white font-bold text-xs transition-colors cursor-pointer font-display"
+            >
+              Saya Mengerti
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Companion QR Modal (Dual Camera) */}
       <CompanionQrModal
         isOpen={showQrModal}
         companionUrl={companionUrl}
-        sessionId={examStore.sessionId}
+        sessionId={examStore.sessionId || undefined}
         isCompanionPaired={proctoringStore.companionPaired}
         onClose={() => setShowQrModal(false)}
       />
 
-      {/* Submit Confirmation Modal */}
+      {/* Submit Confirmation Modal with Doubt & Stats Breakdown */}
       <ExamSubmitModal
         isOpen={showSubmitModal}
         answeredCount={examStore.answeredCount}
         totalQuestions={examStore.totalQuestions}
+        doubtCount={doubtCount}
         isSubmitting={isSubmitting}
         onClose={() => setShowSubmitModal(false)}
         onConfirm={handleFinalSubmit}
@@ -670,8 +1239,9 @@ export default function ExamWorkspacePage() {
             </p>
 
             <button
+              type="button"
               onClick={() => proctoringStore.dismissWarning()}
-              className="w-full py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition-colors cursor-pointer font-display"
+              className="w-full py-2.5 px-4 rounded-xl bg-[#150f23] hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition-colors cursor-pointer font-display"
             >
               Saya Mengerti & Melanjutkan Ujian
             </button>
@@ -722,10 +1292,14 @@ export default function ExamWorkspacePage() {
               </div>
             </div>
             <button
+              type="button"
               onClick={enterFullscreenAndStart}
-              className="w-full py-3.5 px-6 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs sm:text-sm shadow-card hover:shadow-card-hover transition-all flex items-center justify-center gap-2 cursor-pointer font-display tracking-wide group"
+              className="w-full py-3.5 px-6 rounded-xl bg-[#150f23] hover:bg-slate-800 text-white font-bold text-xs sm:text-sm shadow-card hover:shadow-card-hover transition-all flex items-center justify-center gap-2 cursor-pointer font-display tracking-wide group"
             >
-              <Maximize className="w-4 h-4 text-[#c2ef4e] group-hover:scale-110 transition-transform" aria-hidden="true" />
+              <Maximize
+                className="w-4 h-4 text-[#c2ef4e] group-hover:scale-110 transition-transform"
+                aria-hidden="true"
+              />
               <span>Masuk Mode Layar Penuh & Mulai Ujian</span>
             </button>
           </div>

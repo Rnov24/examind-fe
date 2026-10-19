@@ -1,0 +1,39 @@
+{
+  "command": "ux-critique",
+  "timestamp": "2026-10-19T19:51:30+07:00",
+  "surface": "Teacher Flow: Dashboard, Question Bank, Exam Wizard, & Grade Review Workspace",
+  "audience": "Guru mata pelajaran dan pengawas ujian sekolah di Indonesia yang mengelola ratusan butir soal dan asesmen berkala",
+  "wins": [
+    {
+      "summary": "Pemisahan ranah aksi mendesak vs master data pada dashboard guru",
+      "detail": "Blok 'Perlu Perhatian & Tindakan Anda' membedakan secara instan antara ujian yang tengah aktif diawasi (live monitor) dan ujian yang selesai menunggu koreksi esai tanpa tercampur baur."
+    },
+    {
+      "summary": "Dual-column review dengan Rubrik 4D transparan pada koreksi esai",
+      "detail": "Penjajaran lembar jawaban siswa berdampingan dengan evaluasi kriteria atomik dan skor probabilitas AI memberi konteks komprehensif bagi guru sebelum memberikan penilaian final."
+    },
+    {
+      "summary": "Dialog generator butir soal AI yang kontekstual per mata pelajaran",
+      "detail": "Modal AI Generator langsung mengikat parameter tingkat kesulitan dan distribusi tipe soal ke bank materi yang relevan, mempercepat drafting butir evaluasi pedagogis."
+    }
+  ],
+  "misses": [
+    {
+      "summary": "Alur pembuatan ujian terputus tanpa stepper progresif terpadu",
+      "detail": "Guru mengisi form panjang di /exams/create lalu tiba-tiba terlempar ke /exams/[id] tanpa indikator tahapan (wizard stepper) yang menjelaskan sisa langkah alokasi soal dan target bobot 100 poin."
+    },
+    {
+      "summary": "Bank soal kehilangan utilitas kurasi saat butir bertambah banyak",
+      "detail": "Ketiadaan filter pencarian, penyaring tipe/kesulitan, dan aksi massal (bulk selection) membuat kurasi puluhan butir soal lambat dan rentan salah klik."
+    },
+    {
+      "summary": "Koreksi esai repetitif tanpa keyboard-first workflow dan pelabelan rekomendasi AI yang ambigu",
+      "detail": "Penilai dipaksa melakukan scroll dan klik berulang untuk setiap nomor tanpa tombol pintas (keyboard shortcuts), sementara data probabilitas AI disajikan dengan emoji mentah alih-alih saran pedagogis terstruktur."
+    }
+  ],
+  "strategic_move": {
+    "summary": "Bangun Teacher High-Velocity Command: Stepper 3-Fase Terpadu, Kurasi Bank Multi-Filter, dan Fast-Grading Keyboard Hub",
+    "detail": "Integrasikan pembuatan ujian dengan wizard stepper berkepastian (Detail -> Alokasi Soal -> Publikasi), lengkapi bank soal dengan pencarian instan, filter multi-dimensi, dan multi-select import, serta hadirkan panel koreksi esai berkecepatan tinggi dengan navigasi keyboard (J/K/A/Enter), visualisasi rubrik bersih Lucide, dan indikator progres kelulusan koreksi real-time."
+  },
+  "prose": "─── critique ───\nSurface:       Teacher Flow (Dashboard, Bank Soal, Wizard Ujian, & Grade Review Workspace)\nAudience:      Guru mata pelajaran dan pengawas ujian sekolah di Indonesia\n\nAlur kerja guru di EXAMIND memiliki fondasi fungsional yang menjanjikan dengan integrasi kecerdasan buatan yang berani pada penyusunan soal dan koreksi esai. Namun, pada penggunaan nyata dengan beban administrasi tinggi, antarmuka saat ini terasa terfragmentasi antara form panjang, bank soal tanpa filter kurasi, dan ruang koreksi esai yang lambat dinavigasi.\n\nWhat's working:\n1. Pemisahan ranah aksi mendesak vs master data pada dashboard guru — blok atensi memprioritaskan sesi yang butuh intervensi langsung (live monitoring dan koreksi tertunda) sebelum guru menjelajahi tabel arsip.\n2. Dual-column review dengan Rubrik 4D transparan pada koreksi esai — penjajaran naskah jawaban siswa dengan pertimbangan AI memberikan kepastian pedagogis sebelum guru mengetuk skor akhir.\n3. Dialog generator butir soal AI yang kontekstual per mata pelajaran — integrasi parameter topik silabus langsung menghasilkan butir siap pakai tanpa perlu guru merancang prompt dari nol.\n\nWhat's not:\n1. Alur pembuatan ujian terputus tanpa stepper progresif terpadu — guru tidak memiliki peta jalan visual mengenai langkah apa saja yang harus diselesaikan antara konfigurasi jadwal, pemilihan butir soal, dan syarat publikasi 100 poin.\n2. Bank soal kehilangan utilitas kurasi saat butir bertambah banyak — ketiadaan pencarian instan, filter tipe/kesulitan, dan penambahan butir secara massal (bulk add) memaksa guru mengklik soal satu per satu secara melelahkan.\n3. Koreksi esai repetitif tanpa keyboard-first workflow dan pelabelan rekomendasi AI yang ambigu — penilai harus bolak-balik scroll dan klik mouse pada setiap soal, dengan kehadiran emoji non-standar yang merusak konsistensi desain institusional.\n\nThe strategic move:\nBangun Teacher High-Velocity Command: hadirkan stepper 3-fase berkepastian visual pada pembuatan ujian, sematkan sistem kurasi bank soal multi-filter dengan bulk action, serta ubah ruang koreksi esai menjadi keyboard-driven review workspace yang cepat, bersih dari emoji ikon, dan transparan membedakan saran AI dengan nilai resmi guru."
+}

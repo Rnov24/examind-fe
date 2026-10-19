@@ -213,42 +213,42 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
       greetingName={user?.full_name || 'Super Admin'}
       greetingSubtitle="Evaluasi statistik psikometrik butir soal, kurva distribusi nilai, dan ekspor Berita Acara ujian."
       greetingAction={
-        <div className="flex items-center gap-2.5 flex-wrap print:hidden">
+        <div className="flex items-center gap-2 sm:gap-2.5 flex-wrap print:hidden">
           <button
             type="button"
             onClick={handlePrint}
-            className="px-4 py-2.5 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-xs flex items-center gap-2 transition-colors cursor-pointer"
+            className="min-h-[40px] sm:min-h-[44px] px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
           >
             <Printer className="w-4 h-4 text-slate-600" />
-            <span>Cetak Rekap</span>
+            <span>Cetak Rekapitulasi</span>
           </button>
 
           <button
             type="button"
             onClick={downloadExcel}
             disabled={isDownloadingExcel}
-            className="px-4 py-2.5 rounded-full border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 disabled:opacity-50 text-emerald-800 font-bold text-xs shadow-xs flex items-center gap-2 transition-colors cursor-pointer"
+            className="min-h-[40px] sm:min-h-[44px] px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-full border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 disabled:opacity-50 text-emerald-800 font-bold text-xs shadow-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
           >
             {isDownloadingExcel ? (
               <Loader2 className="w-4 h-4 animate-spin text-emerald-600" />
             ) : (
               <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
             )}
-            <span>{isDownloadingExcel ? 'Mengunduh...' : 'Unduh Excel'}</span>
+            <span>{isDownloadingExcel ? 'Mengunduh...' : 'Unduh Rekap Excel'}</span>
           </button>
 
           <button
             type="button"
             onClick={downloadPdf}
             disabled={isDownloadingPdf}
-            className="px-5 py-2.5 rounded-full bg-[#150f23] hover:bg-slate-800 disabled:opacity-50 text-white font-bold text-xs shadow-card hover:shadow-card-hover flex items-center gap-2 transition-all cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-[#150f23] focus:outline-none"
+            className="min-h-[40px] sm:min-h-[44px] px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-[#150f23] hover:bg-slate-800 disabled:opacity-50 text-white font-bold text-xs shadow-card hover:shadow-card-hover flex items-center justify-center gap-2 transition-all cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-[#150f23] focus:outline-none"
           >
             {isDownloadingPdf ? (
               <Loader2 className="w-4 h-4 animate-spin text-[#c2ef4e]" />
             ) : (
               <FileText className="w-4 h-4 text-[#c2ef4e]" />
             )}
-            <span>{isDownloadingPdf ? 'Mengunduh...' : 'Unduh PDF Berita Acara'}</span>
+            <span>{isDownloadingPdf ? 'Mengunduh...' : 'Unduh Berita Acara PDF'}</span>
           </button>
         </div>
       }
@@ -438,25 +438,18 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
               <Loader2 className="w-8 h-8 text-indigo-600 animate-spin" />
             </div>
           ) : (
-            <div className="overflow-x-auto touch-pan-x">
-              <table className="w-full text-left text-xs text-slate-600">
-                <thead className="bg-slate-50/80 text-[11px] uppercase font-bold text-slate-600 tracking-wider font-mono border-b border-slate-100">
-                  <tr>
-                    <th className="py-3 px-5">No</th>
-                    <th className="py-3 px-4">Tipe Soal</th>
-                    <th className="py-3 px-4">Butir Soal</th>
-                    <th className="py-3 px-4">Tingkat Kesukaran</th>
-                    <th className="py-3 px-4">Daya Pembeda</th>
-                    <th className="py-3 px-5 font-semibold text-right">Rekomendasi</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 font-medium">
-                  {(analyticsData?.item_analysis || []).map((item, idx) => (
-                    <tr key={item.question_id} className="hover:bg-slate-50/70 transition-colors">
-                      <td className="py-3.5 px-5 font-bold text-slate-900 font-mono">{idx + 1}</td>
-                      <td className="py-3.5 px-4">
+            <div>
+              {/* Mobile Card List View (<md) */}
+              <div className="md:hidden divide-y divide-slate-100">
+                {(analyticsData?.item_analysis || []).map((item, idx) => (
+                  <div key={item.question_id} className="p-4 space-y-2.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <span className="w-6 h-6 rounded-md bg-slate-100 font-mono text-xs font-bold text-slate-800 flex items-center justify-center shrink-0">
+                          {idx + 1}
+                        </span>
                         <span
-                          className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase font-mono shadow-2xs ${
+                          className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold uppercase font-mono shadow-2xs ${
                             item.question_type === 'multiple_choice'
                               ? 'bg-indigo-50 text-indigo-700 border border-indigo-200'
                               : 'bg-slate-100 text-slate-700 border border-slate-200'
@@ -464,53 +457,135 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
                         >
                           {item.question_type === 'multiple_choice' ? 'PG' : 'Esai'}
                         </span>
-                      </td>
-                      <td className="py-3.5 px-4 max-w-xs truncate text-slate-900 font-semibold">{item.prompt}</td>
-                      <td className="py-3.5 px-4">
-                        <span className="font-bold text-slate-900 font-mono tabular-nums">
-                          {item.difficulty_index}
-                        </span>
-                        <span className="text-[10px] text-slate-500 block capitalize font-mono">
-                          ({item.difficulty_category})
-                        </span>
-                      </td>
-                      <td className="py-3.5 px-4">
-                        <span className="font-bold text-slate-900 font-mono tabular-nums">
-                          {item.discrimination_index}
-                        </span>
-                        <span className="text-[10px] text-slate-500 block capitalize font-mono">
-                          ({item.discrimination_category})
-                        </span>
-                      </td>
-                      <td className="py-3.5 px-5 text-right">
-                        <span
-                          className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold font-mono inline-block shadow-2xs ${
-                            item.status === 'good'
-                              ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
-                              : item.status === 'revise'
-                              ? 'bg-amber-50 text-amber-800 border border-amber-200'
-                              : 'bg-rose-50 text-rose-700 border border-rose-200'
-                          }`}
-                        >
-                          {item.status === 'good'
-                            ? 'Sangat Baik'
+                      </div>
+                      <span
+                        className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold font-mono inline-block shadow-2xs ${
+                          item.status === 'good'
+                            ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
                             : item.status === 'revise'
-                            ? 'Perlu Revisi'
-                            : 'Gugur'}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
+                            ? 'bg-amber-50 text-amber-800 border border-amber-200'
+                            : 'bg-rose-50 text-rose-700 border border-rose-200'
+                        }`}
+                      >
+                        {item.status === 'good'
+                          ? 'Sangat Baik'
+                          : item.status === 'revise'
+                          ? 'Perlu Revisi'
+                          : 'Gugur'}
+                      </span>
+                    </div>
 
-                  {(!analyticsData?.item_analysis || analyticsData.item_analysis.length === 0) && (
+                    <p className="text-xs font-medium text-slate-900 line-clamp-2">{item.prompt}</p>
+
+                    <div className="grid grid-cols-2 gap-2 pt-1 border-t border-slate-100/80 text-[11px]">
+                      <div className="bg-slate-50/80 rounded-lg p-2 border border-slate-100">
+                        <span className="text-slate-500 block text-[10px] uppercase font-mono">T. Kesukaran</span>
+                        <div className="flex items-baseline gap-1 mt-0.5">
+                          <span className="font-bold text-slate-900 font-mono tabular-nums">
+                            {item.difficulty_index}
+                          </span>
+                          <span className="text-[10px] text-slate-500 capitalize font-mono">
+                            ({item.difficulty_category})
+                          </span>
+                        </div>
+                      </div>
+                      <div className="bg-slate-50/80 rounded-lg p-2 border border-slate-100">
+                        <span className="text-slate-500 block text-[10px] uppercase font-mono">Daya Pembeda</span>
+                        <div className="flex items-baseline gap-1 mt-0.5">
+                          <span className="font-bold text-slate-900 font-mono tabular-nums">
+                            {item.discrimination_index}
+                          </span>
+                          <span className="text-[10px] text-slate-500 capitalize font-mono">
+                            ({item.discrimination_category})
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+
+                {(!analyticsData?.item_analysis || analyticsData.item_analysis.length === 0) && (
+                  <div className="py-10 px-4 text-center text-slate-500 text-xs">
+                    Data analisis butir soal belum tersedia. Pastikan paket ujian telah diselesaikan oleh siswa untuk memproses evaluasi psikometrik.
+                  </div>
+                )}
+              </div>
+
+              {/* Desktop Table View (>=md) */}
+              <div className="hidden md:block overflow-x-auto touch-pan-x">
+                <table className="w-full text-left text-xs text-slate-600">
+                  <thead className="bg-slate-50/80 text-[11px] uppercase font-bold text-slate-600 tracking-wider font-mono border-b border-slate-100">
                     <tr>
-                      <td colSpan={6} className="py-12 text-center text-slate-500 text-xs">
-                        Data analisis butir soal belum tersedia atau siswa belum mengumpulkan ujian.
-                      </td>
+                      <th className="py-3 px-5">No</th>
+                      <th className="py-3 px-4">Tipe Soal</th>
+                      <th className="py-3 px-4">Butir Soal</th>
+                      <th className="py-3 px-4">Tingkat Kesukaran</th>
+                      <th className="py-3 px-4">Daya Pembeda</th>
+                      <th className="py-3 px-5 font-semibold text-right">Rekomendasi</th>
                     </tr>
-                  )}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 font-medium">
+                    {(analyticsData?.item_analysis || []).map((item, idx) => (
+                      <tr key={item.question_id} className="hover:bg-slate-50/70 transition-colors">
+                        <td className="py-3.5 px-5 font-bold text-slate-900 font-mono">{idx + 1}</td>
+                        <td className="py-3.5 px-4">
+                          <span
+                            className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase font-mono shadow-2xs ${
+                              item.question_type === 'multiple_choice'
+                                ? 'bg-indigo-50 text-indigo-700 border border-indigo-200'
+                                : 'bg-slate-100 text-slate-700 border border-slate-200'
+                            }`}
+                          >
+                            {item.question_type === 'multiple_choice' ? 'PG' : 'Esai'}
+                          </span>
+                        </td>
+                        <td className="py-3.5 px-4 max-w-xs truncate text-slate-900 font-semibold">{item.prompt}</td>
+                        <td className="py-3.5 px-4">
+                          <span className="font-bold text-slate-900 font-mono tabular-nums">
+                            {item.difficulty_index}
+                          </span>
+                          <span className="text-[10px] text-slate-500 block capitalize font-mono">
+                            ({item.difficulty_category})
+                          </span>
+                        </td>
+                        <td className="py-3.5 px-4">
+                          <span className="font-bold text-slate-900 font-mono tabular-nums">
+                            {item.discrimination_index}
+                          </span>
+                          <span className="text-[10px] text-slate-500 block capitalize font-mono">
+                            ({item.discrimination_category})
+                          </span>
+                        </td>
+                        <td className="py-3.5 px-5 text-right">
+                          <span
+                            className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold font-mono inline-block shadow-2xs ${
+                              item.status === 'good'
+                                ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                                : item.status === 'revise'
+                                ? 'bg-amber-50 text-amber-800 border border-amber-200'
+                                : 'bg-rose-50 text-rose-700 border border-rose-200'
+                            }`}
+                          >
+                            {item.status === 'good'
+                              ? 'Sangat Baik'
+                              : item.status === 'revise'
+                              ? 'Perlu Revisi'
+                              : 'Gugur'}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+
+                    {(!analyticsData?.item_analysis || analyticsData.item_analysis.length === 0) && (
+                      <tr>
+                        <td colSpan={6} className="py-12 text-center text-slate-500 text-xs">
+                          Data analisis butir soal belum tersedia. Pastikan paket ujian telah diselesaikan oleh siswa untuk memproses evaluasi psikometrik.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
         </DashboardCard>

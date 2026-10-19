@@ -1,6 +1,7 @@
 import React, { forwardRef } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { tokens } from '@/components/system/tokens'
 
 export type SelectSize = 'sm' | 'md' | 'lg'
 
@@ -13,9 +14,9 @@ export interface SelectProps extends Omit<React.SelectHTMLAttributes<HTMLSelectE
 }
 
 const selectSizeStyles: Record<SelectSize, string> = {
-  sm: 'h-8.5 pl-3 pr-8 text-xs rounded-xl',
-  md: 'h-10 pl-3.5 pr-9 text-xs sm:text-sm rounded-xl',
-  lg: 'h-12 pl-4 pr-10 text-sm sm:text-base rounded-xl',
+  sm: cn('h-8.5 pl-3 pr-8 text-xs', tokens.radius.lg),
+  md: cn('h-10 pl-3.5 pr-9 text-xs sm:text-sm', tokens.radius.lg),
+  lg: cn('h-12 pl-4 pr-10 text-sm sm:text-base', tokens.radius.lg),
 }
 
 export const Select = forwardRef<HTMLSelectElement, SelectProps>(
@@ -54,9 +55,10 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             disabled={disabled}
             className={cn(
               'w-full bg-slate-50/70 border border-slate-200 text-slate-900 font-sans tracking-tight font-semibold appearance-none cursor-pointer',
-              'transition-all duration-150',
+              tokens.transition.fast,
               'hover:border-slate-300 hover:bg-slate-50',
-              'focus:bg-white focus:outline-none focus:border-[#150f23] focus:ring-2 focus:ring-[#6a5fc1]/25',
+              'focus:bg-white focus:outline-none',
+              tokens.border.focus,
               'disabled:bg-slate-100 disabled:text-slate-400 disabled:border-slate-200 disabled:cursor-not-allowed',
               error &&
                 'border-rose-300 bg-rose-50/30 text-rose-900 focus:border-rose-500 focus:ring-rose-500/25',
@@ -65,6 +67,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             )}
             {...props}
           >
+
             {children}
           </select>
 

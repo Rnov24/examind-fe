@@ -1,6 +1,8 @@
 'use client'
 
 import React from 'react'
+import { cn } from '@/lib/utils'
+import { tokens } from '@/components/system/tokens'
 
 interface DashboardEmptyStateProps {
   icon?: React.ReactNode
@@ -19,18 +21,24 @@ export function DashboardEmptyState({
 }: DashboardEmptyStateProps) {
   return (
     <div
-      className={`py-12 px-4 flex flex-col items-center justify-center text-center ${className}`}
+      className={cn('py-12 px-4 flex flex-col items-center justify-center text-center', className)}
     >
       {icon && (
-        <div className="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 mb-3 shadow-2xs">
+        <div
+          className={cn(
+            'w-12 h-12 bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 mb-3',
+            tokens.radius.xl,
+            tokens.shadow.micro
+          )}
+        >
           {icon}
         </div>
       )}
-      <h3 className="font-display text-sm font-bold text-slate-800">
+      <h3 className={cn(tokens.typography.subheading, 'text-slate-800')}>
         {title}
       </h3>
       {description && (
-        <p className="text-xs text-slate-400 font-medium max-w-sm mt-1">
+        <p className={cn(tokens.typography.bodyMuted, 'max-w-sm mt-1')}>
           {description}
         </p>
       )}

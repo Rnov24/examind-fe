@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import Link from 'next/link'
 import {
   BookOpen,
@@ -14,6 +14,12 @@ import {
   RefreshCw,
   Loader2,
   ChevronRight,
+  Sparkles,
+  CheckSquare,
+  Search,
+  Filter,
+  ArrowRight,
+  Layers,
 } from 'lucide-react'
 import api from '@/lib/api'
 import { useAuthStore } from '@/stores/authStore'
@@ -49,6 +55,10 @@ export default function TeacherDashboardPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
+  // Filters for recent exams table
+  const [examSearch, setExamSearch] = useState('')
+  const [examStatusFilter, setExamStatusFilter] = useState<'all' | 'in_progress' | 'completed' | 'published'>('all')
+
   const loadData = useCallback(async () => {
     setIsLoading(true)
     setErrorMessage(null)
@@ -70,7 +80,7 @@ export default function TeacherDashboardPage() {
       if (eRes.status === 'fulfilled') {
         const exams = eRes.value.data.data || []
         setExamsCount(exams.length)
-        setRecentExams(exams.slice(0, 6))
+        setRecentExams(exams)
       } else {
         errorCount++
       }
@@ -99,14 +109,36 @@ export default function TeacherDashboardPage() {
   }, [loadData])
 
   // Distill: Identify items that genuinely need teacher's immediate attention
-  const inProgressExams = recentExams.filter((e) => e.status === 'in_progress')
-  const completedExams = recentExams.filter((e) => e.status === 'completed')
+  const inProgressExams = useMemo(
+    () => recentExams.filter((e) => e.status === 'in_progress'),
+    [recentExams]
+  )
+  const completedExams = useMemo(
+    () => recentExams.filter((e) => e.status === 'completed'),
+    [recentExams]
+  )
   const attentionItemsCount = inProgressExams.length + completedExams.length
+
+  // Filtered recent exams
+  const filteredExams = useMemo(() => {
+    return recentExams
+      .filter((e) => {
+        const matchesSearch =
+          e.title.toLowerCase().includes(examSearch.toLowerCase()) ||
+          (e.class_name || '').toLowerCase().includes(examSearch.toLowerCase())
+
+        const matchesStatus =
+          examStatusFilter === 'all' ? true : e.status === examStatusFilter
+
+        return matchesSearch && matchesStatus
+      })
+      .slice(0, 8)
+  }, [recentExams, examSearch, examStatusFilter])
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto font-sans">
       {/* Institutional Light Header with Ambient Glow */}
-      <div className="bg-gradient-to-r from-white via-white to-indigo-50/30 rounded-2xl border border-slate-200/90 p-5 sm:p-6 shadow-card relative overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+      <div className="bg-gradient-to-r from-white via-white to-indigo-50/40 rounded-2xl border border-slate-200/90 p-5 sm:p-6 shadow-card relative overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-5">
         <div className="absolute -right-16 -top-16 w-64 h-64 bg-indigo-100/40 rounded-full blur-3xl pointer-events-none"></div>
 
         <div className="space-y-1.5 relative z-10 min-w-0 max-w-xl">
@@ -115,25 +147,25 @@ export default function TeacherDashboardPage() {
               Portal Guru & Pengawas
             </span>
             <span className="text-xs text-slate-500 font-mono truncate">
-              NIP: {user?.identifier || '-'}
+              NIP / Identitas: {user?.identifier || '-'}
             </span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-display font-extrabold tracking-tight text-slate-900 truncate">
             Selamat Datang, {user?.full_name || 'Bapak/Ibu Guru'}
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
-            Pusat pemantauan ujian kelas, koreksi rubrik esai AI, dan penyusunan master bank butir soal.
+            Pusat pemantauan ujian kelas real-time, validasi rubrik esai AI, dan penyusunan master bank butir soal.
           </p>
         </div>
 
-        {/* Action Header: ONE Primary CTA ("Buat Paket Ujian") + Secondary Ghost Button */}
+        {/* Action Header: One Primary CTA + Secondary Link */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 shrink-0 relative z-10 w-full sm:w-auto">
           <Link
             href="/questions"
-            className="px-4 py-2.5 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs rounded-xl border border-slate-200 hover:border-slate-300 transition-colors shadow-xs flex items-center justify-center gap-2 cursor-pointer w-full sm:w-auto focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+            className="px-4 py-2.5 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs rounded-xl border border-slate-200 hover:border-slate-300 transition-colors shadow-xs flex items-center justify-center gap-2 cursor-pointer w-full sm:w-auto focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
           >
             <BookOpen className="w-4 h-4 text-slate-600" aria-hidden="true" />
-            <span>Buka Bank Soal</span>
+            <span>Master Bank Soal</span>
           </Link>
           <Link
             href="/exams/create"
@@ -151,7 +183,7 @@ export default function TeacherDashboardPage() {
           <Loader2 className="w-8 h-8 text-indigo-600 animate-spin mx-auto" aria-hidden="true" />
           <h3 className="font-bold text-slate-900 text-sm">Memuat ringkasan aktivitas pengawas...</h3>
           <p className="text-xs text-slate-500 max-w-sm mx-auto">
-            Menghubungkan data ujian, rombel siswa, dan status koreksi esai Anda.
+            Menghubungkan data jadwal ujian, rombel siswa, dan status koreksi esai Anda.
           </p>
         </div>
       )}
@@ -179,7 +211,7 @@ export default function TeacherDashboardPage() {
 
       {!isLoading && !errorMessage && (
         <>
-          {/* PRIMARY FOCUS: "What needs my attention?" Section */}
+          {/* PRIMARY FOCUS: "Perlu Perhatian & Tindakan Anda" Section */}
           <div className="bg-white rounded-2xl border border-slate-200/90 shadow-card p-5 sm:p-6 space-y-4">
             <div className="flex items-center justify-between gap-3 border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2.5">
@@ -201,7 +233,7 @@ export default function TeacherDashboardPage() {
                     Perlu Perhatian & Tindakan Anda
                   </h2>
                   <p className="text-xs text-slate-500">
-                    Sesi ujian yang sedang berlangsung atau lembar jawaban yang menunggu koreksi
+                    Sesi ujian yang sedang berlangsung atau lembar jawaban yang menunggu koreksi guru
                   </p>
                 </div>
               </div>
@@ -293,10 +325,13 @@ export default function TeacherDashboardPage() {
             )}
           </div>
 
-          {/* Genuine KPI Overview (Non-redundant 3-col grid, marketing cards removed) */}
+          {/* Genuine KPI Overview Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-card flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-slate-100 text-slate-700 border border-slate-200/80 flex items-center justify-center font-bold shrink-0">
+            <Link
+              href="/questions"
+              className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-card hover:shadow-card-hover transition-all flex items-center gap-4 group"
+            >
+              <div className="w-12 h-12 rounded-xl bg-slate-100 group-hover:bg-indigo-50 text-slate-700 group-hover:text-indigo-600 border border-slate-200/80 flex items-center justify-center font-bold shrink-0 transition-colors">
                 <BookOpen className="w-5 h-5" aria-hidden="true" />
               </div>
               <div className="min-w-0">
@@ -306,12 +341,18 @@ export default function TeacherDashboardPage() {
                 <span className="text-2xl font-black text-slate-900 font-display tabular-nums truncate block">
                   {banksCount} Paket
                 </span>
-                <span className="text-[11px] text-slate-500 block truncate">Koleksi butir pedagogis</span>
+                <span className="text-[11px] text-slate-500 flex items-center gap-1 group-hover:text-indigo-600 transition-colors">
+                  <span>Kelola butir soal</span>
+                  <ArrowRight className="w-3 h-3 text-slate-400 group-hover:text-indigo-600 transition-colors" aria-hidden="true" />
+                </span>
               </div>
-            </div>
+            </Link>
 
-            <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-card flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-slate-100 text-slate-700 border border-slate-200/80 flex items-center justify-center font-bold shrink-0">
+            <Link
+              href="/exams"
+              className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-card hover:shadow-card-hover transition-all flex items-center gap-4 group"
+            >
+              <div className="w-12 h-12 rounded-xl bg-slate-100 group-hover:bg-indigo-50 text-slate-700 group-hover:text-indigo-600 border border-slate-200/80 flex items-center justify-center font-bold shrink-0 transition-colors">
                 <FileSpreadsheet className="w-5 h-5" aria-hidden="true" />
               </div>
               <div className="min-w-0">
@@ -321,12 +362,18 @@ export default function TeacherDashboardPage() {
                 <span className="text-2xl font-black text-slate-900 font-display tabular-nums truncate block">
                   {examsCount} Jadwal
                 </span>
-                <span className="text-[11px] text-slate-500 block truncate">Asesmen CBT terdaftar</span>
+                <span className="text-[11px] text-slate-500 flex items-center gap-1 group-hover:text-indigo-600 transition-colors">
+                  <span>Lihat seluruh jadwal</span>
+                  <ArrowRight className="w-3 h-3 text-slate-400 group-hover:text-indigo-600 transition-colors" aria-hidden="true" />
+                </span>
               </div>
-            </div>
+            </Link>
 
-            <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-card flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-slate-100 text-slate-700 border border-slate-200/80 flex items-center justify-center font-bold shrink-0">
+            <Link
+              href="/classes"
+              className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-card hover:shadow-card-hover transition-all flex items-center gap-4 group"
+            >
+              <div className="w-12 h-12 rounded-xl bg-slate-100 group-hover:bg-indigo-50 text-slate-700 group-hover:text-indigo-600 border border-slate-200/80 flex items-center justify-center font-bold shrink-0 transition-colors">
                 <Users className="w-5 h-5" aria-hidden="true" />
               </div>
               <div className="min-w-0">
@@ -336,14 +383,17 @@ export default function TeacherDashboardPage() {
                 <span className="text-2xl font-black text-slate-900 font-display tabular-nums truncate block">
                   {classesCount} Kelas
                 </span>
-                <span className="text-[11px] text-slate-500 block truncate">Kelas akademik aktif</span>
+                <span className="text-[11px] text-slate-500 flex items-center gap-1 group-hover:text-indigo-600 transition-colors">
+                  <span>Daftar rombel akademik</span>
+                  <ArrowRight className="w-3 h-3 text-slate-400 group-hover:text-indigo-600 transition-colors" aria-hidden="true" />
+                </span>
               </div>
-            </div>
+            </Link>
           </div>
 
           {/* Recent Scheduled Exams Table Container */}
           <div className="bg-white rounded-2xl border border-slate-200/90 shadow-card overflow-hidden">
-            <div className="p-4 sm:p-5 sm:px-6 border-b border-slate-100 flex items-center justify-between gap-3">
+            <div className="p-4 sm:p-5 sm:px-6 border-b border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div>
                 <h2 className="text-base font-display font-bold text-slate-900">
                   Daftar Paket Ujian Terkini
@@ -352,13 +402,53 @@ export default function TeacherDashboardPage() {
                   Kelola paket ujian, akses pemantauan, dan buka lembar koreksi
                 </p>
               </div>
-              <Link
-                href="/exams"
-                className="text-xs font-bold text-slate-900 hover:text-indigo-600 flex items-center gap-1 font-mono transition-colors shrink-0 focus-visible:ring-2 focus-visible:ring-[#6a5fc1] focus-visible:outline-none rounded-lg px-2 py-1"
-              >
-                <span>Lihat Semua Ujian</span>
-                <ChevronRight className="w-3.5 h-3.5 text-slate-500" aria-hidden="true" />
-              </Link>
+
+              {/* Status Tab Filter */}
+              <div className="flex items-center gap-2 flex-wrap">
+                <div className="flex items-center p-1 bg-slate-100 rounded-xl text-xs font-semibold">
+                  <button
+                    type="button"
+                    onClick={() => setExamStatusFilter('all')}
+                    className={`px-3 py-1 rounded-lg transition-colors cursor-pointer ${
+                      examStatusFilter === 'all'
+                        ? 'bg-white text-slate-900 shadow-2xs font-bold'
+                        : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    Semua
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setExamStatusFilter('in_progress')}
+                    className={`px-3 py-1 rounded-lg transition-colors cursor-pointer ${
+                      examStatusFilter === 'in_progress'
+                        ? 'bg-white text-emerald-800 shadow-2xs font-bold'
+                        : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    Berlangsung
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setExamStatusFilter('completed')}
+                    className={`px-3 py-1 rounded-lg transition-colors cursor-pointer ${
+                      examStatusFilter === 'completed'
+                        ? 'bg-white text-indigo-800 shadow-2xs font-bold'
+                        : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    Selesai
+                  </button>
+                </div>
+
+                <Link
+                  href="/exams"
+                  className="text-xs font-bold text-slate-900 hover:text-indigo-600 flex items-center gap-1 font-mono transition-colors shrink-0 rounded-lg px-2 py-1"
+                >
+                  <span>Semua ({recentExams.length})</span>
+                  <ChevronRight className="w-3.5 h-3.5 text-slate-500" aria-hidden="true" />
+                </Link>
+              </div>
             </div>
 
             <TableContainer accent="none">
@@ -374,7 +464,7 @@ export default function TeacherDashboardPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {recentExams.map((exam) => (
+                  {filteredExams.map((exam) => (
                     <TableRow key={exam.id}>
                       <TableCell className="px-6 py-4 font-bold text-slate-900 text-sm max-w-xs truncate min-w-0">
                         {exam.title}
@@ -433,13 +523,15 @@ export default function TeacherDashboardPage() {
                       </TableCell>
                     </TableRow>
                   ))}
-                  {recentExams.length === 0 && (
+
+                  {/* Empty state when no exams match filter or total is 0 */}
+                  {filteredExams.length === 0 && (
                     <TableRow>
                       <TableCell colSpan={6} className="p-0">
                         <EmptyState
                           icon={<FileSpreadsheet className="w-6 h-6 text-slate-500" aria-hidden="true" />}
-                          title="Belum Ada Paket Ujian"
-                          description="Mulai dengan membuat paket ujian pertama dan jadwalkan untuk kelas siswa Anda."
+                          title="Belum Ada Paket Ujian pada Filter Ini"
+                          description="Mulai dengan membuat paket ujian pertama dan jadwalkan untuk rombel kelas siswa Anda."
                           action={
                             <Link href="/exams/create">
                               <Button
@@ -464,4 +556,3 @@ export default function TeacherDashboardPage() {
     </div>
   )
 }
-

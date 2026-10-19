@@ -608,10 +608,11 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
 
             <div className="flex items-center gap-2.5">
               <div className="relative">
-                <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" aria-hidden="true" />
                 <input
                   type="text"
                   placeholder="Cari kunci atau provider..."
+                  aria-label="Cari kunci atau provider"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-8 pr-3 py-1.5 rounded-xl border border-slate-200 bg-white text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-900 w-48 sm:w-56"
@@ -639,8 +640,145 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
             </div>
           </div>
 
-          {/* Table Container */}
-          <div className="overflow-x-auto touch-pan-x">
+          {/* Mobile Card List Strategy (<md) */}
+          <div className="md:hidden divide-y divide-slate-100 p-4 space-y-3 font-sans">
+            {filteredSecrets.length === 0 ? (
+              <div className="py-8 text-center text-slate-500">
+                <Key className="w-6 h-6 text-slate-300 mx-auto mb-2" />
+                <p className="text-xs font-semibold text-slate-700">
+                  {searchQuery
+                    ? 'Tidak ada kunci yang cocok dengan pencarian.'
+                    : 'Belum ada secret kustom yang tersimpan di vault database.'}
+                </p>
+              </div>
+            ) : (
+              filteredSecrets.map((s) => {
+                const isRevealed = Boolean(revealedKeys[s.key_name])
+                const isCopied = copiedKey === s.key_name
+
+                return (
+                  <div key={s.id} className="pt-3 first:pt-0 space-y-2.5">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span className="font-mono font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded border border-slate-200/70 text-xs">
+                            {s.key_name}
+                          </span>
+                          <button
+                            onClick={() => copyToClipboard(s.key_name, `name-${s.key_name}`)}
+                            title="Salin nama kunci"
+                            className="p-1 rounded text-slate-400 hover:text-slate-700 cursor-pointer"
+                          >
+                            {copiedKey === `name-${s.key_name}` ? (
+                              <Check className="w-3.5 h-3.5 text-emerald-600" />
+                            ) : (
+                              <Copy className="w-3.5 h-3.5" />
+                            )}
+                          </button>
+                        </div>
+                        <span className="font-mono uppercase text-[10px] font-bold text-slate-500 mt-0.5 block">
+                          Provider: {s.provider}
+                        </span>
+                      </div>
+
+                      {s.is_active ? (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 shrink-0">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                          Aktif
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-medium bg-slate-100 text-slate-600 border border-slate-200 shrink-0">
+                          Nonaktif
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Masked cipher box */}
+                    <div className="flex items-center justify-between p-2.5 bg-slate-50 rounded-xl border border-slate-200/80 font-mono text-xs">
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        {isRevealed ? (
+                          <>
+                            <Unlock className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                            <span className="truncate text-slate-800 text-[11px]">{s.masked_value}</span>
+                          </>
+                        ) : (
+                          <>
+                            <Lock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                            <span className="tracking-widest text-slate-400 text-[11px]">••••••••••••</span>
+                          </>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-1 shrink-0">
+                        {isRevealed && (
+                          <button
+                            onClick={() => copyToClipboard(s.masked_value, s.key_name)}
+                            title="Salin nilai tersamar"
+                            className="p-1 text-slate-400 hover:text-slate-700 cursor-pointer"
+                          >
+                            {isCopied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                          </button>
+                        )}
+                        <button
+                          onClick={() => toggleRevealKey(s.key_name)}
+                          title={isRevealed ? 'Kunci kembali nilai' : 'Lihat nilai tersamar'}
+                          className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 cursor-pointer"
+                        >
+                          {isRevealed ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                      </div>
+                    </div>
+
+                    {s.description && (
+                      <p className="text-xs text-slate-600 leading-relaxed">{s.description}</p>
+                    )}
+
+                    {/* Mobile Action Buttons with >=44px touch targets */}
+                    <div className="grid grid-cols-2 gap-2 pt-1 border-t border-slate-100">
+                      <button
+                        onClick={() => testSecretConnection(s.provider, s.key_name)}
+                        disabled={testingKey === s.key_name}
+                        className="min-h-[44px] px-3 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+                      >
+                        {testingKey === s.key_name ? (
+                          <Loader2 className="w-3.5 h-3.5 animate-spin text-[#c2ef4e]" />
+                        ) : (
+                          <Zap className="w-3.5 h-3.5 text-[#c2ef4e]" />
+                        )}
+                        <span>{testingKey === s.key_name ? 'Menguji...' : 'Uji Koneksi'}</span>
+                      </button>
+
+                      <button
+                        onClick={() => handleEditSecret(s)}
+                        className="min-h-[44px] px-3 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-800 font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+                      >
+                        <Settings className="w-3.5 h-3.5 text-slate-500" />
+                        <span>Konfigurasi</span>
+                      </button>
+
+                      <button
+                        onClick={() => handleToggleStatus(s.key_name)}
+                        className="min-h-[44px] px-3 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 bg-white text-slate-700 text-xs font-semibold flex items-center justify-center"
+                      >
+                        {s.is_active ? 'Nonaktifkan' : 'Aktifkan'}
+                      </button>
+
+                      <button
+                        onClick={() => setDeletingSecret(s)}
+                        className="min-h-[44px] px-3 py-2 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-semibold flex items-center justify-center gap-1"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        <span>Hapus</span>
+                      </button>
+                    </div>
+                  </div>
+                )
+              })
+            )}
+          </div>
+
+          {/* Desktop Table Container (hidden on mobile, visible on md+) */}
+          <div className="hidden md:block overflow-x-auto touch-pan-x">
             <table className="w-full text-left border-collapse text-xs">
               <thead>
                 <tr className="bg-slate-50/60 border-b border-slate-200/80 text-slate-500 font-mono text-[11px] uppercase tracking-wider font-semibold">
@@ -953,12 +1091,12 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
               </p>
             </div>
 
-            <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+            <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2 pt-2 border-t border-slate-100">
               <button
                 type="button"
                 onClick={() => setDeletingSecret(null)}
                 disabled={isDeleting}
-                className="px-4 py-2 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold cursor-pointer"
+                className="min-h-[44px] px-4 py-2.5 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold cursor-pointer flex items-center justify-center"
               >
                 Batal
               </button>
@@ -966,7 +1104,7 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
                 type="button"
                 onClick={handleConfirmDelete}
                 disabled={isDeleting}
-                className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-xs cursor-pointer disabled:opacity-50 flex items-center gap-1.5"
+                className="min-h-[44px] px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-xs cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1.5"
               >
                 {isDeleting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
                 <span>{isDeleting ? 'Menghapus...' : 'Ya, Hapus'}</span>
@@ -993,18 +1131,21 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
                 <span>{isEditingExisting ? 'Perbarui Kunci API' : 'Simpan Kunci API Terenkripsi'}</span>
               </h3>
               <button
+                type="button"
                 onClick={() => setIsModalOpen(false)}
                 aria-label="Tutup modal"
                 className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700 cursor-pointer"
               >
-                <X className="w-4 h-4" />
+                <X className="w-4 h-4" aria-hidden="true" />
               </button>
             </div>
 
             <form onSubmit={handleSaveSecret} className="space-y-3.5 text-xs">
               <div>
-                <label className="block font-bold text-slate-700 mb-1">Penyedia (Provider)</label>
+                <label htmlFor="global-secret-provider-select" className="block font-bold text-slate-700 mb-1">Penyedia (Provider)</label>
                 <select
+                  id="global-secret-provider-select"
+                  aria-label="Penyedia (Provider)"
                   value={form.provider}
                   onChange={(e) => {
                     const p = e.target.value
@@ -1094,20 +1235,20 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+              <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2 pt-3 border-t border-slate-100">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold cursor-pointer"
+                  className="min-h-[44px] px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold cursor-pointer flex items-center justify-center"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold disabled:opacity-50 cursor-pointer shadow-xs font-display"
+                  className="min-h-[44px] px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold disabled:opacity-50 cursor-pointer shadow-xs font-display flex items-center justify-center"
                 >
-                  {isSubmitting ? 'Menyimpan...' : 'Enkripsi & Simpan'}
+                  {isSubmitting ? 'Menyimpan...' : 'Simpan Kunci API'}
                 </button>
               </div>
             </form>
@@ -1275,20 +1416,20 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
               </div>
 
               {/* Actions */}
-              <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+              <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2 pt-2 border-t border-slate-100">
                 <button
                   type="button"
                   onClick={() => setEditingTask(null)}
-                  className="px-4 py-2 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold"
+                  className="min-h-[44px] px-4 py-2 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold flex items-center justify-center"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
                   disabled={isSavingTask}
-                  className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold shadow-xs flex items-center gap-2 font-display"
+                  className="min-h-[44px] px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold shadow-xs flex items-center justify-center gap-2 font-display cursor-pointer"
                 >
-                  {isSavingTask ? 'Menyimpan...' : 'Simpan Konfigurasi'}
+                  {isSavingTask ? 'Menyimpan...' : 'Simpan Konfigurasi Engine'}
                 </button>
               </div>
             </form>

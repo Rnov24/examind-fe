@@ -193,7 +193,7 @@ export default function ForgotPasswordPage() {
                 <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider font-mono block">
                   Uji Coba Cepat (Akun Demo):
                 </span>
-                <div className="grid grid-cols-2 gap-2 text-xs">
+                <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 gap-2 text-xs">
                   <button
                     type="button"
                     onClick={() => fillDemo('andi.pratama@student.sman1unggul.sch.id')}
@@ -339,7 +339,7 @@ export default function ForgotPasswordPage() {
       </main>
 
       {/* Footer System Info */}
-      <footer className="relative z-10 text-center py-4 text-xs text-slate-400">
+      <footer className="relative z-10 text-center py-4 text-xs text-slate-500">
         &copy; 2026 EXAMIND Academic Assessment System. Dilengkapi Keamanan Resend Transactional Email.
       </footer>
     </div>

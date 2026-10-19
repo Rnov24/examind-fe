@@ -25,6 +25,8 @@ import {
 } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { ExamindLogo } from '@/components/brand/ExamindLogo'
+import { cn } from '@/lib/utils'
+import { tokens } from '@/components/system/tokens'
 import { RibbonNavItem } from './types'
 
 interface RibbonProps {
@@ -109,23 +111,34 @@ export function Ribbon({ items, className = '' }: RibbonProps) {
   return (
     <aside
       aria-label="Navigasi Ribbon Utama"
-      className={`bg-white rounded-full border border-slate-200/80 shadow-card py-4 px-2 w-16 md:w-[68px] flex flex-col items-center justify-between select-none shrink-0 ${className}`}
+      className={cn(
+        tokens.surface.card,
+        tokens.radius.full,
+        tokens.border.default,
+        tokens.shadow.card,
+        'py-4 px-2 w-16 md:w-[68px] flex flex-col items-center justify-between select-none shrink-0',
+        className
+      )}
     >
       {/* Top: Logo Mark */}
       <div className="flex flex-col items-center gap-3 w-full">
         {/* Logo Mark Link */}
         <Link
           href="/dashboard"
-          className="relative group p-1.5 rounded-full hover:bg-slate-100 transition-colors flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-[#150f23]"
+          className={cn(
+            'relative group p-1.5 hover:bg-slate-100 transition-colors flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-[#150f23]',
+            tokens.radius.full
+          )}
           aria-label="Kembali ke Dashboard Utama EXAMIND"
         >
           <ExamindLogo variant="symbol" theme="color" className="w-8 h-8 object-contain shrink-0" priority />
           {/* Tooltip */}
-          <div className="absolute left-full ml-3 px-2.5 py-1 bg-slate-900 text-white text-[11px] font-medium rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 shadow-md z-50 flex items-center font-sans">
+          <div className={cn('absolute left-full ml-3 px-2.5 py-1 bg-slate-900 text-white text-[11px] font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 shadow-md z-50 flex items-center font-sans', tokens.radius.md)}>
             EXAMIND CBT
             <span className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-slate-900" />
           </div>
         </Link>
+
 
         {/* Subtle separator */}
         <div className="w-8 h-px bg-slate-200/70 my-1" aria-hidden="true" />

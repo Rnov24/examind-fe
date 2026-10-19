@@ -1,0 +1,18 @@
+{
+  "command": "ux-design",
+  "timestamp": "2026-10-19T19:48:30+07:00",
+  "brief": "Run /ux-critique then /ux-design on the student exam-taking flow: src/app/(exam)/ (especially student/exam/[examId]/page.tsx and its components). Reduce cognitive load under time pressure: timer always visible but calm, question navigator scannable, answer states unmistakable (answered / flagged / unanswered). Proctoring camera tile: present but non-distracting; clear LIVE indicator; graceful when proctoring is disabled. Transitions between questions feel instant; autosave status communicated subtly. Mobile: usable on phones. Accessibility: keyboard navigation for questions, focus states, aria labels.",
+  "stack": "Next.js + Tailwind + TypeScript",
+  "dials": {
+    "variance": 3,
+    "motion": 3,
+    "density": 7
+  },
+  "patterns": [
+    "Calm Daylight Fintech Arena",
+    "Unmistakable Tetra-State Grid",
+    "Non-Distracting Proctoring Cloak",
+    "Mobile Bottom Ergonomic Dock"
+  ],
+  "output_file": "src/app/(exam)/student/exam/[examId]/page.tsx"
+}

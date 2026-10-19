@@ -2,6 +2,8 @@
 
 import React from 'react'
 import { ArrowUp, ArrowDown } from 'lucide-react'
+import { cn } from '@/lib/utils'
+import { tokens } from '@/components/system/tokens'
 import { StatTrend } from './types'
 
 export interface StatCardProps {
@@ -28,19 +30,18 @@ export function StatCard({
   const iconToneClasses = (() => {
     switch (tone) {
       case 'emerald':
-        return 'bg-emerald-50 border-emerald-200/80 text-emerald-600'
+        return tokens.semantic.emerald.subtle
       case 'indigo':
-        return 'bg-indigo-50 border-indigo-200/80 text-indigo-600'
       case 'violet':
-        return 'bg-violet-50 border-violet-200/80 text-[#6a5fc1]'
+        return tokens.semantic.violet.subtle
       case 'amber':
-        return 'bg-amber-50 border-amber-200/80 text-amber-600'
+        return tokens.semantic.amber.subtle
       case 'rose':
-        return 'bg-rose-50 border-rose-200/80 text-rose-600'
+        return tokens.semantic.rose.subtle
       case 'lime':
-        return 'bg-[#c2ef4e]/20 border-[#c2ef4e]/60 text-slate-950'
+        return tokens.semantic.lime.subtle
       default:
-        return 'bg-slate-50 border-slate-100 text-slate-700'
+        return tokens.semantic.neutral.subtle
     }
   })()
 
@@ -49,7 +50,6 @@ export function StatCard({
       case 'emerald':
         return 'hover:border-emerald-300'
       case 'indigo':
-        return 'hover:border-indigo-300'
       case 'violet':
         return 'hover:border-violet-300'
       case 'amber':
@@ -65,23 +65,37 @@ export function StatCard({
 
   return (
     <div
-      className={`rounded-2xl bg-white border border-slate-200/80 p-5 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all flex flex-col justify-between ${toneBorderClass} ${className}`}
+      className={cn(
+        tokens.surface.card,
+        tokens.radius.xl,
+        tokens.border.default,
+        'p-5',
+        tokens.shadow.cardHover,
+        'transition-all flex flex-col justify-between',
+        toneBorderClass,
+        className
+      )}
     >
       <div>
         {/* Top: Title & Icon */}
         <div className="flex items-center justify-between gap-3">
-          <span className="text-xs font-bold text-slate-600 tracking-tight">
+          <span className="text-xs font-bold text-slate-600 tracking-tight font-sans">
             {title}
           </span>
           <div
-            className={`w-9 h-9 rounded-xl border flex items-center justify-center shrink-0 shadow-2xs transition-colors ${iconToneClasses}`}
+            className={cn(
+              'w-9 h-9 border flex items-center justify-center shrink-0 transition-colors',
+              tokens.radius.lg,
+              tokens.shadow.micro,
+              iconToneClasses
+            )}
           >
             {icon}
           </div>
         </div>
 
         {/* Value */}
-        <div className="font-display text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight tabular-nums mt-3">
+        <div className={cn(tokens.typography.hero, 'tabular-nums mt-3')}>
           {value}
         </div>
       </div>
@@ -90,11 +104,14 @@ export function StatCard({
       <div className="mt-4 pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
         {trend && (
           <div
-            className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold font-mono tracking-tight shadow-2xs ${
+            className={cn(
+              'inline-flex items-center gap-1 px-2.5 py-0.5 text-[11px] font-bold font-mono tracking-tight',
+              tokens.radius.full,
+              tokens.shadow.micro,
               trend.positive !== false
                 ? 'bg-emerald-50 text-emerald-800 border border-emerald-200/80'
                 : 'bg-rose-50 text-rose-800 border border-rose-200/80'
-            }`}
+            )}
           >
             {trend.positive !== false ? (
               <ArrowUp className="w-3 h-3 text-emerald-700 shrink-0 stroke-[2.5]" aria-hidden="true" />
@@ -109,7 +126,7 @@ export function StatCard({
         )}
 
         {subtitle && (
-          <span className="text-[11px] text-slate-500 font-medium">
+          <span className={cn(tokens.typography.caption, 'truncate')}>
             {subtitle}
           </span>
         )}

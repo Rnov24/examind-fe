@@ -3,6 +3,8 @@
 import React from 'react'
 import Link from 'next/link'
 import { PanelLeft } from 'lucide-react'
+import { cn } from '@/lib/utils'
+import { tokens } from '@/components/system/tokens'
 import { useAuthStore } from '@/stores/authStore'
 import { useUiStore } from '@/stores/uiStore'
 import { ExamindLogo } from '@/components/brand/ExamindLogo'
@@ -40,7 +42,7 @@ export function DashboardShell({
   const displayName = greetingName || user?.full_name || 'Administrator'
 
   return (
-    <div className={`space-y-6 w-full font-sans ${className}`}>
+    <div className={cn('space-y-6 w-full font-sans', className)}>
       {/* Top Floating Header Area (Brand pill, Pill Tabs, Cluster) */}
       <header className="flex flex-col md:flex-row items-center justify-between gap-3 w-full">
         {/* Left: Mobile Drawer Trigger & Brand Lockup */}
@@ -52,7 +54,12 @@ export function DashboardShell({
               onClick={toggleSidebar}
               aria-label="Alihkan Sidebar Navigasi"
               aria-expanded={sidebarOpen}
-              className="md:hidden p-2.5 rounded-full bg-white border border-slate-200/80 shadow-xs text-slate-600 hover:text-slate-900 transition-colors cursor-pointer"
+              className={cn(
+                'md:hidden min-w-[44px] min-h-[44px] flex items-center justify-center p-2.5 bg-white text-slate-600 hover:text-slate-900 transition-colors cursor-pointer',
+                tokens.radius.full,
+                tokens.border.default,
+                tokens.shadow.subtle
+              )}
             >
               <PanelLeft className="w-5 h-5" aria-hidden="true" />
             </button>
@@ -60,14 +67,20 @@ export function DashboardShell({
             {/* Brand Pill (Visible on mobile, and clean anchor on desktop) */}
             <Link
               href="/dashboard"
-              className="bg-white rounded-full px-3.5 py-1.5 border border-slate-200/80 shadow-xs flex items-center gap-2 hover:border-slate-300 transition-all group"
+              className={cn(
+                'bg-white px-3.5 py-1.5 flex items-center gap-2 hover:border-slate-300 transition-all group',
+                tokens.radius.full,
+                tokens.border.default,
+                tokens.shadow.subtle
+              )}
             >
               <ExamindLogo variant="lockup" theme="color" className="h-5 sm:h-6 w-auto shrink-0" priority />
-              <span className="text-[10px] font-bold px-1.5 py-0.2 rounded bg-[#c2ef4e] text-slate-950 font-mono tracking-wider shrink-0">
+              <span className={cn('text-[10px] font-bold px-1.5 py-0.2 font-mono tracking-wider shrink-0', tokens.radius.xs, tokens.semantic.lime.badge)}>
                 CBT
               </span>
             </Link>
           </div>
+
 
           {/* Right cluster on mobile */}
           <div className="md:hidden">
@@ -77,7 +90,7 @@ export function DashboardShell({
 
         {/* Center: Top Pill Tab Navigation */}
         {navTabs && navTabs.length > 0 && (
-          <div className="w-full md:w-auto flex justify-center overflow-x-auto py-1">
+          <div className="w-full md:w-auto flex justify-start md:justify-center overflow-x-auto py-1 max-w-full touch-pan-x scrollbar-none">
             <TopPillNav
               tabs={navTabs}
               activeTab={activeTab || navTabs[0]?.id || ''}

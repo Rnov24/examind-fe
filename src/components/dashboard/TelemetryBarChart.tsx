@@ -1,6 +1,8 @@
 'use client'
 
 import React from 'react'
+import { cn } from '@/lib/utils'
+import { tokens } from '@/components/system/tokens'
 
 export interface TelemetryBarPoint {
   day: string
@@ -37,10 +39,14 @@ export function TelemetryBarChart({
 }: TelemetryBarChartProps) {
   return (
     <div
-      className={`p-4 rounded-xl bg-slate-50/90 border border-slate-200/80 space-y-3 ${className}`}
+      className={cn(
+        'p-3.5 bg-slate-50/70 border border-slate-100 space-y-2.5',
+        tokens.radius.lg,
+        className
+      )}
     >
       <div className="flex items-center justify-between text-[11px]">
-        <span className="font-bold text-slate-900">{title}</span>
+        <span className="font-bold text-slate-900 font-sans">{title}</span>
         <span className="font-mono text-slate-500 text-[10px] font-medium">{subtitle}</span>
       </div>
 
@@ -54,7 +60,7 @@ export function TelemetryBarChart({
             <div className="w-full max-w-[18px] flex flex-col items-center gap-0.5 justify-end h-full">
               {/* Top lime AI highlight cap */}
               <div
-                className="w-full bg-[#c2ef4e] rounded-t-sm transition-all group-hover:scale-y-105 shadow-2xs"
+                className={cn('w-full rounded-t-sm transition-all group-hover:scale-y-105', tokens.semantic.lime.badge, tokens.shadow.micro)}
                 style={{ height: `${item.ai * 0.35}%` }}
                 title={`${aiLabel}: ${item.ai}%`}
               />
@@ -75,11 +81,11 @@ export function TelemetryBarChart({
       {/* Legend */}
       <div className="flex items-center justify-center gap-4 text-[10px] font-semibold pt-1 text-slate-700 font-mono">
         <span className="flex items-center gap-1.5">
-          <span className="w-2.5 h-2.5 rounded-xs bg-[#150f23] shadow-2xs" />
+          <span className={cn('w-2.5 h-2.5 bg-[#150f23]', tokens.radius.xs, tokens.shadow.micro)} />
           {serverLabel}
         </span>
         <span className="flex items-center gap-1.5">
-          <span className="w-2.5 h-2.5 rounded-xs bg-[#c2ef4e] border border-lime-400 shadow-2xs" />
+          <span className={cn('w-2.5 h-2.5 bg-[#c2ef4e] border border-lime-400', tokens.radius.xs, tokens.shadow.micro)} />
           {aiLabel}
         </span>
       </div>

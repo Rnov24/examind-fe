@@ -1,0 +1,259 @@
+'use client'
+
+import React, { useState } from 'react'
+import Link from 'next/link'
+import { usePathname, useRouter } from 'next/navigation'
+import {
+  Sun,
+  Moon,
+  HelpCircle,
+  LogOut,
+  LayoutDashboard,
+  Building2,
+  Users,
+  BookOpen,
+  FileSpreadsheet,
+  CheckCircle2,
+  BarChart3,
+  FileText,
+  ShieldCheck,
+  TrendingUp,
+  Coins,
+  Cpu,
+  Activity,
+  Video,
+  Smartphone,
+  Sparkles,
+} from 'lucide-react'
+import { useAuthStore } from '@/stores/authStore'
+import { ExamindLogo } from '@/components/brand/ExamindLogo'
+import { RibbonNavItem } from './types'
+
+interface RibbonProps {
+  items?: RibbonNavItem[]
+  className?: string
+}
+
+export function Ribbon({ items, className = '' }: RibbonProps) {
+  const pathname = usePathname()
+  const router = useRouter()
+  const { user, logout } = useAuthStore()
+  const [themeMode, setThemeMode] = useState<'light' | 'dark'>('light')
+
+  const isSuperAdmin = user?.role === 'superadmin'
+  const isAdmin = user?.role === 'admin'
+  const isTeacher = user?.role === 'teacher'
+  const isStudent = user?.role === 'student' || (!isSuperAdmin && !isAdmin && !isTeacher)
+
+  // Default items based on current role if not explicitly provided
+  const navItems: RibbonNavItem[] =
+    items ||
+    (() => {
+      if (isSuperAdmin) {
+        return [
+          { id: 'dashboard', label: 'Dashboard Utama', href: '/superadmin/dashboard', icon: LayoutDashboard },
+          { id: 'tenants', label: 'Sekolah & Institusi', href: '/superadmin/tenants', icon: Building2 },
+          { id: 'admin-portal', label: 'Portal Admin', href: '/admin/dashboard', icon: ShieldCheck },
+          { id: 'finance', label: 'Keuangan & Tagihan', href: '/superadmin/finance', icon: TrendingUp },
+          { id: 'pricing', label: 'Harga Layanan & Kuota', href: '/superadmin/pricing', icon: Coins },
+          { id: 'secrets', label: 'Kunci API & Keamanan', href: '/superadmin/secrets', icon: Cpu },
+          { id: 'analytics', label: 'Audit & Telemetri Nilai', href: '/analytics', icon: BarChart3 },
+          { id: 'monitor', label: 'Monitor Proctoring Live', href: '/exams/1/monitor', icon: Activity },
+        ]
+      }
+      if (isAdmin) {
+        return [
+          { id: 'dashboard', label: 'Dashboard Admin', href: '/admin/dashboard', icon: LayoutDashboard },
+          { id: 'classes', label: 'Manajemen Kelas', href: '/classes', icon: Users },
+          { id: 'questions', label: 'Bank Soal CBT', href: '/questions', icon: BookOpen },
+          { id: 'exams', label: 'Jadwal Ujian', href: '/exams', icon: FileSpreadsheet },
+          { id: 'monitor', label: 'Proctoring Live', href: '/exams/1/monitor', icon: Video },
+          { id: 'analytics', label: 'Rekap Nilai', href: '/analytics', icon: BarChart3 },
+        ]
+      }
+      if (isTeacher) {
+        return [
+          { id: 'dashboard', label: 'Dashboard Guru', href: '/teacher/dashboard', icon: LayoutDashboard },
+          { id: 'classes', label: 'Kelas Saya', href: '/classes', icon: Users },
+          { id: 'questions', label: 'Bank Soal', href: '/questions', icon: BookOpen },
+          { id: 'exams', label: 'Jadwal Ujian', href: '/exams', icon: FileSpreadsheet },
+          { id: 'grading', label: 'Koreksi Esai AI', href: '/grading', icon: CheckCircle2 },
+          { id: 'analytics', label: 'Analisis Soal', href: '/analytics', icon: BarChart3 },
+        ]
+      }
+      return [
+        { id: 'dashboard', label: 'Dashboard Siswa', href: '/student/dashboard', icon: LayoutDashboard },
+        { id: 'exam', label: 'Ujian Aktif', href: '/student/exam/1', icon: FileText },
+        { id: 'result', label: 'Pembahasan Soal', href: '/student/exam/1/result', icon: Sparkles },
+        { id: 'companion', label: 'Kamera HP Pengawas', href: '/companion', icon: Smartphone },
+      ]
+    })()
+
+  const isActive = (href: string): boolean => {
+    if (pathname === href) return true
+    if (
+      href !== '/' &&
+      href !== '/dashboard' &&
+      href !== '/superadmin/dashboard' &&
+      href !== '/admin/dashboard' &&
+      href !== '/teacher/dashboard' &&
+      href !== '/student/dashboard'
+    ) {
+      return pathname.startsWith(href)
+    }
+    return false
+  }
+
+  const handleLogout = () => {
+    logout()
+    router.push('/login')
+  }
+
+  const toggleTheme = () => {
+    setThemeMode((prev) => (prev === 'light' ? 'dark' : 'light'))
+  }
+
+  return (
+    <aside
+      aria-label="Navigasi Ribbon Utama"
+      className={`bg-white rounded-full border border-slate-200/80 shadow-card py-4 px-2 w-16 md:w-[68px] flex flex-col items-center justify-between select-none shrink-0 ${className}`}
+    >
+      {/* Top: Logo & Theme Switcher */}
+      <div className="flex flex-col items-center gap-3 w-full">
+        {/* Logo Mark Link */}
+        <Link
+          href="/dashboard"
+          className="relative group p-1.5 rounded-full hover:bg-slate-100 transition-colors flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-[#150f23]"
+          aria-label="Kembali ke Dashboard Utama EXAMIND"
+        >
+          <ExamindLogo variant="symbol" theme="color" className="w-8 h-8 object-contain shrink-0" priority />
+          {/* Tooltip */}
+          <div className="absolute left-full ml-3 px-2.5 py-1 bg-slate-900 text-white text-[11px] font-medium rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 shadow-md z-50 flex items-center font-sans">
+            EXAMIND CBT
+            <span className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-slate-900" />
+          </div>
+        </Link>
+
+        {/* Theme Toggle (Sun / Moon) */}
+        <div className="flex flex-col items-center p-1 rounded-full bg-slate-100/90 border border-slate-200/70 gap-0.5">
+          <button
+            type="button"
+            onClick={() => setThemeMode('light')}
+            title="Mode Terang"
+            aria-label="Mode Terang"
+            className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${
+              themeMode === 'light'
+                ? 'bg-white text-amber-500 shadow-2xs font-bold'
+                : 'text-slate-400 hover:text-slate-700'
+            }`}
+          >
+            <Sun className="w-3.5 h-3.5" aria-hidden="true" />
+          </button>
+          <button
+            type="button"
+            onClick={() => setThemeMode('dark')}
+            title="Mode Gelap"
+            aria-label="Mode Gelap"
+            className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${
+              themeMode === 'dark'
+                ? 'bg-[#150f23] text-indigo-300 shadow-2xs'
+                : 'text-slate-400 hover:text-slate-700'
+            }`}
+          >
+            <Moon className="w-3.5 h-3.5" aria-hidden="true" />
+          </button>
+        </div>
+
+        {/* Subtle separator */}
+        <div className="w-8 h-px bg-slate-200/70 my-1" aria-hidden="true" />
+      </div>
+
+      {/* Center: Navigation Icon Buttons */}
+      <nav className="flex flex-col items-center gap-1.5 w-full my-auto py-2" aria-label="Menu Ikon Utama">
+        {navItems.map((item) => {
+          const active = isActive(item.href)
+          const Icon = item.icon
+
+          return (
+            <div key={item.id} className="relative group flex items-center justify-center">
+              <Link
+                href={item.href}
+                aria-label={item.label}
+                aria-current={active ? 'page' : undefined}
+                className={`w-11 h-11 rounded-full flex items-center justify-center transition-all cursor-pointer ${
+                  active
+                    ? 'bg-[#150f23] text-[#c2ef4e] shadow-sm ring-1 ring-slate-800'
+                    : 'text-slate-400 hover:text-slate-900 hover:bg-slate-100/90'
+                }`}
+              >
+                <Icon
+                  className={`w-5 h-5 transition-transform duration-150 group-hover:scale-110 ${
+                    active ? 'text-[#c2ef4e]' : 'text-slate-500 group-hover:text-slate-900'
+                  }`}
+                  aria-hidden="true"
+                />
+              </Link>
+
+              {/* Floating Tooltip */}
+              <div
+                role="tooltip"
+                className="absolute left-full ml-3 px-2.5 py-1 bg-slate-900 text-white text-[11px] font-medium rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 shadow-md z-50 flex items-center font-sans tracking-tight"
+              >
+                {item.label}
+                <span className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-slate-900" />
+              </div>
+            </div>
+          )
+        })}
+      </nav>
+
+      {/* Bottom: Help & Logout pinned */}
+      <div className="flex flex-col items-center gap-1.5 w-full pt-1">
+        {/* Subtle separator */}
+        <div className="w-8 h-px bg-slate-200/70 my-1" aria-hidden="true" />
+
+        {/* Help Button */}
+        <div className="relative group flex items-center justify-center">
+          <button
+            type="button"
+            title="Bantuan & Dokumentasi"
+            aria-label="Bantuan & Dokumentasi"
+            onClick={() => alert('Pusat Bantuan & Dokumentasi CBT EXAMIND v1.0')}
+            className="w-10 h-10 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-800 hover:bg-slate-100 transition-colors"
+          >
+            <HelpCircle className="w-5 h-5" aria-hidden="true" />
+          </button>
+          <div
+            role="tooltip"
+            className="absolute left-full ml-3 px-2.5 py-1 bg-slate-900 text-white text-[11px] font-medium rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 shadow-md z-50 flex items-center font-sans"
+          >
+            Bantuan & Panduan
+            <span className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-slate-900" />
+          </div>
+        </div>
+
+        {/* Logout Button */}
+        <div className="relative group flex items-center justify-center">
+          <button
+            type="button"
+            onClick={handleLogout}
+            title="Keluar dari Akun"
+            aria-label="Keluar dari Akun"
+            className="w-10 h-10 rounded-full flex items-center justify-center text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+          >
+            <LogOut className="w-5 h-5" aria-hidden="true" />
+          </button>
+          <div
+            role="tooltip"
+            className="absolute left-full ml-3 px-2.5 py-1 bg-rose-950 text-white text-[11px] font-medium rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 shadow-md z-50 flex items-center font-sans"
+          >
+            Keluar dari Akun
+            <span className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-rose-950" />
+          </div>
+        </div>
+      </div>
+    </aside>
+  )
+}
+
+export default Ribbon

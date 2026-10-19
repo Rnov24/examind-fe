@@ -1,8 +1,8 @@
 'use client'
 
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import {
   Building2,
   LayoutDashboard,
@@ -23,26 +23,28 @@ import {
   Cpu,
   TrendingUp,
   Coins,
+  Sun,
+  Moon,
+  HelpCircle,
+  LogOut,
+  X,
+  PanelLeftClose,
 } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useUiStore } from '@/stores/uiStore'
+import { ExamindLogo } from '@/components/brand/ExamindLogo'
 
 export default function Sidebar() {
   const pathname = usePathname()
-  const { user } = useAuthStore()
-  const { sidebarOpen, setSidebarOpen, initSidebar } = useUiStore()
+  const router = useRouter()
+  const { user, logout } = useAuthStore()
+  const { sidebarOpen, setSidebarOpen, toggleSidebar, initSidebar } = useUiStore()
+  const [themeMode, setThemeMode] = useState<'light' | 'dark'>('light')
 
-  // Initialize sidebar on first mount (guard for SSR: defaults to true on server, adapts on client)
+  // Initialize sidebar on first mount
   useEffect(() => {
     initSidebar()
-
-    const mql = window.matchMedia('(min-width: 768px)')
-    const handleChange = (e: MediaQueryListEvent) => {
-      setSidebarOpen(e.matches)
-    }
-    mql.addEventListener('change', handleChange)
-    return () => mql.removeEventListener('change', handleChange)
-  }, [initSidebar, setSidebarOpen])
+  }, [initSidebar])
 
   // Close drawer on Escape key (mobile only)
   useEffect(() => {
@@ -65,11 +67,7 @@ export default function Sidebar() {
 
   // Strict, non-overlapping active detection to avoid multiple items being lit up
   const isActive = (path: string): boolean => {
-    // Exact match
     if (pathname === path) return true
-
-    // Sub-route matching (e.g. /classes/1 matches /classes, /questions/2 matches /questions)
-    // Avoid marking parent active if current route has its own dedicated link
     if (
       path !== '/' &&
       path !== '/dashboard' &&
@@ -98,104 +96,294 @@ export default function Sidebar() {
     }
   }
 
-  const renderLink = (
-    href: string,
-    label: string,
-    Icon: React.ComponentType<{ className?: string }>
-  ) => {
-    const active = isActive(href)
-    const isCollapsed = !sidebarOpen
-
-    return (
-      <Link
-        key={href}
-        href={href}
-        onClick={handleNavClick}
-        title={label}
-        aria-label={label}
-        className={`group flex items-center ${
-          isCollapsed ? 'justify-center px-0' : 'justify-between px-3'
-        } py-2.5 rounded-xl text-xs transition-all relative ${
-          active
-            ? 'bg-slate-900 text-white font-semibold shadow-card ring-1 ring-slate-800'
-            : 'text-slate-600 hover:bg-slate-100/90 hover:text-slate-900 font-medium'
-        }`}
-      >
-        {isCollapsed ? (
-          <Icon
-            className={`w-4 h-4 shrink-0 transition-transform group-hover:scale-110 ${
-              active ? 'text-[#c2ef4e]' : 'text-slate-500 group-hover:text-slate-800'
-            }`}
-            aria-hidden="true"
-          />
-        ) : (
-          <div className="flex items-center gap-2.5 min-w-0">
-            <Icon
-              className={`w-4 h-4 shrink-0 transition-transform group-hover:scale-105 ${
-                active ? 'text-[#c2ef4e]' : 'text-slate-500 group-hover:text-slate-800'
-              }`}
-              aria-hidden="true"
-            />
-            <span className="truncate">{label}</span>
-          </div>
-        )}
-      </Link>
-    )
+  const handleLogout = () => {
+    logout()
+    router.push('/login')
   }
 
-  const renderSectionHeader = (title: string) => {
-    if (!sidebarOpen) return null
-
-    return (
-      <div className="pt-3 pb-1 px-3 text-[10px] font-bold uppercase tracking-wider text-slate-500 font-mono flex items-center justify-between">
-        <span>{title}</span>
-      </div>
-    )
+  // Define role navigation links for clean iteration in both rail and expanded modes
+  const getNavLinks = () => {
+    if (isSuperAdmin) {
+      return [
+        { href: '/superadmin/dashboard', label: 'Dashboard', icon: LayoutDashboard, section: 'Menu Utama' },
+        { href: '/superadmin/tenants', label: 'Sekolah', icon: Building2, section: 'Menu Utama' },
+        { href: '/admin/dashboard', label: 'Portal Admin', icon: ShieldCheck, section: 'Menu Utama' },
+        { href: '/superadmin/finance', label: 'Keuangan', icon: TrendingUp, section: 'Keuangan' },
+        { href: '/superadmin/pricing', label: 'Harga Layanan', icon: Coins, section: 'Keuangan' },
+        { href: '/superadmin/secrets', label: 'Kunci API', icon: Cpu, section: 'Sistem' },
+        { href: '/analytics', label: 'Audit Nilai', icon: BarChart3, section: 'Sistem' },
+        { href: '/exams/1/monitor', label: 'Monitor Live', icon: Activity, section: 'Sistem' },
+      ]
+    }
+    if (isAdmin) {
+      return [
+        { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard, section: 'Menu Utama' },
+        { href: '/classes', label: 'Kelas', icon: Users, section: 'Menu Utama' },
+        { href: '/questions', label: 'Bank Soal', icon: BookOpen, section: 'Ujian' },
+        { href: '/exams', label: 'Jadwal Ujian', icon: FileSpreadsheet, section: 'Ujian' },
+        { href: '/exams/1/monitor', label: 'Proctoring Live', icon: Video, section: 'Ujian' },
+        { href: '/analytics', label: 'Rekap Nilai', icon: BarChart3, section: 'Lainnya' },
+        { href: '/superadmin/secrets', label: 'Pengaturan', icon: Key, section: 'Lainnya' },
+      ]
+    }
+    if (isTeacher) {
+      return [
+        { href: '/teacher/dashboard', label: 'Dashboard', icon: LayoutDashboard, section: 'Menu Utama' },
+        { href: '/classes', label: 'Kelas Saya', icon: Users, section: 'Menu Utama' },
+        { href: '/questions', label: 'Bank Soal', icon: BookOpen, section: 'Menu Utama' },
+        { href: '/exams', label: 'Jadwal Ujian', icon: FileSpreadsheet, section: 'Ujian' },
+        { href: '/exams/create', label: 'Buat Ujian', icon: PlusCircle, section: 'Ujian' },
+        { href: '/exams/1/monitor', label: 'Proctoring Live', icon: Video, section: 'Ujian' },
+        { href: '/grading', label: 'Koreksi Esai', icon: CheckCircle2, section: 'Penilaian' },
+        { href: '/analytics', label: 'Analisis Soal', icon: BarChart3, section: 'Penilaian' },
+      ]
+    }
+    return [
+      { href: '/student/dashboard', label: 'Dashboard', icon: LayoutDashboard, section: 'Menu Utama' },
+      { href: '/student/exam/1', label: 'Mulai Ujian', icon: FileText, section: 'Menu Utama' },
+      { href: '/student/exam/1/result', label: 'Pembahasan', icon: Sparkles, section: 'Hasil' },
+      { href: '/companion', label: 'Kamera HP', icon: Smartphone, section: 'Perangkat' },
+    ]
   }
+
+  const navLinks = getNavLinks()
 
   return (
     <>
-      {/* Mobile Drawer Backdrop */}
-      <div
-        onClick={() => setSidebarOpen(false)}
-        className={`fixed inset-0 z-40 bg-slate-950/60 transition-opacity duration-300 md:hidden motion-reduce:transition-none ${
-          sidebarOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
-        }`}
-        aria-hidden="true"
-      />
+      {/* ========================================================
+          1. DESKTOP FLOATING ICON RIBBON (When !sidebarOpen on desktop)
+          Replaces rectangular sidebar with Finexy floating rail aesthetic
+         ======================================================== */}
+      {!sidebarOpen && (
+        <aside
+          id="sidebar-ribbon"
+          aria-label="Navigasi Ribbon Rail"
+          className="hidden md:flex flex-col items-center justify-between sticky top-4 my-4 ml-4 h-[calc(100vh-2rem)] w-16 md:w-[68px] bg-white rounded-full border border-slate-200/80 shadow-card py-4 px-2 select-none shrink-0 z-30"
+        >
+          {/* Top: Logo Mark & Theme Switcher */}
+          <div className="flex flex-col items-center gap-3 w-full">
+            {/* Logo Link */}
+            <Link
+              href="/dashboard"
+              className="relative group p-1.5 rounded-full hover:bg-slate-100 transition-colors flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-[#150f23]"
+              aria-label="Kembali ke Dashboard Utama"
+            >
+              <ExamindLogo variant="symbol" theme="color" className="w-8 h-8 object-contain shrink-0" priority />
+              <div
+                role="tooltip"
+                className="absolute left-full ml-3 px-2.5 py-1 bg-slate-900 text-white text-[11px] font-medium rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 shadow-md z-50 flex items-center font-sans tracking-tight"
+              >
+                EXAMIND CBT
+                <span className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-slate-900" />
+              </div>
+            </Link>
 
-      {/* Main Sidebar Navigation / Overlay Drawer */}
-      <aside
-        id="sidebar-nav"
-        aria-label="Menu Navigasi Utama"
-        className={`fixed md:sticky top-0 md:top-16 inset-y-0 md:inset-y-auto left-0 md:left-auto z-40 md:z-20 shrink-0 border-r border-slate-200/80 bg-white md:bg-white/85 backdrop-blur-md flex flex-col justify-between h-full md:h-[calc(100vh-4rem)] overflow-y-auto overflow-x-hidden text-slate-800 select-none shadow-2xl md:shadow-2xs transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none max-w-[calc(100vw-3rem)] md:max-w-none ${
-          sidebarOpen
-            ? 'w-72 md:w-72 translate-x-0 p-3.5 pb-[max(1rem,env(safe-area-inset-bottom))] md:pb-3.5'
-            : '-translate-x-full md:translate-x-0 w-72 md:w-[76px] pointer-events-none md:pointer-events-auto p-3.5 md:px-2.5 md:py-3.5 pb-[max(1rem,env(safe-area-inset-bottom))] md:pb-3.5'
-        }`}
-      >
-        <div className="space-y-4">
-          {/* Role Specific Navigation */}
-          <nav className="space-y-1">
-            {/* ==================== SUPERADMIN NAVIGATION ==================== */}
-            {isSuperAdmin && (
-              <>
-                {renderSectionHeader('Menu Utama')}
-                {renderLink('/superadmin/dashboard', 'Dashboard', LayoutDashboard)}
-                {renderLink('/superadmin/tenants', 'Sekolah', Building2)}
-                {renderLink('/admin/dashboard', 'Portal Admin', ShieldCheck)}
+            {/* Sun / Moon Theme Toggle */}
+            <div className="flex flex-col items-center p-1 rounded-full bg-slate-100/90 border border-slate-200/70 gap-0.5">
+              <button
+                type="button"
+                onClick={() => setThemeMode('light')}
+                title="Mode Terang"
+                aria-label="Mode Terang"
+                className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${
+                  themeMode === 'light'
+                    ? 'bg-white text-amber-500 shadow-2xs font-bold'
+                    : 'text-slate-400 hover:text-slate-700'
+                }`}
+              >
+                <Sun className="w-3.5 h-3.5" aria-hidden="true" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setThemeMode('dark')}
+                title="Mode Gelap"
+                aria-label="Mode Gelap"
+                className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${
+                  themeMode === 'dark'
+                    ? 'bg-[#150f23] text-indigo-300 shadow-2xs'
+                    : 'text-slate-400 hover:text-slate-700'
+                }`}
+              >
+                <Moon className="w-3.5 h-3.5" aria-hidden="true" />
+              </button>
+            </div>
 
-                {renderSectionHeader('Keuangan')}
-                {renderLink('/superadmin/finance', 'Keuangan', TrendingUp)}
-                {renderLink('/superadmin/pricing', 'Harga Layanan', Coins)}
+            {/* Hairline Separator */}
+            <div className="w-8 h-px bg-slate-200/70 my-0.5" aria-hidden="true" />
+          </div>
 
-                {renderSectionHeader('Sistem')}
-                {renderLink('/superadmin/secrets', 'Kunci API', Cpu)}
-                {renderLink('/analytics', 'Audit Nilai', BarChart3)}
-                {renderLink('/exams/1/monitor', 'Monitor Live', Activity)}
+          {/* Center: Navigation Icon Buttons with Tooltips */}
+          <nav className="flex flex-col items-center gap-1.5 w-full my-auto py-2 overflow-y-auto scrollbar-none" aria-label="Menu Ikon Ribbon">
+            {navLinks.map((item) => {
+              const active = isActive(item.href)
+              const Icon = item.icon
 
-                {/* SuperAdmin Infrastructure Health Card */}
-                {sidebarOpen && (
+              return (
+                <div key={item.href} className="relative group flex items-center justify-center">
+                  <Link
+                    href={item.href}
+                    aria-label={item.label}
+                    aria-current={active ? 'page' : undefined}
+                    className={`w-11 h-11 rounded-full flex items-center justify-center transition-all cursor-pointer ${
+                      active
+                        ? 'bg-[#150f23] text-[#c2ef4e] shadow-sm ring-1 ring-slate-800'
+                        : 'text-slate-400 hover:text-slate-900 hover:bg-slate-100/90'
+                    }`}
+                  >
+                    <Icon
+                      className={`w-5 h-5 transition-transform duration-150 group-hover:scale-110 ${
+                        active ? 'text-[#c2ef4e]' : 'text-slate-500 group-hover:text-slate-900'
+                      }`}
+                      aria-hidden="true"
+                    />
+                  </Link>
+
+                  {/* Floating Tooltip */}
+                  <div
+                    role="tooltip"
+                    className="absolute left-full ml-3 px-2.5 py-1 bg-slate-900 text-white text-[11px] font-medium rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 shadow-md z-50 flex items-center font-sans tracking-tight"
+                  >
+                    {item.label}
+                    <span className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-slate-900" />
+                  </div>
+                </div>
+              )
+            })}
+          </nav>
+
+          {/* Bottom: Help & Logout pinned */}
+          <div className="flex flex-col items-center gap-1.5 w-full pt-1">
+            <div className="w-8 h-px bg-slate-200/70 my-0.5" aria-hidden="true" />
+
+            {/* Help Button */}
+            <div className="relative group flex items-center justify-center">
+              <button
+                type="button"
+                onClick={() => alert('Pusat Bantuan CBT EXAMIND v1.0')}
+                title="Bantuan & Dokumentasi"
+                aria-label="Bantuan & Dokumentasi"
+                className="w-10 h-10 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer"
+              >
+                <HelpCircle className="w-5 h-5" aria-hidden="true" />
+              </button>
+              <div
+                role="tooltip"
+                className="absolute left-full ml-3 px-2.5 py-1 bg-slate-900 text-white text-[11px] font-medium rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 shadow-md z-50 flex items-center font-sans tracking-tight"
+              >
+                Bantuan & Panduan
+                <span className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-slate-900" />
+              </div>
+            </div>
+
+            {/* Logout Button */}
+            <div className="relative group flex items-center justify-center">
+              <button
+                type="button"
+                onClick={handleLogout}
+                title="Keluar dari Akun"
+                aria-label="Keluar dari Akun"
+                className="w-10 h-10 rounded-full flex items-center justify-center text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+              >
+                <LogOut className="w-5 h-5" aria-hidden="true" />
+              </button>
+              <div
+                role="tooltip"
+                className="absolute left-full ml-3 px-2.5 py-1 bg-rose-950 text-white text-[11px] font-medium rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 shadow-md z-50 flex items-center font-sans tracking-tight"
+              >
+                Keluar dari Akun
+                <span className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-rose-950" />
+              </div>
+            </div>
+          </div>
+        </aside>
+      )}
+
+      {/* ========================================================
+          2. MOBILE DRAWER & EXPANDED SIDEBAR (When sidebarOpen is true)
+          Preserves existing mobile drawer functionality and links
+         ======================================================== */}
+      {sidebarOpen && (
+        <>
+          {/* Mobile Backdrop */}
+          <div
+            onClick={() => setSidebarOpen(false)}
+            className="fixed inset-0 z-40 bg-slate-950/60 transition-opacity duration-300 md:hidden motion-reduce:transition-none"
+            aria-hidden="true"
+          />
+
+          <aside
+            id="sidebar-nav"
+            aria-label="Menu Navigasi Lengkap"
+            className="fixed md:sticky top-0 md:top-4 inset-y-0 md:inset-y-auto left-0 md:left-auto z-50 md:z-20 shrink-0 md:my-4 md:ml-4 w-72 h-full md:h-[calc(100vh-2rem)] bg-white md:rounded-3xl border-r md:border border-slate-200/80 shadow-2xl md:shadow-card flex flex-col justify-between p-4 overflow-y-auto text-slate-800 select-none transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]"
+          >
+            <div className="space-y-4">
+              {/* Header with Brand & Close Button */}
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                <Link href="/dashboard" className="flex items-center gap-2 group" onClick={handleNavClick}>
+                  <ExamindLogo variant="lockup" theme="color" className="h-6 w-auto shrink-0" priority />
+                  <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-[#c2ef4e] text-slate-950 font-mono tracking-wider">
+                    CBT
+                  </span>
+                </Link>
+
+                <button
+                  type="button"
+                  onClick={() => setSidebarOpen(false)}
+                  title="Sembunyikan Sidebar"
+                  aria-label="Sembunyikan Sidebar"
+                  className="p-1.5 rounded-xl text-slate-400 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer"
+                >
+                  <PanelLeftClose className="w-5 h-5 hidden md:block" aria-hidden="true" />
+                  <X className="w-5 h-5 md:hidden" aria-hidden="true" />
+                </button>
+              </div>
+
+              {/* Navigation Links Grouped by Section */}
+              <nav className="space-y-1">
+                {(() => {
+                  let lastSection = ''
+                  return navLinks.map((item) => {
+                    const active = isActive(item.href)
+                    const Icon = item.icon
+                    const showSection = item.section !== lastSection
+                    if (showSection) lastSection = item.section
+
+                    return (
+                      <React.Fragment key={item.href}>
+                        {showSection && (
+                          <div className="pt-3 pb-1 px-3 text-[10px] font-bold uppercase tracking-wider text-slate-500 font-mono">
+                            {item.section}
+                          </div>
+                        )}
+                        <Link
+                          href={item.href}
+                          onClick={handleNavClick}
+                          title={item.label}
+                          aria-label={item.label}
+                          aria-current={active ? 'page' : undefined}
+                          className={`group flex items-center justify-between px-3 py-2.5 rounded-xl text-xs transition-all ${
+                            active
+                              ? 'bg-[#150f23] text-white font-semibold shadow-card ring-1 ring-slate-800'
+                              : 'text-slate-600 hover:bg-slate-100/90 hover:text-slate-900 font-medium'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <Icon
+                              className={`w-4 h-4 shrink-0 transition-transform group-hover:scale-105 ${
+                                active ? 'text-[#c2ef4e]' : 'text-slate-500 group-hover:text-slate-800'
+                              }`}
+                              aria-hidden="true"
+                            />
+                            <span className="truncate">{item.label}</span>
+                          </div>
+                        </Link>
+                      </React.Fragment>
+                    )
+                  })
+                })()}
+
+                {/* Role Specific Status Card */}
+                {isSuperAdmin && (
                   <div className="mt-4 p-3 rounded-xl bg-slate-900 text-white text-[11px] space-y-2 shadow-card border border-slate-800">
                     <div className="flex items-center justify-between">
                       <span className="font-mono text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Cluster Engine</span>
@@ -216,34 +404,11 @@ export default function Sidebar() {
                           Terhubung
                         </span>
                       </div>
-                      <div className="flex justify-between">
-                        <span>AI Provider:</span>
-                        <span className="text-indigo-300">Gemini 2.5 Flash</span>
-                      </div>
                     </div>
                   </div>
                 )}
-              </>
-            )}
 
-            {/* ==================== ADMIN SEKOLAH NAVIGATION ==================== */}
-            {isAdmin && (
-              <>
-                {renderSectionHeader('Menu Utama')}
-                {renderLink('/admin/dashboard', 'Dashboard', LayoutDashboard)}
-                {renderLink('/classes', 'Kelas', Users)}
-
-                {renderSectionHeader('Ujian')}
-                {renderLink('/questions', 'Bank Soal', BookOpen)}
-                {renderLink('/exams', 'Jadwal Ujian', FileSpreadsheet)}
-                {renderLink('/exams/1/monitor', 'Proctoring Live', Video)}
-
-                {renderSectionHeader('Lainnya')}
-                {renderLink('/analytics', 'Rekap Nilai', BarChart3)}
-                {renderLink('/superadmin/secrets', 'Pengaturan', Key)}
-
-                {/* Admin License Status Card */}
-                {sidebarOpen && (
+                {isAdmin && (
                   <div className="mt-4 p-3 rounded-xl bg-slate-50 border border-slate-200/80 text-[11px] space-y-2">
                     <div className="flex items-center justify-between">
                       <span className="font-bold text-slate-800 text-[10px] uppercase font-mono tracking-wider">Lisensi Institusi</span>
@@ -256,28 +421,8 @@ export default function Sidebar() {
                     </p>
                   </div>
                 )}
-              </>
-            )}
 
-            {/* ==================== TEACHER NAVIGATION ==================== */}
-            {isTeacher && (
-              <>
-                {renderSectionHeader('Menu Utama')}
-                {renderLink('/teacher/dashboard', 'Dashboard', LayoutDashboard)}
-                {renderLink('/classes', 'Kelas Saya', Users)}
-                {renderLink('/questions', 'Bank Soal', BookOpen)}
-
-                {renderSectionHeader('Ujian')}
-                {renderLink('/exams', 'Jadwal Ujian', FileSpreadsheet)}
-                {renderLink('/exams/create', 'Buat Ujian', PlusCircle)}
-                {renderLink('/exams/1/monitor', 'Proctoring Live', Video)}
-
-                {renderSectionHeader('Penilaian')}
-                {renderLink('/grading', 'Koreksi Esai', CheckCircle2)}
-                {renderLink('/analytics', 'Analisis Soal', BarChart3)}
-
-                {/* Teacher AI Studio Card */}
-                {sidebarOpen && (
+                {isTeacher && (
                   <div className="mt-4 p-3 rounded-xl bg-gradient-to-br from-indigo-50/70 to-indigo-50/40 border border-indigo-200/80 text-[11px] space-y-2">
                     <div className="flex items-center justify-between">
                       <span className="font-bold text-indigo-950 flex items-center gap-1.5 text-xs">
@@ -289,28 +434,12 @@ export default function Sidebar() {
                       </span>
                     </div>
                     <p className="text-[10px] text-slate-600 leading-relaxed">
-                      Generate draft soal PG & esai dengan rubrik 4 dimensi otomatis melalui Bank Soal.
+                      Generate draft soal PG & esai dengan rubrik otomatis melalui Bank Soal.
                     </p>
                   </div>
                 )}
-              </>
-            )}
 
-            {/* ==================== STUDENT NAVIGATION ==================== */}
-            {isStudent && (
-              <>
-                {renderSectionHeader('Menu Utama')}
-                {renderLink('/student/dashboard', 'Dashboard', LayoutDashboard)}
-                {renderLink('/student/exam/1', 'Mulai Ujian', FileText)}
-
-                {renderSectionHeader('Hasil')}
-                {renderLink('/student/exam/1/result', 'Pembahasan', Sparkles)}
-
-                {renderSectionHeader('Perangkat')}
-                {renderLink('/companion', 'Kamera HP', Smartphone)}
-
-                {/* Student Proctoring Status Card */}
-                {sidebarOpen && (
+                {isStudent && (
                   <div className="mt-4 p-3.5 rounded-xl bg-emerald-50/80 border border-emerald-200 text-[11px] space-y-2">
                     <div className="flex items-center justify-between">
                       <span className="font-bold text-emerald-950 flex items-center gap-1.5 text-xs">
@@ -322,36 +451,34 @@ export default function Sidebar() {
                       </span>
                     </div>
                     <p className="text-[10px] text-emerald-800/80 leading-relaxed">
-                      Pengawasan kamera ganda dan proteksi layar penuh aktif selama sesi ujian berlangsung.
+                      Pengawasan kamera ganda dan proteksi layar penuh aktif.
                     </p>
                   </div>
                 )}
-              </>
-            )}
-          </nav>
-        </div>
+              </nav>
+            </div>
 
-        {/* Global Sidebar System Footer */}
-        {sidebarOpen && (
-          <div className="pt-3 pb-[max(0.5rem,env(safe-area-inset-bottom))] md:pb-0 border-t border-slate-200/80 space-y-2">
-            <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 text-[10px] font-mono text-slate-600 flex items-center justify-between">
-              <div className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="font-semibold text-slate-900">TiDB Cloud & WS</span>
+            {/* Sidebar Footer */}
+            <div className="pt-3 pb-[max(0.5rem,env(safe-area-inset-bottom))] border-t border-slate-200/80 space-y-2">
+              <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 text-[10px] font-mono text-slate-600 flex items-center justify-between">
+                <div className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="font-semibold text-slate-900">TiDB Cloud & WS</span>
+                </div>
+                <span className="text-slate-500 font-bold">Ready</span>
               </div>
-              <span className="text-slate-500 font-bold">Ready</span>
-            </div>
 
-            <div className="px-2 flex items-center justify-between text-[10px] text-slate-500 font-mono">
-              <span>EXAMIND v1.0 • Next.js 15</span>
-              <span className="flex items-center gap-1">
-                <Cpu className="w-3 h-3 text-slate-500" aria-hidden="true" />
-                Edge AI
-              </span>
+              <div className="px-2 flex items-center justify-between text-[10px] text-slate-500 font-mono">
+                <span>EXAMIND v1.0 • Next.js 15</span>
+                <span className="flex items-center gap-1">
+                  <Cpu className="w-3 h-3 text-slate-500" aria-hidden="true" />
+                  Edge AI
+                </span>
+              </div>
             </div>
-          </div>
-        )}
-      </aside>
+          </aside>
+        </>
+      )}
     </>
   )
 }

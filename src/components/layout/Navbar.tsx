@@ -2,7 +2,7 @@
 
 import React, { useEffect } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { LogOut, PanelLeft } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useUiStore } from '@/stores/uiStore'
@@ -10,6 +10,7 @@ import { ExamindLogo } from '@/components/brand/ExamindLogo'
 
 export default function Navbar() {
   const router = useRouter()
+  const pathname = usePathname()
   const { user, logout, hydrate, isHydrated } = useAuthStore()
   const { sidebarOpen, toggleSidebar, initSidebar } = useUiStore()
 
@@ -22,6 +23,12 @@ export default function Navbar() {
       hydrate()
     }
   }, [isHydrated, hydrate])
+
+  // In Finexy design language, the dashboard uses floating ribbon + TopPillNav + profile chip,
+  // making the legacy top navbar redundant on dashboard pages.
+  if (pathname === '/superadmin/dashboard') {
+    return null
+  }
 
   const institutionName = user?.tenant_name || 'Portal CBT Sekolah'
 

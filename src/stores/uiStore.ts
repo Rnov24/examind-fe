@@ -9,14 +9,13 @@ interface UiState {
 }
 
 export const useUiStore = create<UiState>((set, get) => ({
-  sidebarOpen: true,
+  sidebarOpen: false,
   isInitialized: false,
   toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),
   setSidebarOpen: (open: boolean) => set({ sidebarOpen: open }),
   initSidebar: () => {
     if (typeof window !== 'undefined' && !get().isInitialized) {
-      const isDesktop = window.matchMedia('(min-width: 768px)').matches
-      set({ sidebarOpen: isDesktop, isInitialized: true })
+      set({ sidebarOpen: false, isInitialized: true })
     }
   },
 }))

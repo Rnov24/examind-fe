@@ -23,8 +23,6 @@ import {
   Cpu,
   TrendingUp,
   Coins,
-  Sun,
-  Moon,
   HelpCircle,
   LogOut,
   X,
@@ -39,7 +37,6 @@ export default function Sidebar() {
   const router = useRouter()
   const { user, logout } = useAuthStore()
   const { sidebarOpen, setSidebarOpen, toggleSidebar, initSidebar } = useUiStore()
-  const [themeMode, setThemeMode] = useState<'light' | 'dark'>('light')
 
   // Initialize sidebar on first mount
   useEffect(() => {
@@ -177,36 +174,6 @@ export default function Sidebar() {
                 <span className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-slate-900" />
               </div>
             </Link>
-
-            {/* Sun / Moon Theme Toggle */}
-            <div className="flex flex-col items-center p-1 rounded-full bg-slate-100/90 border border-slate-200/70 gap-0.5">
-              <button
-                type="button"
-                onClick={() => setThemeMode('light')}
-                title="Mode Terang"
-                aria-label="Mode Terang"
-                className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${
-                  themeMode === 'light'
-                    ? 'bg-white text-amber-500 shadow-2xs font-bold'
-                    : 'text-slate-400 hover:text-slate-700'
-                }`}
-              >
-                <Sun className="w-3.5 h-3.5" aria-hidden="true" />
-              </button>
-              <button
-                type="button"
-                onClick={() => setThemeMode('dark')}
-                title="Mode Gelap"
-                aria-label="Mode Gelap"
-                className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${
-                  themeMode === 'dark'
-                    ? 'bg-[#150f23] text-indigo-300 shadow-2xs'
-                    : 'text-slate-400 hover:text-slate-700'
-                }`}
-              >
-                <Moon className="w-3.5 h-3.5" aria-hidden="true" />
-              </button>
-            </div>
 
             {/* Hairline Separator */}
             <div className="w-8 h-px bg-slate-200/70 my-0.5" aria-hidden="true" />

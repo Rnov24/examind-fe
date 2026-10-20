@@ -203,8 +203,7 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
   }
 
   useEffect(() => {
-    loadSecrets()
-    loadTaskSecrets()
+    void Promise.all([loadSecrets(), loadTaskSecrets()])
   }, [])
 
   const getSecretByKey = (keyName: string) => {

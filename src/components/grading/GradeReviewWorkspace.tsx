@@ -27,6 +27,7 @@ import {
   FileSpreadsheet,
 } from 'lucide-react'
 import api from '@/lib/api'
+import { fetchCachedExamsList } from '@/lib/bentoCache'
 
 interface SessionListItem {
   session_id: number
@@ -107,8 +108,7 @@ export default function GradeReviewWorkspace({
 
   async function loadExams() {
     try {
-      const res = await api.get('/exams')
-      const exams = res.data.data || []
+      const exams = await fetchCachedExamsList()
       setAllExams(exams)
       if (!initialExamId && exams.length > 0) {
         setExamId(exams[0].id)
@@ -175,7 +175,7 @@ export default function GradeReviewWorkspace({
     try {
       const newScore = overrideForm[ansId]
       const notes = notesForm[ansId]
-      await api.put(`/grading/answer/${ansId}/override`, {
+      const res = await api.put(`/grading/answer/${ansId}/override`, {
         teacher_override_score: newScore,
         teacher_notes: notes,
       })
@@ -186,7 +186,21 @@ export default function GradeReviewWorkspace({
         setSessionDetail({ ...sessionDetail, answers: updatedAnswers })
       }
       showNotification('success', 'Nilai guru berhasil disimpan ke lembar penilaian siswa!')
-      await loadSessions(examId)
+      // Patch the session row locally from the PUT response (backend returns the new
+      // session total and always marks the session "graded"), avoiding a full sessions refetch.
+      const newTotal = res?.data?.data?.session_total
+      if (newTotal !== null && newTotal !== undefined) {
+        setSessionsList((prev) =>
+          prev.map((s) =>
+            s.session_id === selectedSessionId
+              ? { ...s, total_score: Number(newTotal), status: 'graded' }
+              : s
+          )
+        )
+      } else {
+        // Can't determine the new status locally — fall back to a full refetch
+        await loadSessions(examId)
+      }
     } catch (err: any) {
       showNotification('error', err.response?.data?.message || 'Gagal menyimpan nilai guru. Coba lagi.')
     } finally {

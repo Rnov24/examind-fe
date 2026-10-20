@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useCallback, useMemo } from 'react'
+import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import {
   Building2,
   Plus,
@@ -29,6 +29,13 @@ export default function SuperAdminTenantsPage() {
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
+  // Debounced search (350ms) so typing doesn't rebuild the cache key on every keystroke
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('')
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedSearchQuery(searchQuery), 350)
+    return () => clearTimeout(t)
+  }, [searchQuery])
+
   // 1. Parallel Fetch: Platform Stats for Top Metrics
   const statsBlock = useBentoBlock<any>({
     key: 'superadmin:stats',
@@ -40,11 +47,13 @@ export default function SuperAdminTenantsPage() {
   })
 
   // 2. Parallel Fetch: Tenants Directory List
+  // When no filters are active, reuse the dashboard's tenants key to avoid cache fragmentation
+  const isUnfiltered = !debouncedSearchQuery.trim() && !filterPlan
   const tenantsBlock = useBentoBlock<any[]>({
-    key: `superadmin:tenants:${searchQuery}:${filterPlan}`,
+    key: isUnfiltered ? 'superadmin:dashboard:tenants' : `superadmin:tenants:${debouncedSearchQuery}:${filterPlan}`,
     fetcher: async () => {
       const params: Record<string, string> = {}
-      if (searchQuery.trim()) params.search = searchQuery.trim()
+      if (debouncedSearchQuery.trim()) params.search = debouncedSearchQuery.trim()
       if (filterPlan) params.plan = filterPlan
       const res = await api.get('/superadmin/tenants', { params })
       return res.data.data || []

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useMemo, useCallback } from 'react'
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import {
@@ -94,18 +94,22 @@ export default function ExamDetailPage() {
     }
   }, [examId])
 
+  const didAutoSelectBankRef = useRef(false)
+
   const loadBanks = useCallback(async () => {
     try {
       const res = await api.get('/questions/banks')
       const banks = res.data.data || []
       setAvailableBanks(banks)
-      if (banks.length > 0 && !selectedBankId) {
+      // Auto-select the first bank on initial load only (ref guard prevents re-selection loops)
+      if (banks.length > 0 && !didAutoSelectBankRef.current) {
+        didAutoSelectBankRef.current = true
         setSelectedBankId(banks[0].id)
       }
     } catch (err) {
       console.error('Failed to load banks:', err)
     }
-  }, [selectedBankId])
+  }, [])
 
   const loadBankQuestions = useCallback(async (bankIdVal: number) => {
     if (!bankIdVal) return

@@ -17,6 +17,7 @@ import {
   Sparkles,
 } from 'lucide-react'
 import api from '@/lib/api'
+import { fetchCachedExamsList } from '@/lib/bentoCache'
 import {
   DashboardShell,
   StatCard,
@@ -157,8 +158,7 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
 
   async function loadExamsList() {
     try {
-      const res = await api.get('/exams')
-      const exams: ExamOption[] = res.data.data || []
+      const exams: ExamOption[] = await fetchCachedExamsList<ExamOption>()
       setAllExams(exams)
       if (!initialExamId && exams.length > 0) {
         setExamId(exams[0].id)

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useMemo } from 'react'
 import Link from 'next/link'
 import {
   TrendingUp,
@@ -22,6 +22,7 @@ import {
   Search,
 } from 'lucide-react'
 import api from '@/lib/api'
+import { useBentoBlock } from '@/lib/bentoCache'
 import { useCountUp, MoneyCountUp, formatIDR } from '@/hooks/useCountUp'
 import {
   DashboardShell,
@@ -82,26 +83,21 @@ interface FinanceData {
 export default function SuperAdminFinancePage() {
   const { user } = useAuthStore()
   const [activeTab, setActiveTab] = useState('finance')
-  const [financeData, setFinanceData] = useState<FinanceData | null>(null)
-  const [loading, setLoading] = useState(true)
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null)
   const [searchInvoice, setSearchInvoice] = useState('')
 
-  const loadFinance = async () => {
-    setLoading(true)
-    try {
+  // Shared cache block with the superadmin dashboard ('superadmin:finance', 60s TTL)
+  const financeBlock = useBentoBlock<FinanceData>({
+    key: 'superadmin:finance',
+    fetcher: async () => {
       const res = await api.get('/superadmin/finance')
-      setFinanceData(res.data.data)
-    } catch (err) {
-      console.error('Failed to load finance data:', err)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    loadFinance()
-  }, [])
+      return res.data.data
+    },
+    ttlMs: 60000,
+  })
+  const financeData = financeBlock.data
+  const loading = financeBlock.status === 'loading' || financeBlock.isRefreshing
+  const loadFinance = () => financeBlock.reload(true)
 
   // Cascading money count-up hooks for top KPI cards
   const mrrCount = useCountUp(financeData?.mrr, 1200, { delay: 0 })

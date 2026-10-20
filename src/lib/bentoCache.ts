@@ -12,6 +12,9 @@ interface CacheEntry<T> {
 // In-memory module-level cache for SWR-lite pattern (zero external deps)
 const memoryCache = new Map<string, CacheEntry<any>>()
 
+// In-flight request dedup: concurrent execute() calls with the same key share one promise
+const inflightRequests = new Map<string, Promise<any>>()
+
 /**
  * Retrieve cached data by key if present.
  * Returns null if not found.
@@ -36,11 +39,17 @@ export function setBentoCache<T>(key: string, data: T): void {
 export function invalidateBentoCache(keyPrefix?: string): void {
   if (!keyPrefix) {
     memoryCache.clear()
+    inflightRequests.clear()
     return
   }
   for (const k of memoryCache.keys()) {
     if (k.startsWith(keyPrefix)) {
       memoryCache.delete(k)
+    }
+  }
+  for (const k of inflightRequests.keys()) {
+    if (k.startsWith(keyPrefix)) {
+      inflightRequests.delete(k)
     }
   }
 }
@@ -102,8 +111,17 @@ export function useBentoBlock<T>({
       }
       setError(null)
 
+      // In-flight dedup: share the promise if an identical request is already running
+      let promise = inflightRequests.get(key) as Promise<T> | undefined
+      if (!promise || isManualRetry) {
+        promise = fetcherRef.current()
+        if (!isManualRetry) {
+          inflightRequests.set(key, promise)
+        }
+      }
+
       try {
-        const result = await fetcherRef.current()
+        const result = await promise
         setData(result)
         setBentoCache(key, result)
         setStatus('ready')
@@ -120,6 +138,9 @@ export function useBentoBlock<T>({
           console.warn(`[useBentoBlock] Background refresh failed for ${key}:`, err)
         }
       } finally {
+        if (inflightRequests.get(key) === promise) {
+          inflightRequests.delete(key)
+        }
         setIsRefreshing(false)
       }
     },
@@ -146,5 +167,38 @@ export function useBentoBlock<T>({
     isRefreshing,
     retry,
     reload: execute,
+  }
+}
+
+/**
+ * Shared exams list cache ('exams:list', TTL 90s).
+ * Used by teacher dashboard, exams list page, analytics workspace, and grade review workspace
+ * so the /exams endpoint is fetched at most once per 90s across the whole app.
+ */
+export const EXAMS_LIST_CACHE_KEY = 'exams:list'
+export const EXAMS_LIST_TTL_MS = 90000
+
+export async function fetchCachedExamsList<T = any>(): Promise<T[]> {
+  const cached = getBentoCache<T[]>(EXAMS_LIST_CACHE_KEY, EXAMS_LIST_TTL_MS)
+  if (cached) return cached.data
+
+  let promise = inflightRequests.get(EXAMS_LIST_CACHE_KEY) as Promise<T[]> | undefined
+  if (!promise) {
+    promise = (async () => {
+      const { default: api } = await import('./api')
+      const res = await api.get('/exams')
+      const data = (res.data.data || []) as T[]
+      setBentoCache(EXAMS_LIST_CACHE_KEY, data)
+      return data
+    })()
+    inflightRequests.set(EXAMS_LIST_CACHE_KEY, promise)
+  }
+
+  try {
+    return await promise
+  } finally {
+    if (inflightRequests.get(EXAMS_LIST_CACHE_KEY) === promise) {
+      inflightRequests.delete(EXAMS_LIST_CACHE_KEY)
+    }
   }
 }

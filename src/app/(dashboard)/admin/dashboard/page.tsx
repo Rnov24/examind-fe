@@ -62,6 +62,13 @@ export default function AdminDashboardPage() {
   const [userList, setUserList] = useState<any[]>([])
   const [selectedRole, setSelectedRole] = useState('all')
   const [searchKeyword, setSearchKeyword] = useState('')
+
+  // Debounced search (350ms) so typing doesn't trigger a fetch on every keystroke
+  const [debouncedSearchKeyword, setDebouncedSearchKeyword] = useState('')
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedSearchKeyword(searchKeyword), 350)
+    return () => clearTimeout(t)
+  }, [searchKeyword])
   const [showAddUserModal, setShowAddUserModal] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [formErrorMessage, setFormErrorMessage] = useState('')
@@ -83,7 +90,7 @@ export default function AdminDashboardPage() {
     }
   }, [])
 
-  const fetchUsers = useCallback(async (role = selectedRole, keyword = searchKeyword) => {
+  const fetchUsers = useCallback(async (role = selectedRole, keyword = debouncedSearchKeyword) => {
     setIsLoadingUsers(true)
     setUsersErrorMessage(null)
     try {
@@ -101,22 +108,27 @@ export default function AdminDashboardPage() {
     } finally {
       setIsLoadingUsers(false)
     }
-  }, [selectedRole, searchKeyword])
+  }, [selectedRole, debouncedSearchKeyword])
 
   useEffect(() => {
     fetchStats()
+  }, [fetchStats])
+
+  useEffect(() => {
     fetchUsers()
-  }, [fetchStats, fetchUsers])
+  }, [fetchUsers])
 
   const toggleUserStatus = async (targetUser: any) => {
     if (togglingUserId) return
     setTogglingUserId(targetUser.id)
     try {
       const res = await api.patch(`/admin/users/${targetUser.id}/toggle-status`)
+      const newIsActive = res.data.data.is_active
       setUserList((prev) =>
-        prev.map((u) => (u.id === targetUser.id ? { ...u, is_active: res.data.data.is_active } : u))
+        prev.map((u) => (u.id === targetUser.id ? { ...u, is_active: newIsActive } : u))
       )
-      await fetchStats()
+      // No stats refetch needed: /admin/stats counts users by role regardless of is_active,
+      // so toggling a user's status does not change any stat value.
     } catch (err: any) {
       alert(err.response?.data?.message || 'Gagal mengubah status akun pengguna.')
     } finally {
@@ -421,7 +433,6 @@ export default function AdminDashboardPage() {
                 value={searchKeyword}
                 onChange={(e) => {
                   setSearchKeyword(e.target.value)
-                  fetchUsers(selectedRole, e.target.value)
                 }}
                 onClear={() => {
                   setSearchKeyword('')

@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { Plus, Eye, Radio, BarChart3, Loader2, FileText, AlertTriangle, RefreshCw } from 'lucide-react'
-import api from '@/lib/api'
+import { fetchCachedExamsList } from '@/lib/bentoCache'
 import { formatDate } from '@/lib/utils'
 
 interface ExamItem {
@@ -27,8 +27,8 @@ export default function ExamListPage() {
     setLoading(true)
     setErrorMessage(null)
     try {
-      const res = await api.get('/exams')
-      setExams(res.data.data || [])
+      const exams = await fetchCachedExamsList<ExamItem>()
+      setExams(exams)
     } catch (err: any) {
       console.error('Failed to load exams:', err)
       setErrorMessage(

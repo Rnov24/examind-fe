@@ -2,10 +2,12 @@
 
 import React from 'react'
 import { usePathname } from 'next/navigation'
+import dynamic from 'next/dynamic'
 import Navbar from '@/components/layout/Navbar'
 import Sidebar from '@/components/layout/Sidebar'
-import AIAssistantWidget from '@/components/AIAssistantWidget'
 import AuthGuard from '@/components/auth/AuthGuard'
+
+const AIAssistantWidget = dynamic(() => import('@/components/AIAssistantWidget'), { ssr: false })
 
 export default function DashboardLayout({
   children,

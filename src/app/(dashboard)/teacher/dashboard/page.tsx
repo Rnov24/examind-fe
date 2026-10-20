@@ -22,6 +22,7 @@ import {
   Layers,
 } from 'lucide-react'
 import api from '@/lib/api'
+import { fetchCachedExamsList } from '@/lib/bentoCache'
 import { useAuthStore } from '@/stores/authStore'
 import {
   Table,
@@ -65,7 +66,8 @@ export default function TeacherDashboardPage() {
     try {
       const [bRes, eRes, cRes] = await Promise.allSettled([
         api.get('/questions/banks'),
-        api.get('/exams'),
+        // Shared exams:list cache (90s TTL) — same shape as api.get('/exams')
+        fetchCachedExamsList().then((exams) => ({ data: { data: exams } })),
         api.get('/academic/classes'),
       ])
 

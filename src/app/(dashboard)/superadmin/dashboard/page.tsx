@@ -24,7 +24,6 @@ import {
   HeroCard,
   DashboardCard,
   TelemetryStrip,
-  DashboardProgressBar,
   PlanDistributionGrid,
   TelemetryBarChart,
   QuickActionGrid,
@@ -177,7 +176,6 @@ export default function SuperAdminDashboardPage() {
               icon={<GraduationCap className="w-5 h-5 text-indigo-600" aria-hidden="true" />}
               tone="indigo"
               subtitle={`Dari ${(stats?.total_global_users ?? 0).toLocaleString('id-ID')} akun terdaftar di platform`}
-              trend={{ value: '100%', positive: true, label: 'aktif ujian' }}
               className="h-full min-h-[170px]"
             />
           </div>
@@ -190,7 +188,6 @@ export default function SuperAdminDashboardPage() {
               icon={<Users className="w-5 h-5 text-amber-600" aria-hidden="true" />}
               tone="amber"
               subtitle="Pendidik aktif penyusun bank soal CBT"
-              trend={{ value: '+8%', positive: true, label: 'bulan ini' }}
               className="h-full min-h-[170px]"
             />
           </div>
@@ -218,19 +215,14 @@ export default function SuperAdminDashboardPage() {
 
                 <div className="border-t border-slate-100 pt-4">
                   <div className="flex items-center justify-between text-xs text-slate-500 font-medium mb-1">
-                    <span>Kuota Token AI Platform</span>
-                    <span className="font-mono font-semibold text-violet-700">71% Terpakai</span>
+                    <span>Pemakaian Kredit AI Platform</span>
+                    <span className="font-mono font-semibold text-violet-700">
+                      {(stats?.total_ai_credits_used ?? 0).toLocaleString('id-ID')} kredit terpakai
+                    </span>
                   </div>
-                  <DashboardProgressBar
-                    value={1420000}
-                    max={2000000}
-                    label="1.420.000 / 2.000.000 Token"
-                    percentageLabel="71%"
-                    statusLeft="Reset Kuota: 12 hari lagi"
-                    statusRight="Kapasitas Optimal"
-                    tone="violet"
-                    className="pt-1"
-                  />
+                  <p className="text-[11px] text-slate-400 font-mono pt-1">
+                    Total kredit AI terpakai seluruh sekolah mitra
+                  </p>
                 </div>
               </div>
             </DashboardCard>
@@ -290,10 +282,21 @@ export default function SuperAdminDashboardPage() {
                     <div className="font-display text-xl font-extrabold text-slate-900 tabular-nums">
                       Rp {(finance?.mrr ?? 0).toLocaleString('id-ID')}
                     </div>
-                    <div className="flex items-center gap-1 text-[11px] text-emerald-700 font-semibold font-mono">
-                      <ArrowUpRight className="w-3 h-3 stroke-[2.5]" aria-hidden="true" />
-                      <span>+14% vs bulan lalu</span>
-                    </div>
+                    {finance?.growth_rate_mom != null ? (
+                      <div
+                        className={`flex items-center gap-1 text-[11px] font-semibold font-mono ${
+                          finance.growth_rate_mom >= 0 ? 'text-emerald-700' : 'text-rose-700'
+                        }`}
+                      >
+                        <ArrowUpRight className="w-3 h-3 stroke-[2.5]" aria-hidden="true" />
+                        <span>
+                          {finance.growth_rate_mom > 0 ? '+' : ''}
+                          {finance.growth_rate_mom}% vs bulan lalu
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="text-[11px] text-slate-500 font-mono">—</div>
+                    )}
                   </div>
 
                   <div className="p-3.5 rounded-xl bg-slate-50/80 border border-slate-100 space-y-1">
@@ -303,9 +306,8 @@ export default function SuperAdminDashboardPage() {
                     <div className="font-display text-xl font-extrabold text-slate-900 tabular-nums">
                       Rp {(finance?.arr ?? 0).toLocaleString('id-ID')}
                     </div>
-                    <div className="flex items-center gap-1 text-[11px] text-emerald-700 font-semibold font-mono">
-                      <ArrowUpRight className="w-3 h-3 stroke-[2.5]" aria-hidden="true" />
-                      <span>+18% pertumbuhan</span>
+                    <div className="text-[11px] text-slate-500 font-mono">
+                      Proyeksi tahunan dari MRR berjalan
                     </div>
                   </div>
 

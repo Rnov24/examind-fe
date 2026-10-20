@@ -1,7 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
-import Link from 'next/link'
+import React, { useState, useEffect, useRef } from 'react'
 import {
   ShieldCheck,
   Laptop,
@@ -11,21 +10,87 @@ import {
   GraduationCap,
   BookOpen,
   Building2,
-  Lock,
   AlertCircle,
-  PhoneCall,
   ArrowRight,
   CheckCircle2,
   X,
   Send,
   MessageSquare,
-  Menu,
+  LayoutDashboard,
+  FileText,
+  Users,
+  User,
+  ChartColumn,
+  Sparkles,
+  ClipboardCheck,
+  ScanFace,
+  Eye,
+  Video,
+  QrCode,
 } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
+import { formatIDR, useCountUp } from '@/hooks/useCountUp'
 import { ExamindLogo } from '@/components/brand/ExamindLogo'
+import { MarketingNavbar } from '@/components/marketing/MarketingNavbar'
+import { SectionDivider } from '@/components/marketing/SectionDivider'
+
+interface LandingPlan {
+  id: string
+  name: string
+  price_monthly: number
+  price_annually: number
+  max_students: number
+  max_teachers: number
+  max_storage_gb?: number
+  ai_credits_monthly: number
+  proctoring_type: string
+  description: string
+  features?: string[]
+  is_popular?: boolean
+}
+
+interface LandingStats {
+  active_schools: number
+  total_users: number
+  total_exams: number
+  total_sessions: number
+}
+
+const formatCount = (n: number) => n.toLocaleString('id-ID')
+
+const proctoringLabel = (type: string) =>
+  type === 'dual_camera'
+    ? 'Proctoring dua kamera (HP + laptop)'
+    : type === 'single_camera'
+    ? 'Proctoring satu kamera (webcam)'
+    : type
+
+function StatCounter({ value, label }: { value: number; label: string }) {
+  const { displayValue, ref } = useCountUp(value, 1200, { formatAsIDR: false })
+  return (
+    <div ref={ref} className="text-center sm:text-left">
+      <div className="text-2xl sm:text-3xl font-extrabold font-mono text-slate-900 tracking-tight tabular-nums">
+        {displayValue}
+      </div>
+      <div className="text-xs sm:text-sm text-slate-500 font-medium mt-0.5">{label}</div>
+    </div>
+  )
+}
 
 export default function LandingPage() {
-  const { user, isHydrated, hydrate, isAuthenticated } = useAuthStore()
+  const { isHydrated, hydrate } = useAuthStore()
+
+  // Hero mouse parallax refs (desktop pointer-fine only, lerped via rAF)
+  const heroSectionRef = useRef<HTMLElement | null>(null)
+  const mockParallaxRef = useRef<HTMLDivElement | null>(null)
+  const floatGradeRef = useRef<HTMLDivElement | null>(null)
+  const floatProcRef = useRef<HTMLDivElement | null>(null)
+
+  // Real landing data (plans + stats) from GET /public/landing
+  const [plans, setPlans] = useState<LandingPlan[] | null>(null)
+  const [plansError, setPlansError] = useState(false)
+  const [landingStats, setLandingStats] = useState<LandingStats | null>(null)
+  const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'annual'>('monthly')
 
   useEffect(() => {
     if (!isHydrated) {
@@ -52,57 +117,93 @@ export default function LandingPage() {
     revealElements.forEach((el) => observer.observe(el))
 
     return () => observer.disconnect()
+    // Re-run when plans arrive so pricing cards rendered after the fetch
+    // are picked up by the observer too.
+  }, [plans])
+
+  // Hero mouse parallax: subtle depth on the dashboard mock + floating cards.
+  // Desktop pointer-fine only; disabled for touch and prefers-reduced-motion.
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const section = heroSectionRef.current
+    if (!section) return
+    if (!window.matchMedia('(pointer: fine)').matches) return
+    if (!window.matchMedia('(prefers-reduced-motion: no-preference)').matches) return
+
+    let raf = 0
+    const target = { x: 0, y: 0 }
+    const current = { x: 0, y: 0 }
+
+    const apply = () => {
+      current.x += (target.x - current.x) * 0.08
+      current.y += (target.y - current.y) * 0.08
+      const { x, y } = current
+      if (mockParallaxRef.current) {
+        mockParallaxRef.current.style.transform = `translate3d(${(x * 4).toFixed(2)}px, ${(y * 4).toFixed(2)}px, 0)`
+      }
+      if (floatGradeRef.current) {
+        floatGradeRef.current.style.transform = `translate3d(${(x * 10).toFixed(2)}px, ${(y * 8).toFixed(2)}px, 0)`
+      }
+      if (floatProcRef.current) {
+        floatProcRef.current.style.transform = `translate3d(${(-x * 8).toFixed(2)}px, ${(-y * 6).toFixed(2)}px, 0)`
+      }
+      if (Math.abs(target.x - current.x) > 0.001 || Math.abs(target.y - current.y) > 0.001) {
+        raf = requestAnimationFrame(apply)
+      } else {
+        raf = 0
+      }
+    }
+
+    const onMove = (e: MouseEvent) => {
+      const rect = section.getBoundingClientRect()
+      target.x = ((e.clientX - rect.left) / rect.width - 0.5) * 2
+      target.y = ((e.clientY - rect.top) / rect.height - 0.5) * 2
+      if (!raf) raf = requestAnimationFrame(apply)
+    }
+    const onLeave = () => {
+      target.x = 0
+      target.y = 0
+      if (!raf) raf = requestAnimationFrame(apply)
+    }
+
+    section.addEventListener('mousemove', onMove)
+    section.addEventListener('mouseleave', onLeave)
+    return () => {
+      section.removeEventListener('mousemove', onMove)
+      section.removeEventListener('mouseleave', onLeave)
+      if (raf) cancelAnimationFrame(raf)
+    }
   }, [])
 
 
-  const userName = user?.full_name || user?.identifier || 'Pengguna'
-  const isAuth = isAuthenticated()
-
-  const dashboardRoute = (() => {
-    if (user?.role === 'superadmin') return '/superadmin/dashboard'
-    if (user?.role === 'admin') return '/admin/dashboard'
-    if (user?.role === 'student') return '/student/dashboard'
-    return '/teacher/dashboard'
-  })()
-
-  // Mobile Menu State
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-
-  // Interactive Hero Tab State
-  const [activeHeroTab, setActiveHeroTab] = useState<'exam' | 'monitor' | 'grading'>('exam')
-
-  // Hero Interactive State - Tab 1 (Ruang Ujian Siswa)
-  const [selectedOption, setSelectedOption] = useState<'A' | 'B' | 'C'>('A')
-  const [autosaveStatus, setAutosaveStatus] = useState('Tersimpan di IndexedDB (<1s)')
-
-  const selectOption = (opt: 'A' | 'B' | 'C') => {
-    setSelectedOption(opt)
-    setAutosaveStatus('Menyimpan...')
-    setTimeout(() => {
-      setAutosaveStatus('Tersimpan di IndexedDB (<1s)')
-    }, 250)
-  }
-
-  // Hero Interactive State - Tab 2 (Live Proctoring Guru)
-  const [incidentStatus, setIncidentStatus] = useState<'idle' | 'tolerated' | 'flagged'>('idle')
-  const [previewSnapshot, setPreviewSnapshot] = useState(false)
-
-  // Hero Interactive State - Tab 3 (Koreksi Esai & Socratic Tutor)
-  const tutorPrompts = [
-    {
-      q: 'Kenapa opsi B kurang tepat?',
-      a: 'Bagus sekali pertanyaannya! Pada opsi B, kamu menghitung daya tanpa memperhitungkan efisiensi transformator 80%. Rumus yang tepat: Daya Masukan = Daya Keluaran / Efisiensi = 160 W / 0.8 = 200 W. Maka Kuat Arus Primer = 200 W / 220 V = 0,91 Ampere.',
-    },
-    {
-      q: 'Bagaimana kaitan efisiensi dengan hukum termodinamika?',
-      a: 'Berdasarkan Hukum Termodinamika II, tidak ada mesin kalor yang mampu mengubah seluruh energi kalor menjadi usaha mekanik secara sempurna (efisiensi 100%). Selalu ada energi yang terbuang ke reservoir dingin sebagai peningkatan entropi sistem.',
-    },
-    {
-      q: 'Bagaimana AI menilai esai saya secara transparan?',
-      a: 'EXAMIND mengoreksi draf esai berbasis Rubrik 4 Dimensi objektif: Pemahaman Konsep (5.0), Runtutan Argumen (5.0), Ketepatan Istilah Baku (5.0), dan Kejelasan Bahasa (5.0). Guru mata pelajaran memegang hak mutlak untuk meninjau dan mengubah skor.',
-    },
-  ]
-  const [activeTutorPromptIdx, setActiveTutorPromptIdx] = useState(0)
+  useEffect(() => {
+    let cancelled = false
+    const base = process.env.NEXT_PUBLIC_API_URL || '/api/v1'
+    fetch(`${base}/public/landing`)
+      .then((res) => {
+        if (!res.ok) throw new Error(`Landing data request failed: ${res.status}`)
+        return res.json()
+      })
+      .then((json) => {
+        if (cancelled) return
+        const data = json?.data
+        if (Array.isArray(data?.plans) && data.plans.length > 0) {
+          setPlans(data.plans)
+        } else {
+          setPlansError(true)
+        }
+        const s = data?.stats
+        if (s && (s.active_schools || s.total_users || s.total_exams || s.total_sessions)) {
+          setLandingStats(s)
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setPlansError(true)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   // FAQ Accordion State
   const [activeFaq, setActiveFaq] = useState<number | null>(0)
@@ -113,23 +214,23 @@ export default function LandingPage() {
   const faqs = [
     {
       q: 'Apakah peserta ujian yang menoleh otomatis didiskualifikasi oleh AI?',
-      a: 'Tidak. AI EXAMIND tidak memiliki kewenangan memutus ujian siswa. Sistem hanya mencatat cap waktu dan snapshot bukti ke konsol pengawas. Keputusan verifikasi dan sanksi sepenuhnya berada di tangan guru pengawas (prinsip Human-in-the-Loop).',
+      a: 'Tidak. AI hanya mencatat waktu dan snapshot kejadian. Keputusan akhir selalu di tangan guru pengawas.',
     },
     {
       q: 'Bagaimana jika jaringan internet sekolah atau rumah peserta terputus saat ujian berlangsung?',
-      a: 'Ujian berjalan lancar tanpa kehilangan data. Mesin IndexedDB di peramban peserta merekam setiap perubahan jawaban seketika. Begitu sambungan internet pulih, sistem secara otomatis menyinkronkan data jawaban ke server.',
+      a: 'Jawaban tersimpan otomatis di browser lewat IndexedDB, lalu tersinkron ke server begitu koneksi pulih.',
     },
     {
       q: 'Bagaimana EXAMIND melindungi privasi rekaman video peserta sesuai ketentuan hukum?',
-      a: 'EXAMIND tunduk penuh pada UU No. 27 Tahun 2022 tentang Pelindungan Data Pribadi (UU PDP). Kamera hanya diaktifkan atas persetujuan eksplisit peserta, berkas snapshot dienkripsi, dan seluruh data biometrik dihapus permanen secara otomatis setelah 60 hari.',
+      a: 'Kamera aktif hanya dengan izin peserta. Snapshot terenkripsi dan dihapus otomatis setelah 60 hari, sesuai UU PDP No. 27 Tahun 2022.',
     },
     {
       q: 'Apakah guru memiliki wewenang merevisi nilai esai yang diberikan oleh AI?',
-      a: 'Ya, mutlak. AI hanya menyajikan draf penilaian awal berdasarkan rubrik 4 dimensi objektif beserta alasannya. Guru mata pelajaran memegang kendali penuh untuk meninjau, menyunting, atau merevisi nilai sebelum hasil diumumkan.',
+      a: 'Bisa. Nilai AI hanya draf awal. Guru meninjau dan mengubahnya sebelum hasil diumumkan.',
     },
     {
       q: 'Mengapa pengadaan EXAMIND tidak menyediakan pembayaran kartu kredit langsung?',
-      a: 'Sebagai penyedia platform institusi, kami menghormati tata kelola anggaran sekolah dan yayasan. Pembayaran diproses melalui mekanisme penawaran resmi, penerbitan SPK/MOU, faktur pajak institusi, dan transfer antar-rekening bank instansi.',
+      a: 'Pembayaran lewat penawaran resmi, SPK/MOU, faktur pajak institusi, dan transfer antar-rekening instansi.',
     },
   ]
 
@@ -170,7 +271,7 @@ export default function LandingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans antialiased selection:bg-[#c2ef4e] selection:text-slate-950">
+    <div className="min-h-screen bg-white text-slate-900 font-sans antialiased selection:bg-[#6a5fc1] selection:text-white">
       {/* Ambient Background Depth & Subtle Radial Bleed */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0 opacity-40">
         <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[1100px] h-[550px] bg-gradient-to-b from-indigo-100/60 via-purple-50/40 to-transparent blur-3xl"></div>
@@ -178,121 +279,30 @@ export default function LandingPage() {
         <div className="absolute top-[1800px] -right-48 w-[600px] h-[600px] bg-indigo-100/30 blur-3xl rounded-full"></div>
       </div>
 
-      {/* Main Navigation Bar */}
-      <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-xl border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          {/* Brand Logo */}
-          <a href="#hero" className="flex items-center gap-3 group" aria-label="EXAMIND Beranda">
-            <ExamindLogo variant="lockup" theme="color" className="h-8 w-auto shrink-0" priority />
-            <div className="border-l border-slate-200/80 pl-3 hidden sm:flex flex-col">
-              <span className="text-[10px] font-bold text-slate-500 tracking-wider uppercase font-mono">
-                Platform Ujian AI
-              </span>
-            </div>
-          </a>
-
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-8 text-xs font-semibold text-slate-600">
-            <a href="#keunggulan" className="hover:text-slate-900 transition-colors">Fitur Unggulan</a>
-            <a href="#peran" className="hover:text-slate-900 transition-colors">Peran Pengguna</a>
-            <a href="#proctoring" className="hover:text-slate-900 transition-colors">Dual-Camera AI</a>
-            <a href="#pricing" className="hover:text-slate-900 transition-colors flex items-center gap-1.5">
-              <span>Paket & Lisensi</span>
-              <span className="px-1.5 py-0.5 text-[11px] font-bold bg-[#c2ef4e] text-slate-950 rounded-xs font-mono">B2B SaaS</span>
-            </a>
-            <a href="#faq" className="hover:text-slate-900 transition-colors">Tanya Jawab</a>
-          </nav>
-
-          {/* Right Header Actions */}
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => openInquiryModal('demo')}
-              className="hidden sm:inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 transition-colors cursor-pointer"
-            >
-              <PhoneCall className="w-3.5 h-3.5 text-slate-900" />
-              <span>Konsultasi Lisensi</span>
-            </button>
-
-            {isAuth ? (
-              <Link
-                href={dashboardRoute}
-                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-white font-bold shadow-sm transition-all"
-              >
-                <span>Dashboard ({userName})</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-            ) : (
-              <Link
-                href="/login"
-                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-white font-bold shadow-xs transition-colors"
-              >
-                <Lock className="w-3.5 h-3.5" />
-                <span>Masuk Portal CBT</span>
-              </Link>
-            )}
-
-            {/* Mobile Menu Button */}
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer"
-              aria-label="Buka menu navigasi"
-            >
-              {!isMobileMenuOpen ? <Menu className="w-5 h-5" /> : <X className="w-5 h-5" />}
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile Dropdown Menu */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden border-t border-slate-200 bg-white px-4 py-4 space-y-3">
-            <nav className="flex flex-col space-y-2 text-xs font-semibold text-slate-700">
-              <a onClick={() => setIsMobileMenuOpen(false)} href="#keunggulan" className="py-2 hover:text-slate-900 transition-colors">Fitur Unggulan</a>
-              <a onClick={() => setIsMobileMenuOpen(false)} href="#peran" className="py-2 hover:text-slate-900 transition-colors">Peran Pengguna</a>
-              <a onClick={() => setIsMobileMenuOpen(false)} href="#proctoring" className="py-2 hover:text-slate-900 transition-colors">Dual-Camera AI</a>
-              <a onClick={() => setIsMobileMenuOpen(false)} href="#pricing" className="py-2 hover:text-slate-900 transition-colors flex items-center justify-between">
-                <span>Paket & Lisensi</span>
-                <span className="px-1.5 py-0.5 text-[11px] font-bold bg-[#c2ef4e] text-slate-950 rounded-xs font-mono">B2B SaaS</span>
-              </a>
-              <a onClick={() => setIsMobileMenuOpen(false)} href="#faq" className="py-2 hover:text-slate-900 transition-colors">Tanya Jawab</a>
-            </nav>
-            <div className="pt-2 border-t border-slate-200 flex flex-col gap-2">
-              <button
-                onClick={() => {
-                  openInquiryModal('demo')
-                  setIsMobileMenuOpen(false)
-                }}
-                className="w-full py-2.5 px-3 rounded-lg text-xs font-semibold border border-slate-200 bg-slate-50 text-slate-800 text-center flex items-center justify-center gap-2 cursor-pointer"
-              >
-                <PhoneCall className="w-3.5 h-3.5 text-slate-900" />
-                <span>Konsultasi Lisensi</span>
-              </button>
-            </div>
-          </div>
-        )}
-      </header>
+      <MarketingNavbar />
 
       {/* HERO SECTION */}
-      <section id="hero" className="relative z-10 pt-16 pb-24 md:pt-24 md:pb-32 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-5xl mx-auto text-center space-y-8">
+      <section ref={heroSectionRef} id="hero" className="relative z-10 min-h-screen flex flex-col justify-center bg-white pt-28 pb-24 px-4 sm:px-6 lg:px-8">
+        <div className="w-full max-w-5xl mx-auto text-center space-y-8">
           <h1
             className="anim-rise text-4xl sm:text-5xl md:text-6xl font-black text-slate-900 tracking-tight leading-[1.15] max-w-4xl mx-auto"
             style={{ '--anim-duration': '400ms', '--anim-delay': '80ms' } as React.CSSProperties}
           >
-            Satu Platform Ujian Berstandar Institusi.<br className="hidden sm:inline" />
+            Ujian online yang{' '}
             <span
               className="anim-pop bg-[#c2ef4e] text-slate-950 px-2.5 py-0.5 rounded-xs inline-block font-black mt-1"
               style={{ '--anim-duration': '350ms', '--anim-delay': '240ms' } as React.CSSProperties}
             >
-              Bebas Kecurangan
-            </span>,
-            Adil bagi Siswa, Efisien bagi Guru.
+              diawasi AI
+            </span>
+            , dinilai dalam hitungan menit.
           </h1>
 
           <p
             className="anim-rise text-base sm:text-lg md:text-xl text-slate-600 leading-relaxed max-w-2xl mx-auto font-normal"
             style={{ '--anim-duration': '400ms', '--anim-delay': '180ms' } as React.CSSProperties}
           >
-            Menggabungkan pengawasan AI Dual-Camera beretika, pembuatan soal adaptif, dan koreksi esai otomatis rubrik 4 dimensi. Menjamin objektivitas penilaian dan ketenangan peserta ujian tanpa risiko diskualifikasi sepihak.
+            Satu platform untuk ujian CBT, bank soal, proctoring kamera, dan koreksi esai. Hasilnya rapi, keputusannya tetap di tangan guru.
           </p>
 
           <div
@@ -301,7 +311,7 @@ export default function LandingPage() {
           >
             <button
               onClick={() => openInquiryModal('demo')}
-              className="px-6 py-3.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm shadow-md transition-all flex items-center gap-2 cursor-pointer"
+              className="mkt-btn-press px-6 py-3.5 rounded-lg bg-[#c2ef4e] hover:bg-[#b2e233] text-slate-950 font-bold text-sm shadow-md flex items-center gap-2 cursor-pointer"
             >
               <span>Jadwalkan Demo Sekolah</span>
               <ArrowRight className="w-4 h-4 anim-nudge-x" />
@@ -309,389 +319,281 @@ export default function LandingPage() {
 
             <a
               href="#pricing"
-              className="px-5 py-3.5 rounded-lg bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 font-semibold text-sm transition-all shadow-xs"
+              className="mkt-btn-press px-5 py-3.5 rounded-lg bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 font-semibold text-sm shadow-xs"
             >
-              Lihat Skema Biaya & Lisensi
+              Lihat Harga
             </a>
           </div>
-
-          <div
-            className="anim-rise pt-8 flex flex-wrap items-center justify-center gap-6 sm:gap-8 text-xs sm:text-sm text-slate-600 font-medium border-t border-slate-200 max-w-4xl mx-auto"
-            style={{ '--anim-duration': '400ms', '--anim-delay': '380ms' } as React.CSSProperties}
-          >
-            <div className="flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-emerald-600" />
-              <span>Standar Integritas 2026</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-emerald-600" />
-              <span>Human-in-the-Loop Proctoring</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Laptop className="w-4 h-4 text-indigo-600" />
-              <span>Penyimpanan Offline Aman (IndexedDB)</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Brain className="w-4 h-4 text-purple-600" />
-              <span>Koreksi Esai Objektif (Rubrik 4D)</span>
-            </div>
-          </div>
         </div>
 
-        {/* INTERACTIVE HERO STAGE / MOCKUP SHOWCASE */}
-        <div id="keunggulan" data-reveal className="max-w-6xl mx-auto mt-14 scroll-mt-24">
-          <div className="rounded-xl border border-slate-200 bg-white shadow-xl overflow-hidden backdrop-blur-md">
+        {/* DASHBOARD PREVIEW MOCK */}
+        <div data-reveal className="relative w-full max-w-5xl mx-auto mt-16">
+          <div ref={mockParallaxRef} className="will-change-transform">
+          <div className="rounded-xl border border-slate-200 bg-white shadow-xl overflow-hidden text-left">
             {/* Window Header Bar */}
-            <div className="px-5 py-3.5 bg-slate-100 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <div className="flex gap-1.5">
-                  <span className="w-3 h-3 rounded-full bg-slate-300"></span>
-                  <span className="w-3 h-3 rounded-full bg-slate-300"></span>
-                  <span className="w-3 h-3 rounded-full bg-slate-300"></span>
-                </div>
-                <span className="text-xs font-mono text-slate-500">cbt.examind.sch.id/workspace</span>
+            <div className="px-5 py-3 bg-slate-100 border-b border-slate-200 flex items-center gap-3">
+              <div className="flex gap-1.5">
+                <span className="w-3 h-3 rounded-full bg-slate-300"></span>
+                <span className="w-3 h-3 rounded-full bg-slate-300"></span>
+                <span className="w-3 h-3 rounded-full bg-slate-300"></span>
               </div>
-
-              {/* Stage Mode Switcher */}
-              <div className="flex items-center gap-1.5 bg-white p-1 rounded-lg border border-slate-200 text-xs sm:text-sm font-semibold overflow-x-auto shadow-xs">
-                <button
-                  onClick={() => setActiveHeroTab('exam')}
-                  className={`px-3.5 py-1.5 rounded-md transition-all cursor-pointer whitespace-nowrap ${
-                    activeHeroTab === 'exam'
-                      ? 'bg-slate-900 text-white font-bold shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  Ruang Ujian Siswa
-                </button>
-                <button
-                  onClick={() => setActiveHeroTab('monitor')}
-                  className={`px-3.5 py-1.5 rounded-md transition-all cursor-pointer whitespace-nowrap ${
-                    activeHeroTab === 'monitor'
-                      ? 'bg-slate-900 text-white font-bold shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  Live Proctoring Pengawas
-                </button>
-                <button
-                  onClick={() => setActiveHeroTab('grading')}
-                  className={`px-3.5 py-1.5 rounded-md transition-all cursor-pointer whitespace-nowrap ${
-                    activeHeroTab === 'grading'
-                      ? 'bg-slate-900 text-white font-bold shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  Koreksi Esai & Socratic Tutor
-                </button>
-              </div>
+              <span className="text-xs font-mono text-slate-500">app.examind.id/dashboard</span>
             </div>
 
-            {/* Showcase Content Body */}
-            <div className="p-6 md:p-8 bg-slate-50/60 min-h-[420px]">
-              {/* 1. TAB: RUANG UJIAN SISWA */}
-              {activeHeroTab === 'exam' && (
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                  <div className="lg:col-span-8 bg-white rounded-xl border border-slate-200 p-6 space-y-5 shadow-xs">
-                    <div className="flex items-center justify-between pb-3 border-b border-slate-200">
-                      <div>
-                        <span className="text-sm font-bold text-slate-900">Penilaian Akhir Semester — Fisika Terapan XII</span>
-                        <p className="text-xs text-slate-500 mt-0.5">Peserta: Andi Pratama (NISN: 0081234567)</p>
-                      </div>
-                      <div className="text-right">
-                        <span className="font-mono text-sm font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded">01:34:20 Tersisa</span>
-                        <p className="text-xs text-slate-500 flex items-center justify-end gap-1 mt-0.5">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> {autosaveStatus}
-                        </p>
-                      </div>
-                    </div>
+            <div className="flex">
+              {/* Mock Sidebar */}
+              <div className="hidden sm:flex w-44 shrink-0 flex-col gap-1 border-r border-slate-200 bg-slate-50/70 p-3">
+                <div className="px-2 pb-3">
+                  <ExamindLogo variant="lockup" theme="color" className="h-6 w-auto" />
+                </div>
+                <div className="flex items-center gap-2 rounded-lg bg-slate-900 px-2.5 py-2 text-xs font-bold text-white">
+                  <LayoutDashboard className="w-4 h-4" />
+                  <span>Dashboard</span>
+                </div>
+                <div className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-semibold text-slate-500">
+                  <FileText className="w-4 h-4" />
+                  <span>Ujian</span>
+                </div>
+                <div className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-semibold text-slate-500">
+                  <Users className="w-4 h-4" />
+                  <span>Siswa</span>
+                </div>
+                <div className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-semibold text-slate-500">
+                  <ClipboardCheck className="w-4 h-4" />
+                  <span>Penilaian</span>
+                </div>
+                <div className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-semibold text-slate-500">
+                  <ChartColumn className="w-4 h-4" />
+                  <span>Analitik</span>
+                </div>
+              </div>
 
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-2 text-xs">
-                        <span className="px-2.5 py-0.5 rounded bg-indigo-50 text-indigo-700 border border-indigo-200 font-mono font-bold text-xs">Soal #4</span>
-                        <span className="text-slate-500">• Pilihan Ganda (Bobot: 10 Poin)</span>
-                      </div>
-                      <p className="text-sm sm:text-base text-slate-900 leading-relaxed font-normal">
-                        Sebuah transformator memiliki efisiensi 80% dengan daya keluaran 160 Watt. Jika tegangan primer 220 Volt, berapakah kuat arus primer transformator tersebut?
-                      </p>
-                    </div>
-
-                    <div className="space-y-2.5 pt-2">
-                      <button
-                        type="button"
-                        onClick={() => selectOption('A')}
-                        className={`w-full p-3.5 rounded-lg border text-left text-sm transition-colors flex items-center justify-between cursor-pointer ${
-                          selectedOption === 'A'
-                            ? 'border-slate-900 bg-slate-900 text-white font-medium shadow-xs'
-                            : 'border-slate-200 bg-white text-slate-700 hover:border-slate-400 hover:bg-slate-50'
-                        }`}
-                      >
-                        <span>A. 0,91 Ampere</span>
-                        {selectedOption === 'A' && <span className="text-xs bg-white text-slate-900 px-2.5 py-0.5 rounded font-bold">Jawaban Dipilih</span>}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => selectOption('B')}
-                        className={`w-full p-3.5 rounded-lg border text-left text-sm transition-colors flex items-center justify-between cursor-pointer ${
-                          selectedOption === 'B'
-                            ? 'border-slate-900 bg-slate-900 text-white font-medium shadow-xs'
-                            : 'border-slate-200 bg-white text-slate-700 hover:border-slate-400 hover:bg-slate-50'
-                        }`}
-                      >
-                        <span>B. 1,14 Ampere</span>
-                        {selectedOption === 'B' && <span className="text-xs bg-white text-slate-900 px-2.5 py-0.5 rounded font-bold">Jawaban Dipilih</span>}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => selectOption('C')}
-                        className={`w-full p-3.5 rounded-lg border text-left text-sm transition-colors flex items-center justify-between cursor-pointer ${
-                          selectedOption === 'C'
-                            ? 'border-slate-900 bg-slate-900 text-white font-medium shadow-xs'
-                            : 'border-slate-200 bg-white text-slate-700 hover:border-slate-400 hover:bg-slate-50'
-                        }`}
-                      >
-                        <span>C. 0,72 Ampere</span>
-                        {selectedOption === 'C' && <span className="text-xs bg-white text-slate-900 px-2.5 py-0.5 rounded font-bold">Jawaban Dipilih</span>}
-                      </button>
-                    </div>
+              {/* Mock Main Panel */}
+              <div className="flex-1 min-w-0 p-4 sm:p-5 space-y-4 bg-white">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <div className="text-sm font-bold text-slate-900">Dashboard Guru</div>
+                    <div className="mt-1.5 h-2 w-36 rounded-full bg-slate-200"></div>
                   </div>
+                  <span className="w-8 h-8 rounded-full bg-[#6a5fc1] text-white flex items-center justify-center shrink-0">
+                    <User className="w-4 h-4" />
+                  </span>
+                </div>
 
-                  <div className="lg:col-span-4 space-y-4">
-                    <div className="bg-white rounded-xl border border-slate-200 p-4 space-y-3 shadow-xs">
-                      <div className="flex items-center justify-between text-xs font-bold">
-                        <span className="text-slate-900">Kamera Primer (Laptop)</span>
-                        <span className="text-emerald-700 font-mono text-[11px] bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">● WAJAH TERVERIFIKASI</span>
+                {/* Mock Stat Cards */}
+                <div className="grid grid-cols-3 gap-3">
+                  {[
+                    { label: 'Ujian Berlangsung', bars: [35, 55, 45, 70, 60] },
+                    { label: 'Siswa Aktif', bars: [50, 42, 66, 58, 80] },
+                    { label: 'Rata-rata Nilai', bars: [45, 60, 52, 74, 68] },
+                  ].map((card) => (
+                    <div key={card.label} className="rounded-lg border border-slate-200 p-3">
+                      <div className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wide text-slate-500 truncate">
+                        {card.label}
                       </div>
-                      <div className="h-28 bg-slate-50 rounded-lg border border-slate-200 flex flex-col items-center justify-center text-slate-500 text-xs gap-1.5 font-mono">
-                        <Camera className="w-5 h-5 text-slate-400" />
-                        <span>Sudut Pandang Wajah Peserta (0°)</span>
+                      <div className="mt-2 flex items-end gap-1 h-8">
+                        {card.bars.map((h, i) => (
+                          <span
+                            key={i}
+                            className={`flex-1 rounded-sm ${i === card.bars.length - 1 ? 'bg-[#c2ef4e]' : 'bg-[#6a5fc1]/60'}`}
+                            style={{ height: `${h}%` }}
+                          />
+                        ))}
                       </div>
                     </div>
+                  ))}
+                </div>
 
-                    <div className="bg-white rounded-xl border border-slate-200 p-4 space-y-3 shadow-xs">
-                      <div className="flex items-center justify-between text-xs font-bold">
-                        <span className="text-slate-900">Kamera Sekunder (HP)</span>
-                        <span className="text-indigo-700 font-mono text-[11px] bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">● MEJA & LAYAR AKTIF</span>
-                      </div>
-                      <div className="h-28 bg-slate-50 rounded-lg border border-slate-200 flex flex-col items-center justify-center text-slate-500 text-xs gap-1.5 font-mono">
-                        <Smartphone className="w-5 h-5 text-slate-400" />
-                        <span>Sudut Pandang Meja & Layar (45°)</span>
-                      </div>
-                    </div>
+                {/* Mock Chart Panel */}
+                <div className="rounded-lg border border-slate-200 p-3.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-900">Aktivitas Ujian Minggu Ini</span>
+                    <span className="flex items-center gap-1.5 text-[11px] font-bold text-emerald-600">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                      Live
+                    </span>
+                  </div>
+                  <div className="mt-3 flex items-end gap-1.5 h-24">
+                    {[38, 52, 44, 66, 58, 80, 72, 92, 84, 64, 74, 96, 86, 100].map((h, i) => (
+                      <span
+                        key={i}
+                        className={`flex-1 rounded-t-sm ${i === 13 ? 'bg-[#c2ef4e]' : i % 3 === 0 ? 'bg-[#6a5fc1]' : 'bg-indigo-200'}`}
+                        style={{ height: `${h}%` }}
+                      />
+                    ))}
                   </div>
                 </div>
-              )}
+              </div>
+            </div>
+          </div>
+          </div>
 
-              {/* 2. TAB: LIVE MONITORING GURU */}
-              {activeHeroTab === 'monitor' && (
-                <div className="space-y-5">
-                  <div className="flex items-center justify-between pb-3 border-b border-slate-200 text-xs">
-                    <div>
-                      <h3 className="font-bold text-slate-900 text-base">Konsol Pengawas Kelas XII MIPA 1 (34 Siswa)</h3>
-                      <p className="text-slate-500 text-xs mt-0.5">WebSocket Hub Aktif • Status Integritas Rata-Rata: 98.2%</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold flex items-center gap-1.5">
-                        <span className="w-2 h-2 rounded-full bg-emerald-500"></span> Pengawasan Realtime
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div
-                      className={`bg-white rounded-xl border p-4 sm:p-5 space-y-3 transition-colors shadow-xs ${
-                        incidentStatus === 'tolerated'
-                          ? 'border-emerald-300'
-                          : incidentStatus === 'flagged'
-                          ? 'border-rose-300'
-                          : 'border-amber-300'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between text-xs sm:text-sm">
-                        <span
-                          className={`font-bold flex items-center gap-1.5 ${
-                            incidentStatus === 'tolerated'
-                              ? 'text-emerald-700'
-                              : incidentStatus === 'flagged'
-                              ? 'text-rose-700'
-                              : 'text-amber-700'
-                          }`}
-                        >
-                          <AlertCircle className="w-4 h-4 shrink-0" />
-                          {incidentStatus === 'idle' && <span>AI Flag: Gerakan Kepala ke Kanan (8 Detik)</span>}
-                          {incidentStatus === 'tolerated' && <span>Status: Diverifikasi Wajar oleh Pengawas</span>}
-                          {incidentStatus === 'flagged' && <span>Status: Ditandai untuk Klarifikasi Lanjutan</span>}
-                        </span>
-                        <span className="font-mono text-slate-500 text-xs">10:18:04 WIB</span>
-                      </div>
-                      <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
-                        Siswa <strong>Rudi Hermawan</strong> terdeteksi menoleh ke luar frame. Snapshot tersimpan otomatis.
-                        {incidentStatus === 'tolerated' && (
-                          <span className="block mt-1 text-emerald-700 font-medium">
-                            Catatan pengawas: Siswa membetulkan posisi kacamata, integritas valid.
-                          </span>
-                        )}
-                        {incidentStatus === 'flagged' && (
-                          <span className="block mt-1 text-rose-700 font-medium">
-                            Catatan pengawas: Memerlukan klarifikasi interkom pengawas.
-                          </span>
-                        )}
-                      </p>
-                      <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100">
-                        <button
-                          type="button"
-                          onClick={() => setPreviewSnapshot(!previewSnapshot)}
-                          className="px-3.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold cursor-pointer transition-colors border border-slate-200"
-                        >
-                          {previewSnapshot ? 'Tutup Bukti Snapshot' : 'Buka Bukti Snapshot'}
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setIncidentStatus('tolerated')}
-                          className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-colors ${
-                            incidentStatus === 'tolerated'
-                              ? 'bg-emerald-600 text-white'
-                              : 'bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100'
-                          }`}
-                        >
-                          Toleransi Insiden (Bukan Curang)
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setIncidentStatus('flagged')}
-                          className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-colors ${
-                            incidentStatus === 'flagged'
-                              ? 'bg-rose-600 text-white'
-                              : 'bg-rose-50 text-rose-800 border border-rose-200 hover:bg-rose-100'
-                          }`}
-                        >
-                          Minta Klarifikasi Siswa
-                        </button>
-                      </div>
-
-                      {previewSnapshot && (
-                        <div className="p-3.5 bg-slate-50 rounded-lg border border-slate-200 space-y-2 mt-2">
-                          <div className="flex items-center justify-between text-xs text-slate-500 font-mono">
-                            <span>Bukti #084-RUDI</span>
-                            <span>Kamera Primer + Sekunder</span>
-                          </div>
-                          <div className="grid grid-cols-2 gap-2 text-center text-xs text-slate-600 font-mono">
-                            <div className="p-3 bg-white rounded border border-slate-200 flex flex-col items-center justify-center">
-                              <Camera className="w-4 h-4 text-amber-600 mb-1" />
-                              <span>Wajah Menoleh (Laptop)</span>
-                            </div>
-                            <div className="p-3 bg-white rounded border border-slate-200 flex flex-col items-center justify-center">
-                              <Smartphone className="w-4 h-4 text-emerald-600 mb-1" />
-                              <span>Meja Bersih (HP)</span>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="bg-white rounded-xl border border-slate-200 p-4 sm:p-5 space-y-3 shadow-xs">
-                      <div className="flex items-center justify-between text-xs sm:text-sm">
-                        <span className="font-bold text-slate-900 flex items-center gap-1.5">
-                          <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                          33 Siswa Terkonfirmasi Wajar
-                        </span>
-                        <span className="font-mono text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 text-xs font-bold">
-                          ● Tanpa Pelanggaran
-                        </span>
-                      </div>
-                      <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                        Tidak terdeteksi perpindahan tab, suara mencurigakan, atau perangkat sekunder. Seluruh autosave lokal tersinkronisasi.
-                      </p>
-                      <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-                        <span>Otoritas Diskualifikasi:</span>
-                        <span className="text-slate-900 font-bold">Otoritas Penuh Pengawas (Human-in-the-Loop)</span>
-                      </div>
-                    </div>
-                  </div>
+          {/* Floating Card: AI Grading Result */}
+          <div ref={floatGradeRef} className="hidden lg:flex absolute -right-8 top-28 w-60 flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-xl text-left will-change-transform">
+            <div className="flex items-center gap-2.5">
+              <span className="w-8 h-8 rounded-lg bg-violet-100 text-[#6a5fc1] flex items-center justify-center shrink-0">
+                <Brain className="w-4 h-4" />
+              </span>
+              <div>
+                <div className="text-xs font-bold text-slate-900">Koreksi Esai AI</div>
+                <div className="text-[11px] font-semibold text-emerald-600">Selesai dinilai</div>
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              {[
+                { label: 'Konsep', w: '92%' },
+                { label: 'Argumen', w: '84%' },
+                { label: 'Istilah', w: '88%' },
+                { label: 'Bahasa', w: '80%' },
+              ].map((row) => (
+                <div key={row.label} className="flex items-center gap-2">
+                  <span className="w-14 text-[11px] font-medium text-slate-500">{row.label}</span>
+                  <span className="flex-1 h-1.5 rounded-full bg-slate-100 overflow-hidden">
+                    <span className="block h-full rounded-full bg-[#6a5fc1]" style={{ width: row.w }}></span>
+                  </span>
                 </div>
-              )}
+              ))}
+            </div>
+            <div className="text-[11px] font-semibold text-slate-600 bg-slate-50 border border-slate-200 rounded-md px-2 py-1.5">
+              Draf — menunggu tinjauan guru
+            </div>
+          </div>
 
-              {/* 3. TAB: KOREKSI ESAI & TUTOR */}
-              {activeHeroTab === 'grading' && (
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                  <div className="lg:col-span-6 bg-white rounded-xl border border-slate-200 p-5 space-y-4 shadow-xs">
-                    <div className="flex items-center justify-between border-b border-slate-200 pb-2.5">
-                      <span className="text-sm font-bold text-slate-900">Evaluasi Esai AI Rubrik 4 Dimensi</span>
-                      <span className="font-mono text-sm font-bold text-slate-900 bg-slate-100 px-2.5 py-0.5 rounded">Skor: 18.5 / 20.0</span>
-                    </div>
-                    <div className="grid grid-cols-2 gap-2.5 text-xs sm:text-sm">
-                      <div className="p-3 rounded-lg bg-slate-50 border border-slate-200">
-                        <div className="font-bold text-slate-900">Pemahaman Konsep (5.0/5.0)</div>
-                        <div className="text-xs text-slate-600 mt-1 leading-relaxed">Penjelasan hukum termodinamika tepat dan menyeluruh.</div>
-                      </div>
-                      <div className="p-3 rounded-lg bg-slate-50 border border-slate-200">
-                        <div className="font-bold text-slate-900">Runtutan Argumen (4.5/5.0)</div>
-                        <div className="text-xs text-slate-600 mt-1 leading-relaxed">Alur logika sebab-akibat mesin Carnot runtut.</div>
-                      </div>
-                      <div className="p-3 rounded-lg bg-slate-50 border border-slate-200">
-                        <div className="font-bold text-slate-900">Ketepatan Istilah (4.5/5.0)</div>
-                        <div className="text-xs text-slate-600 mt-1 leading-relaxed">Kosakata fisika kalor baku sesuai kaidah.</div>
-                      </div>
-                      <div className="p-3 rounded-lg bg-slate-50 border border-slate-200">
-                        <div className="font-bold text-slate-900">Kejelasan Bahasa (4.5/5.0)</div>
-                        <div className="text-xs text-slate-600 mt-1 leading-relaxed">Struktur kalimat efektif dan mudah dipahami.</div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="lg:col-span-6 bg-white rounded-xl border border-slate-200 p-5 space-y-3.5 shadow-xs">
-                    <div className="flex items-center justify-between border-b border-slate-200 pb-2.5 text-xs sm:text-sm">
-                      <span className="font-bold text-slate-900 flex items-center gap-1.5">
-                        <Brain className="w-4 h-4 text-purple-600" />
-                        Socratic Tutor AI (Bimbingan Belajar Siswa)
-                      </span>
-                      <span className="text-xs bg-purple-50 text-purple-700 border border-purple-200 px-2.5 py-0.5 rounded font-mono font-bold">
-                        Konsultasi Mandiri
-                      </span>
-                    </div>
-
-                    <div className="flex flex-wrap gap-2 pt-1">
-                      {tutorPrompts.map((p, pIdx) => (
-                        <button
-                          key={pIdx}
-                          type="button"
-                          onClick={() => setActiveTutorPromptIdx(pIdx)}
-                          className={`px-3 py-1.5 rounded-lg text-xs transition-colors cursor-pointer text-left ${
-                            activeTutorPromptIdx === pIdx
-                              ? 'bg-slate-900 text-white font-bold'
-                              : 'bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-200'
-                          }`}
-                        >
-                          {p.q}
-                        </button>
-                      ))}
-                    </div>
-
-                    <div className="p-4 bg-slate-50 rounded-lg text-xs sm:text-sm space-y-2.5 border border-slate-200">
-                      <div className="text-indigo-700 font-bold">
-                        Siswa: "{tutorPrompts[activeTutorPromptIdx].q}"
-                      </div>
-                      <div className="text-slate-800 leading-relaxed">
-                        Tutor AI: "{tutorPrompts[activeTutorPromptIdx].a}"
-                      </div>
-                    </div>
-                  </div>
+          {/* Floating Card: Proctoring Status */}
+          <div ref={floatProcRef} className="hidden lg:flex absolute -left-8 bottom-12 w-56 flex-col gap-2.5 rounded-xl border border-slate-200 bg-white p-4 shadow-xl text-left will-change-transform">
+            <div className="flex items-center gap-2.5">
+              <span className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center shrink-0">
+                <Video className="w-4 h-4" />
+              </span>
+              <div>
+                <div className="text-xs font-bold text-slate-900">Proctoring Live</div>
+                <div className="text-[11px] font-semibold text-emerald-600 flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                  Sedang berjalan
                 </div>
-              )}
+              </div>
+            </div>
+            <div className="space-y-1.5 text-[11px] font-semibold text-slate-600">
+              <div className="flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                <span>Wajah terverifikasi</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                <span>Tatapan ke layar</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                <span>Kamera HP terhubung</span>
+              </div>
             </div>
           </div>
         </div>
+
+        {/* REAL STATS STRIP (hidden when the API has no data) */}
+        {landingStats && (
+          <div className="w-full max-w-5xl mx-auto mt-12 grid grid-cols-2 md:grid-cols-4 gap-6 border-t border-slate-200 pt-8">
+            <StatCounter value={landingStats.active_schools} label="Sekolah aktif" />
+            <StatCounter value={landingStats.total_users} label="Pengguna terdaftar" />
+            <StatCounter value={landingStats.total_exams} label="Ujian dibuat" />
+            <StatCounter value={landingStats.total_sessions} label="Sesi ujian" />
+          </div>
+        )}
+
+        {/* KEUNGGULAN: BENTO GRID */}
+        <div id="keunggulan" className="w-full max-w-6xl mx-auto mt-20 scroll-mt-28">
+          <h2 data-reveal className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight text-center">
+            Semua kebutuhan ujian, satu platform
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8 text-left">
+            <div
+              data-reveal
+              style={{ '--reveal-delay': '0ms' } as React.CSSProperties}
+              className="mkt-hover-lift hover:shadow-md md:col-span-2 rounded-xl border border-slate-200 bg-white p-5 sm:p-6 shadow-xs hover:border-slate-300"
+            >
+              <span className="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-600 border border-indigo-100 flex items-center justify-center">
+                <Laptop className="w-5 h-5" />
+              </span>
+              <h3 className="mt-4 font-bold text-slate-900">Ujian CBT Online</h3>
+              <p className="mt-1 text-sm text-slate-600">Di browser, tanpa instal aplikasi tambahan.</p>
+            </div>
+
+            <div
+              data-reveal
+              style={{ '--reveal-delay': '50ms' } as React.CSSProperties}
+              className="mkt-hover-lift hover:shadow-md rounded-xl border border-slate-200 bg-white p-5 sm:p-6 shadow-xs hover:border-slate-300"
+            >
+              <span className="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center">
+                <Camera className="w-5 h-5" />
+              </span>
+              <h3 className="mt-4 font-bold text-slate-900">Proctoring Kamera Ganda</h3>
+              <p className="mt-1 text-sm text-slate-600">Deteksi HP, wajah, dan arah tatapan.</p>
+            </div>
+
+            <div
+              data-reveal
+              style={{ '--reveal-delay': '100ms' } as React.CSSProperties}
+              className="mkt-hover-lift hover:shadow-md rounded-xl border border-slate-200 bg-white p-5 sm:p-6 shadow-xs hover:border-slate-300"
+            >
+              <span className="w-10 h-10 rounded-lg bg-violet-50 text-[#6a5fc1] border border-violet-100 flex items-center justify-center">
+                <Sparkles className="w-5 h-5" />
+              </span>
+              <h3 className="mt-4 font-bold text-slate-900">Bank Soal &amp; Generate AI</h3>
+              <p className="mt-1 text-sm text-slate-600">Soal dibuat dari materi ajar guru.</p>
+            </div>
+
+            <div
+              data-reveal
+              style={{ '--reveal-delay': '150ms' } as React.CSSProperties}
+              className="mkt-hover-lift hover:shadow-md md:col-span-2 rounded-xl border border-slate-200 bg-white p-5 sm:p-6 shadow-xs hover:border-slate-300"
+            >
+              <span className="w-10 h-10 rounded-lg bg-violet-50 text-[#6a5fc1] border border-violet-100 flex items-center justify-center">
+                <ClipboardCheck className="w-5 h-5" />
+              </span>
+              <h3 className="mt-4 font-bold text-slate-900">Koreksi Esai Otomatis AI</h3>
+              <p className="mt-1 text-sm text-slate-600">Esai dan jawaban singkat dinilai berubrik.</p>
+            </div>
+
+            <div
+              data-reveal
+              style={{ '--reveal-delay': '200ms' } as React.CSSProperties}
+              className="mkt-hover-lift hover:shadow-md rounded-xl border border-slate-200 bg-white p-5 sm:p-6 shadow-xs hover:border-slate-300"
+            >
+              <span className="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-600 border border-indigo-100 flex items-center justify-center">
+                <MessageSquare className="w-5 h-5" />
+              </span>
+              <h3 className="mt-4 font-bold text-slate-900">Chatbot Paham Data Sekolah</h3>
+              <p className="mt-1 text-sm text-slate-600">Menjawab dari data sekolah Anda langsung.</p>
+            </div>
+
+            <div
+              data-reveal
+              style={{ '--reveal-delay': '250ms' } as React.CSSProperties}
+              className="mkt-hover-lift hover:shadow-md md:col-span-2 rounded-xl border border-slate-200 bg-white p-5 sm:p-6 shadow-xs hover:border-slate-300"
+            >
+              <span className="w-10 h-10 rounded-lg bg-slate-100 text-slate-700 border border-slate-200 flex items-center justify-center">
+                <Building2 className="w-5 h-5" />
+              </span>
+              <h3 className="mt-4 font-bold text-slate-900">Multi-Sekolah (Tenant)</h3>
+              <p className="mt-1 text-sm text-slate-600">Banyak sekolah terpisah dalam satu platform.</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Divider: hero (white) -> peran (white), subtle slate-50 crescent */}
+        <SectionDivider fill="#ffffff" accentFill="#f8fafc" variant="a" />
       </section>
 
       {/* TIGA PILAR PENGGUNA */}
-      <section id="peran" className="relative z-10 py-24 px-4 sm:px-6 lg:px-8 border-t border-slate-200 bg-white scroll-mt-20">
-        <div className="max-w-7xl mx-auto space-y-14">
+      <section id="peran" className="relative z-10 min-h-screen flex flex-col justify-center py-20 px-4 sm:px-6 lg:px-8 bg-white scroll-mt-24">
+        <div className="w-full max-w-7xl mx-auto space-y-14">
           <div data-reveal className="max-w-3xl space-y-3">
             <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-              Tiga Sudut Pandang, Satu Ekosistem Harmonis
+              Satu platform, tiga cara pakai
             </h2>
             <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-              Dirancang adil untuk peserta ujian, efisien bagi pendidik, dan akuntabel bagi pengambil kebijakan sekolah.
+              Siswa, guru, dan admin sekolah memakai tampilan yang sesuai tugasnya.
             </p>
           </div>
 
@@ -728,7 +630,7 @@ export default function LandingPage() {
               <div
                 data-reveal
                 style={{ '--reveal-delay': '0ms' } as React.CSSProperties}
-                className="relative p-6 rounded-xl bg-slate-50 border border-slate-200 hover:border-slate-300 transition-colors flex flex-col justify-between"
+                className="mkt-hover-lift hover:shadow-md relative p-6 rounded-xl bg-slate-50 border border-slate-200 hover:border-slate-300 flex flex-col justify-between"
               >
                 {/* Mobile Node Dot */}
                 <div className="md:hidden absolute -left-3.5 top-7 -translate-x-1/2 flex items-center justify-center">
@@ -743,22 +645,45 @@ export default function LandingPage() {
                     </div>
                     <h3 className="text-2xl font-bold text-slate-900 tracking-tight">Siswa (Peserta Ujian)</h3>
                   </div>
-                  <p className="text-sm text-slate-600 leading-relaxed">
-                    Fokus mengerjakan ujian tanpa kecemasan teknis. Autosave IndexedDB menjamin jawaban tidak pernah hilang meski aliran listrik atau koneksi WiFi terputus. Setelah ujian, Socratic Tutor memandu pemahaman konsep secara mendalam.
-                  </p>
+
+                  {/* Mini Mock: Exam Room */}
+                  <div className="rounded-lg border border-slate-200 bg-white p-3.5 space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-bold text-slate-700">Ujian Berlangsung</span>
+                      <span className="flex items-center gap-1.5 text-[11px] font-bold text-emerald-600">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                        Tersimpan
+                      </span>
+                    </div>
+                    <div className="h-2 w-4/5 rounded-full bg-slate-200"></div>
+                    <div className="space-y-1.5">
+                      <div className="flex items-center gap-2 rounded-md border border-slate-900 bg-slate-900 px-2.5 py-2">
+                        <span className="w-2 h-2 rounded-full bg-[#c2ef4e] shrink-0"></span>
+                        <span className="h-1.5 w-2/3 rounded-full bg-white/70"></span>
+                      </div>
+                      <div className="flex items-center gap-2 rounded-md border border-slate-200 px-2.5 py-2">
+                        <span className="w-2 h-2 rounded-full border border-slate-300 shrink-0"></span>
+                        <span className="h-1.5 w-1/2 rounded-full bg-slate-200"></span>
+                      </div>
+                      <div className="flex items-center gap-2 rounded-md border border-slate-200 px-2.5 py-2">
+                        <span className="w-2 h-2 rounded-full border border-slate-300 shrink-0"></span>
+                        <span className="h-1.5 w-3/5 rounded-full bg-slate-200"></span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 <ul className="space-y-2.5 text-sm text-slate-700 pt-6 mt-6 border-t border-slate-200">
                   <li className="flex items-start gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                    <span>Zero Data-Loss: Jawaban tersimpan di peramban seketika</span>
+                    <span>Autosave, jawaban tidak hilang</span>
                   </li>
                   <li className="flex items-start gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                    <span>Ketenangan Mental: Tanpa penutupan paksa ujian sepihak</span>
+                    <span>Tidak ada penutupan ujian sepihak</span>
                   </li>
                   <li className="flex items-start gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                    <span>Socratic Tutor: Pembahasan interaktif langkah demi langkah</span>
+                    <span>Pembahasan soal setelah ujian</span>
                   </li>
                 </ul>
               </div>
@@ -766,8 +691,8 @@ export default function LandingPage() {
               {/* CARD GURU */}
               <div
                 data-reveal
-                style={{ '--reveal-delay': '100ms' } as React.CSSProperties}
-                className="relative p-6 rounded-xl bg-slate-50 border border-slate-200 hover:border-slate-300 transition-colors flex flex-col justify-between"
+                style={{ '--reveal-delay': '50ms' } as React.CSSProperties}
+                className="mkt-hover-lift hover:shadow-md relative p-6 rounded-xl bg-slate-50 border border-slate-200 hover:border-slate-300 flex flex-col justify-between"
               >
                 {/* Mobile Node Dot */}
                 <div className="md:hidden absolute -left-3.5 top-7 -translate-x-1/2 flex items-center justify-center">
@@ -780,24 +705,37 @@ export default function LandingPage() {
                       <BookOpen className="w-3.5 h-3.5" />
                       <span>PENDIDIK</span>
                     </div>
-                    <h3 className="text-2xl font-bold text-slate-900 tracking-tight">Guru & Tim Pengawas</h3>
+                    <h3 className="text-2xl font-bold text-slate-900 tracking-tight">Guru &amp; Pengawas</h3>
                   </div>
-                  <p className="text-sm text-slate-600 leading-relaxed">
-                    Memangkas hingga 80% beban administrasi koreksi. Generator soal berbasis kurikulum merumuskan paket soal dalam hitungan detik. AI mengevaluasi esai secara objektif, sementara guru tetap memegang otoritas penuh penyesuaian nilai.
-                  </p>
+
+                  {/* Mini Mock: Proctoring Console Rows */}
+                  <div className="rounded-lg border border-slate-200 bg-white p-3.5 space-y-2">
+                    <div className="flex items-center justify-between gap-2 rounded-md bg-slate-50 border border-slate-100 px-2.5 py-2">
+                      <span className="h-1.5 w-2/3 rounded-full bg-slate-300"></span>
+                      <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded shrink-0">Aman</span>
+                    </div>
+                    <div className="flex items-center justify-between gap-2 rounded-md bg-slate-50 border border-slate-100 px-2.5 py-2">
+                      <span className="h-1.5 w-1/2 rounded-full bg-slate-300"></span>
+                      <span className="text-[10px] font-bold text-amber-700 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded shrink-0">Perlu cek</span>
+                    </div>
+                    <div className="flex items-center justify-between gap-2 rounded-md bg-slate-50 border border-slate-100 px-2.5 py-2">
+                      <span className="h-1.5 w-3/5 rounded-full bg-slate-300"></span>
+                      <span className="text-[10px] font-bold text-[#6a5fc1] bg-violet-50 border border-violet-200 px-1.5 py-0.5 rounded shrink-0">Draf AI</span>
+                    </div>
+                  </div>
                 </div>
                 <ul className="space-y-2.5 text-sm text-slate-700 pt-6 mt-6 border-t border-slate-200">
                   <li className="flex items-start gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                    <span>Generator Paket Soal: Pilihan ganda & esai siap pakai</span>
+                    <span>Generate soal dari bank soal</span>
                   </li>
                   <li className="flex items-start gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                    <span>Live Proctoring: Pantau seluruh kelas dalam satu layar konsol</span>
+                    <span>Pantau satu kelas dalam satu layar</span>
                   </li>
                   <li className="flex items-start gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                    <span>Otoritas Mutlak: Guru bebas merevisi nilai draf AI kapan saja</span>
+                    <span>Nilai draf AI bisa direvisi</span>
                   </li>
                 </ul>
               </div>
@@ -805,8 +743,8 @@ export default function LandingPage() {
               {/* CARD SEKOLAH */}
               <div
                 data-reveal
-                style={{ '--reveal-delay': '200ms' } as React.CSSProperties}
-                className="relative p-6 rounded-xl bg-slate-50 border border-slate-200 hover:border-slate-300 transition-colors flex flex-col justify-between"
+                style={{ '--reveal-delay': '100ms' } as React.CSSProperties}
+                className="mkt-hover-lift hover:shadow-md relative p-6 rounded-xl bg-slate-50 border border-slate-200 hover:border-slate-300 flex flex-col justify-between"
               >
                 {/* Mobile Node Dot */}
                 <div className="md:hidden absolute -left-3.5 top-7 -translate-x-1/2 flex items-center justify-center">
@@ -819,392 +757,429 @@ export default function LandingPage() {
                       <Building2 className="w-3.5 h-3.5" />
                       <span>INSTITUSI</span>
                     </div>
-                    <h3 className="text-2xl font-bold text-slate-900 tracking-tight">Kepala Sekolah & Tim Asesmen</h3>
+                    <h3 className="text-2xl font-bold text-slate-900 tracking-tight">Admin Sekolah</h3>
                   </div>
-                  <p className="text-sm text-slate-600 leading-relaxed">
-                    Menjamin reputasi integritas dan kepatuhan hukum institusi. Seluruh data biometrik terlindungi sesuai UU Pelindungan Data Pribadi (UU PDP). Cetak Berita Acara dan Transkrip Nilai resmi instansi dalam satu klik.
-                  </p>
+
+                  {/* Mini Mock: Admin Overview */}
+                  <div className="rounded-lg border border-slate-200 bg-white p-3.5 space-y-3">
+                    <div className="grid grid-cols-3 gap-2">
+                      {['Sekolah', 'Guru', 'Siswa'].map((label) => (
+                        <div key={label} className="rounded-md bg-slate-50 border border-slate-100 px-2 py-2 space-y-1.5">
+                          <div className="h-1.5 w-3/4 rounded-full bg-slate-300"></div>
+                          <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">{label}</div>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="flex items-end gap-1 h-10">
+                      {[45, 70, 55, 85, 65, 95, 78].map((h, i) => (
+                        <span
+                          key={i}
+                          className={`flex-1 rounded-t-sm ${i === 5 ? 'bg-[#c2ef4e]' : 'bg-[#6a5fc1]/60'}`}
+                          style={{ height: `${h}%` }}
+                        />
+                      ))}
+                    </div>
+                  </div>
                 </div>
                 <ul className="space-y-2.5 text-sm text-slate-700 pt-6 mt-6 border-t border-slate-200">
                   <li className="flex items-start gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                    <span>Kepatuhan Hukum: Tunduk penuh pada UU PDP No. 27/2022</span>
+                    <span>Kepatuhan UU PDP</span>
                   </li>
                   <li className="flex items-start gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                    <span>Dokumentasi Legal: Berita Acara & Transkrip Nilai PDF resmi</span>
+                    <span>Berita acara &amp; transkrip PDF</span>
                   </li>
                   <li className="flex items-start gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                    <span>Analitik Mutu: Komparasi capaian kompetensi antar-kelas</span>
+                    <span>Analitik capaian antar-kelas</span>
                   </li>
                 </ul>
               </div>
             </div>
           </div>
         </div>
+
+        {/* Divider: peran (white) -> proctoring (#150f23) */}
+        <SectionDivider fill="#150f23" variant="b" />
       </section>
 
       {/* DUAL-CAMERA DETAIL */}
-      <section id="proctoring" className="relative z-10 py-24 px-4 sm:px-6 lg:px-8 border-t border-slate-200 bg-slate-50 scroll-mt-20">
-        <div className="max-w-7xl mx-auto space-y-12">
+      <section id="proctoring" className="relative z-10 min-h-screen flex flex-col justify-center py-20 px-4 sm:px-6 lg:px-8 bg-[#150f23] scroll-mt-24">
+        <div className="w-full max-w-7xl mx-auto space-y-12">
           <div data-reveal className="max-w-3xl space-y-3">
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-              Bagaimana AI Dual-Camera Mengamankan Ruang Ujian
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+              Dua kamera, tanpa titik buta
             </h2>
-            <p className="text-slate-600 text-sm sm:text-base leading-relaxed max-w-2xl">
-              Menutup titik buta kamera tunggal secara menyeluruh tanpa mewajibkan instalasi aplikasi rumit di ponsel peserta.
+            <p className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-2xl">
+              Kamera laptop memantau wajah dan tatapan. Kamera HP memantau meja dan layar. AI memberi peringatan — pengawas yang memutuskan.
             </p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            {/* LEFT: MONITORING CONSOLE (FLATTENED) */}
+            {/* LEFT: CAMERA FRAME MOCKS WITH DETECTION BOXES */}
             <div
               data-reveal
               style={{ '--reveal-delay': '0ms' } as React.CSSProperties}
-              className="lg:col-span-6 bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden"
+              className="lg:col-span-6 space-y-4"
             >
-              {/* Header Bar */}
-              <div className="px-5 py-3.5 bg-slate-50/70 border-b border-slate-200 flex items-center justify-between text-xs">
-                <span className="font-bold text-slate-900">Topologi Pengawasan Kamera Ganda</span>
-                <span className="text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded border border-emerald-200 font-mono font-bold">
-                  ● Sinkronisasi Aktif
+              {/* Frame: Laptop Camera */}
+              <div className="relative rounded-xl border border-white/10 bg-[#0c0918] overflow-hidden">
+                <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/10">
+                  <span className="flex items-center gap-2 text-[11px] font-mono font-bold text-slate-300">
+                    <Camera className="w-3.5 h-3.5" />
+                    KAMERA LAPTOP
+                  </span>
+                  <span className="flex items-center gap-1.5 text-[11px] font-bold text-emerald-400">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                    LIVE
+                  </span>
+                </div>
+                <div className="relative h-52 sm:h-60">
+                  {/* Face bounding box */}
+                  <div className="absolute left-[14%] top-[20%] w-[30%] h-[56%] rounded-lg border-2 border-emerald-400/90">
+                    <span className="absolute -top-7 left-0 text-[10px] font-bold font-mono text-emerald-300 bg-emerald-400/10 border border-emerald-400/40 rounded px-1.5 py-0.5 whitespace-nowrap">
+                      WAJAH
+                    </span>
+                    <span className="absolute inset-0 flex items-center justify-center text-emerald-400/60">
+                      <ScanFace className="w-10 h-10" />
+                    </span>
+                  </div>
+                  {/* Desk silhouette */}
+                  <div className="absolute bottom-5 left-[56%] right-[8%] space-y-2">
+                    <div className="h-2 w-4/5 rounded-full bg-white/10"></div>
+                    <div className="h-2 w-3/5 rounded-full bg-white/10"></div>
+                    <div className="h-2 w-2/3 rounded-full bg-white/10"></div>
+                  </div>
+                  {/* Gaze chip */}
+                  <span className="absolute bottom-3 left-3 flex items-center gap-1.5 text-[11px] font-bold text-slate-200 bg-white/10 border border-white/15 rounded-full px-2.5 py-1">
+                    <Eye className="w-3.5 h-3.5 text-[#c2ef4e]" />
+                    Tatapan: ke layar
+                  </span>
+                </div>
+              </div>
+
+              {/* Sync Bridge */}
+              <div className="flex items-center justify-center gap-2 text-[11px] font-mono font-bold tracking-wider text-slate-400">
+                <span className="sync-pulse-dot w-2 h-2 rounded-full bg-[#c2ef4e] shadow-[0_0_6px_rgba(194,239,78,0.9)]" />
+                TERSINKRON ANTAR KAMERA
+              </div>
+
+              {/* Frame: Phone Camera */}
+              <div className="relative rounded-xl border border-white/10 bg-[#0c0918] overflow-hidden">
+                <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/10">
+                  <span className="flex items-center gap-2 text-[11px] font-mono font-bold text-slate-300">
+                    <Smartphone className="w-3.5 h-3.5" />
+                    KAMERA HP
+                  </span>
+                  <span className="flex items-center gap-1.5 text-[11px] font-bold text-indigo-300">
+                    <QrCode className="w-3.5 h-3.5" />
+                    QR TERHUBUNG
+                  </span>
+                </div>
+                <div className="relative h-40 sm:h-44">
+                  {/* Desk silhouette */}
+                  <div className="absolute bottom-5 left-[8%] right-[42%] space-y-2">
+                    <div className="h-2 w-4/5 rounded-full bg-white/10"></div>
+                    <div className="h-2 w-3/5 rounded-full bg-white/10"></div>
+                    <div className="h-2 w-2/3 rounded-full bg-white/10"></div>
+                  </div>
+                  {/* Detected phone bounding box */}
+                  <span className="absolute right-[13%] top-3 text-[10px] font-bold font-mono text-rose-300 bg-rose-400/10 border border-rose-400/40 rounded px-1.5 py-0.5 whitespace-nowrap">
+                    HP TERDETEKSI
+                  </span>
+                  <div className="absolute right-[14%] top-[24%] w-[15%] h-[58%] rounded-md border-2 border-rose-400/90 rotate-6">
+                    <span className="absolute inset-x-1 top-1 h-1 rounded-full bg-rose-400/40"></span>
+                  </div>
+                  {/* Desk chip */}
+                  <span className="absolute bottom-3 left-3 flex items-center gap-1.5 text-[11px] font-bold text-slate-200 bg-white/10 border border-white/15 rounded-full px-2.5 py-1">
+                    <Eye className="w-3.5 h-3.5 text-[#c2ef4e]" />
+                    Meja &amp; layar terpantau
+                  </span>
+                </div>
+              </div>
+
+              {/* Status Chips */}
+              <div className="flex flex-wrap gap-2">
+                <span className="flex items-center gap-1.5 text-[11px] font-bold text-emerald-300 bg-emerald-400/10 border border-emerald-400/30 rounded-full px-2.5 py-1">
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  Wajah terverifikasi
+                </span>
+                <span className="flex items-center gap-1.5 text-[11px] font-bold text-rose-300 bg-rose-400/10 border border-rose-400/30 rounded-full px-2.5 py-1">
+                  <Smartphone className="w-3.5 h-3.5" />
+                  HP terdeteksi
+                </span>
+                <span className="flex items-center gap-1.5 text-[11px] font-bold text-violet-300 bg-violet-400/10 border border-violet-400/30 rounded-full px-2.5 py-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#c2ef4e]"></span>
+                  Sinkronisasi aktif
                 </span>
               </div>
-
-              {/* Dual-Feed Area with Sync Bridge */}
-              <div className="relative grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-slate-200 bg-white">
-                {/* Kamera Primer (0°) */}
-                <div className="p-6 space-y-2">
-                  <div className="flex items-center gap-2 text-indigo-700 font-mono text-xs font-bold">
-                    <Camera className="w-4 h-4" />
-                    <span>Kamera Primer (0°)</span>
-                  </div>
-                  <div className="text-sm text-slate-900 font-bold">Webcam Laptop Peserta</div>
-                  <p className="text-xs text-slate-600 leading-relaxed">
-                    Memantau kehadiran wajah, arah tatapan mata, serta mendeteksi jika peserta meninggalkan meja ujian.
-                  </p>
-                </div>
-
-                {/* Kamera Sekunder (45°) */}
-                <div className="p-6 space-y-2">
-                  <div className="flex items-center gap-2 text-emerald-700 font-mono text-xs font-bold">
-                    <Smartphone className="w-4 h-4" />
-                    <span>Kamera Sekunder (45°)</span>
-                  </div>
-                  <div className="text-sm text-slate-900 font-bold">Ponsel Siswa via QR Code</div>
-                  <p className="text-xs text-slate-600 leading-relaxed">
-                    Memantau permukaan meja, keyboard, tangan, dan layar tanpa perlu memasang aplikasi tambahan.
-                  </p>
-                </div>
-
-                {/* Sync Bridge: Horizontal on sm+, Vertical on <sm */}
-                <div
-                  className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-none"
-                  aria-hidden="true"
-                >
-                  <div className="bg-white border border-slate-200 shadow-xs rounded-full p-1.5 flex items-center justify-center">
-                    <div className="relative flex items-center justify-center w-4 h-14 sm:w-16 sm:h-4">
-                      {/* Horizontal track line (sm+) */}
-                      <div className="hidden sm:block absolute inset-x-1 top-1/2 -translate-y-1/2 h-0.5 bg-slate-200 rounded-full" />
-                      {/* Vertical track line (<sm) */}
-                      <div className="sm:hidden block absolute inset-y-1 left-1/2 -translate-x-1/2 w-0.5 bg-slate-200 rounded-full" />
-                      {/* Traveling sync pulse dot */}
-                      <span className="sync-pulse-dot w-2.5 h-2.5 rounded-full bg-[#c2ef4e] border border-emerald-600 shadow-[0_0_6px_rgba(194,239,78,0.9)]" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Console Footer Strip: Transmission Bar */}
-              <div className="px-5 py-3 bg-slate-50/70 border-t border-slate-200 text-xs text-slate-600 flex flex-col sm:flex-row sm:items-center justify-between gap-1">
-                <span>Transmisi Data: Protokol WebSocket Terenkripsi SSL</span>
-                <span className="font-mono text-slate-900 font-bold text-xs">Latensi Teruji &lt; 200 ms</span>
-              </div>
+              <p className="text-[11px] text-slate-500 font-mono">Koneksi WebSocket terenkripsi SSL</p>
             </div>
 
-            {/* RIGHT: NUMBERED STEPS */}
+            {/* RIGHT: NUMBERED STEPS (TRIMMED) */}
             <div
               data-reveal
-              style={{ '--reveal-delay': '120ms' } as React.CSSProperties}
+              style={{ '--reveal-delay': '60ms' } as React.CSSProperties}
               className="lg:col-span-6 space-y-8"
             >
               <div className="flex items-start gap-3.5">
-                <span className="w-6 h-6 rounded-md bg-slate-900 text-white flex items-center justify-center text-xs font-mono font-bold shrink-0 mt-0.5">
+                <span className="w-6 h-6 rounded-md bg-[#6a5fc1] text-white flex items-center justify-center text-xs font-mono font-bold shrink-0 mt-0.5">
                   1
                 </span>
-                <div className="space-y-2">
-                  <h3 className="text-base font-bold text-slate-900">
-                    Kemudahan Akses Tanpa Instalasi Aplikasi
-                  </h3>
-                  <p className="text-sm text-slate-600 leading-relaxed max-w-xl">
-                    Peserta cukup membuka kamera bawaan ponsel dan memindai QR Code di layar ujian. Streaming langsung aktif di peramban tanpa membebani memori penyimpanan perangkat siswa.
+                <div className="space-y-1.5">
+                  <h3 className="text-base font-bold text-white">Tanpa instal aplikasi</h3>
+                  <p className="text-sm text-slate-300 leading-relaxed max-w-xl">
+                    Kamera HP aktif lewat scan QR dari layar ujian.
                   </p>
                 </div>
               </div>
 
               <div className="flex items-start gap-3.5">
-                <span className="w-6 h-6 rounded-md bg-slate-900 text-white flex items-center justify-center text-xs font-mono font-bold shrink-0 mt-0.5">
+                <span className="w-6 h-6 rounded-md bg-[#6a5fc1] text-white flex items-center justify-center text-xs font-mono font-bold shrink-0 mt-0.5">
                   2
                 </span>
-                <div className="space-y-2">
-                  <h3 className="text-base font-bold text-slate-900">
-                    Cakupan Meja dan Layar Menyeluruh
-                  </h3>
-                  <p className="text-sm text-slate-600 leading-relaxed max-w-xl">
-                    Penempatan sudut 45 derajat memastikan seluruh area kerja tangan peserta dan sisi layar terpantau jelas, menutup celah pemakaian catatan fisik maupun ponsel sekunder.
+                <div className="space-y-1.5">
+                  <h3 className="text-base font-bold text-white">Meja dan layar terpantau</h3>
+                  <p className="text-sm text-slate-300 leading-relaxed max-w-xl">
+                    Sudut 45° menutup celah catatan dan ponsel kedua.
                   </p>
                 </div>
               </div>
 
               <div className="flex items-start gap-3.5">
-                <span className="w-6 h-6 rounded-md bg-slate-900 text-white flex items-center justify-center text-xs font-mono font-bold shrink-0 mt-0.5">
+                <span className="w-6 h-6 rounded-md bg-[#6a5fc1] text-white flex items-center justify-center text-xs font-mono font-bold shrink-0 mt-0.5">
                   3
                 </span>
-                <div className="space-y-2">
-                  <h3 className="text-base font-bold text-slate-900">
-                    Otoritas Penuh Pengawas Manusia
-                  </h3>
-                  <p className="text-sm text-slate-600 leading-relaxed max-w-xl">
-                    AI berfungsi sebagai sistem peringatan dini, bukan penentu hukuman. Setiap peristiwa disajikan dalam bentuk bukti snapshot dan cap waktu agar pengawas dapat mengambil keputusan yang adil dan beretika.
+                <div className="space-y-1.5">
+                  <h3 className="text-base font-bold text-white">Pengawas yang memutuskan</h3>
+                  <p className="text-sm text-slate-300 leading-relaxed max-w-xl">
+                    Setiap kejadian disertai snapshot dan cap waktu.
                   </p>
                 </div>
               </div>
             </div>
           </div>
         </div>
+
+        {/* Divider: proctoring (#150f23) -> pricing (white) */}
+        <SectionDivider fill="#ffffff" variant="a" />
       </section>
 
       {/* PRICING & LISENSI SAAS */}
-      <section id="pricing" className="relative z-10 py-24 px-4 sm:px-6 lg:px-8 border-t border-slate-200 bg-white text-slate-900 scroll-mt-20">
-        <div className="max-w-7xl mx-auto space-y-14">
+      <section id="pricing" className="relative z-10 min-h-screen flex flex-col justify-center py-20 px-4 sm:px-6 lg:px-8 bg-white text-slate-900 scroll-mt-24">
+        <div className="w-full max-w-7xl mx-auto space-y-14">
           <div data-reveal className="max-w-3xl space-y-3">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-xs bg-slate-100 text-slate-800 text-xs font-mono font-bold uppercase tracking-wider border border-slate-200">
               Pengadaan Institusi B2B
             </div>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-              Paket & Lisensi SaaS Resmi Sekolah
+              Harga &amp; Lisensi Sekolah
             </h2>
             <p className="text-slate-600 text-sm sm:text-base leading-relaxed max-w-2xl">
-              EXAMIND bermitra resmi melalui Surat Perjanjian Kerja (SPK) atau MOU sekolah.{' '}
-              <strong className="text-slate-900">Kami tidak menyediakan sistem pembayaran kartu kredit publik</strong>. Seluruh proses pengadaan diurus melalui penawaran resmi, faktur pajak institusi, dan transfer antar-rekening instansi dengan pendampingan Konsultan Edukasi.
+              Harga mengikuti jumlah siswa di sekolah Anda. Pengadaan lewat penawaran resmi, SPK/MOU, dan faktur pajak institusi — tanpa pembayaran kartu kredit publik.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
-            {/* TIER 1: STARTER */}
-            <div
-              data-reveal
-              style={{ '--reveal-delay': '0ms' } as React.CSSProperties}
-              className="p-7 rounded-xl bg-slate-50 border border-slate-200 flex flex-col justify-between space-y-6 shadow-xs hover:border-slate-300 transition-all text-slate-900"
-            >
-              <div className="space-y-5">
-                <div>
-                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider font-mono">Sekolah Mandiri</span>
-                  <h3 className="text-xl font-bold text-slate-900 mt-1">Paket Rintisan & Bimbel</h3>
-                  <p className="text-sm text-slate-600 mt-1.5 leading-relaxed">Untuk sekolah rintisan, SMP swasta, atau bimbel persiapan ujian.</p>
-                </div>
-
-                <div className="py-4 border-y border-slate-200 space-y-1">
-                  <div className="text-xs text-slate-500 font-bold uppercase tracking-wider font-mono">Investasi Semester</div>
-                  <div className="text-3xl font-extrabold font-mono text-slate-900 tracking-tight">
-                    Rp 3.500.000 <span className="text-xs font-normal text-slate-500">/ smt</span>
-                  </div>
-                  <div className="text-xs text-slate-500">Hingga 300 siswa aktif</div>
-                </div>
-
-                <ul className="space-y-3 text-sm text-slate-700">
-                  <li className="flex items-start gap-2.5">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                    <span className="text-slate-900 font-medium">Kamera Tunggal (Webcam Laptop)</span>
-                  </li>
-                  <li className="flex items-start gap-2.5">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                    <span>Koreksi Pilihan Ganda Instan</span>
-                  </li>
-                  <li className="flex items-start gap-2.5">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                    <span>IndexedDB Zero Data-Loss Autosave</span>
-                  </li>
-                  <li className="flex items-start gap-2.5">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                    <span>Ekspor Rekapitulasi Nilai Excel</span>
-                  </li>
-                </ul>
-              </div>
-
-              <div className="pt-4 border-t border-slate-200 space-y-2">
+          {plans ? (
+            <>
+              {/* Billing Period Toggle */}
+              <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-lg border border-slate-200 text-sm font-semibold w-fit shadow-xs">
                 <button
-                  onClick={() => openInquiryModal('Paket Rintisan & Bimbel')}
-                  className="w-full py-3 px-4 rounded-lg bg-white hover:bg-slate-100 text-slate-900 border border-slate-300 font-bold text-sm transition-colors cursor-pointer shadow-xs"
+                  type="button"
+                  onClick={() => setBillingPeriod('monthly')}
+                  className={`px-4 py-1.5 rounded-md transition-all cursor-pointer ${
+                    billingPeriod === 'monthly'
+                      ? 'bg-slate-900 text-white font-bold shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
                 >
-                  Konsultasikan Paket Dasar
+                  Bulanan
                 </button>
-                <p className="text-xs text-center text-slate-500">Terhubung langsung dengan Konsultan Edukasi</p>
-              </div>
-            </div>
-
-            {/* TIER 2: INSTITUSI PRO */}
-            <div
-              data-reveal
-              style={{ '--reveal-delay': '100ms' } as React.CSSProperties}
-              className="p-7 rounded-xl bg-white border-2 border-slate-900 flex flex-col justify-between space-y-6 shadow-xl relative text-slate-900"
-            >
-              <div className="absolute -top-3.5 right-6 px-3 py-0.5 rounded-full text-xs font-bold bg-[#c2ef4e] text-slate-950 shadow-sm font-mono border border-slate-900">
-                Paling Direkomendasikan
-              </div>
-
-              <div className="space-y-5">
-                <div>
-                  <span className="text-xs font-bold text-indigo-700 uppercase tracking-wider font-mono">Standar Institusi</span>
-                  <h3 className="text-xl font-bold text-slate-900 mt-1">Institusi Terpadu</h3>
-                  <p className="text-sm text-slate-600 mt-1.5 leading-relaxed">Solusi komprehensif untuk SMP, SMA, dan SMK terakreditasi.</p>
-                </div>
-
-                <div className="py-4 border-y border-slate-200 space-y-1">
-                  <div className="text-xs text-slate-500 font-bold uppercase tracking-wider font-mono">Investasi Semester</div>
-                  <div className="text-3xl font-extrabold font-mono text-slate-900 tracking-tight">
-                    Rp 7.800.000 <span className="text-xs font-normal text-slate-500">/ smt</span>
-                  </div>
-                  <div className="text-xs text-slate-500">Hingga 1.500 siswa aktif</div>
-                </div>
-
-                <ul className="space-y-3 text-sm text-slate-800">
-                  <li className="flex items-start gap-2.5">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                    <span><strong className="text-slate-900">AI Dual-Camera Proctoring</strong> (Laptop + HP)</span>
-                  </li>
-                  <li className="flex items-start gap-2.5">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                    <span><strong className="text-slate-900">AI Essay Grading Rubrik 4 Dimensi</strong></span>
-                  </li>
-                  <li className="flex items-start gap-2.5">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                    <span><strong className="text-slate-900">Socratic Tutor AI</strong> Pembahasan Pasca-Ujian</span>
-                  </li>
-                  <li className="flex items-start gap-2.5">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                    <span>Live Proctoring WebSocket & Flag Snapshot</span>
-                  </li>
-                  <li className="flex items-start gap-2.5">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                    <span>Berita Acara & Transkrip Hasil PDF Resmi</span>
-                  </li>
-                </ul>
-              </div>
-
-              <div className="pt-4 border-t border-slate-200 space-y-2">
                 <button
-                  onClick={() => openInquiryModal('Institusi Terpadu')}
-                  className="w-full py-3 px-4 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm shadow-md transition-all cursor-pointer"
+                  type="button"
+                  onClick={() => setBillingPeriod('annual')}
+                  className={`px-4 py-1.5 rounded-md transition-all cursor-pointer ${
+                    billingPeriod === 'annual'
+                      ? 'bg-slate-900 text-white font-bold shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
                 >
-                  Jadwalkan Demo & Ajukan Penawaran SPK
+                  Tahunan
                 </button>
-                <p className="text-xs text-center text-slate-500">Sudah termasuk sesi pelatihan guru dan pengawas</p>
               </div>
+
+              {/* Plan Cards (from GET /public/landing) */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
+                {plans.map((plan, idx) => {
+                  const price = billingPeriod === 'monthly' ? plan.price_monthly : plan.price_annually
+                  return (
+                    <div
+                      key={plan.id}
+                      data-reveal
+                      style={{ '--reveal-delay': `${Math.min(idx, 5) * 50}ms` } as React.CSSProperties}
+                      className={
+                        plan.is_popular
+                          ? 'mkt-hover-lift hover:shadow-2xl p-7 rounded-xl bg-white border-2 border-slate-900 flex flex-col justify-between space-y-6 shadow-xl relative text-slate-900'
+                          : 'mkt-hover-lift hover:shadow-md p-7 rounded-xl bg-slate-50 border border-slate-200 flex flex-col justify-between space-y-6 shadow-xs hover:border-slate-300 text-slate-900'
+                      }
+                    >
+                      {plan.is_popular && (
+                        <div className="absolute -top-3.5 right-6 px-3 py-0.5 rounded-full text-xs font-bold bg-[#c2ef4e] text-slate-950 shadow-sm font-mono border border-slate-900">
+                          Paling Direkomendasikan
+                        </div>
+                      )}
+
+                      <div className="space-y-5">
+                        <div>
+                          <h3 className="text-xl font-bold text-slate-900">{plan.name}</h3>
+                          <p className="text-sm text-slate-600 mt-1.5 leading-relaxed">{plan.description}</p>
+                        </div>
+
+                        <div key={billingPeriod} className="price-swap py-4 border-y border-slate-200 space-y-1">
+                          <div className="text-xs text-slate-500 font-bold uppercase tracking-wider font-mono">
+                            {billingPeriod === 'monthly' ? 'Per bulan' : 'Per tahun'}
+                          </div>
+                          <div className="text-3xl font-extrabold font-mono text-slate-900 tracking-tight">
+                            {formatIDR(price)}
+                          </div>
+                        </div>
+
+                        <ul className="space-y-2.5 text-sm text-slate-700">
+                          <li className="flex items-start gap-2.5">
+                            <Users className="w-4 h-4 text-slate-500 shrink-0 mt-0.5" />
+                            <span>Hingga {formatCount(plan.max_students)} siswa</span>
+                          </li>
+                          <li className="flex items-start gap-2.5">
+                            <BookOpen className="w-4 h-4 text-slate-500 shrink-0 mt-0.5" />
+                            <span>Hingga {formatCount(plan.max_teachers)} guru</span>
+                          </li>
+                          <li className="flex items-start gap-2.5">
+                            <Sparkles className="w-4 h-4 text-[#6a5fc1] shrink-0 mt-0.5" />
+                            <span>{formatCount(plan.ai_credits_monthly)} kredit AI per bulan</span>
+                          </li>
+                          <li className="flex items-start gap-2.5">
+                            <Camera className="w-4 h-4 text-slate-500 shrink-0 mt-0.5" />
+                            <span>{proctoringLabel(plan.proctoring_type)}</span>
+                          </li>
+                        </ul>
+
+                        {plan.features && plan.features.length > 0 && (
+                          <ul className="space-y-2.5 text-sm text-slate-700 border-t border-slate-100 pt-4">
+                            {plan.features.map((feature) => (
+                              <li key={feature} className="flex items-start gap-2.5">
+                                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                                <span>{feature}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+
+                      <div className="pt-4 border-t border-slate-200">
+                        <button
+                          onClick={() => openInquiryModal(plan.name)}
+                          className={
+                            plan.is_popular
+                              ? 'mkt-btn-press w-full py-3 px-4 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm shadow-md cursor-pointer'
+                              : 'mkt-btn-press w-full py-3 px-4 rounded-lg bg-white hover:bg-slate-100 text-slate-900 border border-slate-300 font-bold text-sm cursor-pointer shadow-xs'
+                          }
+                        >
+                          Konsultasikan Paket Ini
+                        </button>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </>
+          ) : plansError ? (
+            /* Fetch failed: no cards, no invented prices */
+            <div className="rounded-xl border border-slate-200 bg-slate-50 p-8 sm:p-10 text-center space-y-4">
+              <p className="text-lg font-bold text-slate-900">Harga tersedia saat pendaftaran</p>
+              <p className="text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
+                Daftar harga resmi dikirim setelah kami tahu jumlah siswa sekolah Anda.
+              </p>
+              <button
+                onClick={() => openInquiryModal('demo')}
+                className="mkt-btn-press px-6 py-3 rounded-lg bg-[#c2ef4e] hover:bg-[#b2e233] text-slate-950 font-bold text-sm shadow-md cursor-pointer"
+              >
+                Minta Daftar Harga
+              </button>
             </div>
-
-            {/* TIER 3: ENTERPRISE */}
-            <div
-              data-reveal
-              style={{ '--reveal-delay': '200ms' } as React.CSSProperties}
-              className="p-7 rounded-xl bg-slate-50 border border-slate-200 flex flex-col justify-between space-y-6 shadow-xs hover:border-slate-300 transition-all text-slate-900"
-            >
-              <div className="space-y-5">
-                <div>
-                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider font-mono">Konsorsium & Yayasan</span>
-                  <h3 className="text-xl font-bold text-slate-900 mt-1">Enterprise & Dinas Pendidikan</h3>
-                  <p className="text-sm text-slate-600 mt-1.5 leading-relaxed">Untuk yayasan besar multi-cabang atau dinas pendidikan wilayah.</p>
-                </div>
-
-                <div className="py-4 border-y border-slate-200 space-y-1">
-                  <div className="text-xs text-slate-500 font-bold uppercase tracking-wider font-mono">Skema Kemitraan</div>
-                  <div className="text-3xl font-extrabold font-mono text-slate-900 tracking-tight">
-                    Kustom SPK <span className="text-xs font-normal text-slate-500">/ tahun</span>
+          ) : (
+            /* Loading skeletons */
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" aria-hidden="true">
+              {[0, 1, 2].map((i) => (
+                <div key={i} className="p-7 rounded-xl bg-slate-50 border border-slate-200 space-y-5 animate-pulse">
+                  <div className="space-y-2">
+                    <div className="h-5 w-2/3 rounded bg-slate-200"></div>
+                    <div className="h-3 w-full rounded bg-slate-200"></div>
+                    <div className="h-3 w-4/5 rounded bg-slate-200"></div>
                   </div>
-                  <div className="text-xs text-slate-500">Kapasitas Siswa Tanpa Batas (Multi-Sekolah)</div>
+                  <div className="py-4 border-y border-slate-200">
+                    <div className="h-8 w-1/2 rounded bg-slate-200"></div>
+                  </div>
+                  <div className="space-y-2.5">
+                    <div className="h-3 w-full rounded bg-slate-200"></div>
+                    <div className="h-3 w-5/6 rounded bg-slate-200"></div>
+                    <div className="h-3 w-4/6 rounded bg-slate-200"></div>
+                    <div className="h-3 w-3/6 rounded bg-slate-200"></div>
+                  </div>
+                  <div className="h-11 rounded-lg bg-slate-200"></div>
                 </div>
-
-                <ul className="space-y-3 text-sm text-slate-700">
-                  <li className="flex items-start gap-2.5">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                    <span className="text-slate-900 font-medium">Seluruh Fitur Paket Institusi Terpadu</span>
-                  </li>
-                  <li className="flex items-start gap-2.5">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                    <span>Private Server / On-Premise MySQL Sync</span>
-                  </li>
-                  <li className="flex items-start gap-2.5">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                    <span>Integrasi Database Siswa & Dapodik</span>
-                  </li>
-                  <li className="flex items-start gap-2.5">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                    <span>Pendampingan On-Site Ujian Serentak</span>
-                  </li>
-                  <li className="flex items-start gap-2.5">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                    <span>SLA 99.9% & Dedicated Support Engineer</span>
-                  </li>
-                </ul>
-              </div>
-
-              <div className="pt-4 border-t border-slate-200 space-y-2">
-                <button
-                  onClick={() => openInquiryModal('Enterprise & Dinas')}
-                  className="w-full py-3 px-4 rounded-lg bg-white hover:bg-slate-100 text-slate-900 border border-slate-300 font-bold text-sm transition-colors cursor-pointer shadow-xs"
-                >
-                  Hubungi Tim Kemitraan Strategis
-                </button>
-                <p className="text-xs text-center text-slate-500">Konsultasi nota kesepahaman dan pengadaan institusi</p>
-              </div>
+              ))}
             </div>
-          </div>
+          )}
 
           {/* Procurement Guarantee Callout */}
           <div
             data-reveal
-            style={{ '--reveal-delay': '100ms' } as React.CSSProperties}
+            style={{ '--reveal-delay': '50ms' } as React.CSSProperties}
             className="p-6 rounded-xl bg-slate-50 border border-slate-200 shadow-xs flex items-center gap-4 text-sm text-slate-900"
           >
             <ShieldCheck className="w-6 h-6 text-emerald-600 shrink-0" />
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 w-full">
               <div>
-                <span className="font-bold text-slate-900 text-base">Tata Kelola Pengadaan B2B Resmi (Tanpa Payment Gateway)</span>
-                <p className="text-slate-600 mt-1 text-xs sm:text-sm">Pengadaan lisensi EXAMIND menggunakan dokumen legal SPK/MOU resmi sekolah, faktur pajak institusi, dan transfer antar-rekening instansi.</p>
+                <span className="font-bold text-slate-900 text-base">Pengadaan resmi lewat SPK/MOU</span>
+                <p className="text-slate-600 mt-1 text-xs sm:text-sm">Faktur pajak institusi, transfer antar-rekening instansi, dan pendampingan Konsultan Edukasi.</p>
               </div>
               <button
                 onClick={() => openInquiryModal('spk')}
-                className="shrink-0 px-4 py-2.5 rounded-lg bg-white hover:bg-slate-100 text-slate-900 border border-slate-300 font-semibold text-xs sm:text-sm transition-colors cursor-pointer whitespace-nowrap shadow-xs"
+                className="mkt-btn-press shrink-0 px-4 py-2.5 rounded-lg bg-white hover:bg-slate-100 text-slate-900 border border-slate-300 font-semibold text-xs sm:text-sm cursor-pointer whitespace-nowrap shadow-xs"
               >
                 Konsultasi Draf SPK / MOU
               </button>
             </div>
           </div>
         </div>
+
+        {/* Divider: pricing (white) -> faq (slate-50) */}
+        <SectionDivider fill="#f8fafc" variant="b" />
       </section>
 
       {/* FAQ SECTION */}
-      <section id="faq" className="relative z-10 py-24 px-4 sm:px-6 lg:px-8 border-t border-slate-200 bg-slate-50 scroll-mt-20">
-        <div className="max-w-4xl mx-auto space-y-12">
+      <section id="faq" className="relative z-10 min-h-screen flex flex-col justify-center py-20 px-4 sm:px-6 lg:px-8 bg-slate-50 scroll-mt-24">
+        <div className="w-full max-w-4xl mx-auto space-y-12">
           <div data-reveal className="text-center space-y-3">
             <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
               Pertanyaan Umum Pengadaan EXAMIND
             </h2>
             <p className="text-slate-600 text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
-              Jawaban transparan seputar aspek teknis, hukum, dan operasional ujian sekolah.
+              Seputar teknis, hukum, dan operasional ujian sekolah.
             </p>
           </div>
 
           <div
             data-reveal
-            style={{ '--reveal-delay': '100ms' } as React.CSSProperties}
+            style={{ '--reveal-delay': '50ms' } as React.CSSProperties}
             className="divide-y divide-slate-200 border-y border-slate-200"
           >
             {faqs.map((item, idx) => (
               <div key={idx} className="py-4">
                 <button
                   onClick={() => toggleFaq(idx)}
+                  aria-expanded={activeFaq === idx}
                   className="w-full py-2 text-left font-bold text-base sm:text-lg text-slate-900 flex items-center justify-between gap-4 hover:text-indigo-600 transition-colors cursor-pointer"
                 >
                   <span className="leading-snug">{item.q}</span>
@@ -1212,39 +1187,36 @@ export default function LandingPage() {
                     {activeFaq === idx ? '−' : '+'}
                   </span>
                 </button>
-                {activeFaq === idx && (
-                  <div className="pt-3 pb-2 text-sm text-slate-600 leading-relaxed max-w-2xl">
-                    {item.a}
+                <div
+                  className={`grid transition-[grid-template-rows,opacity] duration-[250ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                    activeFaq === idx ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+                  }`}
+                  aria-hidden={activeFaq !== idx}
+                >
+                  <div className="overflow-hidden">
+                    <div className="pt-3 pb-2 text-sm text-slate-600 leading-relaxed max-w-2xl">
+                      {item.a}
+                    </div>
                   </div>
-                )}
+                </div>
               </div>
             ))}
           </div>
         </div>
+
+        {/* Divider: faq (slate-50) -> footer (white) */}
+        <SectionDivider fill="#ffffff" variant="a" />
       </section>
 
-      {/* SQUIGGLY ACCENT DIVIDER */}
-      <div data-reveal className="relative w-full overflow-hidden leading-none bg-slate-50 pt-4">
-        <svg className="w-full h-4 sm:h-5 text-[#c2ef4e]" viewBox="0 0 1200 24" fill="none" preserveAspectRatio="none">
-          <path
-            d="M0,12 Q30,0 60,12 T120,12 T180,12 T240,12 T300,12 T360,12 T420,12 T480,12 T540,12 T600,12 T660,12 T720,12 T780,12 T840,12 T900,12 T960,12 T1020,12 T1080,12 T1140,12 T1200,12"
-            stroke="currentColor"
-            strokeWidth="3"
-            strokeLinecap="round"
-            fill="none"
-          />
-        </svg>
-      </div>
-
       {/* FOOTER */}
-      <footer data-reveal className="relative z-10 bg-white border-t border-slate-200 text-slate-600 text-xs py-16 px-4 sm:px-6 lg:px-8">
+      <footer data-reveal className="relative z-10 bg-white text-slate-600 text-xs py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
           <div className="space-y-3 md:col-span-1">
             <div className="flex items-center gap-2.5">
               <ExamindLogo variant="lockup" theme="color" className="h-8 w-auto shrink-0" />
             </div>
             <p className="text-sm text-slate-600 leading-relaxed">
-              Platform Ujian Daring AI Berintegritas Institusional. Mengamankan ujian sekolah dengan martabat, keadilan, dan teknologi pedagogis.
+              Platform ujian online untuk sekolah: CBT, proctoring dua kamera, dan penilaian esai AI dalam satu tempat.
             </p>
           </div>
 
@@ -1253,7 +1225,7 @@ export default function LandingPage() {
             <ul className="space-y-2.5 text-sm text-slate-600">
               <li><a href="#proctoring" className="hover:text-slate-900 transition-colors">AI Dual-Camera Proctoring</a></li>
               <li><a href="#peran" className="hover:text-slate-900 transition-colors">AI Essay Grading Rubrik 4D</a></li>
-              <li><a href="#peran" className="hover:text-slate-900 transition-colors">Socratic Tutor Pembahasan</a></li>
+              <li><a href="#peran" className="hover:text-slate-900 transition-colors">Tutor Pembahasan Soal</a></li>
               <li><a href="#hero" className="hover:text-slate-900 transition-colors">IndexedDB Autosave Engine</a></li>
             </ul>
           </div>
@@ -1303,12 +1275,12 @@ export default function LandingPage() {
             {/* Modal Header */}
             <div className="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-800 border border-indigo-200 flex items-center justify-center font-bold text-xs">
-                  CS
+                <div className="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-800 border border-indigo-200 flex items-center justify-center shrink-0">
+                  <MessageSquare className="w-4 h-4" />
                 </div>
                 <div>
                   <h3 className="text-base font-bold text-slate-900 tracking-tight">Konsultasi Pengadaan Lisensi Sekolah</h3>
-                  <p className="text-xs text-slate-500">Konsultan Edukasi EXAMIND Siap Membantu Kebutuhan Institusi Anda</p>
+                  <p className="text-xs text-slate-500">Tim kami siap membantu kebutuhan sekolah Anda</p>
                 </div>
               </div>
               <button

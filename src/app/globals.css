@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  scroll-behavior: smooth;
+}
+
 :root {
   font-family: 'Plus Jakarta Sans', 'Rubik', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   color-scheme: light;
@@ -310,10 +314,10 @@ h1, h2, h3, .heading-display {
 [data-reveal] {
   --reveal-delay: 0ms;
   opacity: 0;
-  transform: translateY(12px);
+  transform: translateY(24px);
   transition-property: opacity, transform;
   transition-duration: 400ms;
-  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
   transition-delay: min(var(--reveal-delay, 0ms), 400ms);
   will-change: opacity, transform;
 }
@@ -348,6 +352,63 @@ h1, h2, h3, .heading-display {
   [data-reveal-line].ecosystem-baseline-v.is-visible {
     transform: scaleY(1);
   }
+}
+
+/* ==========================================================================
+   Landing Animation Pass (Part 3 — Emil Kowalski principles)
+   Hover lift, button press, pricing swap. Transform/opacity-led, ease-out
+   cubic-bezier(0.22, 1, 0.36, 1), 150-200ms, no bounce/elastic.
+   For [data-reveal] elements the reveal longhands govern until .is-visible;
+   the combined rule below then takes over with a 0ms delay so hover feedback
+   stays snappy while entrance stagger (via --reveal-delay) is preserved.
+   ========================================================================== */
+.mkt-hover-lift:not([data-reveal]) {
+  transition: transform 200ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 200ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 200ms ease;
+}
+
+[data-reveal].mkt-hover-lift.is-visible {
+  transition: transform 200ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 200ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 200ms ease;
+  transition-delay: 0ms;
+}
+
+.mkt-hover-lift:hover {
+  transform: translateY(-4px);
+}
+
+.mkt-btn-press {
+  transition: transform 150ms cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.mkt-btn-press:hover {
+  transform: scale(1.02);
+}
+
+.mkt-btn-press:active {
+  transform: scale(0.98);
+}
+
+@keyframes price-swap {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.price-swap {
+  animation: price-swap 200ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  will-change: transform, opacity;
 }
 
 /* Dual-camera sync pulse animation (transform + opacity only) */
@@ -461,6 +522,20 @@ h1, h2, h3, .heading-display {
   [data-reveal-line].is-visible {
     transform: none !important;
     opacity: 1 !important;
+  }
+
+  .mkt-hover-lift:hover {
+    transform: none !important;
+  }
+
+  .mkt-btn-press,
+  .mkt-btn-press:hover,
+  .mkt-btn-press:active {
+    transform: none !important;
+  }
+
+  .price-swap {
+    animation: none !important;
   }
 }
 

@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect, useRef } from 'react'
+import Link from 'next/link'
 import {
   ShieldCheck,
   Laptop,
@@ -23,7 +24,6 @@ import {
   ChartColumn,
   Sparkles,
   ClipboardCheck,
-  ScanFace,
   Eye,
   Video,
   QrCode,
@@ -178,7 +178,9 @@ export default function LandingPage() {
 
   useEffect(() => {
     let cancelled = false
-    const base = process.env.NEXT_PUBLIC_API_URL || '/api/v1'
+    // Same-origin in the browser: the Next.js rewrite proxies /api/v1 to the
+    // backend, avoiding the CORS block that a direct cross-origin call hits.
+    const base = typeof window !== 'undefined' ? '/api/v1' : process.env.NEXT_PUBLIC_API_URL || '/api/v1'
     fetch(`${base}/public/landing`)
       .then((res) => {
         if (!res.ok) throw new Error(`Landing data request failed: ${res.status}`)
@@ -271,7 +273,7 @@ export default function LandingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white text-slate-900 font-sans antialiased selection:bg-[#6a5fc1] selection:text-white">
+    <div className="min-h-screen overflow-x-clip bg-white text-slate-900 font-sans antialiased selection:bg-[#6a5fc1] selection:text-white">
       {/* Ambient Background Depth & Subtle Radial Bleed */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0 opacity-40">
         <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[1100px] h-[550px] bg-gradient-to-b from-indigo-100/60 via-purple-50/40 to-transparent blur-3xl"></div>
@@ -302,7 +304,7 @@ export default function LandingPage() {
             className="anim-rise text-base sm:text-lg md:text-xl text-slate-600 leading-relaxed max-w-2xl mx-auto font-normal"
             style={{ '--anim-duration': '400ms', '--anim-delay': '180ms' } as React.CSSProperties}
           >
-            Satu platform untuk ujian CBT, bank soal, proctoring kamera, dan koreksi esai. Hasilnya rapi, keputusannya tetap di tangan guru.
+            Satu platform untuk ujian CBT, bank soal, proctoring kamera, dan koreksi esai. Hasilnya rapi, keputusannya tetap di tangan guru. Sekolah tidak perlu lagi mencetak soal, menyusun jadwal jaga bergantian, atau memeriksa ratusan esai satu per satu.
           </p>
 
           <div
@@ -381,7 +383,7 @@ export default function LandingPage() {
                 </div>
 
                 {/* Mock Stat Cards */}
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-3 gap-2 sm:gap-3">
                   {[
                     { label: 'Ujian Berlangsung', bars: [35, 55, 45, 70, 60] },
                     { label: 'Siswa Aktif', bars: [50, 42, 66, 58, 80] },
@@ -505,6 +507,13 @@ export default function LandingPage() {
           <h2 data-reveal className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight text-center">
             Semua kebutuhan ujian, satu platform
           </h2>
+          <p
+            data-reveal
+            style={{ '--reveal-delay': '50ms' } as React.CSSProperties}
+            className="mt-4 text-sm sm:text-base text-slate-600 leading-relaxed text-center max-w-2xl mx-auto"
+          >
+            Menyiapkan ujian biasanya berarti berpindah-pindah alat: satu untuk soal, satu untuk pengawasan, satu lagi untuk menilai. Di EXAMIND semuanya dikerjakan di tempat yang sama, jadi guru cukup membuka satu dashboard dari persiapan sampai nilai diumumkan.
+          </p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8 text-left">
             <div
@@ -593,7 +602,7 @@ export default function LandingPage() {
               Satu platform, tiga cara pakai
             </h2>
             <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-              Siswa, guru, dan admin sekolah memakai tampilan yang sesuai tugasnya.
+              Siswa, guru, dan admin sekolah memakai tampilan yang sesuai tugasnya. Siswa cukup fokus mengerjakan soal tanpa menu yang membingungkan. Guru dan admin mendapat alat kerja yang lengkap tanpa harus melihat hal yang bukan urusannya.
             </p>
           </div>
 
@@ -644,6 +653,9 @@ export default function LandingPage() {
                       <span>PESERTA UJIAN</span>
                     </div>
                     <h3 className="text-2xl font-bold text-slate-900 tracking-tight">Siswa (Peserta Ujian)</h3>
+                    <p className="text-sm text-slate-600 leading-relaxed">
+                      Mengerjakan ujian dari browser biasa, dengan jawaban yang tersimpan otomatis setiap saat.
+                    </p>
                   </div>
 
                   {/* Mini Mock: Exam Room */}
@@ -706,6 +718,9 @@ export default function LandingPage() {
                       <span>PENDIDIK</span>
                     </div>
                     <h3 className="text-2xl font-bold text-slate-900 tracking-tight">Guru &amp; Pengawas</h3>
+                    <p className="text-sm text-slate-600 leading-relaxed">
+                      Membuat soal, mengawasi kelas yang sedang ujian, dan meninjau nilai dari satu tempat.
+                    </p>
                   </div>
 
                   {/* Mini Mock: Proctoring Console Rows */}
@@ -758,6 +773,9 @@ export default function LandingPage() {
                       <span>INSTITUSI</span>
                     </div>
                     <h3 className="text-2xl font-bold text-slate-900 tracking-tight">Admin Sekolah</h3>
+                    <p className="text-sm text-slate-600 leading-relaxed">
+                      Mengelola akun, jadwal ujian, dan laporan resmi yang dibutuhkan sekolah dan dinas.
+                    </p>
                   </div>
 
                   {/* Mini Mock: Admin Overview */}
@@ -812,7 +830,7 @@ export default function LandingPage() {
               Dua kamera, tanpa titik buta
             </h2>
             <p className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-2xl">
-              Kamera laptop memantau wajah dan tatapan. Kamera HP memantau meja dan layar. AI memberi peringatan — pengawas yang memutuskan.
+              Kamera laptop memantau wajah dan tatapan. Kamera HP memantau meja dan layar. AI memberi peringatan — pengawas yang memutuskan. Dengan dua sudut pandang ini, ujian bisa dijalankan dari rumah atau ruang kelas tanpa celah yang biasa dipakai untuk mencontek.
             </p>
           </div>
 
@@ -824,7 +842,7 @@ export default function LandingPage() {
               className="lg:col-span-6 space-y-4"
             >
               {/* Frame: Laptop Camera */}
-              <div className="relative rounded-xl border border-white/10 bg-[#0c0918] overflow-hidden">
+              <div className="relative rounded-xl border border-white/10 bg-[#1e2536] overflow-hidden">
                 <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/10">
                   <span className="flex items-center gap-2 text-[11px] font-mono font-bold text-slate-300">
                     <Camera className="w-3.5 h-3.5" />
@@ -835,24 +853,47 @@ export default function LandingPage() {
                     LIVE
                   </span>
                 </div>
-                <div className="relative h-52 sm:h-60">
-                  {/* Face bounding box */}
+                <div className="relative h-52 sm:h-60 bg-gradient-to-b from-[#2c3549] via-[#28324a] to-[#232c40]">
+                  {/* Window light panel on the wall */}
+                  <div className="absolute right-[5%] top-[10%] h-[44%] w-[32%] rounded-lg border border-white/[0.07] bg-white/[0.05]">
+                    <div className="absolute inset-x-0 top-1/2 h-px bg-white/[0.07]"></div>
+                    <div className="absolute inset-y-0 left-1/2 w-px bg-white/[0.07]"></div>
+                  </div>
+                  {/* Desk surface */}
+                  <div className="absolute inset-x-0 bottom-0 h-[24%] border-t border-white/10 bg-[#36415c]"></div>
+                  {/* Laptop on the desk, in front of the student */}
+                  <div className="absolute bottom-[6%] left-[18%] w-[22%]">
+                    <div className="rounded-t-md border border-white/15 bg-[#4a5878] p-1">
+                      <div className="h-7 sm:h-10 rounded-[3px] bg-[#8296ba]"></div>
+                    </div>
+                    <div className="h-1.5 rounded-b-md bg-[#2c3549]"></div>
+                  </div>
+                  {/* Books on the desk (right side) */}
+                  <div className="absolute bottom-[8%] left-[57%] right-[9%] space-y-1.5">
+                    <div className="h-2.5 w-4/5 rounded-sm bg-[#6a5fc1]/70"></div>
+                    <div className="h-2.5 w-3/5 rounded-sm bg-[#54678c]"></div>
+                    <div className="h-2.5 w-2/3 rounded-sm bg-[#46536e]"></div>
+                  </div>
+                  {/* Face bounding box with illustrated student */}
                   <div className="absolute left-[14%] top-[20%] w-[30%] h-[56%] rounded-lg border-2 border-emerald-400/90">
                     <span className="absolute -top-7 left-0 text-[10px] font-bold font-mono text-emerald-300 bg-emerald-400/10 border border-emerald-400/40 rounded px-1.5 py-0.5 whitespace-nowrap">
                       WAJAH
                     </span>
-                    <span className="absolute inset-0 flex items-center justify-center text-emerald-400/60">
-                      <ScanFace className="w-10 h-10" />
-                    </span>
-                  </div>
-                  {/* Desk silhouette */}
-                  <div className="absolute bottom-5 left-[56%] right-[8%] space-y-2">
-                    <div className="h-2 w-4/5 rounded-full bg-white/10"></div>
-                    <div className="h-2 w-3/5 rounded-full bg-white/10"></div>
-                    <div className="h-2 w-2/3 rounded-full bg-white/10"></div>
+                    <svg
+                      viewBox="0 0 120 160"
+                      preserveAspectRatio="xMidYMax meet"
+                      className="absolute inset-0 h-full w-full"
+                      aria-hidden="true"
+                    >
+                      <path d="M14 160 C14 118 36 102 60 102 C84 102 106 118 106 160 Z" fill="#66779e" />
+                      <rect x="52" y="80" width="16" height="24" rx="6" fill="#7d90b4" />
+                      <circle cx="60" cy="56" r="30" fill="#8ea2c4" />
+                      <path d="M30 54 C30 34 44 24 60 24 C76 24 90 34 90 54 C90 45 78 37 60 37 C42 37 30 45 30 54 Z" fill="#43536f" />
+                      <path d="M48 103 L60 117 L72 103 L66 126 L54 126 Z" fill="#6a5fc1" opacity="0.85" />
+                    </svg>
                   </div>
                   {/* Gaze chip */}
-                  <span className="absolute bottom-3 left-3 flex items-center gap-1.5 text-[11px] font-bold text-slate-200 bg-white/10 border border-white/15 rounded-full px-2.5 py-1">
+                  <span className="absolute bottom-3 left-3 flex items-center gap-1.5 text-[11px] font-bold text-slate-200 bg-white/10 backdrop-blur-sm border border-white/15 rounded-full px-2.5 py-1">
                     <Eye className="w-3.5 h-3.5 text-[#c2ef4e]" />
                     Tatapan: ke layar
                   </span>
@@ -866,7 +907,7 @@ export default function LandingPage() {
               </div>
 
               {/* Frame: Phone Camera */}
-              <div className="relative rounded-xl border border-white/10 bg-[#0c0918] overflow-hidden">
+              <div className="relative rounded-xl border border-white/10 bg-[#1e2536] overflow-hidden">
                 <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/10">
                   <span className="flex items-center gap-2 text-[11px] font-mono font-bold text-slate-300">
                     <Smartphone className="w-3.5 h-3.5" />
@@ -877,22 +918,38 @@ export default function LandingPage() {
                     QR TERHUBUNG
                   </span>
                 </div>
-                <div className="relative h-40 sm:h-44">
-                  {/* Desk silhouette */}
-                  <div className="absolute bottom-5 left-[8%] right-[42%] space-y-2">
-                    <div className="h-2 w-4/5 rounded-full bg-white/10"></div>
-                    <div className="h-2 w-3/5 rounded-full bg-white/10"></div>
-                    <div className="h-2 w-2/3 rounded-full bg-white/10"></div>
+                <div className="relative h-40 sm:h-44 bg-gradient-to-b from-[#2c3549] to-[#232c40]">
+                  {/* Desk mat (top-down view) */}
+                  <div className="absolute inset-x-[3%] top-[8%] bottom-[6%] rounded-lg border border-white/[0.06] bg-[#36415c]/60"></div>
+                  {/* Laptop seen from above */}
+                  <div className="absolute left-[6%] bottom-[13%] w-[38%] h-[58%] rounded-md border border-white/10 bg-[#4a5878] p-1.5 flex flex-col gap-1.5">
+                    <div className="h-[52%] rounded-[3px] bg-[#8296ba]"></div>
+                    <div className="flex-1 space-y-1">
+                      <div className="h-1 rounded-full bg-white/25"></div>
+                      <div className="h-1 rounded-full bg-white/20"></div>
+                      <div className="h-1 rounded-full bg-white/25"></div>
+                    </div>
+                  </div>
+                  {/* Sheet of paper next to the laptop */}
+                  <div className="absolute left-[50%] bottom-[16%] w-[15%] h-[52%] rotate-[5deg] rounded-[3px] bg-[#c9d3e6] p-1.5 space-y-1.5">
+                    <div className="h-1 rounded-full bg-slate-500/50"></div>
+                    <div className="h-1 rounded-full bg-slate-500/40"></div>
+                    <div className="h-1 rounded-full bg-slate-500/50"></div>
+                    <div className="h-1 w-2/3 rounded-full bg-slate-500/40"></div>
                   </div>
                   {/* Detected phone bounding box */}
                   <span className="absolute right-[13%] top-3 text-[10px] font-bold font-mono text-rose-300 bg-rose-400/10 border border-rose-400/40 rounded px-1.5 py-0.5 whitespace-nowrap">
                     HP TERDETEKSI
                   </span>
-                  <div className="absolute right-[14%] top-[24%] w-[15%] h-[58%] rounded-md border-2 border-rose-400/90 rotate-6">
+                  <div className="absolute right-[14%] top-[24%] w-[15%] h-[58%] rounded-md border-2 border-rose-400/90 rotate-6 bg-[#39445e]">
+                    <span className="absolute inset-[3px] rounded-[3px] bg-[#8296ba]/80"></span>
+                    <span className="absolute inset-x-2 top-3 h-1 rounded-full bg-white/50"></span>
+                    <span className="absolute inset-x-2 top-5 h-1 rounded-full bg-white/40"></span>
+                    <span className="absolute inset-x-2 top-7 h-1 w-1/2 rounded-full bg-white/40"></span>
                     <span className="absolute inset-x-1 top-1 h-1 rounded-full bg-rose-400/40"></span>
                   </div>
                   {/* Desk chip */}
-                  <span className="absolute bottom-3 left-3 flex items-center gap-1.5 text-[11px] font-bold text-slate-200 bg-white/10 border border-white/15 rounded-full px-2.5 py-1">
+                  <span className="absolute bottom-3 left-3 flex items-center gap-1.5 text-[11px] font-bold text-slate-200 bg-white/10 backdrop-blur-sm border border-white/15 rounded-full px-2.5 py-1">
                     <Eye className="w-3.5 h-3.5 text-[#c2ef4e]" />
                     Meja &amp; layar terpantau
                   </span>
@@ -914,7 +971,7 @@ export default function LandingPage() {
                   Sinkronisasi aktif
                 </span>
               </div>
-              <p className="text-[11px] text-slate-500 font-mono">Koneksi WebSocket terenkripsi SSL</p>
+              <p className="text-[11px] text-slate-500 font-mono">Kedua kamera terhubung dan tersinkron selama ujian berlangsung</p>
             </div>
 
             {/* RIGHT: NUMBERED STEPS (TRIMMED) */}
@@ -977,7 +1034,7 @@ export default function LandingPage() {
               Harga &amp; Lisensi Sekolah
             </h2>
             <p className="text-slate-600 text-sm sm:text-base leading-relaxed max-w-2xl">
-              Harga mengikuti jumlah siswa di sekolah Anda. Pengadaan lewat penawaran resmi, SPK/MOU, dan faktur pajak institusi — tanpa pembayaran kartu kredit publik.
+              Harga mengikuti jumlah siswa di sekolah Anda, jadi sekolah kecil tidak membayar sebesar sekolah besar. Semua paket sudah termasuk pembaruan sistem dan pendampingan awal untuk guru dan admin. Pengadaan lewat penawaran resmi, SPK/MOU, dan faktur pajak institusi — tanpa pembayaran kartu kredit publik.
             </p>
           </div>
 
@@ -1013,6 +1070,13 @@ export default function LandingPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
                 {plans.map((plan, idx) => {
                   const price = billingPeriod === 'monthly' ? plan.price_monthly : plan.price_annually
+                  // Per-student monthly equivalent, rounded to the nearest Rp100
+                  const perStudentRaw =
+                    plan.max_students > 0
+                      ? (billingPeriod === 'monthly' ? plan.price_monthly : plan.price_annually / 12) /
+                        plan.max_students
+                      : 0
+                  const perStudent = Math.max(100, Math.round(perStudentRaw / 100) * 100)
                   return (
                     <div
                       key={plan.id}
@@ -1020,7 +1084,7 @@ export default function LandingPage() {
                       style={{ '--reveal-delay': `${Math.min(idx, 5) * 50}ms` } as React.CSSProperties}
                       className={
                         plan.is_popular
-                          ? 'mkt-hover-lift hover:shadow-2xl p-7 rounded-xl bg-white border-2 border-slate-900 flex flex-col justify-between space-y-6 shadow-xl relative text-slate-900'
+                          ? 'mkt-hover-lift hover:shadow-2xl p-8 rounded-xl bg-white border-2 border-slate-900 flex flex-col justify-between space-y-6 shadow-2xl relative z-10 text-slate-900'
                           : 'mkt-hover-lift hover:shadow-md p-7 rounded-xl bg-slate-50 border border-slate-200 flex flex-col justify-between space-y-6 shadow-xs hover:border-slate-300 text-slate-900'
                       }
                     >
@@ -1036,13 +1100,22 @@ export default function LandingPage() {
                           <p className="text-sm text-slate-600 mt-1.5 leading-relaxed">{plan.description}</p>
                         </div>
 
-                        <div key={billingPeriod} className="price-swap py-4 border-y border-slate-200 space-y-1">
+                        <div key={billingPeriod} className="price-swap py-4 border-y border-slate-200 space-y-1.5">
                           <div className="text-xs text-slate-500 font-bold uppercase tracking-wider font-mono">
                             {billingPeriod === 'monthly' ? 'Per bulan' : 'Per tahun'}
                           </div>
-                          <div className="text-3xl font-extrabold font-mono text-slate-900 tracking-tight">
+                          <div
+                            className={`font-extrabold font-mono text-slate-900 tracking-tight leading-none ${
+                              plan.is_popular ? 'text-5xl' : 'text-4xl'
+                            }`}
+                          >
                             {formatIDR(price)}
                           </div>
+                          {perStudentRaw > 0 && (
+                            <p className="text-sm font-semibold text-slate-600">
+                              setara {formatIDR(perStudent)} per siswa per bulan
+                            </p>
+                          )}
                         </div>
 
                         <ul className="space-y-2.5 text-sm text-slate-700">
@@ -1078,15 +1151,19 @@ export default function LandingPage() {
 
                       <div className="pt-4 border-t border-slate-200">
                         <button
+                          type="button"
                           onClick={() => openInquiryModal(plan.name)}
                           className={
                             plan.is_popular
-                              ? 'mkt-btn-press w-full py-3 px-4 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm shadow-md cursor-pointer'
-                              : 'mkt-btn-press w-full py-3 px-4 rounded-lg bg-white hover:bg-slate-100 text-slate-900 border border-slate-300 font-bold text-sm cursor-pointer shadow-xs'
+                              ? 'mkt-btn-press block w-full py-3.5 px-4 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm text-center shadow-md cursor-pointer'
+                              : 'mkt-btn-press block w-full py-3.5 px-4 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm text-center shadow-sm cursor-pointer'
                           }
                         >
-                          Konsultasikan Paket Ini
+                          Pesan Paket Ini
                         </button>
+                        <p className="text-xs text-slate-500 text-center mt-2.5 leading-relaxed">
+                          Pengadaan sekolah lewat SPK/MOU — tim kami bantu aktivasi dan pelatihannya.
+                        </p>
                       </div>
                     </div>
                   )
@@ -1096,9 +1173,9 @@ export default function LandingPage() {
           ) : plansError ? (
             /* Fetch failed: no cards, no invented prices */
             <div className="rounded-xl border border-slate-200 bg-slate-50 p-8 sm:p-10 text-center space-y-4">
-              <p className="text-lg font-bold text-slate-900">Harga tersedia saat pendaftaran</p>
+              <p className="text-lg font-bold text-slate-900">Harga belum bisa dimuat</p>
               <p className="text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
-                Daftar harga resmi dikirim setelah kami tahu jumlah siswa sekolah Anda.
+                Koneksi ke server harga sedang bermasalah. Minta daftar harganya lewat tombol di bawah, atau coba muat ulang halamannya.
               </p>
               <button
                 onClick={() => openInquiryModal('demo')}
@@ -1166,7 +1243,7 @@ export default function LandingPage() {
               Pertanyaan Umum Pengadaan EXAMIND
             </h2>
             <p className="text-slate-600 text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
-              Seputar teknis, hukum, dan operasional ujian sekolah.
+              Seputar teknis, hukum, dan operasional ujian sekolah. Kalau pertanyaan Anda belum terjawab di sini, tim kami bisa dihubungi lewat tombol konsultasi di atas.
             </p>
           </div>
 
@@ -1221,43 +1298,43 @@ export default function LandingPage() {
           </div>
 
           <div className="space-y-3">
-            <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">Teknologi Utama</h4>
+            <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">Produk</h4>
             <ul className="space-y-2.5 text-sm text-slate-600">
-              <li><a href="#proctoring" className="hover:text-slate-900 transition-colors">AI Dual-Camera Proctoring</a></li>
-              <li><a href="#peran" className="hover:text-slate-900 transition-colors">AI Essay Grading Rubrik 4D</a></li>
-              <li><a href="#peran" className="hover:text-slate-900 transition-colors">Tutor Pembahasan Soal</a></li>
-              <li><a href="#hero" className="hover:text-slate-900 transition-colors">IndexedDB Autosave Engine</a></li>
+              <li><a href="#keunggulan" className="hover:text-slate-900 transition-colors">Keunggulan</a></li>
+              <li><a href="#peran" className="hover:text-slate-900 transition-colors">Peran Pengguna</a></li>
+              <li><a href="#proctoring" className="hover:text-slate-900 transition-colors">Proctoring</a></li>
+              <li><a href="#pricing" className="hover:text-slate-900 transition-colors">Harga &amp; Lisensi</a></li>
+              <li><a href="#faq" className="hover:text-slate-900 transition-colors">FAQ</a></li>
             </ul>
           </div>
 
           <div className="space-y-3">
-            <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">Pengadaan Sekolah</h4>
+            <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">Perusahaan</h4>
             <ul className="space-y-2.5 text-sm text-slate-600">
-              <li><a href="#pricing" className="hover:text-slate-900 transition-colors">Paket Lisensi Institusi</a></li>
-              <li><button onClick={() => openInquiryModal('demo')} className="hover:text-slate-900 transition-colors text-left cursor-pointer">Jadwalkan Demo Sekolah</button></li>
-              <li><button onClick={() => openInquiryModal('spk')} className="hover:text-slate-900 transition-colors text-left cursor-pointer">Draf Kontrak SPK / MOU</button></li>
-              <li><button onClick={() => openInquiryModal('cs')} className="hover:text-slate-900 transition-colors text-left cursor-pointer">Konsultasi Lisensi Institusi</button></li>
+              <li><a href="#hero" className="hover:text-slate-900 transition-colors">Tentang EXAMIND</a></li>
+              <li><button onClick={() => openInquiryModal('cs')} className="hover:text-slate-900 transition-colors text-left cursor-pointer">Kontak</button></li>
+              <li><button onClick={() => openInquiryModal('demo')} className="hover:text-slate-900 transition-colors text-left cursor-pointer">Jadwalkan Demo</button></li>
+              <li><button onClick={() => openInquiryModal('spk')} className="hover:text-slate-900 transition-colors text-left cursor-pointer">Pengadaan via SPK / MOU</button></li>
             </ul>
           </div>
 
           <div className="space-y-3">
-            <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">Kepatuhan Hukum</h4>
+            <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">Hubungi Kami</h4>
             <p className="text-sm text-slate-600 leading-relaxed">
-              Tunduk pada ketentuan UU No. 27 Tahun 2022 tentang Pelindungan Data Pribadi (UU PDP). Snapshot terenkripsi dan dihapus otomatis dalam 60 hari.
+              Tim kami membalas pada jam kerja, Senin–Jumat pukul 08.00–17.00 WIB.
             </p>
-            <div className="pt-2 text-xs text-slate-500 font-mono">
-              FastAPI • PyTorch • Gemini 2.5 • Next.js
-            </div>
+            <button
+              onClick={() => openInquiryModal('cs')}
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-white hover:bg-slate-100 text-slate-900 border border-slate-300 font-semibold text-sm cursor-pointer shadow-xs"
+            >
+              <MessageSquare className="w-4 h-4" />
+              <span>Mulai Konsultasi</span>
+            </button>
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto pt-8 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-          <div>
-            © 2026 EXAMIND Technologies. Seluruh hak cipta dilindungi.
-          </div>
-          <div>
-            Dirancang Khusus untuk Sekolah & Institusi di Indonesia
-          </div>
+        <div className="max-w-7xl mx-auto pt-8 border-t border-slate-200 text-xs text-slate-500">
+          © 2026 EXAMIND Technologies. Seluruh hak cipta dilindungi.
         </div>
       </footer>
 

@@ -14,6 +14,13 @@ import React from 'react'
  * one, leaving a thin crescent of the accent color visible — used for the
  * white -> white transition (hero -> peran) where a single wave would be
  * invisible.
+ *
+ * Seam safety: the container is pulled 2px past the parent section's bottom
+ * edge (-bottom-[2px]) and made 4px taller to compensate, so the wave's fill
+ * band extends 2px into the following section. Without that overlap, a
+ * fractional-pixel rounding gap between the section's bottom edge and the
+ * SVG's last painted row lets the page background peek through as a 1px
+ * hairline — most visible against the dark proctoring section.
  */
 export function SectionDivider({
   fill,
@@ -41,11 +48,12 @@ export function SectionDivider({
   return (
     <div
       aria-hidden="true"
-      className={`pointer-events-none absolute inset-x-0 bottom-0 z-0 h-14 sm:h-16 lg:h-20 ${className}`}
+      className={`pointer-events-none absolute inset-x-0 -bottom-[2px] z-0 h-[60px] sm:h-[68px] lg:h-[84px] ${className}`}
     >
       <svg
         viewBox="0 0 1440 100"
         preserveAspectRatio="none"
+        shapeRendering="geometricPrecision"
         className="block h-full w-full"
         focusable="false"
       >

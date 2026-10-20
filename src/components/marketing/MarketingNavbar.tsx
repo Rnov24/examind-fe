@@ -81,7 +81,7 @@ export function MarketingNavbar() {
         <header className="flex items-center justify-between gap-2 rounded-full border border-slate-200 bg-white/90 py-2 pl-4 pr-2 shadow-lg shadow-slate-900/5 backdrop-blur-xl">
           {/* Brand */}
           <a href="#hero" className="flex shrink-0 items-center" aria-label="EXAMIND Beranda">
-            <ExamindLogo variant="lockup" theme="color" className="h-7 w-auto shrink-0" priority />
+            <ExamindLogo variant="lockup" theme="color" className="h-6 w-auto shrink-0 sm:h-7" priority />
           </a>
 
           {/* Desktop links */}
@@ -107,7 +107,7 @@ export function MarketingNavbar() {
             {isAuth ? (
               <Link
                 href={dashboardRoute}
-                className="mkt-btn-press inline-flex items-center gap-1.5 rounded-full bg-[#c2ef4e] px-4 py-2 text-[13px] font-bold text-slate-950 shadow-xs hover:bg-[#b2e234]"
+                className="mkt-btn-press inline-flex items-center gap-1.5 rounded-full bg-[#c2ef4e] px-3 py-1.5 text-xs font-bold text-slate-950 shadow-xs hover:bg-[#b2e234] sm:px-4 sm:py-2 sm:text-[13px]"
               >
                 <span>Ke Dashboard</span>
                 <ArrowRight className="h-3.5 w-3.5" />
@@ -115,7 +115,7 @@ export function MarketingNavbar() {
             ) : (
               <Link
                 href="/register"
-                className="mkt-btn-press inline-flex items-center gap-1.5 rounded-full bg-[#c2ef4e] px-4 py-2 text-[13px] font-bold text-slate-950 shadow-xs hover:bg-[#b2e234]"
+                className="mkt-btn-press inline-flex items-center gap-1.5 rounded-full bg-[#c2ef4e] px-3 py-1.5 text-xs font-bold text-slate-950 shadow-xs hover:bg-[#b2e234] sm:px-4 sm:py-2 sm:text-[13px]"
               >
                 <span>Mulai</span>
                 <ArrowRight className="h-3.5 w-3.5" />

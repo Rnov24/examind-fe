@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 import api from '@/lib/api'
 import { useAuthStore } from '@/stores/authStore'
+import { Stagger, StaggerItem } from '@/components/system/PageTransition'
 import { Badge, Button, EmptyState } from '@/components/ui'
 
 interface ActiveExam {
@@ -59,8 +60,9 @@ export default function StudentDashboardPage() {
   const otherExams = activeExams.length > 1 ? activeExams.slice(1) : []
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto font-sans">
+    <Stagger className="space-y-6 max-w-5xl mx-auto font-sans">
       {/* Institutional Daylight Header */}
+      <StaggerItem>
       <div className="relative overflow-hidden bg-[#150f23] bg-grid-dots-dark rounded-2xl border border-[#362d59] p-5 sm:p-6 shadow-midnight-elevated flex flex-col sm:flex-row sm:items-center justify-between gap-5">
         <div className="pointer-events-none absolute -top-16 -right-16 w-72 h-72 bg-[#6a5fc1]/20 rounded-full blur-3xl"></div>
 
@@ -90,6 +92,7 @@ export default function StudentDashboardPage() {
           </Badge>
         </div>
       </div>
+      </StaggerItem>
 
       {/* Loading State */}
       {isLoading && (
@@ -192,7 +195,7 @@ export default function StudentDashboardPage() {
 
           {/* Secondary Scheduled Exams (if more than 1) */}
           {otherExams.length > 0 && (
-            <div className="bg-white rounded-2xl border border-[#ddd9ef] shadow-card overflow-hidden">
+            <StaggerItem className="bg-white rounded-2xl border border-[#ddd9ef] shadow-card overflow-hidden">
               <div className="p-4 sm:px-6 border-b border-[#e9e5f6] flex items-center justify-between">
                 <div>
                   <h3 className="font-display text-sm sm:text-base font-bold text-slate-900">
@@ -243,14 +246,14 @@ export default function StudentDashboardPage() {
                 )
               })}
               </div>
-            </div>
+            </StaggerItem>
           )}
         </>
       )}
 
       {/* Empty State: No Scheduled Exams */}
       {!isLoading && !errorMessage && activeExams.length === 0 && (
-        <div className="bg-white rounded-2xl border border-[#ddd9ef] p-12 text-center shadow-card flex flex-col items-center justify-center">
+        <StaggerItem className="bg-white rounded-2xl border border-[#ddd9ef] p-12 text-center shadow-card flex flex-col items-center justify-center">
           <div className="w-12 h-12 rounded-xl bg-[#f1effa] border border-[#ddd9ef] text-[#6a5fc1] flex items-center justify-center mb-3">
             <FileText className="w-6 h-6" aria-hidden="true" />
           </div>
@@ -266,10 +269,11 @@ export default function StudentDashboardPage() {
             <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" />
             <span>Periksa Jadwal Terbaru</span>
           </button>
-        </div>
+        </StaggerItem>
       )}
 
       {/* Progressive Disclosure: CBT Security & Integrity Accordion */}
+      <StaggerItem>
       <details className="group bg-white rounded-2xl border border-[#ddd9ef] shadow-card overflow-hidden">
         <summary className="p-4 sm:px-5 flex items-center justify-between cursor-pointer select-none hover:bg-[#f1effa] transition-colors list-none">
           <div className="flex items-center gap-3">
@@ -298,7 +302,8 @@ export default function StudentDashboardPage() {
           </ul>
         </div>
       </details>
-    </div>
+      </StaggerItem>
+    </Stagger>
   )
 }
 

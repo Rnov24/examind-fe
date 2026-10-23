@@ -32,6 +32,7 @@ import {
 } from '@/components/dashboard'
 import { useBentoBlock, invalidateBentoCache } from '@/lib/bentoCache'
 import { useAuthStore } from '@/stores/authStore'
+import { Stagger, StaggerItem } from '@/components/system/PageTransition'
 
 export default function SuperAdminDashboardPage() {
   const { user } = useAuthStore()
@@ -141,21 +142,23 @@ export default function SuperAdminDashboardPage() {
         </button>
       }
     >
-      <div className="space-y-6">
+      <Stagger className="space-y-6">
         {/* ROW 1: SYSTEM TELEMETRY STRIP */}
-        <TelemetryStrip
-          isRefreshing={statsBlock.isRefreshing}
-          onRefresh={() => {
-            statsBlock.retry()
-            financeBlock.retry()
-            tenantsBlock.retry()
-          }}
-        />
+        <StaggerItem>
+          <TelemetryStrip
+            isRefreshing={statsBlock.isRefreshing}
+            onRefresh={() => {
+              statsBlock.retry()
+              financeBlock.retry()
+              tenantsBlock.retry()
+            }}
+          />
+        </StaggerItem>
 
         {/* ROW 2: PRIMARY FOCAL POINT — ACADEMIC INFRASTRUCTURE HERO & STATS */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-5">
           {/* Focal Point 1: Hero Card Sekolah Terdaftar */}
-          <div className="col-span-1 sm:col-span-2 lg:col-span-4">
+          <StaggerItem className="col-span-1 sm:col-span-2 lg:col-span-4">
             <HeroCard
               title="Sekolah Terdaftar"
               value={stats?.total_tenants ?? 0}
@@ -168,10 +171,10 @@ export default function SuperAdminDashboardPage() {
               highlightText="Infrastruktur CBT Utama"
               className="h-full min-h-[170px]"
             />
-          </div>
+          </StaggerItem>
 
           {/* Focal Point 2: Stat Card Peserta Didik (Siswa) */}
-          <div className="col-span-1 lg:col-span-4">
+          <StaggerItem className="col-span-1 lg:col-span-4">
             <StatCard
               title="Peserta Didik (Siswa)"
               value={(stats?.total_global_students ?? 0).toLocaleString('id-ID')}
@@ -180,10 +183,10 @@ export default function SuperAdminDashboardPage() {
               subtitle={`Dari ${(stats?.total_global_users ?? 0).toLocaleString('id-ID')} akun terdaftar di platform`}
               className="h-full min-h-[170px]"
             />
-          </div>
+          </StaggerItem>
 
           {/* Focal Point 3: Stat Card Tenaga Pendidik (Guru) */}
-          <div className="col-span-1 lg:col-span-4">
+          <StaggerItem className="col-span-1 lg:col-span-4">
             <StatCard
               title="Tenaga Pendidik (Guru)"
               value={(stats?.total_global_teachers ?? 0).toLocaleString('id-ID')}
@@ -192,10 +195,11 @@ export default function SuperAdminDashboardPage() {
               subtitle="Pendidik aktif penyusun bank soal CBT"
               className="h-full min-h-[170px]"
             />
-          </div>
+          </StaggerItem>
         </div>
 
         {/* ROW 3: INFRASTRUCTURE & PLATFORM CAPACITY */}
+        <StaggerItem>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Left Block: License Plans & AI Tokens Allocation (col-span-7) */}
           <div className="lg:col-span-7">
@@ -279,8 +283,10 @@ export default function SuperAdminDashboardPage() {
             </DashboardCard>
           </div>
         </div>
+        </StaggerItem>
 
         {/* ROW 4: SECONDARY — FINANCIAL OVERVIEW & QUICK ACTIONS */}
+        <StaggerItem>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Left Block: Financial Summary (col-span-8) */}
           <div className="lg:col-span-8">
@@ -408,9 +414,11 @@ export default function SuperAdminDashboardPage() {
             </DashboardCard>
           </div>
         </div>
+        </StaggerItem>
 
         {/* ROW 5: RECENT ACTIVITIES TABLE */}
-        <TenantActivityTable
+        <StaggerItem>
+          <TenantActivityTable
           tenants={filteredTenants}
           isLoading={tenantsBlock.status === 'loading'}
           searchQuery={activitySearch}
@@ -418,8 +426,9 @@ export default function SuperAdminDashboardPage() {
           statusFilter={activityStatusFilter}
           onStatusFilterChange={setActivityStatusFilter}
           manageAllHref="/superadmin/tenants"
-        />
-      </div>
+          />
+        </StaggerItem>
+      </Stagger>
 
       {/* Tenant Onboard Modal */}
       <TenantModal

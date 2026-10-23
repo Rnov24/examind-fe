@@ -19,6 +19,7 @@ import {
 } from 'lucide-react'
 import api from '@/lib/api'
 import { useAuthStore } from '@/stores/authStore'
+import { Stagger, StaggerItem } from '@/components/system/PageTransition'
 import {
   Button,
   Badge,
@@ -160,8 +161,9 @@ export default function AdminDashboardPage() {
   const isFilterActive = selectedRole !== 'all' || searchKeyword.trim().length > 0
 
   return (
-    <div className="space-y-6 max-w-6xl mx-auto font-sans">
+    <Stagger className="space-y-6 max-w-6xl mx-auto font-sans">
       {/* Midnight-Violet Header Band */}
+      <StaggerItem>
       <div className="relative overflow-hidden bg-[#150f23] bg-grid-dots-dark rounded-2xl border border-[#362d59] p-5 sm:p-6 shadow-midnight-elevated flex flex-col sm:flex-row sm:items-center justify-between gap-5">
         <div className="pointer-events-none absolute -top-16 -right-16 w-72 h-72 bg-[#6a5fc1]/20 rounded-full blur-3xl"></div>
 
@@ -203,8 +205,10 @@ export default function AdminDashboardPage() {
           </Button>
         </div>
       </div>
+      </StaggerItem>
 
       {/* PRIMARY GOAL ELEVATION: System Health & Infrastructure Overview First */}
+      <StaggerItem>
       <div className="bg-white rounded-2xl border border-[#ddd9ef] shadow-card p-5 sm:p-6 space-y-4">
         <div className="flex items-center justify-between border-b border-[#e9e5f6] pb-3 flex-wrap gap-2">
           <div className="flex items-center gap-2.5">
@@ -343,8 +347,10 @@ export default function AdminDashboardPage() {
           </div>
         </div>
       </div>
+      </StaggerItem>
 
       {/* KPI Overview Cards */}
+      <StaggerItem>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-card flex items-center gap-4">
           <div className="w-12 h-12 rounded-xl bg-[#f1effa] text-[#6a5fc1] border border-[#ddd9ef] flex items-center justify-center font-bold shrink-0">
@@ -396,8 +402,10 @@ export default function AdminDashboardPage() {
           </div>
         </div>
       </div>
+      </StaggerItem>
 
       {/* User Management Section (Secondary) */}
+      <StaggerItem>
       <div className="bg-white rounded-2xl border border-[#ddd9ef] shadow-card overflow-hidden">
         <div className="p-5 sm:px-6 border-b border-[#e9e5f6] flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
@@ -584,6 +592,7 @@ export default function AdminDashboardPage() {
           </TableContainer>
         )}
       </div>
+      </StaggerItem>
 
       {/* Add User Modal */}
       <AddUserModal
@@ -596,7 +605,7 @@ export default function AdminDashboardPage() {
         }}
         onSubmit={submitAddUser}
       />
-    </div>
+    </Stagger>
   )
 }
 

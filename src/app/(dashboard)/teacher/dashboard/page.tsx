@@ -22,6 +22,7 @@ import {
   Layers,
 } from 'lucide-react'
 import api from '@/lib/api'
+import { Stagger, StaggerItem } from '@/components/system/PageTransition'
 import { fetchCachedExamsList } from '@/lib/bentoCache'
 import { useAuthStore } from '@/stores/authStore'
 import {
@@ -138,8 +139,9 @@ export default function TeacherDashboardPage() {
   }, [recentExams, examSearch, examStatusFilter])
 
   return (
-    <div className="space-y-6 max-w-6xl mx-auto font-sans">
+    <Stagger className="space-y-6 max-w-6xl mx-auto font-sans">
       {/* Midnight-Violet Header Band */}
+      <StaggerItem>
       <div className="bg-[#150f23] bg-grid-dots-dark rounded-2xl border border-[#362d59] p-5 sm:p-6 shadow-midnight-elevated relative overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-5">
         <div className="absolute -right-16 -top-16 w-64 h-64 bg-[#6a5fc1]/20 rounded-full blur-3xl pointer-events-none"></div>
 
@@ -178,6 +180,7 @@ export default function TeacherDashboardPage() {
           </Link>
         </div>
       </div>
+      </StaggerItem>
 
       {/* Loading Skeleton */}
       {isLoading && (
@@ -214,6 +217,7 @@ export default function TeacherDashboardPage() {
       {!isLoading && !errorMessage && (
         <>
           {/* PRIMARY FOCUS: "Perlu Perhatian & Tindakan Anda" Section */}
+          <StaggerItem>
           <div className="bg-white rounded-2xl border border-[#ddd9ef] shadow-card p-5 sm:p-6 space-y-4">
             <div className="flex items-center justify-between gap-3 border-b border-[#e9e5f6] pb-3">
               <div className="flex items-center gap-2.5">
@@ -326,8 +330,10 @@ export default function TeacherDashboardPage() {
               </div>
             )}
           </div>
+          </StaggerItem>
 
           {/* Genuine KPI Overview Grid */}
+          <StaggerItem>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <Link
               href="/questions"
@@ -392,8 +398,10 @@ export default function TeacherDashboardPage() {
               </div>
             </Link>
           </div>
+          </StaggerItem>
 
           {/* Recent Scheduled Exams Table Container */}
+          <StaggerItem>
           <div className="bg-white rounded-2xl border border-[#ddd9ef] shadow-card overflow-hidden">
             <div className="p-4 sm:p-5 sm:px-6 border-b border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div>
@@ -553,8 +561,9 @@ export default function TeacherDashboardPage() {
               </Table>
             </TableContainer>
           </div>
+          </StaggerItem>
         </>
       )}
-    </div>
+    </Stagger>
   )
 }

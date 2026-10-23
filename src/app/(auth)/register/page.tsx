@@ -23,6 +23,8 @@ import {
   RefreshCw,
 } from 'lucide-react'
 import api from '@/lib/api'
+import { AnimatePresence, motion } from 'motion/react'
+import { EMIL_EASE } from '@/components/system/PageTransition'
 import { useAuthStore } from '@/stores/authStore'
 import { AuthShell, authLabelClass, authInputClass, authPrimaryButtonClass } from '@/components/auth/AuthShell'
 
@@ -418,8 +420,16 @@ function RegisterContent() {
         </Link>
       }
     >
+      <AnimatePresence mode="wait" initial={false}>
       {step === 1 ? (
-        <div className="space-y-6">
+        <motion.div
+          key="register-form"
+          className="space-y-6"
+          initial={{ opacity: 0, x: 16 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -16 }}
+          transition={{ duration: 0.2, ease: EMIL_EASE }}
+        >
           {/* Header */}
           <div className="space-y-2">
             <h1 className="font-display text-2xl font-bold tracking-tight text-[#150f23]">
@@ -734,9 +744,16 @@ function RegisterContent() {
               </Link>
             </p>
           </div>
-        </div>
+        </motion.div>
       ) : (
-        <div className="space-y-6">
+        <motion.div
+          key="otp-form"
+          className="space-y-6"
+          initial={{ opacity: 0, x: 16 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -16 }}
+          transition={{ duration: 0.2, ease: EMIL_EASE }}
+        >
           {/* Header */}
           <div className="space-y-2">
             <h1 className="font-display text-2xl font-bold tracking-tight text-[#150f23]">
@@ -884,8 +901,9 @@ function RegisterContent() {
               <span>Ganti email / kembali</span>
             </button>
           </div>
-        </div>
+        </motion.div>
       )}
+      </AnimatePresence>
     </AuthShell>
   )
 }

@@ -12,6 +12,8 @@ import {
   LifeBuoy,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { AnimatePresence, motion } from 'motion/react'
+import { EMIL_EASE } from '@/components/system/PageTransition'
 import { tokens } from '@/components/system/tokens'
 import { useAuthStore } from '@/stores/authStore'
 
@@ -61,26 +63,34 @@ export function HelpModal({ open, onClose }: HelpModalProps) {
     return () => document.removeEventListener('keydown', handleKey)
   }, [open, onClose])
 
-  if (!open) return null
-
   const isStaff = user?.role === 'superadmin' || user?.role === 'admin'
 
   return (
-    <div
-      className="fixed inset-0 z-50 bg-slate-950/40 backdrop-blur-xs flex items-start justify-center pt-16 sm:pt-20 px-4"
-      onClick={onClose}
-      role="dialog"
-      aria-modal="true"
-      aria-label="Bantuan dan Panduan EXAMIND"
-    >
-      <div
-        className={cn(
-          'bg-white border border-slate-200 w-full max-w-lg p-5 space-y-4 max-h-[80vh] overflow-y-auto',
-          tokens.radius.xl,
-          tokens.shadow.modal
-        )}
-        onClick={(e) => e.stopPropagation()}
-      >
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          className="fixed inset-0 z-50 bg-slate-950/40 backdrop-blur-xs flex items-start justify-center pt-16 sm:pt-20 px-4"
+          onClick={onClose}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Bantuan dan Panduan EXAMIND"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.18, ease: 'easeOut' }}
+        >
+          <motion.div
+            className={cn(
+              'bg-white border border-slate-200 w-full max-w-lg p-5 space-y-4 max-h-[80vh] overflow-y-auto',
+              tokens.radius.xl,
+              tokens.shadow.modal
+            )}
+            onClick={(e) => e.stopPropagation()}
+            initial={{ opacity: 0, y: 12, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 8, scale: 0.98 }}
+            transition={{ duration: 0.22, ease: EMIL_EASE }}
+          >
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-2.5">
             <div
@@ -150,8 +160,10 @@ export function HelpModal({ open, onClose }: HelpModalProps) {
             </a>
           )}
         </div>
-      </div>
-    </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   )
 }
 

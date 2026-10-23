@@ -24,6 +24,8 @@ import {
   X,
 } from 'lucide-react'
 import { QRCodeSVG } from 'qrcode.react'
+import { AnimatePresence, motion } from 'motion/react'
+import { EMIL_EASE } from '@/components/system/PageTransition'
 import { useProctoringStore } from '@/stores/proctoringStore'
 import { detectFaces, ensureMediaPipeLoaded } from '@/utils/mediapipeDetect'
 import { ExamindLogo } from '@/components/brand/ExamindLogo'
@@ -474,6 +476,19 @@ export default function CameraSetupWizard({
 
             {/* Step content column */}
             <div className="space-y-4 min-h-[280px] flex flex-col">
+              {/* Step panels crossfade/slide on step change (transform +
+                  opacity only). The live preview column and the navigation
+                  row stay mounted and still — only the instruction panel
+                  swaps. Step logic/state is untouched. */}
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={currentStep}
+                  className="flex flex-col flex-1"
+                  initial={{ opacity: 0, x: 14 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -14 }}
+                  transition={{ duration: 0.2, ease: EMIL_EASE }}
+                >
               {currentStep === 'kamera' && (
                 <div className="space-y-3.5 flex-1">
                   <h2 className="font-display text-lg font-extrabold text-slate-900">
@@ -825,6 +840,8 @@ export default function CameraSetupWizard({
                   </label>
                 </div>
               )}
+                </motion.div>
+              </AnimatePresence>
 
               {/* Navigation */}
               <div className="flex items-center gap-2.5 pt-1">

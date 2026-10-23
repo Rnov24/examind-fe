@@ -16,6 +16,11 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [
       {
+        // Backend health lives at the app root (/health), not under /api/v1.
+        source: '/api/health',
+        destination: `${backendUrl}/health`,
+      },
+      {
         source: '/api/:path*',
         destination: `${backendUrl}/api/:path*`,
       },

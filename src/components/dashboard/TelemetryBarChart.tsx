@@ -1,12 +1,15 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
 import { tokens } from '@/components/system/tokens'
+import api from '@/lib/api'
 
 export interface TelemetryBarPoint {
   day: string
+  /** Sessions started that day (real count from /superadmin/telemetry). */
   load: number
+  /** Sessions submitted that day (real count from /superadmin/telemetry). */
   ai: number
 }
 
@@ -19,24 +22,56 @@ interface TelemetryBarChartProps {
   className?: string
 }
 
-const DEFAULT_DATA: TelemetryBarPoint[] = [
-  { day: 'Sen', load: 60, ai: 45 },
-  { day: 'Sel', load: 85, ai: 70 },
-  { day: 'Rab', load: 75, ai: 60 },
-  { day: 'Kam', load: 95, ai: 85 },
-  { day: 'Jum', load: 80, ai: 65 },
-  { day: 'Sab', load: 40, ai: 30 },
-  { day: 'Min', load: 30, ai: 20 },
-]
+type FetchState = 'loading' | 'ready' | 'error'
+
+function toDayLabel(isoDate: string): string {
+  const d = new Date(isoDate)
+  if (Number.isNaN(d.getTime())) return isoDate
+  // Short Indonesian weekday, e.g. "Sen", "Sel", "Rab"
+  return d.toLocaleDateString('id-ID', { weekday: 'short' }).replace('.', '')
+}
 
 export function TelemetryBarChart({
-  data = DEFAULT_DATA,
-  title = 'Trafik Server CBT',
+  data: dataProp,
+  title = 'Aktivitas Sesi Ujian',
   subtitle = '7 Hari Terakhir',
-  serverLabel = 'Server CBT',
-  aiLabel = 'AI Grading',
+  serverLabel = 'Sesi Dimulai',
+  aiLabel = 'Sesi Selesai',
   className = '',
 }: TelemetryBarChartProps) {
+  const [fetched, setFetched] = useState<TelemetryBarPoint[] | null>(null)
+  const [state, setState] = useState<FetchState>(dataProp ? 'ready' : 'loading')
+
+  useEffect(() => {
+    if (dataProp) return
+    let cancelled = false
+    ;(async () => {
+      try {
+        const res = await api.get('/superadmin/telemetry')
+        const series = res.data?.data?.series
+        if (!Array.isArray(series)) throw new Error('bad shape')
+        if (cancelled) return
+        setFetched(
+          series.map((p: any) => ({
+            day: toDayLabel(p.date),
+            load: Number(p.sessions_started) || 0,
+            ai: Number(p.sessions_submitted) || 0,
+          }))
+        )
+        setState('ready')
+      } catch {
+        if (!cancelled) setState('error')
+      }
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [dataProp])
+
+  const data = dataProp || fetched || []
+  const maxValue = Math.max(1, ...data.map((d) => Math.max(d.load, d.ai)))
+  const totalSessions = data.reduce((sum, d) => sum + d.load + d.ai, 0)
+
   return (
     <div
       className={cn(
@@ -50,33 +85,58 @@ export function TelemetryBarChart({
         <span className="font-mono text-slate-500 text-[10px] font-medium">{subtitle}</span>
       </div>
 
-      {/* Dual Bar Graphic - High contrast daylight styling */}
-      <div className="h-32 flex items-end justify-between gap-1.5 pt-4 px-1">
-        {data.map((item) => (
-          <div
-            key={item.day}
-            className="flex-1 flex flex-col items-center gap-1 h-full justify-end group cursor-pointer"
-          >
-            <div className="w-full max-w-[18px] flex flex-col items-center gap-0.5 justify-end h-full">
-              {/* Top lime AI highlight cap */}
+      {state === 'loading' ? (
+        <div className="h-32 flex items-end justify-between gap-1.5 pt-4 px-1" aria-label="Memuat data telemetri">
+          {Array.from({ length: 7 }).map((_, i) => (
+            <div key={i} className="flex-1 flex flex-col items-center gap-1 h-full justify-end">
               <div
-                className={cn('w-full rounded-t-sm transition-all group-hover:scale-y-105', tokens.semantic.lime.badge, tokens.shadow.micro)}
-                style={{ height: `${item.ai * 0.35}%` }}
-                title={`${aiLabel}: ${item.ai}%`}
+                className="w-full max-w-[18px] bg-slate-200 animate-pulse rounded-sm"
+                style={{ height: `${30 + ((i * 13) % 50)}%` }}
               />
-              {/* Bottom midnight violet server bar */}
-              <div
-                className="w-full bg-[#150f23] rounded-b-sm transition-all group-hover:bg-slate-800"
-                style={{ height: `${item.load * 0.55}%` }}
-                title={`${serverLabel}: ${item.load}%`}
-              />
+              <span className="w-4 h-2 bg-slate-200 animate-pulse rounded-sm" />
             </div>
-            <span className="text-[9px] font-mono text-slate-500 font-medium group-hover:text-slate-900 group-hover:font-bold transition-colors">
-              {item.day}
-            </span>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      ) : state === 'error' ? (
+        <div className="h-32 flex items-center justify-center px-2">
+          <p className="text-[11px] text-slate-500 font-medium text-center">
+            Data belum bisa dimuat
+          </p>
+        </div>
+      ) : totalSessions === 0 ? (
+        <div className="h-32 flex items-center justify-center px-2">
+          <p className="text-[11px] text-slate-500 font-medium text-center">
+            Belum ada sesi ujian dalam 7 hari terakhir
+          </p>
+        </div>
+      ) : (
+        <div className="h-32 flex items-end justify-between gap-1.5 pt-4 px-1">
+          {data.map((item, idx) => (
+            <div
+              key={`${item.day}-${idx}`}
+              className="flex-1 flex flex-col items-center gap-1 h-full justify-end group cursor-pointer"
+            >
+              <div className="w-full max-w-[18px] flex flex-col items-center gap-0.5 justify-end h-full">
+                {/* Sessions submitted segment (violet = platform activity) */}
+                <div
+                  className="w-full rounded-t-sm transition-all group-hover:scale-y-105 bg-[#6a5fc1]"
+                  style={{ height: `${(item.ai / maxValue) * 45}%` }}
+                  title={`${aiLabel}: ${item.ai} sesi`}
+                />
+                {/* Sessions started bar (midnight violet) */}
+                <div
+                  className="w-full bg-[#150f23] rounded-b-sm transition-all group-hover:bg-slate-800"
+                  style={{ height: `${(item.load / maxValue) * 55}%` }}
+                  title={`${serverLabel}: ${item.load} sesi`}
+                />
+              </div>
+              <span className="text-[9px] font-mono text-slate-500 font-medium group-hover:text-slate-900 group-hover:font-bold transition-colors">
+                {item.day}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Legend */}
       <div className="flex items-center justify-center gap-4 text-[10px] font-semibold pt-1 text-slate-700 font-mono">
@@ -85,7 +145,7 @@ export function TelemetryBarChart({
           {serverLabel}
         </span>
         <span className="flex items-center gap-1.5">
-          <span className={cn('w-2.5 h-2.5 bg-[#c2ef4e] border border-lime-400', tokens.radius.xs, tokens.shadow.micro)} />
+          <span className={cn('w-2.5 h-2.5 bg-[#6a5fc1]', tokens.radius.xs, tokens.shadow.micro)} />
           {aiLabel}
         </span>
       </div>

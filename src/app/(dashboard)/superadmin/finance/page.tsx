@@ -715,7 +715,7 @@ export default function SuperAdminFinancePage() {
               </div>
 
               <div className="text-[11px] text-slate-400 font-mono text-center">
-                Metode Pembayaran: {selectedInvoice.payment_method && selectedInvoice.payment_method !== '-' ? selectedInvoice.payment_method : 'Transfer Bank / SPK Resmi'} • Dikeluarkan oleh PT EXAMIND TEKNOLOGI EDUKASI
+                Metode Pembayaran: {selectedInvoice.payment_method && selectedInvoice.payment_method !== '-' ? selectedInvoice.payment_method : 'Belum tercatat'} • Dikeluarkan oleh PT EXAMIND TEKNOLOGI EDUKASI
               </div>
             </div>
 

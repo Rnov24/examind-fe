@@ -11,12 +11,12 @@ import {
   Cpu,
   Activity,
   ShieldCheck,
-  CheckCircle2,
   ArrowUpRight,
   Wallet,
   Sparkles,
 } from 'lucide-react'
 import api from '@/lib/api'
+import { usePlatformHealth } from '@/lib/usePlatformHealth'
 import TenantModal, { TenantFormData } from '@/components/superadmin/TenantModal'
 import {
   DashboardShell,
@@ -35,6 +35,7 @@ import { useAuthStore } from '@/stores/authStore'
 
 export default function SuperAdminDashboardPage() {
   const { user } = useAuthStore()
+  const health = usePlatformHealth()
   const [activeTab, setActiveTab] = useState('overview')
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -228,16 +229,26 @@ export default function SuperAdminDashboardPage() {
             </DashboardCard>
           </div>
 
-          {/* Right Block: CBT Server Telemetry & Health (col-span-5) */}
+          {/* Right Block: CBT Exam Activity & Health (col-span-5) */}
           <div className="lg:col-span-5">
             <DashboardCard
-              title="Telemetri Server Ujian CBT"
-              subtitle="Beban trafik komputasi dan integritas klaster ujian"
+              title="Aktivitas Ujian CBT"
+              subtitle="Sesi ujian yang dimulai dan selesai dalam 7 hari terakhir"
               icon={<ShieldCheck className="w-4 h-4 text-emerald-600" aria-hidden="true" />}
               action={
-                <span className="text-[10px] font-mono font-bold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
-                  Optimal
-                </span>
+                health.loading ? (
+                  <span className="text-[10px] font-mono font-bold text-slate-600 bg-slate-50 px-2.5 py-0.5 rounded-full border border-slate-200">
+                    Memeriksa…
+                  </span>
+                ) : health.reachable && health.dbStatus === 'online' ? (
+                  <span className="text-[10px] font-mono font-bold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                    Operasional
+                  </span>
+                ) : (
+                  <span className="text-[10px] font-mono font-bold text-rose-800 bg-rose-50 px-2.5 py-0.5 rounded-full border border-rose-200">
+                    Bermasalah
+                  </span>
+                )
               }
             >
               <div className="space-y-4">
@@ -251,10 +262,15 @@ export default function SuperAdminDashboardPage() {
                     </span>
                   </div>
                   <div className="flex items-center justify-between pt-2">
-                    <span className="text-slate-500">Kepatuhan UU PDP:</span>
-                    <span className="font-semibold text-emerald-600 flex items-center gap-1">
-                      <CheckCircle2 className="w-3.5 h-3.5" aria-hidden="true" />
-                      Terverifikasi
+                    <span className="text-slate-500">Status Database:</span>
+                    <span className="font-mono font-semibold text-slate-700">
+                      {health.loading
+                        ? 'Memeriksa…'
+                        : !health.reachable
+                          ? 'Tidak terjangkau'
+                          : health.dbStatus === 'online'
+                            ? `Online${health.dbLatencyMs != null ? ` • ${health.dbLatencyMs} ms` : ''}`
+                            : 'Bermasalah'}
                     </span>
                   </div>
                 </div>

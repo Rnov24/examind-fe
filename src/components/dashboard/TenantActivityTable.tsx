@@ -214,7 +214,7 @@ export function TenantActivityTable({
                     <span className="text-slate-400 text-[9px] uppercase block font-sans font-bold">Peserta</span>
                     <span className="font-bold text-slate-800">
                       {(tenant.total_students ?? 0).toLocaleString('id-ID')}
-                      <span className="text-slate-400 text-[9px] font-normal">/{tenant.max_students ?? 500}</span>
+                      <span className="text-slate-400 text-[9px] font-normal">/{tenant.max_students ?? '—'}</span>
                     </span>
                   </div>
                 </div>
@@ -339,7 +339,7 @@ export function TenantActivityTable({
                     <td className="py-3.5 px-4 font-mono font-bold text-slate-800">
                       {(tenant.total_students ?? 0).toLocaleString('id-ID')}{' '}
                       <span className="text-slate-400 text-[10px] font-normal">
-                        / {tenant.max_students ?? 500}
+                        / {tenant.max_students ?? '—'}
                       </span>
                     </td>
 

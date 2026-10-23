@@ -9,10 +9,52 @@ import {
   ChevronDown,
   LogOut,
   X,
+  AlertOctagon,
+  AlertTriangle,
+  Info,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { tokens } from '@/components/system/tokens'
 import { useAuthStore } from '@/stores/authStore'
+import api from '@/lib/api'
+import { HelpModal } from './HelpModal'
+
+interface NotificationItem {
+  id: string | number
+  kind: string
+  title: string
+  body: string
+  created_at: string
+  severity: 'info' | 'warning' | 'critical'
+}
+
+function formatRelativeTime(iso: string): string {
+  const then = new Date(iso).getTime()
+  if (Number.isNaN(then)) return ''
+  const diffSec = Math.max(0, Math.floor((Date.now() - then) / 1000))
+  if (diffSec < 60) return 'Baru saja'
+  const diffMin = Math.floor(diffSec / 60)
+  if (diffMin < 60) return `${diffMin} menit lalu`
+  const diffHour = Math.floor(diffMin / 60)
+  if (diffHour < 24) return `${diffHour} jam lalu`
+  const diffDay = Math.floor(diffHour / 24)
+  if (diffDay === 1) return 'Kemarin'
+  if (diffDay < 7) return `${diffDay} hari lalu`
+  return new Date(iso).toLocaleDateString('id-ID', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  })
+}
+
+const SEVERITY_STYLE: Record<
+  NotificationItem['severity'],
+  { container: string; Icon: typeof Info; iconClass: string }
+> = {
+  critical: { container: 'bg-rose-50 hover:bg-rose-100/70', Icon: AlertOctagon, iconClass: 'text-rose-600' },
+  warning: { container: 'bg-amber-50 hover:bg-amber-100/70', Icon: AlertTriangle, iconClass: 'text-amber-600' },
+  info: { container: 'bg-violet-50 hover:bg-violet-100/70', Icon: Info, iconClass: 'text-[#6a5fc1]' },
+}
 
 interface TopRightClusterProps {
   className?: string
@@ -24,8 +66,43 @@ export function TopRightCluster({ className = '' }: TopRightClusterProps) {
   const [profileOpen, setProfileOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
   const [notificationOpen, setNotificationOpen] = useState(false)
+  const [helpOpen, setHelpOpen] = useState(false)
+  const [notifications, setNotifications] = useState<NotificationItem[]>([])
   const profileRef = useRef<HTMLDivElement>(null)
   const notificationRef = useRef<HTMLDivElement>(null)
+
+  // Real notifications from the backend (role-scoped, derived from live
+  // events). Poll every 60s. Any failure degrades to the honest empty
+  // state — never to invented content.
+  useEffect(() => {
+    let cancelled = false
+    const load = async () => {
+      try {
+        const res = await api.get('/notifications')
+        const items = res.data?.data?.items
+        if (!cancelled && Array.isArray(items)) {
+          setNotifications(items)
+        }
+      } catch {
+        if (!cancelled) setNotifications([])
+      }
+    }
+    load()
+    const interval = setInterval(load, 60000)
+    return () => {
+      cancelled = true
+      clearInterval(interval)
+    }
+  }, [])
+
+  const topSeverity: NotificationItem['severity'] | null =
+    notifications.length === 0
+      ? null
+      : notifications.some((n) => n.severity === 'critical')
+        ? 'critical'
+        : notifications.some((n) => n.severity === 'warning')
+          ? 'warning'
+          : 'info'
 
   // Close dropdowns when clicking outside
   useEffect(() => {
@@ -136,11 +213,20 @@ export function TopRightCluster({ className = '' }: TopRightClusterProps) {
           className={circularButtonClass}
         >
           <Bell className="w-4 h-4" aria-hidden="true" />
-          {/* Active notification indicator dot (lime) */}
-          <span
-            className={cn('absolute top-2.5 right-2.5 w-2 h-2 rounded-full ring-2 ring-white', tokens.semantic.lime.badge)}
-            aria-hidden="true"
-          />
+          {/* Indicator dot — only when real notifications exist, colored by top severity */}
+          {topSeverity && (
+            <span
+              className={cn(
+                'absolute top-2.5 right-2.5 w-2 h-2 rounded-full ring-2 ring-white',
+                topSeverity === 'critical'
+                  ? 'bg-rose-500'
+                  : topSeverity === 'warning'
+                    ? 'bg-amber-500'
+                    : 'bg-[#6a5fc1]'
+              )}
+              aria-hidden="true"
+            />
+          )}
         </button>
 
         {notificationOpen && (
@@ -149,42 +235,61 @@ export function TopRightCluster({ className = '' }: TopRightClusterProps) {
               <span className="font-display font-bold text-xs text-slate-900">
                 Pemberitahuan Sistem
               </span>
-              <span className={cn('text-[10px] font-mono text-[#150f23] font-bold bg-[#c2ef4e]/40 px-1.5 py-0.5', tokens.radius.xs)}>
-                2 Baru
-              </span>
+              {notifications.length > 0 && (
+                <span className={cn('text-[10px] font-mono text-[#150f23] font-bold bg-slate-100 px-1.5 py-0.5', tokens.radius.xs)}>
+                  {notifications.length} Baru
+                </span>
+              )}
             </div>
-            <div className="space-y-1.5 text-xs">
-              <div className={cn('p-2 bg-slate-50 hover:bg-slate-100/70 transition-colors', tokens.radius.lg)}>
-                <p className="font-semibold text-slate-900 text-[11px]">
-                  Sinkronisasi TiDB Serverless
-                </p>
-                <p className="text-[10px] text-slate-500 mt-0.5">
-                  Cluster terhubung stabil di region ap-southeast-1.
-                </p>
+            {notifications.length === 0 ? (
+              <p className="text-[11px] text-slate-500 px-1 py-2">
+                Tidak ada notifikasi baru
+              </p>
+            ) : (
+              <div className="space-y-1.5 text-xs max-h-80 overflow-y-auto">
+                {notifications.map((item) => {
+                  const style = SEVERITY_STYLE[item.severity] || SEVERITY_STYLE.info
+                  const SevIcon = style.Icon
+                  return (
+                    <div
+                      key={item.id}
+                      className={cn('p-2 transition-colors', tokens.radius.lg, style.container)}
+                    >
+                      <div className="flex items-start gap-2">
+                        <SevIcon className={cn('w-3.5 h-3.5 shrink-0 mt-px', style.iconClass)} aria-hidden="true" />
+                        <div className="min-w-0">
+                          <p className="font-semibold text-slate-900 text-[11px]">
+                            {item.title}
+                          </p>
+                          <p className="text-[10px] text-slate-500 mt-0.5">
+                            {item.body}
+                          </p>
+                          <p className="text-[10px] text-slate-400 mt-1 font-mono">
+                            {formatRelativeTime(item.created_at)}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })}
               </div>
-              <div className={cn('p-2 bg-slate-50 hover:bg-slate-100/70 transition-colors', tokens.radius.lg)}>
-                <p className="font-semibold text-slate-900 text-[11px]">
-                  Audit Integritas AI Ujian
-                </p>
-                <p className="text-[10px] text-slate-500 mt-0.5">
-                  Model Gemini 2.5 Flash aktif untuk asistensi rubrik penilaian.
-                </p>
-              </div>
-            </div>
+            )}
           </div>
         )}
       </div>
 
-      {/* Info / Help Button (Hidden on <sm to maintain 360px header budget) */}
+      {/* Help Button (Hidden on <sm to maintain 360px header budget) */}
       <button
         type="button"
-        onClick={() => alert('EXAMIND CBT v1.0 — Platform Ujian AI Sekolah Berintegritas Tinggi')}
-        title="Tentang Platform EXAMIND"
-        aria-label="Informasi Platform"
+        onClick={() => setHelpOpen(true)}
+        title="Bantuan & Panduan Platform"
+        aria-label="Bantuan dan Panduan Platform"
         className={cn(circularButtonClass, 'hidden sm:flex')}
       >
         <HelpCircle className="w-4 h-4" aria-hidden="true" />
       </button>
+
+      <HelpModal open={helpOpen} onClose={() => setHelpOpen(false)} />
 
       {/* User Profile Chip */}
       <div className="relative" ref={profileRef}>
@@ -236,7 +341,7 @@ export function TopRightCluster({ className = '' }: TopRightClusterProps) {
                     {user?.full_name || 'Super Admin'}
                   </p>
                   <p className="text-[10px] text-slate-500 font-mono truncate">
-                    {user?.identifier || 'superadmin@examind.id'}
+                    {user?.identifier || '—'}
                   </p>
                 </div>
               </div>

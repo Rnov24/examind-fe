@@ -76,7 +76,7 @@ export default function Sidebar() {
       if (path === '/exams' && (pathname === '/exams/create' || pathname.includes('/monitor'))) {
         return false
       }
-      if (path === '/student/exam/1' && pathname.includes('/result')) {
+      if (path === '/student/dashboard' && pathname.includes('/student/exam')) {
         return false
       }
       if (path === '/grading' && pathname.startsWith('/grading/')) {
@@ -109,7 +109,7 @@ export default function Sidebar() {
         { href: '/superadmin/pricing', label: 'Harga Layanan', icon: Coins, section: 'Keuangan' },
         { href: '/superadmin/secrets', label: 'Kunci API', icon: Cpu, section: 'Sistem' },
         { href: '/analytics', label: 'Audit Nilai', icon: BarChart3, section: 'Sistem' },
-        { href: '/exams/1/monitor', label: 'Monitor Live', icon: Activity, section: 'Sistem' },
+        { href: '/exams', label: 'Monitor Live', icon: Activity, section: 'Sistem' },
       ]
     }
     if (isAdmin) {
@@ -118,7 +118,7 @@ export default function Sidebar() {
         { href: '/classes', label: 'Kelas', icon: Users, section: 'Menu Utama' },
         { href: '/questions', label: 'Bank Soal', icon: BookOpen, section: 'Ujian' },
         { href: '/exams', label: 'Jadwal Ujian', icon: FileSpreadsheet, section: 'Ujian' },
-        { href: '/exams/1/monitor', label: 'Proctoring Live', icon: Video, section: 'Ujian' },
+        { href: '/exams', label: 'Proctoring Live', icon: Video, section: 'Ujian' },
         { href: '/analytics', label: 'Rekap Nilai', icon: BarChart3, section: 'Lainnya' },
         { href: '/superadmin/secrets', label: 'Pengaturan', icon: Key, section: 'Lainnya' },
       ]
@@ -130,15 +130,15 @@ export default function Sidebar() {
         { href: '/questions', label: 'Bank Soal', icon: BookOpen, section: 'Menu Utama' },
         { href: '/exams', label: 'Jadwal Ujian', icon: FileSpreadsheet, section: 'Ujian' },
         { href: '/exams/create', label: 'Buat Ujian', icon: PlusCircle, section: 'Ujian' },
-        { href: '/exams/1/monitor', label: 'Proctoring Live', icon: Video, section: 'Ujian' },
+        { href: '/exams', label: 'Proctoring Live', icon: Video, section: 'Ujian' },
         { href: '/grading', label: 'Koreksi Esai', icon: CheckCircle2, section: 'Penilaian' },
         { href: '/analytics', label: 'Analisis Soal', icon: BarChart3, section: 'Penilaian' },
       ]
     }
     return [
       { href: '/student/dashboard', label: 'Dashboard', icon: LayoutDashboard, section: 'Menu Utama' },
-      { href: '/student/exam/1', label: 'Mulai Ujian', icon: FileText, section: 'Menu Utama' },
-      { href: '/student/exam/1/result', label: 'Pembahasan', icon: Sparkles, section: 'Hasil' },
+      { href: '/student/dashboard', label: 'Mulai Ujian', icon: FileText, section: 'Menu Utama' },
+      { href: '/student/dashboard', label: 'Pembahasan', icon: Sparkles, section: 'Hasil' },
       { href: '/companion', label: 'Kamera HP', icon: Smartphone, section: 'Perangkat' },
     ]
   }

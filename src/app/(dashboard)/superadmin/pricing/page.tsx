@@ -418,7 +418,7 @@ export default function SuperAdminPricingPage() {
               subtitle="Biaya pemotongan kuota berdasarkan kompleksitas inferensi model LLM"
               action={
                 <span className="text-xs font-mono text-slate-500 font-semibold">
-                  5 Operasi Engine Terdaftar
+                  {taskRates.length} Operasi Engine Terdaftar
                 </span>
               }
               noPadding
@@ -438,9 +438,6 @@ export default function SuperAdminPricingPage() {
                       </span>
                     </div>
                     <p className="text-xs text-slate-600 leading-relaxed">{tr.description}</p>
-                    <div className="text-[11px] font-mono text-slate-500 font-semibold pt-1 border-t border-slate-100/60">
-                      Estimasi Biaya Server: ~Rp {tr.credits * 45} / call
-                    </div>
                   </div>
                 ))}
               </div>
@@ -453,7 +450,6 @@ export default function SuperAdminPricingPage() {
                       <th className="py-3 px-5 font-bold">Jenis Task AI</th>
                       <th className="py-3 px-4 font-bold">Deskripsi Inferensi & Beban Token</th>
                       <th className="py-3 px-4 font-bold text-center">Biaya Kredit</th>
-                      <th className="py-3 px-5 font-bold text-right">Estimasi Biaya Server</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 font-sans">
@@ -471,9 +467,6 @@ export default function SuperAdminPricingPage() {
                             <Coins className="w-3.5 h-3.5 text-amber-600" />
                             {tr.credits} Kredit
                           </span>
-                        </td>
-                        <td className="py-3.5 px-5 text-right font-mono text-slate-500 text-[11px] font-semibold">
-                          ~Rp {tr.credits * 45} / call
                         </td>
                       </tr>
                     ))}

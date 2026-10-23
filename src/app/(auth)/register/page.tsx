@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, Suspense } from 'react'
+import React, { useState, useEffect, useRef, Suspense } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import {
@@ -20,12 +20,11 @@ import {
   EyeOff,
   ShieldCheck,
   Check,
-  Sparkles,
   RefreshCw,
 } from 'lucide-react'
 import api from '@/lib/api'
 import { useAuthStore } from '@/stores/authStore'
-import { ExamindLogo } from '@/components/brand/ExamindLogo'
+import { AuthShell, authLabelClass, authInputClass, authPrimaryButtonClass } from '@/components/auth/AuthShell'
 
 interface SchoolOption {
   id: number
@@ -82,6 +81,61 @@ function RegisterContent() {
   const [otpError, setOtpError] = useState('')
   const [otpSuccess, setOtpSuccess] = useState('')
   const [resendSuccessMessage, setResendSuccessMessage] = useState('')
+
+  // Segmented OTP boxes — presentation only; `otpCode` remains the single
+  // source of truth exactly as before.
+  const otpRefs = useRef<Array<HTMLInputElement | null>>([])
+
+  const handleOtpSlotChange = (index: number, raw: string) => {
+    const digits = raw.replace(/\D/g, '')
+    if (otpError) setOtpError('')
+
+    if (!digits) {
+      if (index < otpCode.length) {
+        setOtpCode(otpCode.slice(0, index) + otpCode.slice(index + 1))
+      }
+      return
+    }
+
+    if (digits.length > 1) {
+      const merged = (otpCode.slice(0, index) + digits).slice(0, 6)
+      setOtpCode(merged)
+      otpRefs.current[Math.min(merged.length, 5)]?.focus()
+      return
+    }
+
+    let next: string
+    if (index < otpCode.length) {
+      next = otpCode.slice(0, index) + digits + otpCode.slice(index + 1)
+    } else {
+      next = (otpCode + digits).slice(0, 6)
+    }
+    setOtpCode(next)
+    if (index < 5) otpRefs.current[index + 1]?.focus()
+  }
+
+  const handleOtpSlotKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Backspace') {
+      if (otpCode[index]) {
+        setOtpCode(otpCode.slice(0, index) + otpCode.slice(index + 1))
+      } else if (index > 0) {
+        otpRefs.current[index - 1]?.focus()
+      }
+    } else if (e.key === 'ArrowLeft' && index > 0) {
+      otpRefs.current[index - 1]?.focus()
+    } else if (e.key === 'ArrowRight' && index < 5) {
+      otpRefs.current[index + 1]?.focus()
+    }
+  }
+
+  const handleOtpPaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    e.preventDefault()
+    const text = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6)
+    if (!text) return
+    if (otpError) setOtpError('')
+    setOtpCode(text)
+    otpRefs.current[Math.min(text.length, 5)]?.focus()
+  }
 
   // Handle direct verification link: /register?verify=<email>
   useEffect(() => {
@@ -154,14 +208,6 @@ function RegisterContent() {
     } finally {
       setVerifyingCode(false)
     }
-  }
-
-  // Quick fill demo code helper
-  const handleSelectDemoCode = (demoCode: string, demoRole: 'student' | 'teacher' | 'admin', schoolId: number) => {
-    setRole(demoRole)
-    setSelectedTenantId(schoolId)
-    setRegistrationCode(demoCode)
-    verifyCode(demoCode, demoRole, schoolId)
   }
 
   // Handle registration submission
@@ -338,67 +384,65 @@ function RegisterContent() {
   const strengthColor =
     strength <= 1 ? 'bg-rose-500' : strength <= 2 ? 'bg-amber-500' : 'bg-emerald-500'
 
+  const roleOptions = [
+    {
+      value: 'student' as const,
+      icon: GraduationCap,
+      title: 'Siswa / Murid',
+      desc: 'Peserta ujian',
+    },
+    {
+      value: 'teacher' as const,
+      icon: BookOpen,
+      title: 'Guru / Pengajar',
+      desc: 'Pembuat soal',
+    },
+    {
+      value: 'admin' as const,
+      icon: Building2,
+      title: 'Admin Sekolah',
+      desc: 'Pengelola',
+    },
+  ]
+
   return (
-    <div className="min-h-screen bg-[#f8fafc] text-slate-900 flex flex-col justify-between p-4 sm:p-6 font-sans selection:bg-[#c2ef4e] selection:text-slate-950 relative overflow-hidden">
-      {/* Ambient Background Gradient */}
-      <div className="pointer-events-none fixed inset-0 overflow-hidden z-0">
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-tr from-indigo-100/60 via-[#c2ef4e]/10 to-transparent rounded-full blur-3xl opacity-70"></div>
-        <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-purple-100/40 rounded-full blur-3xl"></div>
-      </div>
-
-      {/* Top Header Bar */}
-      <header className="relative z-10 max-w-5xl w-full mx-auto flex items-center justify-between py-2">
-        <Link href="/" className="flex items-center gap-3 group" aria-label="EXAMIND Beranda">
-          <ExamindLogo variant="lockup" theme="color" className="h-8 w-auto shrink-0" priority />
-          <div className="border-l border-slate-200/80 pl-3 hidden sm:block">
-            <span className="text-[11px] text-slate-500 font-medium block leading-none">
-              Platform Ujian AI Sekolah
-            </span>
-          </div>
-        </Link>
-
+    <AuthShell
+      width="xl"
+      topRight={
         <Link
           href="/login"
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700 bg-white/90 hover:bg-white border border-slate-200 px-3.5 py-1.5 rounded-full shadow-xs transition-colors"
+          className="inline-flex h-10 items-center gap-1.5 rounded-full border border-[#e5e7eb] bg-white px-3.5 text-[13px] font-semibold text-[#1f1633] transition-colors hover:border-[#cfcfdb]"
         >
-          <ArrowLeft className="w-3.5 h-3.5" />
+          <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
           <span>Sudah punya akun? Masuk</span>
         </Link>
-      </header>
-
-      {/* Main Registration Card Area */}
-      <main className="relative z-10 max-w-xl w-full mx-auto my-auto py-8">
-        {step === 1 ? (
-          <div
-            className="anim-rise bg-white/95 backdrop-blur-xl rounded-2xl border border-slate-200/90 shadow-subtle-elevated p-6 sm:p-8 space-y-6 text-slate-900"
-            style={{ '--anim-duration': '300ms' } as React.CSSProperties}
-          >
+      }
+    >
+      {step === 1 ? (
+        <div className="space-y-6">
           {/* Header */}
-          <div className="space-y-1.5 text-center">
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-slate-100 text-slate-800 border border-slate-200 font-mono">
-              <Sparkles className="w-3 h-3 text-indigo-600" />
-              Pendaftaran Akun Sekolah
-            </div>
-            <h1 className="font-display text-2xl font-bold tracking-tight text-slate-900">
-              Registrasi Akun Institusi
+          <div className="space-y-2">
+            <h1 className="font-display text-2xl font-bold tracking-tight text-[#150f23]">
+              Registrasi Akun
             </h1>
-            <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
-              Pendaftaran memerlukan <strong>Kode Akses Khusus</strong> yang dialokasikan oleh provider/sekolah untuk setiap peran.
+            <p className="text-[13px] leading-relaxed text-slate-500">
+              Pendaftaran memerlukan <strong className="font-semibold text-[#1f1633]">kode pendaftaran</strong> yang
+              diberikan oleh sekolah atau provider untuk setiap peran.
             </p>
           </div>
 
           {/* Success Banner */}
           {successMessage && (
-            <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs flex items-center gap-3 shadow-xs">
-              <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+            <div className="flex items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-[13px] text-emerald-900">
+              <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600" aria-hidden="true" />
               <div className="font-semibold">{successMessage}</div>
             </div>
           )}
 
           {/* Error Alert */}
           {errorMessage && (
-            <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200/80 text-rose-900 text-xs flex items-center gap-2.5 shadow-xs">
-              <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+            <div className="flex items-center gap-2.5 rounded-xl border border-rose-200 bg-rose-50 p-3.5 text-[13px] text-rose-900" role="alert">
+              <AlertCircle className="h-4 w-4 shrink-0 text-rose-600" aria-hidden="true" />
               <span>{errorMessage}</span>
             </div>
           )}
@@ -406,111 +450,60 @@ function RegisterContent() {
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* 1. Role Selection Grid */}
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-2 font-mono">
-                Pilih Peran Akun:
-              </label>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                {/* Siswa */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setRole('student')
-                    if (registrationCode) verifyCode(registrationCode, 'student', selectedTenantId)
-                  }}
-                  className={`p-3 rounded-xl border text-left transition-all cursor-pointer relative overflow-hidden ${
-                    role === 'student'
-                      ? 'border-indigo-600 bg-indigo-50/50 shadow-xs ring-2 ring-indigo-600/20'
-                      : 'border-slate-200 bg-slate-50/60 hover:bg-white hover:border-slate-300'
-                  }`}
-                >
-                  <div className="flex items-center justify-between mb-1.5">
-                    <div
-                      className={`w-7 h-7 rounded-lg flex items-center justify-center ${
-                        role === 'student' ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-700'
+              <span className={authLabelClass} id="register-role-label">
+                Pilih Peran Akun
+              </span>
+              <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3" role="radiogroup" aria-labelledby="register-role-label">
+                {roleOptions.map((option) => {
+                  const selected = role === option.value
+                  return (
+                    <button
+                      key={option.value}
+                      type="button"
+                      role="radio"
+                      aria-checked={selected}
+                      onClick={() => {
+                        setRole(option.value)
+                        if (registrationCode) verifyCode(registrationCode, option.value, selectedTenantId)
+                      }}
+                      className={`min-h-[76px] cursor-pointer rounded-xl border p-3.5 text-left transition-colors ${
+                        selected
+                          ? 'border-[#6a5fc1] bg-[#6a5fc1]/5 ring-1 ring-[#6a5fc1]/40'
+                          : 'border-[#e5e7eb] bg-white hover:border-[#cfcfdb]'
                       }`}
                     >
-                      <GraduationCap className="w-4 h-4" />
-                    </div>
-                    {role === 'student' && <Check className="w-4 h-4 text-indigo-600" />}
-                  </div>
-                  <h4 className="font-bold text-xs text-slate-900">Siswa / Murid</h4>
-                  <p className="text-[10px] text-slate-500 font-mono mt-0.5">Peserta Ujian</p>
-                </button>
-
-                {/* Guru */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setRole('teacher')
-                    if (registrationCode) verifyCode(registrationCode, 'teacher', selectedTenantId)
-                  }}
-                  className={`p-3 rounded-xl border text-left transition-all cursor-pointer relative overflow-hidden ${
-                    role === 'teacher'
-                      ? 'border-indigo-600 bg-indigo-50/50 shadow-xs ring-2 ring-indigo-600/20'
-                      : 'border-slate-200 bg-slate-50/60 hover:bg-white hover:border-slate-300'
-                  }`}
-                >
-                  <div className="flex items-center justify-between mb-1.5">
-                    <div
-                      className={`w-7 h-7 rounded-lg flex items-center justify-center ${
-                        role === 'teacher' ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-700'
-                      }`}
-                    >
-                      <BookOpen className="w-4 h-4" />
-                    </div>
-                    {role === 'teacher' && <Check className="w-4 h-4 text-indigo-600" />}
-                  </div>
-                  <h4 className="font-bold text-xs text-slate-900">Guru / Pengajar</h4>
-                  <p className="text-[10px] text-slate-500 font-mono mt-0.5">Pembuat Soal</p>
-                </button>
-
-                {/* Admin Sekolah */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setRole('admin')
-                    if (registrationCode) verifyCode(registrationCode, 'admin', selectedTenantId)
-                  }}
-                  className={`p-3 rounded-xl border text-left transition-all cursor-pointer relative overflow-hidden ${
-                    role === 'admin'
-                      ? 'border-indigo-600 bg-indigo-50/50 shadow-xs ring-2 ring-indigo-600/20'
-                      : 'border-slate-200 bg-slate-50/60 hover:bg-white hover:border-slate-300'
-                  }`}
-                >
-                  <div className="flex items-center justify-between mb-1.5">
-                    <div
-                      className={`w-7 h-7 rounded-lg flex items-center justify-center ${
-                        role === 'admin' ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-700'
-                      }`}
-                    >
-                      <Building2 className="w-4 h-4" />
-                    </div>
-                    {role === 'admin' && <Check className="w-4 h-4 text-indigo-600" />}
-                  </div>
-                  <h4 className="font-bold text-xs text-slate-900">Admin Sekolah</h4>
-                  <p className="text-[10px] text-slate-500 font-mono mt-0.5">Pengelola</p>
-                </button>
+                      <div className="mb-2 flex items-center justify-between">
+                        <span
+                          className={`flex h-8 w-8 items-center justify-center rounded-lg ${
+                            selected ? 'bg-[#6a5fc1] text-white' : 'bg-slate-100 text-slate-600'
+                          }`}
+                        >
+                          <option.icon className="h-4 w-4" aria-hidden="true" />
+                        </span>
+                        {selected && <Check className="h-4 w-4 text-[#6a5fc1]" aria-hidden="true" />}
+                      </div>
+                      <span className="block text-[13px] font-bold text-[#1f1633]">{option.title}</span>
+                      <span className="mt-0.5 block text-xs text-slate-500">{option.desc}</span>
+                    </button>
+                  )
+                })}
               </div>
             </div>
 
-            {/* 2. School Selection & Specific Registration Code */}
-            <div className="p-4 rounded-xl bg-slate-50/80 border border-slate-200/90 space-y-3.5">
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] font-bold text-slate-800 uppercase tracking-wider font-mono flex items-center gap-1.5">
-                  <KeyRound className="w-3.5 h-3.5 text-indigo-600" />
-                  Otorisasi Kode Provider & Sekolah
-                </span>
-                <span className="text-[10px] text-slate-500 font-mono">Wajib Diisi</span>
-              </div>
+            {/* 2. School Selection & Registration Code */}
+            <div className="space-y-4 rounded-xl border border-[#e5e7eb] bg-[#f8fafc] p-4">
+              <span className="flex items-center gap-1.5 text-[13px] font-bold text-[#1f1633]">
+                <KeyRound className="h-4 w-4 text-[#6a5fc1]" aria-hidden="true" />
+                Kode Pendaftaran &amp; Sekolah
+              </span>
 
               {/* School Dropdown */}
               <div>
-                <label htmlFor="register-school-select" className="block text-xs font-semibold text-slate-700 mb-1">
-                  Sekolah / Institusi:
+                <label htmlFor="register-school-select" className={authLabelClass}>
+                  Sekolah / Institusi
                 </label>
                 <select
                   id="register-school-select"
-                  aria-label="Sekolah / Institusi"
                   value={selectedTenantId}
                   onChange={(e) => {
                     const id = e.target.value ? Number(e.target.value) : ''
@@ -518,9 +511,9 @@ function RegisterContent() {
                     if (registrationCode) verifyCode(registrationCode, role, id)
                   }}
                   required
-                  className="w-full px-3.5 py-2.5 rounded-lg bg-white border border-slate-300 text-xs text-slate-900 focus:outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 shadow-xs"
+                  className={authInputClass}
                 >
-                  <option value="">-- Pilih Sekolah Terdaftar --</option>
+                  <option value="">— Pilih Sekolah Terdaftar —</option>
                   {schools.map((s) => (
                     <option key={s.id} value={s.id}>
                       {s.name} ({s.code})
@@ -529,13 +522,14 @@ function RegisterContent() {
                 </select>
               </div>
 
-              {/* Specific Registration Code Input */}
+              {/* Registration Code Input */}
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Kode Spesifik Registrasi (Diberikan oleh Provider):
+                <label htmlFor="register-code" className={authLabelClass}>
+                  Kode Pendaftaran (dari sekolah / provider)
                 </label>
                 <div className="relative">
                   <input
+                    id="register-code"
                     value={registrationCode}
                     onChange={(e) => {
                       const val = e.target.value.toUpperCase()
@@ -552,169 +546,134 @@ function RegisterContent() {
                     }}
                     type="text"
                     required
-                    placeholder="Contoh: SMAN1-SIS-PROV2026"
-                    className="w-full pl-9 pr-24 py-2.5 rounded-lg bg-white border border-slate-300 text-xs sm:text-sm font-mono font-bold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 shadow-xs uppercase tracking-wide"
+                    placeholder="Format: XXXX-XXX-XXXXXX"
+                    className={`${authInputClass} pl-10 pr-24 font-mono text-sm font-bold uppercase tracking-wide`}
                   />
-                  <KeyRound className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <KeyRound className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" aria-hidden="true" />
                   <button
                     type="button"
                     onClick={() => verifyCode(registrationCode, role, selectedTenantId)}
                     disabled={verifyingCode || !registrationCode.trim()}
-                    className="absolute right-1.5 top-1/2 -translate-y-1/2 px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-bold border border-slate-200 transition-colors disabled:opacity-40 cursor-pointer"
+                    className="absolute right-1.5 top-1/2 flex h-8 -translate-y-1/2 cursor-pointer items-center rounded-lg bg-[#150f23] px-3 text-xs font-bold text-white transition-colors hover:bg-[#1f1633] disabled:opacity-40"
                   >
-                    {verifyingCode ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Verifikasi'}
+                    {verifyingCode ? <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" /> : 'Verifikasi'}
                   </button>
                 </div>
 
                 {/* Real-time Code Verification Feedback */}
                 {codeVerified && (
-                  <div className="mt-2 p-2.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11px] flex items-center gap-2 animate-in fade-in">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <div className="mt-2 flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 p-2.5 text-xs text-emerald-800">
+                    <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" aria-hidden="true" />
                     <span>
                       <strong>Kode Terverifikasi:</strong> {codeVerified.tenant_name} • Peran:{' '}
-                      <span className="capitalize font-bold text-emerald-900">{codeVerified.role}</span>
+                      <span className="font-bold capitalize text-emerald-900">{codeVerified.role}</span>
                     </span>
                   </div>
                 )}
 
                 {codeError && (
-                  <div className="mt-2 p-2.5 rounded-lg bg-rose-50 border border-rose-200 text-rose-800 text-[11px] flex items-center gap-2 animate-in fade-in">
-                    <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+                  <div className="mt-2 flex items-center gap-2 rounded-lg border border-rose-200 bg-rose-50 p-2.5 text-xs text-rose-800" role="alert">
+                    <AlertCircle className="h-4 w-4 shrink-0 text-rose-600" aria-hidden="true" />
                     <span>{codeError}</span>
                   </div>
                 )}
-
-                {/* Quick Helper Pill Chips for Testing */}
-                <div className="mt-2.5 pt-2 border-t border-slate-200/70">
-                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider font-mono block mb-1.5">
-                    Kode Uji Coba Cepat (Klik untuk Isi):
-                  </span>
-                  <div className="flex flex-wrap gap-1.5 text-[10px] font-mono">
-                    <button
-                      type="button"
-                      onClick={() => handleSelectDemoCode('SMAN1-SIS-PROV2026', 'student', 1)}
-                      className="px-2 py-0.5 rounded bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 font-bold transition-colors cursor-pointer"
-                    >
-                      SMAN 1: Siswa
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleSelectDemoCode('SMAN1-GUR-PROV2026', 'teacher', 1)}
-                      className="px-2 py-0.5 rounded bg-indigo-50 hover:bg-indigo-100 text-indigo-800 border border-indigo-200 font-bold transition-colors cursor-pointer"
-                    >
-                      SMAN 1: Guru
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleSelectDemoCode('SMAN1-ADM-PROV2026', 'admin', 1)}
-                      className="px-2 py-0.5 rounded bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 font-bold transition-colors cursor-pointer"
-                    >
-                      SMAN 1: Admin
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleSelectDemoCode('SMKN2-SIS-PROV2026', 'student', 2)}
-                      className="px-2 py-0.5 rounded bg-purple-50 hover:bg-purple-100 text-purple-800 border border-purple-200 font-bold transition-colors cursor-pointer"
-                    >
-                      SMKN 2: Siswa
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleSelectDemoCode('SMKN2-GUR-PROV2026', 'teacher', 2)}
-                      className="px-2 py-0.5 rounded bg-purple-50 hover:bg-purple-100 text-purple-800 border border-purple-200 font-bold transition-colors cursor-pointer"
-                    >
-                      SMKN 2: Guru
-                    </button>
-                  </div>
-                </div>
               </div>
             </div>
 
             {/* 3. Personal & Identity Fields */}
-            <div className="space-y-3.5">
+            <div className="space-y-4">
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1 font-mono">
+                <label htmlFor="register-fullname" className={authLabelClass}>
                   Nama Lengkap
                 </label>
                 <div className="relative">
                   <input
+                    id="register-fullname"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     type="text"
                     required
-                    placeholder="Contoh: Rina Kartika"
-                    className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-slate-50/70 border border-slate-200 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 transition-all shadow-xs"
+                    autoComplete="name"
+                    placeholder="Nama lengkap sesuai data sekolah"
+                    className={`${authInputClass} pl-10`}
                   />
-                  <UserIcon className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <UserIcon className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" aria-hidden="true" />
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1 font-mono">
+                  <label htmlFor="register-identifier" className={authLabelClass}>
                     {role === 'student' ? 'NISN (Nomor Induk Siswa)' : 'NIP / ID Resmi'}
                   </label>
                   <input
+                    id="register-identifier"
                     value={identifier}
                     onChange={(e) => setIdentifier(e.target.value)}
                     type="text"
                     required
-                    placeholder={
-                      role === 'student' ? 'Contoh: 0081234567' : 'Contoh: 19800101...'
-                    }
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50/70 border border-slate-200 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 transition-all shadow-xs font-mono"
+                    placeholder={role === 'student' ? '10 digit NISN' : 'Nomor induk pegawai'}
+                    className={`${authInputClass} font-mono`}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1 font-mono">
+                  <label htmlFor="register-email" className={authLabelClass}>
                     Alamat Email
                   </label>
                   <div className="relative">
                     <input
+                      id="register-email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       type="email"
                       required
-                      placeholder="email@sekolah.sch.id"
-                      className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-slate-50/70 border border-slate-200 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 transition-all shadow-xs"
+                      autoComplete="email"
+                      placeholder="nama@sekolah.sch.id"
+                      className={`${authInputClass} pl-10`}
                     />
-                    <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                    <Mail className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" aria-hidden="true" />
                   </div>
                 </div>
               </div>
 
               {/* Password Fields */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1 font-mono">
+                  <label htmlFor="register-password" className={authLabelClass}>
                     Kata Sandi
                   </label>
                   <div className="relative">
                     <input
+                      id="register-password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       type={showPassword ? 'text' : 'password'}
                       required
-                      placeholder="Min. 6 karakter"
-                      className="w-full pl-9 pr-9 py-2.5 rounded-xl bg-slate-50/70 border border-slate-200 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 transition-all shadow-xs"
+                      autoComplete="new-password"
+                      placeholder="Minimal 6 karakter"
+                      className={`${authInputClass} pl-10 pr-11`}
                     />
-                    <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                    <Lock className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" aria-hidden="true" />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
                       aria-label={showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
+                      className="absolute right-0 top-1/2 flex h-11 w-11 -translate-y-1/2 cursor-pointer items-center justify-center text-slate-400 transition-colors hover:text-slate-600"
                     >
-                      {showPassword ? <EyeOff className="w-3.5 h-3.5" aria-hidden="true" /> : <Eye className="w-3.5 h-3.5" aria-hidden="true" />}
+                      {showPassword ? (
+                        <EyeOff className="h-[18px] w-[18px]" aria-hidden="true" />
+                      ) : (
+                        <Eye className="h-[18px] w-[18px]" aria-hidden="true" />
+                      )}
                     </button>
                   </div>
                   {password && (
-                    <div className="mt-1 flex items-center justify-between text-[10px] font-mono">
+                    <div className="mt-1.5 flex items-center justify-between text-xs">
                       <span className="text-slate-500">Kekuatan: {strengthText}</span>
-                      <div className="w-16 h-1 bg-slate-200 rounded-full overflow-hidden">
+                      <div className="h-1.5 w-16 overflow-hidden rounded-full bg-slate-200">
                         <div
-                          className={`h-full ${strengthColor}`}
+                          className={`h-full ${strengthColor} transition-[width] duration-200`}
                           style={{ width: `${Math.min(100, (strength / 4) * 100)}%` }}
                         />
                       </div>
@@ -723,38 +682,36 @@ function RegisterContent() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1 font-mono">
+                  <label htmlFor="register-confirm-password" className={authLabelClass}>
                     Konfirmasi Kata Sandi
                   </label>
                   <div className="relative">
                     <input
+                      id="register-confirm-password"
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       type={showPassword ? 'text' : 'password'}
                       required
+                      autoComplete="new-password"
                       placeholder="Ulangi kata sandi"
-                      className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-slate-50/70 border border-slate-200 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 transition-all shadow-xs"
+                      className={`${authInputClass} pl-10`}
                     />
-                    <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                    <Lock className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" aria-hidden="true" />
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-3.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 active:bg-slate-950 text-white font-bold text-xs sm:text-sm transition-all disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer shadow-card hover:shadow-card-hover font-display tracking-wide"
-            >
+            <button type="submit" disabled={loading} className={authPrimaryButtonClass}>
               {loading ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin text-[#c2ef4e]" />
-                  <span>Mendaftarkan Akun Institusi...</span>
+                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                  <span>Mendaftarkan Akun...</span>
                 </>
               ) : (
                 <>
-                  <ShieldCheck className="w-4 h-4 text-[#c2ef4e]" />
+                  <ShieldCheck className="h-4 w-4" aria-hidden="true" />
                   <span>
                     Daftar sebagai{' '}
                     {role === 'student' ? 'Siswa' : role === 'teacher' ? 'Guru' : 'Admin Sekolah'}
@@ -765,68 +722,61 @@ function RegisterContent() {
           </form>
 
           {/* Footer Back to Login */}
-          <div className="pt-3 border-t border-slate-100 text-center">
-            <p className="text-xs text-slate-500">
+          <div className="border-t border-slate-100 pt-4 text-center">
+            <p className="text-[13px] text-slate-500">
               Sudah memiliki akun terdaftar?{' '}
               <Link
                 href="/login"
-                className="font-bold text-indigo-600 hover:text-indigo-800 transition-colors inline-flex items-center gap-1 cursor-pointer"
+                className="inline-flex items-center gap-1 font-bold text-[#6a5fc1] transition-colors hover:text-[#422082]"
               >
                 <span>Masuk ke Portal Ujian</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+                <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
               </Link>
             </p>
           </div>
         </div>
       ) : (
-        <div
-          className="anim-rise bg-white/95 backdrop-blur-xl rounded-2xl border border-slate-200/90 shadow-subtle-elevated p-6 sm:p-8 space-y-6 text-slate-900"
-          style={{ '--anim-duration': '300ms' } as React.CSSProperties}
-        >
+        <div className="space-y-6">
           {/* Header */}
-          <div className="space-y-1.5 text-center">
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-slate-100 text-slate-800 border border-slate-200 font-mono">
-              <Mail className="w-3 h-3 text-indigo-600" />
-              Verifikasi Email Institusi
-            </div>
-            <h1 className="font-display text-2xl font-bold tracking-tight text-slate-900">
+          <div className="space-y-2">
+            <h1 className="font-display text-2xl font-bold tracking-tight text-[#150f23]">
               Verifikasi Alamat Email
             </h1>
-            <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
-              Kode verifikasi dikirim ke <strong className="text-slate-900 font-semibold">{email}</strong>. Masukkan 6 digit kode OTP di bawah ini untuk mengaktifkan akun Anda.
+            <p className="text-[13px] leading-relaxed text-slate-500">
+              Kode verifikasi dikirim ke <strong className="font-semibold text-[#150f23]">{email}</strong>. Masukkan 6 digit kode OTP di bawah ini untuk mengaktifkan akun Anda.
             </p>
           </div>
 
           {/* Resend Success Banner */}
           {resendSuccessMessage && (
-            <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs flex items-center gap-2.5 shadow-xs animate-in fade-in">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+            <div className="flex items-center gap-2.5 rounded-xl border border-emerald-200 bg-emerald-50 p-3.5 text-[13px] text-emerald-900">
+              <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" aria-hidden="true" />
               <span>{resendSuccessMessage}</span>
             </div>
           )}
 
           {/* Error Alert */}
           {otpError && (
-            <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200/80 text-rose-900 text-xs flex items-center gap-2.5 shadow-xs animate-in fade-in">
-              <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+            <div className="flex items-center gap-2.5 rounded-xl border border-rose-200 bg-rose-50 p-3.5 text-[13px] text-rose-900" role="alert">
+              <AlertCircle className="h-4 w-4 shrink-0 text-rose-600" aria-hidden="true" />
               <span>{otpError}</span>
             </div>
           )}
 
           {/* Success Banner */}
           {otpSuccess && (
-            <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs space-y-3 shadow-xs animate-in fade-in">
-              <div className="flex items-center gap-2.5 font-semibold text-sm">
-                <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+            <div className="space-y-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-[13px] text-emerald-900">
+              <div className="flex items-center gap-2.5 text-sm font-semibold">
+                <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600" aria-hidden="true" />
                 <span>{otpSuccess}</span>
               </div>
               {!password && (
                 <Link
                   href="/login"
-                  className="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs sm:text-sm transition-colors cursor-pointer shadow-xs"
+                  className="flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#150f23] text-[13px] font-bold text-white transition-colors hover:bg-[#1f1633]"
                 >
                   <span>Masuk ke Akun Anda</span>
-                  <ArrowRight className="w-4 h-4 text-[#c2ef4e]" />
+                  <ArrowRight className="h-4 w-4 text-[#c2ef4e]" aria-hidden="true" />
                 </Link>
               )}
             </div>
@@ -836,29 +786,36 @@ function RegisterContent() {
           {(!otpSuccess || password) && (
             <form onSubmit={handleVerifyOtp} className="space-y-5">
               <div className="space-y-2">
-                <label className="block text-xs font-bold text-slate-700 font-mono text-center">
-                  Kode Verifikasi (6 Digit):
-                </label>
-                <div className="relative max-w-xs mx-auto">
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    pattern="[0-9]*"
-                    maxLength={6}
-                    autoComplete="one-time-code"
-                    value={otpCode}
-                    onChange={(e) => {
-                      const clean = e.target.value.replace(/\D/g, '').slice(0, 6)
-                      setOtpCode(clean)
-                      if (otpError) setOtpError('')
-                    }}
-                    placeholder="000000"
-                    disabled={verifyingOtp || Boolean(otpSuccess)}
-                    className="w-full text-center tracking-[0.6em] pl-[0.6em] py-3.5 rounded-xl bg-slate-50/80 border border-slate-300 text-2xl font-mono font-bold text-slate-900 placeholder:text-slate-300 focus:outline-none focus:bg-white focus:border-[#6a5fc1] focus:ring-2 focus:ring-[#6a5fc1]/25 transition-all shadow-xs disabled:opacity-50"
-                    autoFocus
-                  />
+                <span className={authLabelClass} id="register-otp-label">
+                  Kode Verifikasi (6 Digit)
+                </span>
+                <div
+                  className="flex items-center justify-center gap-1.5 sm:gap-2"
+                  role="group"
+                  aria-labelledby="register-otp-label"
+                >
+                  {Array.from({ length: 6 }).map((_, index) => (
+                    <input
+                      key={index}
+                      ref={(el) => {
+                        otpRefs.current[index] = el
+                      }}
+                      type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      autoComplete={index === 0 ? 'one-time-code' : 'off'}
+                      aria-label={`Digit ke-${index + 1} dari 6`}
+                      value={otpCode[index] ?? ''}
+                      onChange={(e) => handleOtpSlotChange(index, e.target.value)}
+                      onKeyDown={(e) => handleOtpSlotKeyDown(index, e)}
+                      onPaste={handleOtpPaste}
+                      disabled={verifyingOtp || Boolean(otpSuccess)}
+                      autoFocus={index === 0}
+                      className="h-12 w-10 rounded-xl border border-[#cfcfdb] bg-white text-center font-mono text-xl font-bold text-[#1f1633] transition-[border-color,box-shadow] duration-200 focus:border-[#6a5fc1] focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]/25 disabled:opacity-50 sm:h-14 sm:w-12"
+                    />
+                  ))}
                 </div>
-                <p className="text-[11px] text-slate-400 text-center font-mono">
+                <p className="text-center text-xs text-slate-500">
                   Kode berlaku selama 10 menit
                 </p>
               </div>
@@ -867,16 +824,16 @@ function RegisterContent() {
               <button
                 type="submit"
                 disabled={otpCode.length !== 6 || verifyingOtp || Boolean(otpSuccess)}
-                className="w-full py-3.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 active:bg-slate-950 text-white font-bold text-xs sm:text-sm transition-all disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer shadow-card hover:shadow-card-hover font-display tracking-wide"
+                className={authPrimaryButtonClass}
               >
                 {verifyingOtp ? (
                   <>
-                    <Loader2 className="w-4 h-4 animate-spin text-[#c2ef4e]" />
+                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
                     <span>Memverifikasi Kode...</span>
                   </>
                 ) : (
                   <>
-                    <ShieldCheck className="w-4 h-4 text-[#c2ef4e]" />
+                    <ShieldCheck className="h-4 w-4" aria-hidden="true" />
                     <span>Verifikasi</span>
                   </>
                 )}
@@ -888,21 +845,21 @@ function RegisterContent() {
                   type="button"
                   onClick={handleResendOtp}
                   disabled={cooldown > 0 || sendingOtp || Boolean(otpSuccess)}
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-600 hover:text-indigo-800 disabled:text-slate-400 transition-colors cursor-pointer disabled:cursor-not-allowed"
+                  className="inline-flex min-h-[44px] cursor-pointer items-center gap-1.5 px-2 text-[13px] font-semibold text-[#6a5fc1] transition-colors hover:text-[#422082] disabled:cursor-not-allowed disabled:text-slate-400"
                 >
                   {sendingOtp ? (
                     <>
-                      <Loader2 className="w-3.5 h-3.5 animate-spin text-indigo-600" />
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
                       <span>Mengirim ulang kode...</span>
                     </>
                   ) : cooldown > 0 ? (
                     <>
-                      <RefreshCw className="w-3.5 h-3.5" />
+                      <RefreshCw className="h-3.5 w-3.5" aria-hidden="true" />
                       <span>Kirim ulang dalam {cooldown} dtk</span>
                     </>
                   ) : (
                     <>
-                      <RefreshCw className="w-3.5 h-3.5" />
+                      <RefreshCw className="h-3.5 w-3.5" aria-hidden="true" />
                       <span>Kirim ulang kode</span>
                     </>
                   )}
@@ -912,7 +869,7 @@ function RegisterContent() {
           )}
 
           {/* Back Link to Step 1 */}
-          <div className="pt-3 border-t border-slate-100 text-center">
+          <div className="border-t border-slate-100 pt-4 text-center">
             <button
               type="button"
               onClick={() => {
@@ -921,21 +878,15 @@ function RegisterContent() {
                 setOtpSuccess('')
                 setResendSuccessMessage('')
               }}
-              className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 transition-colors cursor-pointer"
+              className="inline-flex min-h-[44px] cursor-pointer items-center gap-1.5 px-2 text-[13px] font-semibold text-slate-600 transition-colors hover:text-[#150f23]"
             >
-              <ArrowLeft className="w-3.5 h-3.5" />
+              <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
               <span>Ganti email / kembali</span>
             </button>
           </div>
         </div>
       )}
-      </main>
-
-      {/* Footer System Info */}
-      <footer className="relative z-10 text-center py-4 text-xs text-slate-500">
-        &copy; 2026 EXAMIND Academic Assessment System. Pendaftaran Terproteksi Kode Otorisasi Provider.
-      </footer>
-    </div>
+    </AuthShell>
   )
 }
 
@@ -943,8 +894,8 @@ export default function RegisterPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-[#f8fafc] flex items-center justify-center">
-          <Loader2 className="w-6 h-6 animate-spin text-slate-900" />
+        <div className="flex min-h-screen items-center justify-center bg-[#f8fafc]">
+          <Loader2 className="h-6 w-6 animate-spin text-[#150f23]" />
         </div>
       }
     >

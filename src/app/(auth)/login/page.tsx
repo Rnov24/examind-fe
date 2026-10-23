@@ -3,10 +3,10 @@
 import React, { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { AlertCircle, Loader2, Check, Mail, ArrowRight } from 'lucide-react'
+import { AlertCircle, Loader2, Check, Mail, ArrowRight, Eye, EyeOff } from 'lucide-react'
 import api from '@/lib/api'
 import { useAuthStore } from '@/stores/authStore'
-import { ExamindLogo } from '@/components/brand/ExamindLogo'
+import { AuthShell, authLabelClass, authInputClass } from '@/components/auth/AuthShell'
 
 function LoginForm() {
   const router = useRouter()
@@ -15,6 +15,7 @@ function LoginForm() {
 
   const [identifier, setIdentifier] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [loginSuccess, setLoginSuccess] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
@@ -48,11 +49,6 @@ function LoginForm() {
       setSessionExpiredNotice(true)
     }
   }, [searchParams])
-
-  const fillDemo = (loginUser: string, loginPass: string) => {
-    setIdentifier(loginUser)
-    setPassword(loginPass)
-  }
 
   const handleSendVerificationOtp = async () => {
     if (!unverifiedEmail) return
@@ -132,272 +128,165 @@ function LoginForm() {
     }
   }
 
-
   return (
-    <div className="min-h-screen bg-[#f8fafc] text-slate-900 flex flex-col justify-between p-4 sm:p-6 font-sans selection:bg-[#c2ef4e] selection:text-slate-950 relative overflow-hidden">
-      {/* Ambient Background Depth */}
-      <div className="pointer-events-none fixed inset-0 overflow-hidden z-0">
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-gradient-to-tr from-indigo-100/60 via-[#c2ef4e]/10 to-transparent rounded-full blur-3xl opacity-70"></div>
-        <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-purple-100/40 rounded-full blur-3xl"></div>
-      </div>
-
-      {/* Top Header Bar */}
-      <header className="relative z-10 max-w-5xl w-full mx-auto flex items-center justify-between py-2">
-        <Link href="/" className="flex items-center gap-3 group" aria-label="EXAMIND Beranda">
-          <ExamindLogo variant="lockup" theme="color" className="h-8 w-auto shrink-0" priority />
-          <div className="border-l border-slate-200/80 pl-3 hidden sm:block">
-            <span className="text-[11px] text-slate-500 font-medium block leading-none">
-              Platform Ujian AI Sekolah
-            </span>
-          </div>
-        </Link>
-
-        <div className="flex items-center gap-2 text-xs font-semibold text-slate-700 bg-white/90 backdrop-blur-md border border-slate-200/80 px-3.5 py-1.5 rounded-full shadow-xs">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-          </span>
-          <span className="font-mono text-[11px]">Server CBT Online</span>
+    <AuthShell>
+      <div className="space-y-6">
+        {/* Card Header */}
+        <div className="space-y-2">
+          <h1 className="font-display text-2xl font-bold tracking-tight text-[#150f23]">
+            Masuk ke Portal Ujian
+          </h1>
+          <p className="text-[13px] leading-relaxed text-slate-500">
+            Gunakan akun resmi sekolah Anda — NISN untuk siswa, NIP untuk guru dan
+            admin, atau alamat email terdaftar.
+          </p>
         </div>
-      </header>
 
-      {/* Main Login Card Area */}
-      <main className="relative z-10 max-w-md w-full mx-auto my-auto py-8">
-        <div
-          className="anim-rise bg-white/95 backdrop-blur-xl rounded-2xl border border-slate-200/90 shadow-subtle-elevated p-6 sm:p-8 space-y-6 text-slate-900"
-          style={{ '--anim-duration': '300ms' } as React.CSSProperties}
-        >
-          {/* Card Header */}
-          <div className="space-y-2 text-center">
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-slate-100 text-slate-800 border border-slate-200 font-mono">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#c2ef4e]"></span>
-              Autentikasi Terpusat
+        {/* Session Expired Alert */}
+        {sessionExpiredNotice && (
+          <div className="flex items-center gap-2.5 rounded-xl border border-amber-200 bg-amber-50 p-3.5 text-[13px] text-amber-900">
+            <AlertCircle className="h-4 w-4 shrink-0 text-amber-600" aria-hidden="true" />
+            <span>Sesi Anda telah kedaluwarsa. Silakan masuk kembali.</span>
+          </div>
+        )}
+
+        {/* Unverified Email Notice */}
+        {unverifiedEmail && (
+          <div className="space-y-2.5 rounded-xl border border-amber-200 bg-amber-50 p-4 text-[13px] text-amber-900">
+            <div className="flex items-center gap-2">
+              <AlertCircle className="h-4 w-4 shrink-0 text-amber-600" aria-hidden="true" />
+              <span className="font-bold text-[#150f23]">Email belum diverifikasi.</span>
             </div>
-            <h1 className="font-display text-2xl font-bold tracking-tight text-slate-900">
-              Masuk ke Portal Ujian
-            </h1>
-            <p className="text-xs text-slate-500 max-w-xs mx-auto">
-              Gunakan akun resmi sekolah Anda (NISN untuk Siswa, NIP untuk Guru/Admin).
+            <p className="text-[13px] leading-relaxed text-slate-600">
+              Akun terdaftar, namun alamat email Anda ({unverifiedEmail}) belum diverifikasi. Klik tombol di bawah untuk menerima kode OTP verifikasi.
             </p>
+            {otpSendError && (
+              <div className="flex items-center gap-1.5 rounded-lg border border-rose-200 bg-rose-50 p-2 text-xs text-rose-800">
+                <AlertCircle className="h-3.5 w-3.5 shrink-0 text-rose-600" aria-hidden="true" />
+                <span>{otpSendError}</span>
+              </div>
+            )}
+            <button
+              type="button"
+              onClick={handleSendVerificationOtp}
+              disabled={sendingVerificationOtp}
+              className="flex h-11 w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-amber-600 px-3 text-[13px] font-bold text-white transition-colors hover:bg-amber-700 active:bg-amber-800 disabled:opacity-50"
+            >
+              {sendingVerificationOtp ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                  <span>Mengirim kode verifikasi...</span>
+                </>
+              ) : (
+                <>
+                  <Mail className="h-4 w-4" aria-hidden="true" />
+                  <span>Kirim kode verifikasi</span>
+                </>
+              )}
+            </button>
+          </div>
+        )}
+
+        {/* Error Alert */}
+        {errorMessage && (
+          <div className="flex items-center gap-2.5 rounded-xl border border-rose-200 bg-rose-50 p-3.5 text-[13px] text-rose-900" role="alert">
+            <AlertCircle className="h-4 w-4 shrink-0 text-rose-600" aria-hidden="true" />
+            <span>{errorMessage}</span>
+          </div>
+        )}
+
+        {/* Login Form */}
+        <form onSubmit={handleLogin} className="space-y-4">
+          <div>
+            <label htmlFor="login-identifier" className={authLabelClass}>
+              NISN / NIP / Email / Nama Pengguna
+            </label>
+            <input
+              id="login-identifier"
+              value={identifier}
+              onChange={(e) => setIdentifier(e.target.value)}
+              type="text"
+              required
+              autoComplete="username"
+              placeholder="nama@sekolah.sch.id"
+              className={authInputClass}
+            />
           </div>
 
-          {/* Session Expired Alert */}
-          {sessionExpiredNotice && (
-            <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-200/80 text-amber-900 text-xs flex items-center gap-2.5 shadow-xs">
-              <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
-              <span>Sesi Anda telah kedaluwarsa. Silakan masuk kembali.</span>
+          <div>
+            <div className="mb-1.5 flex items-center justify-between">
+              <label htmlFor="login-password" className="text-[13px] font-semibold text-[#1f1633]">
+                Kata Sandi
+              </label>
+              <Link
+                href="/forgot-password"
+                className="text-[13px] font-semibold text-[#6a5fc1] transition-colors hover:text-[#422082]"
+              >
+                Lupa kata sandi?
+              </Link>
             </div>
-          )}
-
-          {/* Unverified Email Notice */}
-          {unverifiedEmail && (
-            <div className="p-4 rounded-xl bg-amber-50 border border-amber-200/90 text-amber-900 text-xs space-y-2.5 shadow-xs animate-in fade-in">
-              <div className="flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
-                <span className="font-bold text-slate-900">Email belum diverifikasi.</span>
-              </div>
-              <p className="text-[11px] text-slate-600 leading-relaxed">
-                Akun terdaftar, namun alamat email Anda ({unverifiedEmail}) belum diverifikasi. Klik tombol di bawah untuk menerima kode OTP verifikasi.
-              </p>
-              {otpSendError && (
-                <div className="p-2 rounded-lg bg-rose-50 border border-rose-200 text-rose-800 text-[11px] flex items-center gap-1.5">
-                  <AlertCircle className="w-3.5 h-3.5 text-rose-600 shrink-0" />
-                  <span>{otpSendError}</span>
-                </div>
-              )}
+            <div className="relative">
+              <input
+                id="login-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                type={showPassword ? 'text' : 'password'}
+                required
+                autoComplete="current-password"
+                placeholder="Kata sandi akun Anda"
+                className={`${authInputClass} pr-11`}
+              />
               <button
                 type="button"
-                onClick={handleSendVerificationOtp}
-                disabled={sendingVerificationOtp}
-                className="w-full py-2.5 px-3 rounded-lg bg-amber-600 hover:bg-amber-700 active:bg-amber-800 text-white font-bold text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50 shadow-xs"
+                onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'}
+                className="absolute right-0 top-1/2 flex h-11 w-11 -translate-y-1/2 cursor-pointer items-center justify-center text-slate-400 transition-colors hover:text-slate-600"
               >
-                {sendingVerificationOtp ? (
-                  <>
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                    <span>Mengirim kode verifikasi...</span>
-                  </>
+                {showPassword ? (
+                  <EyeOff className="h-[18px] w-[18px]" aria-hidden="true" />
                 ) : (
-                  <>
-                    <Mail className="w-3.5 h-3.5" />
-                    <span>Kirim kode verifikasi</span>
-                  </>
+                  <Eye className="h-[18px] w-[18px]" aria-hidden="true" />
                 )}
               </button>
             </div>
-          )}
+          </div>
 
-          {/* Error Alert */}
-          {errorMessage && (
-            <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200/80 text-rose-900 text-xs flex items-center gap-2.5 shadow-xs">
-              <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
-              <span>{errorMessage}</span>
-            </div>
-          )}
-
-          {/* Login Form */}
-          <form onSubmit={handleLogin} className="space-y-4">
-            <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1.5 font-mono">
-                NISN / NIP / Email / Nama Pengguna
-              </label>
-              <input
-                value={identifier}
-                onChange={(e) => setIdentifier(e.target.value)}
-                type="text"
-                required
-                placeholder="Contoh: 0081234567 atau budi.santoso@..."
-                className="w-full px-4 py-2.5 rounded-xl bg-slate-50/70 border border-slate-200 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-[#6a5fc1] focus:ring-2 focus:ring-[#6a5fc1]/25 transition-[border-color,box-shadow,background-color] duration-200 ease-out shadow-xs"
-              />
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-xs font-bold text-slate-700 font-mono">
-                  Kata Sandi
-                </label>
-                <Link
-                  href="/forgot-password"
-                  className="text-[11px] font-semibold text-indigo-600 hover:text-indigo-800 transition-colors cursor-pointer"
-                >
-                  Lupa kata sandi?
-                </Link>
-              </div>
-              <input
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                type="password"
-                required
-                placeholder="••••••••"
-                className="w-full px-4 py-2.5 rounded-xl bg-slate-50/70 border border-slate-200 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-[#6a5fc1] focus:ring-2 focus:ring-[#6a5fc1]/25 transition-[border-color,box-shadow,background-color] duration-200 ease-out shadow-xs"
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={loading || loginSuccess}
-              className={`w-full mt-2 py-3 px-4 rounded-xl font-bold text-xs transition-all duration-300 flex items-center justify-center gap-2 shadow-card font-display tracking-wide ${
-                loginSuccess
-                  ? 'bg-[#c2ef4e] text-slate-950 shadow-[0_0_16px_rgba(194,239,78,0.35)] cursor-default'
-                  : loading
-                  ? 'bg-slate-900 text-white opacity-75 cursor-not-allowed'
-                  : 'bg-slate-900 hover:bg-slate-800 active:bg-slate-950 text-white cursor-pointer hover:shadow-card-hover'
-              }`}
-            >
-              {loginSuccess ? (
-                <span className="anim-pop inline-flex items-center gap-2">
-                  <Check className="w-4 h-4 text-slate-950 stroke-[3]" />
-                  <span>Berhasil Masuk</span>
-                </span>
-              ) : loading ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin text-[#c2ef4e]" />
-                  <span>Memeriksa…</span>
-                </>
-              ) : (
-                <span>Masuk ke Sistem Ujian</span>
-              )}
-            </button>
-
-            {/* Registration Link */}
-            <div className="pt-2 text-center">
-              <p className="text-xs text-slate-500">
-                Belum memiliki akun?{' '}
-                <Link
-                  href="/register"
-                  className="font-bold text-indigo-600 hover:text-indigo-800 transition-colors inline-flex items-center gap-1 cursor-pointer"
-                >
-                  <span>Daftar dengan Kode Sekolah</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
-              </p>
-            </div>
-          </form>
-
-          {/* Quick Demo Switcher — dev only, stripped from production builds */}
-          {process.env.NODE_ENV === 'development' && (
-            <div className="pt-5 border-t border-slate-100 space-y-2.5">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold text-slate-700 uppercase tracking-wider font-mono">
-                Akses Cepat Uji Coba:
+          <button
+            type="submit"
+            disabled={loading || loginSuccess}
+            className="flex h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#c2ef4e] text-sm font-bold text-[#150f23] transition-colors hover:bg-[#b0dc3d] active:bg-[#a3d136] disabled:cursor-not-allowed disabled:opacity-60 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#150f23]/50 focus-visible:ring-offset-2"
+          >
+            {loginSuccess ? (
+              <span className="anim-pop inline-flex items-center gap-2">
+                <Check className="h-4 w-4 stroke-[3]" aria-hidden="true" />
+                <span>Berhasil Masuk</span>
               </span>
-              <span className="text-[10px] text-slate-400 font-mono">1-Klik Isi Data</span>
-            </div>
+            ) : loading ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                <span>Memeriksa…</span>
+              </>
+            ) : (
+              <span>Masuk ke Sistem Ujian</span>
+            )}
+          </button>
 
-            <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 gap-2 text-xs">
-              <button
-                type="button"
-                onClick={() => fillDemo('andi.pratama@student.sman1unggul.sch.id', 'Siswa123!')}
-                className="p-3 rounded-xl bg-slate-50 hover:bg-white border border-slate-200/80 hover:border-slate-400/80 text-left transition-all cursor-pointer hover:shadow-xs group"
+          {/* Registration Link */}
+          <div className="pt-2 text-center">
+            <p className="text-[13px] text-slate-500">
+              Belum memiliki akun?{' '}
+              <Link
+                href="/register"
+                className="inline-flex items-center gap-1 font-bold text-[#6a5fc1] transition-colors hover:text-[#422082]"
               >
-                <div className="flex items-center justify-between mb-1">
-                  <span className="font-bold text-slate-900 text-xs group-hover:text-indigo-600 transition-colors">
-                    Andi Pratama
-                  </span>
-                  <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-emerald-100/80 text-emerald-800 border border-emerald-200 font-mono">
-                    Siswa
-                  </span>
-                </div>
-                <p className="text-[10px] text-slate-500 font-mono truncate">0081234567</p>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => fillDemo('budi.santoso@sman1unggul.sch.id', 'Guru123!')}
-                className="p-3 rounded-xl bg-slate-50 hover:bg-white border border-slate-200/80 hover:border-slate-400/80 text-left transition-all cursor-pointer hover:shadow-xs group"
-              >
-                <div className="flex items-center justify-between mb-1">
-                  <span className="font-bold text-slate-900 text-xs group-hover:text-indigo-600 transition-colors">
-                    Budi Santoso
-                  </span>
-                  <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-indigo-100/80 text-indigo-800 border border-indigo-200 font-mono">
-                    Guru
-                  </span>
-                </div>
-                <p className="text-[10px] text-slate-500 font-mono truncate">Guru Fisika</p>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => fillDemo('admin@sman1unggul.sch.id', 'Admin123!')}
-                className="p-3 rounded-xl bg-slate-50 hover:bg-white border border-slate-200/80 hover:border-slate-400/80 text-left transition-all cursor-pointer hover:shadow-xs group"
-              >
-                <div className="flex items-center justify-between mb-1">
-                  <span className="font-bold text-slate-900 text-xs group-hover:text-indigo-600 transition-colors">
-                    Admin Sekolah
-                  </span>
-                  <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-amber-100/80 text-amber-800 border border-amber-200 font-mono">
-                    Admin
-                  </span>
-                </div>
-                <p className="text-[10px] text-slate-500 font-mono truncate">SMA 1 Unggul</p>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => fillDemo('superadmin@examind.id', 'SuperAdmin123!')}
-                className="p-3 rounded-xl bg-slate-50 hover:bg-white border border-slate-200/80 hover:border-slate-400/80 text-left transition-all cursor-pointer hover:shadow-xs group"
-              >
-                <div className="flex items-center justify-between mb-1">
-                  <span className="font-bold text-slate-900 text-xs group-hover:text-indigo-600 transition-colors">
-                    SuperAdmin
-                  </span>
-                  <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-purple-100/80 text-purple-800 border border-purple-200 font-mono">
-                    SaaS
-                  </span>
-                </div>
-                <p className="text-[10px] text-slate-500 font-mono truncate">Platform Owner</p>
-              </button>
-            </div>
-            </div>
-          )}
-        </div>
-      </main>
-
-      {/* Footer */}
-      <footer className="relative z-10 max-w-5xl w-full mx-auto text-center py-4 text-xs text-slate-500">
-        <p>EXAMIND Platform • Dilindungi Protokol Dual-Proctoring & Standar Ujian Digital Nasional</p>
-      </footer>
-    </div>
+                <span>Daftar dengan Kode Sekolah</span>
+                <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+              </Link>
+            </p>
+          </div>
+        </form>
+      </div>
+    </AuthShell>
   )
 }
 
@@ -405,8 +294,8 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-[#f8fafc] flex items-center justify-center">
-          <Loader2 className="w-6 h-6 animate-spin text-slate-900" />
+        <div className="flex min-h-screen items-center justify-center bg-[#f8fafc]">
+          <Loader2 className="h-6 w-6 animate-spin text-[#150f23]" />
         </div>
       }
     >

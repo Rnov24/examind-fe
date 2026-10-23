@@ -24,9 +24,7 @@ export default function DashboardLayout({
   return (
     <AuthGuard>
       <div
-        className={`min-h-screen text-slate-900 flex flex-col font-sans transition-colors ${
-          isDashboardRoute ? 'bg-[#f4f5f8]' : 'bg-slate-50'
-        }`}
+        className={`min-h-screen text-[#1f1633] flex flex-col font-sans transition-colors bg-[#faf9fd]`}
       >
         {!isDashboardRoute && <Navbar />}
         <div className="flex-1 flex flex-row min-w-0">

@@ -11,20 +11,19 @@ html {
   color-scheme: light;
 
   /* EXAMIND Institutional Light Theme Tokens */
-  --canvas-bg: #f8fafc;
+  --canvas-bg: #faf9fd;
   --surface-card: #ffffff;
-  --surface-subtle: #f1f5f9;
-  --surface-hover: #e2e8f0;
-  --border-default: #e2e8f0;
-  --border-strong: #cbd5e1;
-  --text-main: #0f172a;
+  --surface-subtle: #f1effa;
+  --surface-hover: #e9e5f6;
+  --border-default: #ddd9ef;
+  --border-strong: #c9c2ec;
+  --text-main: #1f1633;
   --text-body: #334155;
   --text-muted: #64748b;
   --text-faint: #94a3b8;
-  --accent-primary: #0f172a;
+  --accent-primary: #150f23;
   --accent-lime: #c2ef4e;
-  --accent-indigo: #4f46e5;
-  --accent-violet: #6366f1;
+  --accent-violet: #6a5fc1;
   --accent-emerald: #059669;
   --accent-amber: #d97706;
   --accent-rose: #e11d48;
@@ -35,29 +34,29 @@ html {
   --sentri-on-primary: #ffffff;
   --sentri-accent-lime: #c2ef4e;
   --sentri-accent-pink: #e11d48;
-  --sentri-accent-violet: #4f46e5;
-  --sentri-accent-violet-deep: #4338ca;
-  --sentri-accent-violet-mid: #6366f1;
+  --sentri-accent-violet: #6a5fc1;
+  --sentri-accent-violet-deep: #422082;
+  --sentri-accent-violet-mid: #8c84d0;
   --sentri-surface-canvas-dark: #ffffff;
   --sentri-surface-canvas-light: #ffffff;
-  --sentri-surface-night: #f8fafc;
-  --sentri-surface-press-light: #f1f5f9;
-  --sentri-surface-press-stronger: #e2e8f0;
-  --sentri-hairline-violet: #e2e8f0;
-  --sentri-hairline-cool: #cbd5e1;
-  --sentri-hairline-cloud: #e2e8f0;
+  --sentri-surface-night: #faf9fd;
+  --sentri-surface-press-light: #f1effa;
+  --sentri-surface-press-stronger: #e9e5f6;
+  --sentri-hairline-violet: #ddd9ef;
+  --sentri-hairline-cool: #c9c2ec;
+  --sentri-hairline-cloud: #e9e5f6;
   --sentri-ink: #0f172a;
   --sentri-ink-press: #020617;
   --sentri-on-dark-muted: #64748b;
   --sentri-on-dark-faint: #94a3b8;
-  --sentri-ring-focus: #818cf8;
+  --sentri-ring-focus: #6a5fc1;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
-  background-color: #f8fafc;
-  color: #0f172a;
+  background-color: #faf9fd;
+  color: #1f1633;
   font-family: 'Plus Jakarta Sans', 'Rubik', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -74,16 +73,28 @@ h1, h2, h3, .heading-display {
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: #f1effa;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #c9c2ec;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #a89dde;
+}
+
+/* Browser surfaces themed from the palette: selection + caret */
+::selection {
+  background: #6a5fc1;
+  color: #ffffff;
+}
+
+input,
+textarea,
+select {
+  caret-color: #6a5fc1;
 }
 
 /* Tabular figures for timers, NISN, and scores */
@@ -94,29 +105,29 @@ h1, h2, h3, .heading-display {
 /* Reusable Institutional Card & Control Classes */
 .sentri-card {
   background-color: #ffffff;
-  border: 1px solid #e2e8f0;
-  color: #0f172a;
+  border: 1px solid #ddd9ef;
+  color: #1f1633;
   border-radius: 0.75rem;
 }
 
 .sentri-card-elevated {
   background-color: #ffffff;
-  border: 1px solid #e2e8f0;
-  color: #0f172a;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  border: 1px solid #ddd9ef;
+  color: #1f1633;
+  box-shadow: 0 4px 6px -1px rgba(21, 15, 35, 0.05), 0 2px 4px -2px rgba(21, 15, 35, 0.05);
   border-radius: 0.75rem;
 }
 
 .sentri-input {
   background-color: #ffffff;
-  border: 1px solid #cbd5e1;
-  color: #0f172a;
+  border: 1px solid #c9c2ec;
+  color: #1f1633;
   border-radius: 0.5rem;
 }
 .sentri-input:focus {
-  border-color: #4f46e5;
+  border-color: #6a5fc1;
   outline: none;
-  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+  box-shadow: 0 0 0 2px rgba(106, 95, 193, 0.25);
 }
 
 .sentri-chip-lime {
@@ -129,9 +140,9 @@ h1, h2, h3, .heading-display {
 }
 
 .sentri-chip-violet {
-  background-color: #eef2ff;
-  color: #4338ca;
-  border: 1px solid #c7d2fe;
+  background-color: #f1effa;
+  color: #584dae;
+  border: 1px solid #c9c2ec;
   border-radius: 0.25rem;
   padding: 0.125rem 0.5rem;
   font-family: 'JetBrains Mono', monospace;
@@ -581,7 +592,7 @@ h1, h2, h3, .heading-display {
 
 /* Institutional Pattern Overlays */
 .bg-grid-dots {
-  background-image: radial-gradient(rgba(15, 23, 42, 0.08) 1px, transparent 1px);
+  background-image: radial-gradient(rgba(21, 15, 35, 0.08) 1px, transparent 1px);
   background-size: 24px 24px;
 }
 
@@ -592,7 +603,7 @@ h1, h2, h3, .heading-display {
 
 /* Tactile Paper Edge Transition */
 .paper-edge-shadow {
-  box-shadow: 0 -12px 30px -4px rgba(15, 23, 42, 0.04);
+  box-shadow: 0 -12px 30px -4px rgba(21, 15, 35, 0.04);
 }
 
 .paper-sheet-effect {
@@ -605,7 +616,7 @@ h1, h2, h3, .heading-display {
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(15, 23, 42, 0.08), transparent);
+  background: linear-gradient(90deg, transparent, rgba(21, 15, 35, 0.08), transparent);
 }
 
 /* ==========================================================================
@@ -624,11 +635,11 @@ h1, h2, h3, .heading-display {
 .bento-shimmer {
   background: linear-gradient(
     90deg,
-    #f1f5f9 0%,
-    #e2e8f0 25%,
+    #f1effa 0%,
+    #e3dff5 25%,
     #ffffff 50%,
-    #e2e8f0 75%,
-    #f1f5f9 100%
+    #e3dff5 75%,
+    #f1effa 100%
   );
   background-size: 200% 100%;
   animation: bento-shimmer-sweep 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
@@ -638,7 +649,7 @@ h1, h2, h3, .heading-display {
 @media (prefers-reduced-motion: reduce) {
   .bento-shimmer {
     animation: none !important;
-    background: #e2e8f0 !important;
+    background: #e3dff5 !important;
   }
 }
 

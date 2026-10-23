@@ -43,9 +43,9 @@ export default function Navbar() {
 
   const roleBadgeClass = (() => {
     const role = user?.role
-    if (role === 'superadmin') return 'bg-indigo-50 text-indigo-700 border-indigo-200'
-    if (role === 'admin') return 'bg-slate-100 text-slate-800 border-slate-200'
-    if (role === 'teacher') return 'bg-indigo-50 text-indigo-700 border-indigo-200'
+    if (role === 'superadmin') return 'bg-violet-50 text-violet-700 border-violet-200'
+    if (role === 'admin') return 'bg-azure-50 text-azure-700 border-azure-200'
+    if (role === 'teacher') return 'bg-violet-50 text-violet-700 border-violet-200'
     return 'bg-emerald-50 text-emerald-700 border-emerald-200'
   })()
 
@@ -69,7 +69,7 @@ export default function Navbar() {
           aria-label="Alihkan Sidebar"
           aria-expanded={sidebarOpen}
           aria-controls="sidebar-nav"
-          className="p-2.5 -ml-2 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer min-w-[44px] min-h-[44px] flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="p-2.5 -ml-2 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer min-w-[44px] min-h-[44px] flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-violet-500"
           title={sidebarOpen ? 'Sembunyikan Sidebar' : 'Tampilkan Sidebar'}
         >
           <PanelLeft className="w-5 h-5" aria-hidden="true" />
@@ -93,7 +93,7 @@ export default function Navbar() {
       {/* Right Header Actions & User Profile */}
       <div className="flex items-center gap-3 sm:gap-4 shrink-0">
         {/* Live Server Status Indicator */}
-        <div className="hidden md:flex items-center gap-2 px-3 py-1 rounded-full bg-slate-50 border border-slate-200/80 text-[11px] font-medium text-slate-600 shadow-2xs">
+        <div className="hidden md:flex items-center gap-2 px-3 py-1 rounded-full bg-[#faf9fd] border border-[#ddd9ef] text-[11px] font-medium text-slate-600 shadow-2xs">
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>

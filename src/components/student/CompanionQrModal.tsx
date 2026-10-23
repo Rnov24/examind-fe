@@ -59,7 +59,7 @@ export default function CompanionQrModal({
               <Smartphone className="w-4 h-4 text-[#c2ef4e]" aria-hidden="true" />
             </div>
             <div>
-              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-indigo-700 bg-indigo-50 px-1.5 py-0.5 rounded border border-indigo-200">
+              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-violet-700 bg-violet-50 px-1.5 py-0.5 rounded border border-violet-200">
                 Dual-Cam AI
               </span>
               <h3 id="companion-modal-title" className="text-sm font-bold text-slate-900 font-display mt-0.5">
@@ -71,7 +71,7 @@ export default function CompanionQrModal({
             type="button"
             onClick={onClose}
             aria-label="Tutup modal"
-            className="text-slate-400 hover:text-slate-700 hover:bg-slate-100 p-2 rounded-xl transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-slate-900/10"
+            className="text-slate-400 hover:text-slate-700 hover:bg-slate-100 p-2 rounded-xl transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]/40"
           >
             <X className="w-4 h-4" aria-hidden="true" />
           </button>
@@ -111,7 +111,7 @@ export default function CompanionQrModal({
           <button
             type="button"
             onClick={copyUrl}
-            className="flex-1 py-2.5 px-3 rounded-xl bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs transition-colors border border-slate-200 shadow-xs cursor-pointer flex items-center justify-center gap-1.5 focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+            className="flex-1 py-2.5 px-3 rounded-xl bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs transition-colors border border-slate-200 shadow-xs cursor-pointer flex items-center justify-center gap-1.5 focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
           >
             {copied ? (
               <>

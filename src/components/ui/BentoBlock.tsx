@@ -148,7 +148,7 @@ export function BentoBlock({
                 type="button"
                 onClick={onRetry}
                 className={cn(
-                  'inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition-colors cursor-pointer focus:ring-2 focus:ring-slate-900/10 focus:outline-none',
+                  'inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs transition-colors cursor-pointer focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none',
                   tokens.radius.md,
                   tokens.shadow.subtle
                 )}

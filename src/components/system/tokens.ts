@@ -124,10 +124,10 @@ export const tokens = {
    */
   surface: {
     card: 'bg-white',
-    subtle: 'bg-slate-50/70',
-    muted: 'bg-slate-100',
-    hover: 'hover:bg-slate-50/80',
-    active: 'active:bg-slate-100',
+    subtle: 'bg-[#faf9fd]',
+    muted: 'bg-[#f1effa]',
+    hover: 'hover:bg-[#f1effa]',
+    active: 'active:bg-[#f1effa]',
     midnight: 'bg-[#150f23]',
     midnightSurface: 'bg-[#1f1633]',
   },
@@ -135,14 +135,17 @@ export const tokens = {
   /**
    * Precision Borders & Hairlines:
    * Single-source styling for 1px crisp borders.
+   * Light-surface hairlines are violet-tinted (derived from midnight-violet),
+   * never pure gray, so cards separate from the tinted canvas by hue as
+   * well as lightness.
    */
   border: {
-    subtle: 'border border-slate-100',
-    default: 'border border-slate-200/80',
-    strong: 'border border-slate-300',
-    divider: 'border-slate-100',
-    divideY: 'divide-y divide-slate-100',
-    divideX: 'divide-x divide-slate-100',
+    subtle: 'border border-[#e9e5f6]',
+    default: 'border border-[#ddd9ef]',
+    strong: 'border border-[#c9c2ec]',
+    divider: 'border-[#e9e5f6]',
+    divideY: 'divide-y divide-[#e9e5f6]',
+    divideX: 'divide-x divide-[#e9e5f6]',
     midnight: 'border border-[#362d59]',
     midnightProminent: 'border border-[#2a1e47]',
     focus: 'focus:border-[#150f23] focus:ring-2 focus:ring-[#6a5fc1]/25',
@@ -164,7 +167,7 @@ export const tokens = {
     modal: 'shadow-2xl',
     midnight: 'shadow-midnight-elevated',
     glowLime: 'shadow-glow-lime',
-    glowViolet: 'shadow-glow-indigo',
+    glowViolet: 'shadow-glow-violet',
   },
 
   /**
@@ -188,7 +191,7 @@ export const tokens = {
       text: 'text-[#6a5fc1]',
       dot: 'bg-[#6a5fc1]',
       accentBar: 'before:bg-[#6a5fc1]',
-      hover: 'hover:bg-[#5b50b3] hover:shadow-glow-indigo',
+      hover: 'hover:bg-[#5b50b3] hover:shadow-glow-violet',
     },
     emerald: {
       solid: 'bg-emerald-600 text-white border border-emerald-700',
@@ -228,13 +231,30 @@ export const tokens = {
     },
     neutral: {
       solid: 'bg-slate-900 text-white border border-slate-950',
-      badge: 'bg-slate-100 text-slate-700 border border-slate-200/90',
-      subtle: 'bg-slate-50 text-slate-700 border border-slate-200/80',
+      badge: 'bg-[#f1effa] text-slate-700 border border-[#ddd9ef]',
+      subtle: 'bg-[#faf9fd] text-slate-700 border border-[#ddd9ef]',
       text: 'text-slate-600',
       dot: 'bg-slate-500',
       accentBar: 'before:bg-slate-400',
-      hover: 'hover:bg-slate-100/80 hover:text-slate-900',
+      hover: 'hover:bg-[#f1effa] hover:text-slate-900',
     },
+  },
+
+  /**
+   * Stat / KPI Icon Tiles:
+   * Tinted background + saturated icon + matching hairline, one hue per
+   * meaning. The number itself always stays ink — color carries category,
+   * never the value. Lime is deliberately absent: it belongs to primary
+   * CTAs and active navigation only.
+   */
+  tile: {
+    violet: 'bg-[#f1effa] text-[#6a5fc1] border-[#ddd9ef]',
+    azure: 'bg-azure-50 text-azure-700 border-azure-200/80',
+    emerald: 'bg-emerald-50 text-emerald-700 border-emerald-200/80',
+    amber: 'bg-amber-50 text-amber-700 border-amber-200/80',
+    rose: 'bg-rose-50 text-rose-700 border-rose-200/80',
+    midnight: 'bg-[#150f23] text-white border-[#362d59]',
+    neutral: 'bg-[#faf9fd] text-slate-700 border-[#ddd9ef]',
   },
 
   /**
@@ -248,9 +268,9 @@ export const tokens = {
    * Typography Hierarchy (Plus Jakarta Sans & JetBrains Mono):
    */
   typography: {
-    hero: 'font-display font-extrabold text-2xl sm:text-3xl tracking-tight text-slate-900',
-    title: 'font-display font-extrabold text-base sm:text-lg tracking-tight text-slate-900',
-    subheading: 'font-display font-bold text-sm tracking-tight text-slate-900',
+    hero: 'font-display font-extrabold text-2xl sm:text-3xl tracking-tight text-[#1f1633]',
+    title: 'font-display font-extrabold text-base sm:text-lg tracking-tight text-[#1f1633]',
+    subheading: 'font-display font-bold text-sm tracking-tight text-[#1f1633]',
     eyebrow: 'font-mono text-[10px] font-bold uppercase tracking-wider text-slate-400',
     body: 'font-sans text-xs sm:text-sm text-slate-600 leading-relaxed',
     bodyMuted: 'font-sans text-xs text-slate-500 leading-relaxed',
@@ -284,4 +304,35 @@ export const tokens = {
 } as const
 
 export type DesignTokens = typeof tokens
+
+/**
+ * Categorical Chart Palette:
+ * Brand hues only, ordered so adjacent series stay distinguishable by
+ * lightness as well as hue (never color alone — every series also gets a
+ * label or legend entry). Lime is forbidden here by design: it is spent
+ * exclusively on primary CTAs and active navigation.
+ * Azure (#0284c7) is the one derived hue beyond the locked palette,
+ * justified as the 4th data category (informational/neutral volume)
+ * that must not collide with violet (AI), emerald (success),
+ * amber (attention), or rose (risk).
+ */
+export const chartPalette = {
+  midnight: '#150f23',
+  violet: '#6a5fc1',
+  azure: '#0284c7',
+  emerald: '#059669',
+  amber: '#d97706',
+  rose: '#e11d48',
+} as const
+
+/** Default series assignment order for multi-series charts. */
+export const chartSeriesOrder = [
+  chartPalette.violet,
+  chartPalette.azure,
+  chartPalette.emerald,
+  chartPalette.amber,
+  chartPalette.rose,
+  chartPalette.midnight,
+] as const
+
 export default tokens

@@ -31,20 +31,20 @@ export function QuickActionGrid({ items, className = '' }: QuickActionGridProps)
         className
       )}
     >
-      <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-slate-100">
+      <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-[#e9e5f6]">
         {items.map((item) => (
           <Link
             key={item.href}
             href={item.href}
             className={cn(
-              'p-4 flex items-center justify-between hover:bg-slate-50/80 transition-colors group',
+              'p-4 flex items-center justify-between hover:bg-[#f1effa] transition-colors group',
               tokens.radius.lg
             )}
           >
             <div className="flex items-center gap-3">
               <div
                 className={cn(
-                  'w-9 h-9 bg-slate-50 border border-slate-100 text-slate-700 flex items-center justify-center shrink-0 group-hover:bg-violet-50 group-hover:text-[#6a5fc1] group-hover:border-violet-200/70 transition-colors',
+                  'w-9 h-9 bg-[#faf9fd] border border-[#e9e5f6] text-slate-700 flex items-center justify-center shrink-0 group-hover:bg-violet-50 group-hover:text-[#6a5fc1] group-hover:border-violet-200/70 transition-colors',
                   tokens.radius.lg
                 )}
               >

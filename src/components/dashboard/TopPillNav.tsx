@@ -36,12 +36,12 @@ export function TopPillNav({
         const isActive = tab.id === activeTab
 
         const baseClasses = cn(
-          'shrink-0 px-4 sm:px-5 py-2 min-h-[40px] sm:min-h-[44px] text-xs font-semibold whitespace-nowrap flex items-center gap-2 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#150f23]',
+          'shrink-0 px-4 sm:px-5 py-2 min-h-[40px] sm:min-h-[44px] text-xs font-semibold whitespace-nowrap flex items-center gap-2 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]',
           tokens.radius.full,
           tokens.transition.fast,
           isActive
             ? cn(tokens.semantic.midnight.solid, tokens.shadow.subtle, 'font-bold')
-            : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100/70 font-medium'
+            : 'text-slate-500 hover:text-slate-900 hover:bg-[#f1effa] font-medium'
         )
 
         const content = (

@@ -75,7 +75,7 @@ export function TelemetryBarChart({
   return (
     <div
       className={cn(
-        'p-3.5 bg-slate-50/70 border border-slate-100 space-y-2.5',
+        'p-3.5 bg-[#faf9fd] border border-[#e9e5f6] space-y-2.5',
         tokens.radius.lg,
         className
       )}
@@ -90,10 +90,10 @@ export function TelemetryBarChart({
           {Array.from({ length: 7 }).map((_, i) => (
             <div key={i} className="flex-1 flex flex-col items-center gap-1 h-full justify-end">
               <div
-                className="w-full max-w-[18px] bg-slate-200 animate-pulse rounded-sm"
+                className="w-full max-w-[18px] bg-[#ddd9ef] animate-pulse rounded-sm"
                 style={{ height: `${30 + ((i * 13) % 50)}%` }}
               />
-              <span className="w-4 h-2 bg-slate-200 animate-pulse rounded-sm" />
+              <span className="w-4 h-2 bg-[#ddd9ef] animate-pulse rounded-sm" />
             </div>
           ))}
         </div>
@@ -125,7 +125,7 @@ export function TelemetryBarChart({
                 />
                 {/* Sessions started bar (midnight violet) */}
                 <div
-                  className="w-full bg-[#150f23] rounded-b-sm transition-all group-hover:bg-slate-800"
+                  className="w-full bg-[#150f23] rounded-b-sm transition-all group-hover:bg-[#2a1e47]"
                   style={{ height: `${(item.load / maxValue) * 55}%` }}
                   title={`${serverLabel}: ${item.load} sesi`}
                 />

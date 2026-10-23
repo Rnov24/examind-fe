@@ -29,19 +29,15 @@ export function HeroCard({
     <div
       className={cn(
         tokens.radius.xl,
-        'bg-gradient-to-br from-violet-50/80 via-white to-lime-50/40 border border-violet-200/90 p-5',
+        'bg-gradient-to-br from-[#f3f2fa] via-white to-white border border-[#ddd9ef] p-5',
         tokens.shadow.cardHover,
         'transition-all relative overflow-hidden flex flex-col justify-between',
         className
       )}
     >
-      {/* Ambient glow tints */}
+      {/* Ambient violet atmosphere tint (brand hue, not decoration color) */}
       <div
         className="absolute -top-12 -right-12 w-36 h-36 rounded-full bg-[#6a5fc1]/10 blur-2xl pointer-events-none"
-        aria-hidden="true"
-      />
-      <div
-        className="absolute -bottom-10 -left-10 w-28 h-28 rounded-full bg-[#c2ef4e]/25 blur-xl pointer-events-none"
         aria-hidden="true"
       />
 
@@ -53,7 +49,7 @@ export function HeroCard({
           </span>
           <div
             className={cn(
-              'w-10 h-10 bg-[#150f23] text-[#c2ef4e] border border-slate-900 shadow-sm flex items-center justify-center shrink-0',
+              'w-10 h-10 bg-[#150f23] text-white border border-[#362d59] shadow-sm flex items-center justify-center shrink-0',
               tokens.radius.lg
             )}
           >
@@ -67,25 +63,27 @@ export function HeroCard({
         </div>
       </div>
 
-      {/* Bottom: Lime Highlight Chip & Trend */}
-      <div className="relative z-10 mt-4 pt-2.5 border-t border-violet-100 flex items-center justify-between text-xs">
+      {/* Bottom: Trend Badge & Highlight */}
+      <div className="relative z-10 mt-4 pt-2.5 border-t border-[#e9e5f6] flex items-center justify-between text-xs">
         {trend && (
           <div
             className={cn(
-              'inline-flex items-center gap-1 px-2.5 py-0.5 text-[11px] font-bold font-mono',
-              tokens.semantic.lime.badge,
+              'inline-flex items-center gap-1 px-2.5 py-0.5 text-[11px] font-bold font-mono tracking-tight',
               tokens.radius.full,
-              tokens.shadow.micro
+              tokens.shadow.micro,
+              trend.positive !== false
+                ? 'bg-emerald-50 text-emerald-800 border border-emerald-200/80'
+                : 'bg-rose-50 text-rose-800 border border-rose-200/80'
             )}
           >
             {trend.positive !== false ? (
-              <ArrowUp className="w-3 h-3 text-slate-950 shrink-0 stroke-[2.5]" aria-hidden="true" />
+              <ArrowUp className="w-3 h-3 text-emerald-700 shrink-0 stroke-[2.5]" aria-hidden="true" />
             ) : (
-              <ArrowDown className="w-3 h-3 text-rose-950 shrink-0 stroke-[2.5]" aria-hidden="true" />
+              <ArrowDown className="w-3 h-3 text-rose-700 shrink-0 stroke-[2.5]" aria-hidden="true" />
             )}
             <span>{trend.value}</span>
             {trend.label && (
-              <span className="text-slate-800 font-medium ml-0.5">{trend.label}</span>
+              <span className="text-slate-600 font-medium ml-0.5">{trend.label}</span>
             )}
           </div>
         )}

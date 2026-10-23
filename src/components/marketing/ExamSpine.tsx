@@ -69,7 +69,7 @@ export function ExamSpine() {
         aria-hidden="true"
       >
         <div
-          className="h-full bg-gradient-to-r from-indigo-600 via-[#c2ef4e] to-slate-900 transition-all duration-150 ease-out"
+          className="h-full bg-gradient-to-r from-violet-600 via-[#c2ef4e] to-slate-900 transition-all duration-150 ease-out"
           style={{ width: `${scrollProgress}%` }}
         />
       </div>
@@ -87,7 +87,7 @@ export function ExamSpine() {
           {/* Header booklet stamp */}
           <div className="flex items-center gap-2 pb-2 border-b border-slate-100 w-full justify-between">
             <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold text-slate-700 uppercase">
-              <FileText className="w-3.5 h-3.5 text-indigo-600" />
+              <FileText className="w-3.5 h-3.5 text-violet-600" />
               {isExpanded && <span className="anim-fade">Lembar Penilaian</span>}
             </div>
             <span className="font-mono text-[10px] font-bold text-slate-900 bg-slate-100 px-1.5 py-0.5 rounded">

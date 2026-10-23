@@ -1338,12 +1338,12 @@ export default function ExamWorkspacePage() {
       {!isExamStarted && !isSecurityModalOpen && setupPhase === 'done' && (
         <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 flex items-center justify-center p-4">
           <div className="bg-white border border-slate-200/90 rounded-2xl p-6 sm:p-8 max-w-lg w-full text-center space-y-6 shadow-subtle-elevated relative overflow-hidden">
-            <div className="pointer-events-none absolute -top-12 -right-12 w-48 h-48 bg-indigo-50/70 rounded-full blur-2xl" />
-            <div className="w-16 h-16 rounded-2xl bg-indigo-50 border border-indigo-200/70 text-indigo-700 flex items-center justify-center mx-auto shadow-xs ring-4 ring-indigo-50/70">
+            <div className="pointer-events-none absolute -top-12 -right-12 w-48 h-48 bg-violet-50/70 rounded-full blur-2xl" />
+            <div className="w-16 h-16 rounded-2xl bg-violet-50 border border-violet-200/70 text-violet-700 flex items-center justify-center mx-auto shadow-xs ring-4 ring-violet-50/70">
               {isCameraProctoringEnabled ? (
-                <ShieldAlert className="w-8 h-8 text-indigo-600" aria-hidden="true" />
+                <ShieldAlert className="w-8 h-8 text-violet-600" aria-hidden="true" />
               ) : (
-                <ShieldCheck className="w-8 h-8 text-indigo-600" aria-hidden="true" />
+                <ShieldCheck className="w-8 h-8 text-violet-600" aria-hidden="true" />
               )}
             </div>
             <div className="space-y-1.5">

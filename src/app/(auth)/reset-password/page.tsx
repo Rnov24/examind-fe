@@ -158,8 +158,8 @@ function ResetPasswordContent() {
     <div className="min-h-screen bg-[#f8fafc] text-slate-900 flex flex-col justify-between p-4 sm:p-6 font-sans selection:bg-[#c2ef4e] selection:text-slate-950 relative overflow-hidden">
       {/* Ambient Background Gradient */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden z-0">
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-gradient-to-tr from-indigo-100/60 via-[#c2ef4e]/10 to-transparent rounded-full blur-3xl opacity-70"></div>
-        <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-purple-100/40 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-gradient-to-tr from-violet-100/60 via-[#c2ef4e]/10 to-transparent rounded-full blur-3xl opacity-70"></div>
+        <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-violet-100/40 rounded-full blur-3xl"></div>
       </div>
 
       {/* Top Header Bar */}
@@ -203,7 +203,7 @@ function ResetPasswordContent() {
 
               <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 text-xs">
                 <span>Mengalihkan ke halaman login dalam </span>
-                <strong className="text-indigo-600 font-mono font-bold text-sm">
+                <strong className="text-violet-600 font-mono font-bold text-sm">
                   {redirectCount}s
                 </strong>
                 <span>...</span>
@@ -211,7 +211,7 @@ function ResetPasswordContent() {
 
               <Link
                 href="/login"
-                className="w-full py-3 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition-all shadow-card hover:shadow-card-hover font-display flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-3 px-4 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs transition-all shadow-card hover:shadow-card-hover font-display flex items-center justify-center gap-2 cursor-pointer"
               >
                 <span>Masuk Sekarang</span>
               </Link>
@@ -219,7 +219,7 @@ function ResetPasswordContent() {
           ) : verifying ? (
             /* Verifying Token Spinner */
             <div className="py-12 text-center space-y-3">
-              <Loader2 className="w-8 h-8 animate-spin text-indigo-600 mx-auto" />
+              <Loader2 className="w-8 h-8 animate-spin text-violet-600 mx-auto" />
               <p className="text-xs font-semibold text-slate-600">
                 Memvalidasi token & kode reset keamanan...
               </p>
@@ -244,7 +244,7 @@ function ResetPasswordContent() {
               <div className="space-y-2 pt-2">
                 <Link
                   href="/forgot-password"
-                  className="w-full py-3 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition-all shadow-card hover:shadow-card-hover font-display flex items-center justify-center gap-2 cursor-pointer"
+                  className="w-full py-3 px-4 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs transition-all shadow-card hover:shadow-card-hover font-display flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <KeyRound className="w-4 h-4 text-[#c2ef4e]" />
                   <span>Minta Tautan Reset Baru</span>
@@ -267,7 +267,7 @@ function ResetPasswordContent() {
             <>
               <div className="space-y-2 text-center">
                 <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-slate-100 text-slate-800 border border-slate-200 font-mono">
-                  <ShieldCheck className="w-3 h-3 text-indigo-600" />
+                  <ShieldCheck className="w-3 h-3 text-violet-600" />
                   Atur Ulang Kata Sandi
                 </div>
                 <h1 className="font-display text-2xl font-bold tracking-tight text-slate-900">
@@ -333,7 +333,7 @@ function ResetPasswordContent() {
                       type={showPassword ? 'text' : 'password'}
                       required
                       placeholder="Minimal 6 karakter"
-                      className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-slate-50/70 border border-slate-200 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 transition-all shadow-xs"
+                      className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-slate-50/70 border border-slate-200 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-[#6a5fc1]/40 transition-all shadow-xs"
                     />
                     <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                     <button
@@ -374,7 +374,7 @@ function ResetPasswordContent() {
                       type={showPassword ? 'text' : 'password'}
                       required
                       placeholder="Ulangi kata sandi baru"
-                      className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50/70 border border-slate-200 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 transition-all shadow-xs"
+                      className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50/70 border border-slate-200 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-[#6a5fc1]/40 transition-all shadow-xs"
                     />
                     <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                   </div>
@@ -383,7 +383,7 @@ function ResetPasswordContent() {
                 <button
                   type="submit"
                   disabled={loading || !newPassword || !confirmPassword || (tokenValid !== true && !token.trim())}
-                  className="w-full mt-2 py-3 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 active:bg-slate-950 text-white font-bold text-xs transition-all disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer shadow-card hover:shadow-card-hover font-display tracking-wide"
+                  className="w-full mt-2 py-3 px-4 rounded-xl bg-[#150f23] hover:bg-[#1f1633] active:bg-slate-950 text-white font-bold text-xs transition-all disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer shadow-card hover:shadow-card-hover font-display tracking-wide"
                 >
                   {loading ? (
                     <>

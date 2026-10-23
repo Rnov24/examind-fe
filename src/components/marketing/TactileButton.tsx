@@ -30,7 +30,7 @@ export function TactileButton({
     primary:
       'bg-slate-900 text-white shadow-md hover:shadow-lg focus:ring-slate-900',
     secondary:
-      'bg-white text-slate-800 border border-slate-300 shadow-xs hover:border-slate-400 hover:bg-slate-50 focus:ring-indigo-500',
+      'bg-white text-slate-800 border border-slate-300 shadow-xs hover:border-slate-400 hover:bg-slate-50 focus:ring-violet-500',
     lime:
       'bg-[#c2ef4e] text-slate-950 shadow-md hover:bg-[#b2e23b] focus:ring-lime-400 font-extrabold',
     inverted:
@@ -40,7 +40,7 @@ export function TactileButton({
   const sweepOverlay =
     variant === 'primary' ? (
       <span
-        className="pointer-events-none absolute inset-0 bg-gradient-to-r from-indigo-700 to-slate-800 -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-out z-0"
+        className="pointer-events-none absolute inset-0 bg-gradient-to-r from-violet-700 to-slate-800 -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-out z-0"
         aria-hidden="true"
       />
     ) : variant === 'lime' ? (

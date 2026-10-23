@@ -172,7 +172,7 @@ export default function TenantTable({
                 </div>
                 <div className="w-full h-1.5 rounded-full bg-slate-200 overflow-hidden mt-1">
                   <div
-                    className="h-full bg-gradient-to-r from-indigo-500 to-[#6a5fc1] rounded-full"
+                    className="h-full bg-gradient-to-r from-violet-500 to-[#6a5fc1] rounded-full"
                     style={{
                       width: `${Math.min(100, (t.total_students / (t.max_students || 1)) * 100)}%`,
                     }}
@@ -209,7 +209,7 @@ export default function TenantTable({
         ))}
 
         {tenants.length === 0 && (
-          <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs">
+          <div className="bg-white rounded-2xl p-6 border border-[#ddd9ef] shadow-xs">
             <EmptyState
               icon={<Building2 className="w-6 h-6 text-slate-500" aria-hidden="true" />}
               title={isFilterActive ? 'Sekolah Tidak Ditemukan' : 'Belum Ada Sekolah Terdaftar'}
@@ -277,7 +277,7 @@ export default function TenantTable({
                     </div>
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
-                    <span className="font-mono px-2 py-0.5 rounded bg-slate-100 border border-slate-200 text-slate-900 font-bold text-[11px]">
+                    <span className="font-mono px-2 py-0.5 rounded bg-[#f1effa] border border-[#ddd9ef] text-[#1f1633] font-bold text-[11px]">
                       {t.code}
                     </span>
                     <div className="text-[11px] text-slate-500 mt-0.5 font-mono truncate max-w-[140px]">
@@ -304,9 +304,9 @@ export default function TenantTable({
                       <span className="font-bold text-slate-900">{t.total_students}</span>
                       <span className="text-slate-500">/ {t.max_students}</span>
                     </div>
-                    <div className="w-24 h-1.5 rounded-full bg-slate-100 border border-slate-200 overflow-hidden mt-1 shadow-inner">
+                    <div className="w-24 h-1.5 rounded-full bg-[#f1effa] border border-[#ddd9ef] overflow-hidden mt-1 shadow-inner">
                       <div
-                        className="h-full bg-gradient-to-r from-indigo-500 to-[#6a5fc1] rounded-full transition-all duration-300"
+                        className="h-full bg-gradient-to-r from-violet-500 to-[#6a5fc1] rounded-full transition-all duration-300"
                         style={{
                           width: `${Math.min(100, (t.total_students / (t.max_students || 1)) * 100)}%`,
                         }}

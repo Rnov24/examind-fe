@@ -311,7 +311,7 @@ export default function GradeReviewWorkspace({
         <div className="flex items-center gap-3.5 min-w-0">
           <Link
             href="/exams"
-            className="p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 transition-colors shadow-xs focus:ring-2 focus:ring-slate-900/10 focus:outline-none shrink-0"
+            className="p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-[#f1effa] text-slate-700 transition-colors shadow-xs focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none shrink-0"
             title="Kembali ke Daftar Ujian"
             aria-label="Kembali ke Daftar Ujian"
           >
@@ -345,7 +345,7 @@ export default function GradeReviewWorkspace({
                 setExamId(val)
                 loadSessions(val)
               }}
-              className="px-3.5 py-2 text-xs font-bold rounded-xl border border-slate-300 bg-white text-slate-900 outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900"
+              className="px-3.5 py-2 text-xs font-bold rounded-xl border border-slate-300 bg-white text-slate-900 outline-none focus:ring-2 focus:ring-[#6a5fc1]/40 focus:border-slate-900"
             >
               {allExams.map((e) => (
                 <option key={e.id} value={e.id}>
@@ -400,7 +400,7 @@ export default function GradeReviewWorkspace({
             <div className="flex items-center gap-2.5 print:hidden">
               <button
                 onClick={handlePrint}
-                className="px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-xs flex items-center gap-2 transition-colors cursor-pointer focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+                className="px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-[#f1effa] text-slate-700 font-bold text-xs shadow-xs flex items-center gap-2 transition-colors cursor-pointer focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
               >
                 <Printer className="w-4 h-4 text-slate-600" aria-hidden="true" />
                 <span>Cetak Rekap Nilai</span>
@@ -417,7 +417,7 @@ export default function GradeReviewWorkspace({
                 value={searchStudent}
                 onChange={(e) => setSearchStudent(e.target.value)}
                 placeholder="Cari nama siswa atau NISN..."
-                className="w-full pl-10 pr-9 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium placeholder:text-slate-400 focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 outline-none transition-all"
+                className="w-full pl-10 pr-9 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium placeholder:text-slate-400 focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-[#6a5fc1]/40 outline-none transition-all"
               />
               {searchStudent && (
                 <button
@@ -435,7 +435,7 @@ export default function GradeReviewWorkspace({
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value as any)}
-                className="w-full sm:w-auto px-3 py-2 sm:py-1.5 min-h-[40px] sm:min-h-0 text-xs font-semibold rounded-xl border border-slate-200 bg-slate-50 hover:bg-white text-slate-700 outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900"
+                className="w-full sm:w-auto px-3 py-2 sm:py-1.5 min-h-[40px] sm:min-h-0 text-xs font-semibold rounded-xl border border-slate-200 bg-slate-50 hover:bg-white text-slate-700 outline-none focus:ring-2 focus:ring-[#6a5fc1]/40 focus:border-slate-900"
               >
                 <option value="all">Semua Status Siswa</option>
                 <option value="graded">Selesai Dinilai</option>
@@ -491,7 +491,7 @@ export default function GradeReviewWorkspace({
 
           {isLoading ? (
             <div className="p-16 flex flex-col items-center justify-center gap-3">
-              <Loader2 className="w-8 h-8 text-indigo-600 animate-spin" aria-hidden="true" />
+              <Loader2 className="w-8 h-8 text-violet-600 animate-spin" aria-hidden="true" />
               <p className="text-xs font-semibold text-slate-500 font-mono">
                 Memuat daftar submission & hasil koreksi esai AI...
               </p>
@@ -515,7 +515,7 @@ export default function GradeReviewWorkspace({
                         className={`shrink-0 inline-block px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-wider font-mono shadow-2xs ${
                           s.status === 'graded'
                             ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
-                            : 'bg-indigo-50 text-indigo-700 border border-indigo-200'
+                            : 'bg-violet-50 text-violet-700 border border-violet-200'
                         }`}
                       >
                         {s.status === 'graded' ? 'Terverifikasi' : 'Draf AI'}
@@ -564,7 +564,7 @@ export default function GradeReviewWorkspace({
 
                     <button
                       onClick={() => openSessionReview(s.session_id)}
-                      className="w-full min-h-[44px] px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-card hover:shadow-card-hover cursor-pointer transition-all font-display tracking-wide flex items-center justify-center gap-2"
+                      className="w-full min-h-[44px] px-4 py-2 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-card hover:shadow-card-hover cursor-pointer transition-all font-display tracking-wide flex items-center justify-center gap-2"
                     >
                       <span>Review & Beri Nilai</span>
                     </button>
@@ -584,7 +584,7 @@ export default function GradeReviewWorkspace({
                         setSearchStudent('')
                         setStatusFilter('all')
                       }}
-                      className="min-h-[44px] mt-1 px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs"
+                      className="min-h-[44px] mt-1 px-4 py-2 rounded-xl bg-[#f1effa] hover:bg-[#e9e5f6] text-slate-700 font-bold text-xs"
                     >
                       Reset Pencarian
                     </button>
@@ -594,7 +594,7 @@ export default function GradeReviewWorkspace({
                 {/* Total Empty State (<md) */}
                 {sessionsList.length === 0 && !errorMessage && (
                   <div className="p-8 text-center text-slate-500 space-y-3">
-                    <div className="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center mx-auto">
+                    <div className="w-12 h-12 rounded-2xl bg-violet-50 border border-violet-100 text-violet-600 flex items-center justify-center mx-auto">
                       <FileSpreadsheet className="w-6 h-6" aria-hidden="true" />
                     </div>
                     <div className="space-y-1">
@@ -608,7 +608,7 @@ export default function GradeReviewWorkspace({
                     <div className="pt-2">
                       <Link
                         href={`/exams/${examId}/monitor`}
-                        className="w-full min-h-[44px] px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition-colors flex items-center justify-center gap-1.5"
+                        className="w-full min-h-[44px] px-4 py-2 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-xs transition-colors flex items-center justify-center gap-1.5"
                       >
                         <Radio className="w-3.5 h-3.5 text-[#c2ef4e]" aria-hidden="true" />
                         <span>Buka Live Monitoring Sesi</span>
@@ -634,7 +634,7 @@ export default function GradeReviewWorkspace({
                   </thead>
                   <tbody className="divide-y divide-slate-100 font-medium">
                     {filteredSessions.map((s) => (
-                      <tr key={s.session_id} className="hover:bg-slate-50/80 transition-colors">
+                      <tr key={s.session_id} className="hover:bg-[#f1effa] transition-colors">
                         <td className="px-6 py-4 font-display font-bold text-slate-900 max-w-[200px] truncate" title={s.student_name}>
                           {s.student_name}
                         </td>
@@ -646,7 +646,7 @@ export default function GradeReviewWorkspace({
                             className={`inline-block px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-wider font-mono shadow-2xs ${
                               s.status === 'graded'
                                 ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
-                                : 'bg-indigo-50 text-indigo-700 border border-indigo-200'
+                                : 'bg-violet-50 text-violet-700 border border-violet-200'
                             }`}
                           >
                             {s.status === 'graded' ? 'Terverifikasi' : 'Draf AI'}
@@ -686,7 +686,7 @@ export default function GradeReviewWorkspace({
                         <td className="px-6 py-4 text-right print:hidden">
                           <button
                             onClick={() => openSessionReview(s.session_id)}
-                            className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-card hover:shadow-card-hover cursor-pointer transition-all font-display tracking-wide focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+                            className="px-4 py-2 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-card hover:shadow-card-hover cursor-pointer transition-all font-display tracking-wide focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
                           >
                             Review & Beri Nilai
                           </button>
@@ -709,7 +709,7 @@ export default function GradeReviewWorkspace({
                                 setSearchStudent('')
                                 setStatusFilter('all')
                               }}
-                              className="mt-1 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs"
+                              className="mt-1 px-3 py-1.5 rounded-lg bg-[#f1effa] hover:bg-[#e9e5f6] text-slate-700 font-bold text-xs"
                             >
                               Reset Pencarian
                             </button>
@@ -723,7 +723,7 @@ export default function GradeReviewWorkspace({
                       <tr>
                         <td colSpan={7} className="p-16 text-center text-slate-500">
                           <div className="flex flex-col items-center justify-center gap-3 max-w-md mx-auto">
-                            <div className="w-14 h-14 rounded-2xl bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center">
+                            <div className="w-14 h-14 rounded-2xl bg-violet-50 border border-violet-100 text-violet-600 flex items-center justify-center">
                               <FileSpreadsheet className="w-7 h-7" aria-hidden="true" />
                             </div>
                             <div className="space-y-1">
@@ -737,7 +737,7 @@ export default function GradeReviewWorkspace({
                             <div className="flex items-center gap-2.5 pt-2">
                               <Link
                                 href={`/exams/${examId}/monitor`}
-                                className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition-colors flex items-center gap-1.5"
+                                className="px-4 py-2 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-xs transition-colors flex items-center gap-1.5"
                               >
                                 <Radio className="w-3.5 h-3.5 text-[#c2ef4e]" aria-hidden="true" />
                                 <span>Buka Live Monitoring Sesi</span>
@@ -786,13 +786,13 @@ export default function GradeReviewWorkspace({
                   onClick={() => setSelectedSessionId(null)}
                   title="Kembali ke daftar submission siswa"
                   aria-label="Kembali ke daftar submission siswa"
-                  className="p-2.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 transition-colors cursor-pointer border border-slate-200 shadow-xs shrink-0"
+                  className="p-2.5 rounded-xl bg-white hover:bg-[#f1effa] text-slate-700 transition-colors cursor-pointer border border-slate-200 shadow-xs shrink-0"
                 >
                   <ArrowLeft className="w-4 h-4" aria-hidden="true" />
                 </button>
                 <div className="min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
-                    <span className="text-[10px] font-bold uppercase font-mono px-2 py-0.5 rounded bg-indigo-50 text-indigo-700 border border-indigo-200">
+                    <span className="text-[10px] font-bold uppercase font-mono px-2 py-0.5 rounded bg-violet-50 text-violet-700 border border-violet-200">
                       Sesi Jawaban Siswa
                     </span>
                     <span className="text-xs text-slate-500 font-mono">
@@ -811,7 +811,7 @@ export default function GradeReviewWorkspace({
                 <button
                   type="button"
                   onClick={() => setShowKeyboardHelp((prev) => !prev)}
-                  className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-mono text-xs flex items-center gap-1.5 transition-colors cursor-pointer"
+                  className="px-3 py-1.5 rounded-xl bg-[#f1effa] hover:bg-[#e9e5f6] text-slate-700 font-mono text-xs flex items-center gap-1.5 transition-colors cursor-pointer"
                   title="Tekan '?' untuk melihat pintasan keyboard"
                 >
                   <Keyboard className="w-3.5 h-3.5 text-slate-600" aria-hidden="true" />
@@ -824,7 +824,7 @@ export default function GradeReviewWorkspace({
 
                 <button
                   onClick={() => setSelectedSessionId(null)}
-                  className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition-colors cursor-pointer font-display"
+                  className="px-4 py-2 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-xs transition-colors cursor-pointer font-display"
                 >
                   Selesai Meninjau
                 </button>
@@ -836,7 +836,7 @@ export default function GradeReviewWorkspace({
               <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-700 space-y-1.5 animate-in fade-in duration-150">
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-slate-900 font-display flex items-center gap-1.5">
-                    <Keyboard className="w-3.5 h-3.5 text-indigo-600" aria-hidden="true" />
+                    <Keyboard className="w-3.5 h-3.5 text-violet-600" aria-hidden="true" />
                     Pintasan Keyboard Review Berkecepatan Tinggi:
                   </span>
                   <button
@@ -890,7 +890,7 @@ export default function GradeReviewWorkspace({
                           : isVerified
                           ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
                           : isEssay
-                          ? 'bg-indigo-50 text-indigo-700 border-indigo-200'
+                          ? 'bg-violet-50 text-violet-700 border-violet-200'
                           : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                       }`}
                       title={`Nomor ${qIdx + 1} (${isEssay ? 'Esai' : 'PG'})`}
@@ -921,7 +921,7 @@ export default function GradeReviewWorkspace({
                   onClick={() => setActiveQuestionIdx(idx)}
                   className={`bg-white rounded-2xl border p-6 sm:p-7 shadow-card space-y-5 text-slate-900 transition-all ${
                     isActive
-                      ? 'border-slate-900 ring-2 ring-slate-900/10 shadow-lg'
+                      ? 'border-[#150f23] ring-2 ring-[#6a5fc1]/25 shadow-lg'
                       : 'border-slate-200/80 hover:border-slate-300'
                   }`}
                 >
@@ -934,7 +934,7 @@ export default function GradeReviewWorkspace({
                       <span
                         className={`px-2.5 py-0.5 rounded-lg text-xs font-bold uppercase font-mono shadow-2xs ${
                           ans.question_type === 'multiple_choice'
-                            ? 'bg-indigo-50 text-indigo-700 border border-indigo-200'
+                            ? 'bg-violet-50 text-violet-700 border border-violet-200'
                             : 'bg-slate-100 text-slate-700 border border-slate-200'
                         }`}
                       >
@@ -1001,12 +1001,12 @@ export default function GradeReviewWorkspace({
                       </div>
 
                       {/* Right Column: AI Suggestion & Teacher Decision */}
-                      <div className="space-y-4 p-5 rounded-2xl bg-indigo-50/40 border border-indigo-200">
+                      <div className="space-y-4 p-5 rounded-2xl bg-violet-50/40 border border-violet-200">
                         {/* AI Suggestion Header */}
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-1.5">
-                            <Sparkles className="w-4 h-4 text-indigo-600" aria-hidden="true" />
-                            <span className="text-xs font-bold uppercase tracking-wider text-indigo-950 font-mono">
+                            <Sparkles className="w-4 h-4 text-violet-600" aria-hidden="true" />
+                            <span className="text-xs font-bold uppercase tracking-wider text-violet-950 font-mono">
                               Saran Evaluasi AI (Rekomendasi)
                             </span>
                           </div>
@@ -1038,7 +1038,7 @@ export default function GradeReviewWorkspace({
                                     Matriks Kriteria Evaluasi Atomik:
                                   </span>
                                   <span className="text-[10px] text-slate-500 font-mono">
-                                    Rekomendasi Skor: <strong className="text-indigo-700 font-bold">{ans.auto_score} Poin</strong>
+                                    Rekomendasi Skor: <strong className="text-violet-700 font-bold">{ans.auto_score} Poin</strong>
                                   </span>
                                 </div>
 
@@ -1109,15 +1109,15 @@ export default function GradeReviewWorkspace({
 
                           return (
                             <div className="text-xs text-slate-700 space-y-1.5 bg-white p-4 rounded-xl border border-slate-200 leading-relaxed shadow-xs">
-                              <p className="font-bold text-indigo-950 font-display flex items-center gap-1">
-                                <Info className="w-3.5 h-3.5 text-indigo-600" aria-hidden="true" />
+                              <p className="font-bold text-violet-950 font-display flex items-center gap-1">
+                                <Info className="w-3.5 h-3.5 text-violet-600" aria-hidden="true" />
                                 <span>Pertimbangan AI:</span>
                               </p>
                               <p>
                                 {ans.ai_grading_rationale ||
                                   'Penilaian otomatis dihitung berdasarkan rubrik konsep dan kata kunci silabus.'}
                               </p>
-                              <p className="text-[11px] font-mono font-bold text-indigo-700 pt-1">
+                              <p className="text-[11px] font-mono font-bold text-violet-700 pt-1">
                                 Rekomendasi Skor AI: {ans.auto_score} Poin
                               </p>
                             </div>
@@ -1143,7 +1143,7 @@ export default function GradeReviewWorkspace({
                                     [ans.id]: Number(e.target.value),
                                   })
                                 }
-                                className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm font-bold bg-white text-slate-900 focus:outline-none focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 font-mono shadow-xs"
+                                className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm font-bold bg-white text-slate-900 focus:outline-none focus:border-slate-900 focus:ring-2 focus:ring-[#6a5fc1]/40 font-mono shadow-xs"
                               />
                             </div>
 
@@ -1151,10 +1151,10 @@ export default function GradeReviewWorkspace({
                               <button
                                 type="button"
                                 onClick={() => acceptAiScore(ans)}
-                                className="px-3.5 py-2.5 rounded-xl bg-white hover:bg-slate-50 text-indigo-700 font-bold text-xs border border-indigo-200 transition-colors cursor-pointer font-mono shadow-xs flex items-center gap-1.5"
+                                className="px-3.5 py-2.5 rounded-xl bg-white hover:bg-[#f1effa] text-violet-700 font-bold text-xs border border-violet-200 transition-colors cursor-pointer font-mono shadow-xs flex items-center gap-1.5"
                                 title="Terapkan nilai yang disarankan AI (Tekan 'A')"
                               >
-                                <Sparkles className="w-3.5 h-3.5 text-indigo-600" aria-hidden="true" />
+                                <Sparkles className="w-3.5 h-3.5 text-violet-600" aria-hidden="true" />
                                 <span>Gunakan Saran AI ({ans.auto_score})</span>
                               </button>
                             </div>
@@ -1174,7 +1174,7 @@ export default function GradeReviewWorkspace({
                                 })
                               }
                               placeholder="Ketik feedback pedagogis untuk siswa..."
-                              className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 shadow-xs"
+                              className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-slate-900 focus:ring-2 focus:ring-[#6a5fc1]/40 shadow-xs"
                             />
                           </div>
 
@@ -1185,7 +1185,7 @@ export default function GradeReviewWorkspace({
                             <button
                               onClick={() => saveOverride(ans.id)}
                               disabled={savingOverrideMap[ans.id]}
-                              className="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 disabled:opacity-50 text-white font-bold text-xs shadow-card hover:shadow-card-hover transition-all flex items-center gap-1.5 cursor-pointer font-display tracking-wide"
+                              className="px-5 py-2.5 rounded-xl bg-[#150f23] hover:bg-[#1f1633] disabled:opacity-50 text-white font-bold text-xs shadow-card hover:shadow-card-hover transition-all flex items-center gap-1.5 cursor-pointer font-display tracking-wide"
                             >
                               {savingOverrideMap[ans.id] ? (
                                 <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" />

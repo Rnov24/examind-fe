@@ -122,7 +122,7 @@ export default function ExamSubmitModal({
             type="button"
             disabled={isSubmitting}
             onClick={onClose}
-            className="min-h-[44px] px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs transition-colors cursor-pointer shadow-xs disabled:opacity-50 focus:ring-2 focus:ring-slate-900/10 focus:outline-none flex items-center justify-center"
+            className="min-h-[44px] px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs transition-colors cursor-pointer shadow-xs disabled:opacity-50 focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none flex items-center justify-center"
           >
             Kembali Mengerjakan
           </button>

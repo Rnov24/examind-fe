@@ -65,7 +65,7 @@ export function InstitutionalStamp({
   const themeColors = {
     slate: 'border-slate-800 text-slate-800 hover:border-slate-950',
     emerald: 'border-emerald-700 text-emerald-800 hover:border-emerald-900',
-    violet: 'border-indigo-900 text-indigo-900 hover:border-indigo-950',
+    violet: 'border-violet-900 text-violet-900 hover:border-violet-950',
   }[config.theme]
 
   return (
@@ -83,7 +83,7 @@ export function InstitutionalStamp({
         transform: `rotate(${angle}deg) scale(${isPressed ? 0.94 : 1})`,
         transition: 'transform 180ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 180ms ease',
       }}
-      className={`inline-block select-none cursor-pointer group focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded-xl ${className}`}
+      className={`inline-block select-none cursor-pointer group focus:outline-none focus:ring-2 focus:ring-violet-500 rounded-xl ${className}`}
       aria-label={`Stempel Sertifikasi Institusi: ${config.title}`}
     >
       <div

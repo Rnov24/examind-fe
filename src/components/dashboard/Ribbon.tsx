@@ -172,22 +172,22 @@ export function Ribbon({ items, className = '' }: RibbonProps) {
         <Link
           href="/dashboard"
           className={cn(
-            'relative group p-1.5 hover:bg-slate-100 transition-colors flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-[#150f23]',
+            'relative group p-1.5 hover:bg-slate-100 transition-colors flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]',
             tokens.radius.full
           )}
           aria-label="Kembali ke Dashboard Utama EXAMIND"
         >
           <ExamindLogo variant="symbol" theme="color" className="w-8 h-8 object-contain shrink-0" priority />
           {/* Tooltip */}
-          <div className={cn('absolute left-full ml-3 px-2.5 py-1 bg-slate-900 text-white text-[11px] font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 shadow-md z-50 flex items-center font-sans', tokens.radius.md)}>
+          <div className={cn('absolute left-full ml-3 px-2.5 py-1 bg-[#150f23] text-white text-[11px] font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 shadow-md z-50 flex items-center font-sans', tokens.radius.md)}>
             EXAMIND CBT
-            <span className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-slate-900" />
+            <span className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-[#150f23]" />
           </div>
         </Link>
 
 
         {/* Subtle separator */}
-        <div className="w-8 h-px bg-slate-200/70 my-1" aria-hidden="true" />
+        <div className="w-8 h-px bg-[#e3dff5] my-1" aria-hidden="true" />
       </div>
 
       {/* Center: Navigation Icon Buttons */}
@@ -205,7 +205,7 @@ export function Ribbon({ items, className = '' }: RibbonProps) {
                 className={`w-11 h-11 rounded-full flex items-center justify-center transition-all cursor-pointer ${
                   active
                     ? 'bg-[#150f23] text-[#c2ef4e] shadow-sm ring-1 ring-slate-800'
-                    : 'text-slate-400 hover:text-slate-900 hover:bg-slate-100/90'
+                    : 'text-slate-400 hover:text-slate-900 hover:bg-[#f1effa]'
                 }`}
               >
                 <Icon
@@ -219,10 +219,10 @@ export function Ribbon({ items, className = '' }: RibbonProps) {
               {/* Floating Tooltip */}
               <div
                 role="tooltip"
-                className="absolute left-full ml-3 px-2.5 py-1 bg-slate-900 text-white text-[11px] font-medium rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 shadow-md z-50 flex items-center font-sans tracking-tight"
+                className="absolute left-full ml-3 px-2.5 py-1 bg-[#150f23] text-white text-[11px] font-medium rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 shadow-md z-50 flex items-center font-sans tracking-tight"
               >
                 {item.label}
-                <span className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-slate-900" />
+                <span className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-[#150f23]" />
               </div>
             </div>
           )
@@ -232,7 +232,7 @@ export function Ribbon({ items, className = '' }: RibbonProps) {
       {/* Bottom: Help & Logout pinned */}
       <div className="flex flex-col items-center gap-1.5 w-full pt-1">
         {/* Subtle separator */}
-        <div className="w-8 h-px bg-slate-200/70 my-1" aria-hidden="true" />
+        <div className="w-8 h-px bg-[#e3dff5] my-1" aria-hidden="true" />
 
         {/* Help Button */}
         <div className="relative group flex items-center justify-center">
@@ -247,10 +247,10 @@ export function Ribbon({ items, className = '' }: RibbonProps) {
           </button>
           <div
             role="tooltip"
-            className="absolute left-full ml-3 px-2.5 py-1 bg-slate-900 text-white text-[11px] font-medium rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 shadow-md z-50 flex items-center font-sans"
+            className="absolute left-full ml-3 px-2.5 py-1 bg-[#150f23] text-white text-[11px] font-medium rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 shadow-md z-50 flex items-center font-sans"
           >
             Bantuan & Panduan
-            <span className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-slate-900" />
+            <span className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-[#150f23]" />
           </div>
         </div>
 

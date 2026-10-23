@@ -127,15 +127,16 @@ export default function SuperAdminDashboardPage() {
       navTabs={navTabs}
       activeTab={activeTab}
       onTabChange={setActiveTab}
+      greetingVariant="band"
       greetingName={user?.full_name || 'Super Admin'}
       greetingSubtitle="Pantau integritas ujian, kelola sekolah mitra, dan tinjau status operasional platform."
       greetingAction={
         <button
           type="button"
           onClick={() => setShowCreateModal(true)}
-          className="px-5 py-2.5 rounded-full bg-[#150f23] hover:bg-slate-800 text-white font-bold text-xs shadow-card hover:shadow-card-hover flex items-center justify-center gap-2 transition-all cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-[#150f23] focus:outline-none"
+          className="px-5 py-2.5 rounded-full bg-white hover:bg-[#f1effa] text-[#150f23] font-bold text-xs shadow-card hover:shadow-card-hover flex items-center justify-center gap-2 transition-all cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-[#6a5fc1] focus:outline-none"
         >
-          <Plus className="w-4 h-4 text-[#c2ef4e]" aria-hidden="true" />
+          <Plus className="w-4 h-4 text-[#150f23]" aria-hidden="true" />
           <span>Tambah Sekolah Baru</span>
         </button>
       }
@@ -158,7 +159,7 @@ export default function SuperAdminDashboardPage() {
             <HeroCard
               title="Sekolah Terdaftar"
               value={stats?.total_tenants ?? 0}
-              icon={<Building2 className="w-5 h-5 text-[#c2ef4e]" aria-hidden="true" />}
+              icon={<Building2 className="w-5 h-5 text-white" aria-hidden="true" />}
               trend={{
                 value: `${stats?.active_tenants ?? 0} Sekolah Aktif`,
                 positive: true,
@@ -174,8 +175,8 @@ export default function SuperAdminDashboardPage() {
             <StatCard
               title="Peserta Didik (Siswa)"
               value={(stats?.total_global_students ?? 0).toLocaleString('id-ID')}
-              icon={<GraduationCap className="w-5 h-5 text-indigo-600" aria-hidden="true" />}
-              tone="indigo"
+              icon={<GraduationCap className="w-5 h-5 text-violet-600" aria-hidden="true" />}
+              tone="violet"
               subtitle={`Dari ${(stats?.total_global_users ?? 0).toLocaleString('id-ID')} akun terdaftar di platform`}
               className="h-full min-h-[170px]"
             />
@@ -201,7 +202,7 @@ export default function SuperAdminDashboardPage() {
             <DashboardCard
               title="Alokasi Lisensi & Kapasitas Token AI"
               subtitle="Distribusi tingkatan layanan sekolah mitra dan kuota pemrosesan model LLM"
-              icon={<Sparkles className="w-4 h-4 text-indigo-600" aria-hidden="true" />}
+              icon={<Sparkles className="w-4 h-4 text-violet-600" aria-hidden="true" />}
             >
               <div className="space-y-5">
                 <div>
@@ -214,7 +215,7 @@ export default function SuperAdminDashboardPage() {
                   <PlanDistributionGrid distribution={stats?.plan_distribution} />
                 </div>
 
-                <div className="border-t border-slate-100 pt-4">
+                <div className="border-t border-[#e9e5f6] pt-4">
                   <div className="flex items-center justify-between text-xs text-slate-500 font-medium mb-1">
                     <span>Pemakaian Kredit AI Platform</span>
                     <span className="font-mono font-semibold text-violet-700">
@@ -237,7 +238,7 @@ export default function SuperAdminDashboardPage() {
               icon={<ShieldCheck className="w-4 h-4 text-emerald-600" aria-hidden="true" />}
               action={
                 health.loading ? (
-                  <span className="text-[10px] font-mono font-bold text-slate-600 bg-slate-50 px-2.5 py-0.5 rounded-full border border-slate-200">
+                  <span className="text-[10px] font-mono font-bold text-slate-600 bg-[#faf9fd] px-2.5 py-0.5 rounded-full border border-[#ddd9ef]">
                     Memeriksa…
                   </span>
                 ) : health.reachable && health.dbStatus === 'online' ? (
@@ -254,7 +255,7 @@ export default function SuperAdminDashboardPage() {
               <div className="space-y-4">
                 <TelemetryBarChart />
 
-                <div className="space-y-2 text-xs divide-y divide-slate-100 pt-1">
+                <div className="space-y-2 text-xs divide-y divide-[#e9e5f6] pt-1">
                   <div className="flex items-center justify-between pt-1">
                     <span className="text-slate-500">Rata-rata Pendapatan per Sekolah (ARPU):</span>
                     <span className="font-mono font-bold text-slate-900">
@@ -291,7 +292,7 @@ export default function SuperAdminDashboardPage() {
               <div className="space-y-4">
                 {/* 3 Unified Financial Metrics */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-1">
-                  <div className="p-3.5 rounded-xl bg-slate-50/80 border border-slate-100 space-y-1">
+                  <div className="p-3.5 rounded-xl bg-[#faf9fd] border border-[#e9e5f6] space-y-1">
                     <span className="text-[11px] font-bold text-slate-600 block">
                       Pendapatan Bulanan (MRR)
                     </span>
@@ -315,7 +316,7 @@ export default function SuperAdminDashboardPage() {
                     )}
                   </div>
 
-                  <div className="p-3.5 rounded-xl bg-slate-50/80 border border-slate-100 space-y-1">
+                  <div className="p-3.5 rounded-xl bg-[#faf9fd] border border-[#e9e5f6] space-y-1">
                     <span className="text-[11px] font-bold text-slate-600 block">
                       Proyeksi Tahunan (ARR)
                     </span>
@@ -327,7 +328,7 @@ export default function SuperAdminDashboardPage() {
                     </div>
                   </div>
 
-                  <div className="p-3.5 rounded-xl bg-slate-50/80 border border-slate-100 space-y-1">
+                  <div className="p-3.5 rounded-xl bg-[#faf9fd] border border-[#e9e5f6] space-y-1">
                     <span className="text-[11px] font-bold text-slate-600 block">
                       Rata-rata per Sekolah (ARPU)
                     </span>
@@ -341,10 +342,10 @@ export default function SuperAdminDashboardPage() {
                 </div>
 
                 {/* Footer Action Links */}
-                <div className="flex items-center justify-end gap-3 pt-2 border-t border-slate-100">
+                <div className="flex items-center justify-end gap-3 pt-2 border-t border-[#e9e5f6]">
                   <Link
                     href="/superadmin/pricing"
-                    className="px-4 py-2 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold transition-colors cursor-pointer"
+                    className="px-4 py-2 rounded-full border border-[#ddd9ef] bg-white hover:bg-[#f1effa] text-slate-700 text-xs font-semibold transition-colors cursor-pointer"
                   >
                     Atur Tarif &amp; Kuota Paket
                   </Link>
@@ -365,15 +366,15 @@ export default function SuperAdminDashboardPage() {
             <DashboardCard
               title="Akses Cepat Pengaturan"
               subtitle="Pusat konfigurasi keamanan & audit ujian"
-              icon={<Cpu className="w-4 h-4 text-indigo-600" aria-hidden="true" />}
+              icon={<Cpu className="w-4 h-4 text-violet-600" aria-hidden="true" />}
             >
               <div className="space-y-3 pt-1">
                 <Link
                   href="/superadmin/secrets"
-                  className="p-3.5 rounded-xl bg-slate-50/80 hover:bg-violet-50/60 border border-slate-100 hover:border-violet-200/80 transition-all flex items-center justify-between group cursor-pointer"
+                  className="p-3.5 rounded-xl bg-[#faf9fd] hover:bg-violet-50/60 border border-[#e9e5f6] hover:border-violet-200/80 transition-all flex items-center justify-between group cursor-pointer"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-xl bg-white border border-slate-200/80 text-indigo-600 flex items-center justify-center shrink-0 shadow-2xs group-hover:bg-[#150f23] group-hover:text-[#c2ef4e] transition-colors">
+                    <div className="w-9 h-9 rounded-xl bg-white border border-slate-200/80 text-violet-600 flex items-center justify-center shrink-0 shadow-2xs group-hover:bg-[#150f23] group-hover:text-[#c2ef4e] transition-colors">
                       <Cpu className="w-4 h-4" aria-hidden="true" />
                     </div>
                     <div>
@@ -388,7 +389,7 @@ export default function SuperAdminDashboardPage() {
 
                 <Link
                   href="/analytics"
-                  className="p-3.5 rounded-xl bg-slate-50/80 hover:bg-emerald-50/60 border border-slate-100 hover:border-emerald-200/80 transition-all flex items-center justify-between group cursor-pointer"
+                  className="p-3.5 rounded-xl bg-[#faf9fd] hover:bg-emerald-50/60 border border-[#e9e5f6] hover:border-emerald-200/80 transition-all flex items-center justify-between group cursor-pointer"
                 >
                   <div className="flex items-center gap-3">
                     <div className="w-9 h-9 rounded-xl bg-white border border-slate-200/80 text-emerald-600 flex items-center justify-center shrink-0 shadow-2xs group-hover:bg-[#150f23] group-hover:text-[#c2ef4e] transition-colors">

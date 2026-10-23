@@ -39,7 +39,7 @@ export function DashboardProgressBar({
       case 'lime':
         return 'bg-gradient-to-r from-lime-400 to-[#c2ef4e]'
       default:
-        return 'bg-gradient-to-r from-[#6a5fc1] via-indigo-600 to-[#6a5fc1]'
+        return 'bg-gradient-to-r from-[#6a5fc1] via-violet-600 to-[#6a5fc1]'
     }
   })()
 
@@ -56,25 +56,17 @@ export function DashboardProgressBar({
         </div>
       )}
 
-      {/* Daylight progress bar with restrained rich gradient and lime accent cap */}
+      {/* Daylight progress bar with restrained rich gradient */}
       <div
         className={cn(
-          'h-3 w-full bg-slate-100 overflow-hidden p-0.5 border border-slate-200/80 shadow-inner',
+          'h-3 w-full bg-[#f1effa] overflow-hidden p-0.5 border border-[#ddd9ef] shadow-inner',
           tokens.radius.full
         )}
       >
         <div
           className={cn('h-full relative transition-all duration-500 ease-out', tokens.radius.full, barGradient)}
           style={{ width: `${percentage}%` }}
-        >
-          <div
-            className={cn(
-              'absolute right-0 top-0 bottom-0 w-3 bg-[#c2ef4e] shadow-[0_0_6px_rgba(194,239,78,0.6)]',
-              tokens.radius.full
-            )}
-            aria-hidden="true"
-          />
-        </div>
+        />
       </div>
 
       {(statusLeft || statusRight) && (

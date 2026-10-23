@@ -148,7 +148,7 @@ export default function ExamCreatePage() {
           href="/exams"
           title="Kembali ke Daftar Ujian"
           aria-label="Kembali ke Daftar Ujian"
-          className="p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 transition-colors shadow-xs focus:ring-2 focus:ring-slate-900/10 focus:outline-none shrink-0"
+          className="p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-[#f1effa] text-slate-700 transition-colors shadow-xs focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none shrink-0"
         >
           <ArrowLeft className="w-4 h-4" aria-hidden="true" />
         </Link>
@@ -296,7 +296,7 @@ export default function ExamCreatePage() {
                   type="text"
                   required
                   placeholder="Contoh: Penilaian Harian Bersama Fisika Kuantum XII MIPA"
-                  className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-sm font-semibold focus:bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none placeholder:text-slate-400 transition-all"
+                  className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-sm font-semibold focus:bg-white focus:ring-2 focus:ring-[#6a5fc1]/40 focus:border-slate-900 outline-none placeholder:text-slate-400 transition-all"
                 />
               </div>
 
@@ -309,7 +309,7 @@ export default function ExamCreatePage() {
                   onChange={(e) => setDescription(e.target.value)}
                   rows={3}
                   placeholder="Contoh: Bacalah setiap butir soal dengan teliti. Dilarang membuka tab lain selama ujian..."
-                  className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-xs font-normal focus:bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none placeholder:text-slate-400 transition-all"
+                  className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-xs font-normal focus:bg-white focus:ring-2 focus:ring-[#6a5fc1]/40 focus:border-slate-900 outline-none placeholder:text-slate-400 transition-all"
                 />
               </div>
 
@@ -322,7 +322,7 @@ export default function ExamCreatePage() {
                     value={classId ?? ''}
                     onChange={(e) => setClassId(e.target.value ? Number(e.target.value) : null)}
                     required
-                    className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-xs font-semibold focus:bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none"
+                    className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-xs font-semibold focus:bg-white focus:ring-2 focus:ring-[#6a5fc1]/40 focus:border-slate-900 outline-none"
                   >
                     <option value="">-- Pilih Rombel Kelas --</option>
                     {classes.map((c) => (
@@ -344,7 +344,7 @@ export default function ExamCreatePage() {
                     min={5}
                     max={300}
                     required
-                    className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-xs font-mono font-bold focus:bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none"
+                    className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-xs font-mono font-bold focus:bg-white focus:ring-2 focus:ring-[#6a5fc1]/40 focus:border-slate-900 outline-none"
                   />
                   <p className="text-[11px] text-slate-500 mt-1 font-mono">
                     Rentang waktu antara 5 hingga 300 menit per sesi.
@@ -362,7 +362,7 @@ export default function ExamCreatePage() {
                     onChange={(e) => setStartTime(e.target.value)}
                     type="datetime-local"
                     required
-                    className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-xs font-semibold focus:bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none font-mono"
+                    className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-xs font-semibold focus:bg-white focus:ring-2 focus:ring-[#6a5fc1]/40 focus:border-slate-900 outline-none font-mono"
                   />
                   <p className="text-[11px] text-slate-500 mt-1 font-mono">
                     Siswa mulai diizinkan membuka lembar soal.
@@ -378,7 +378,7 @@ export default function ExamCreatePage() {
                     onChange={(e) => setEndTime(e.target.value)}
                     type="datetime-local"
                     required
-                    className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-xs font-semibold focus:bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none font-mono"
+                    className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-xs font-semibold focus:bg-white focus:ring-2 focus:ring-[#6a5fc1]/40 focus:border-slate-900 outline-none font-mono"
                   />
                   <p className="text-[11px] text-slate-500 mt-1 font-mono">
                     Seluruh sesi otomatis terkumpul setelah batas ini.
@@ -391,7 +391,7 @@ export default function ExamCreatePage() {
                 <button
                   type="button"
                   onClick={handleGoToStep2}
-                  className="px-6 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-card hover:shadow-card-hover transition-all flex items-center gap-2 cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+                  className="px-6 py-2.5 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-card hover:shadow-card-hover transition-all flex items-center gap-2 cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
                 >
                   <span>Lanjut ke Pengawasan & Kebijakan</span>
                   <ArrowRight className="w-4 h-4 text-[#c2ef4e]" aria-hidden="true" />
@@ -451,7 +451,7 @@ export default function ExamCreatePage() {
                     role="switch"
                     aria-checked={isProctoringEnabled}
                     onClick={() => setIsProctoringEnabled(!isProctoringEnabled)}
-                    className={`relative inline-flex h-7 w-12 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-slate-900/20 self-start sm:self-center ${
+                    className={`relative inline-flex h-7 w-12 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]/40 self-start sm:self-center ${
                       isProctoringEnabled ? 'bg-slate-900' : 'bg-slate-300'
                     }`}
                   >
@@ -475,7 +475,7 @@ export default function ExamCreatePage() {
                       <label
                         className={`flex items-start gap-3 p-4 rounded-xl border cursor-pointer transition-all select-none ${
                           cameraMode === 'dual_camera'
-                            ? 'bg-white border-slate-900 shadow-sm ring-1 ring-slate-900'
+                            ? 'bg-white border-[#150f23] shadow-sm ring-1 ring-[#150f23]'
                             : 'bg-white/70 border-slate-200 hover:border-slate-300 text-slate-700'
                         }`}
                       >
@@ -485,13 +485,13 @@ export default function ExamCreatePage() {
                           value="dual_camera"
                           checked={cameraMode === 'dual_camera'}
                           onChange={() => setCameraMode('dual_camera')}
-                          className="mt-1 w-4 h-4 text-slate-900 focus:ring-slate-900 border-slate-300 accent-slate-900"
+                          className="mt-1 w-4 h-4 text-[#6a5fc1] focus:ring-[#6a5fc1] border-[#c9c2ec] accent-[#6a5fc1]"
                         />
                         <div className="space-y-1">
                           <div className="flex items-center gap-1.5">
                             <Smartphone className="w-4 h-4 text-slate-700" aria-hidden="true" />
                             <span className="text-xs font-bold text-slate-900">Dual-Camera</span>
-                            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-50 text-indigo-700 font-bold border border-indigo-200">
+                            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-violet-50 text-violet-700 font-bold border border-violet-200">
                               Rekomendasi
                             </span>
                           </div>
@@ -504,7 +504,7 @@ export default function ExamCreatePage() {
                       <label
                         className={`flex items-start gap-3 p-4 rounded-xl border cursor-pointer transition-all select-none ${
                           cameraMode === 'single_camera'
-                            ? 'bg-white border-slate-900 shadow-sm ring-1 ring-slate-900'
+                            ? 'bg-white border-[#150f23] shadow-sm ring-1 ring-[#150f23]'
                             : 'bg-white/70 border-slate-200 hover:border-slate-300 text-slate-700'
                         }`}
                       >
@@ -514,7 +514,7 @@ export default function ExamCreatePage() {
                           value="single_camera"
                           checked={cameraMode === 'single_camera'}
                           onChange={() => setCameraMode('single_camera')}
-                          className="mt-1 w-4 h-4 text-slate-900 focus:ring-slate-900 border-slate-300 accent-slate-900"
+                          className="mt-1 w-4 h-4 text-[#6a5fc1] focus:ring-[#6a5fc1] border-[#c9c2ec] accent-[#6a5fc1]"
                         />
                         <div className="space-y-1">
                           <div className="flex items-center gap-1.5">
@@ -553,7 +553,7 @@ export default function ExamCreatePage() {
                   <select
                     value={explanationPolicy}
                     onChange={(e) => setExplanationPolicy(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs font-semibold focus:bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none bg-white text-slate-900"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs font-semibold focus:bg-white focus:ring-2 focus:ring-[#6a5fc1]/40 focus:border-slate-900 outline-none bg-white text-slate-900"
                   >
                     <option value="after_exam_closed">Setelah Ujian Resmi Ditutup & Dinilai Guru</option>
                     <option value="instant">Seketika Setelah Siswa Mengumpulkan Jawaban</option>
@@ -569,7 +569,7 @@ export default function ExamCreatePage() {
                       type="checkbox"
                       checked={randomizeQuestions}
                       onChange={(e) => setRandomizeQuestions(e.target.checked)}
-                      className="w-4 h-4 rounded text-slate-900 bg-white border-slate-300 focus:ring-slate-900 accent-slate-900"
+                      className="w-4 h-4 rounded text-[#6a5fc1] bg-white border-[#c9c2ec] focus:ring-[#6a5fc1] accent-[#6a5fc1]"
                     />
                     <span>Acak Urutan Soal Tiap Siswa</span>
                   </label>
@@ -578,7 +578,7 @@ export default function ExamCreatePage() {
                       type="checkbox"
                       checked={randomizeOptions}
                       onChange={(e) => setRandomizeOptions(e.target.checked)}
-                      className="w-4 h-4 rounded text-slate-900 bg-white border-slate-300 focus:ring-slate-900 accent-slate-900"
+                      className="w-4 h-4 rounded text-[#6a5fc1] bg-white border-[#c9c2ec] focus:ring-[#6a5fc1] accent-[#6a5fc1]"
                     />
                     <span>Acak Opsi Pilihan Ganda</span>
                   </label>
@@ -590,7 +590,7 @@ export default function ExamCreatePage() {
                 <button
                   type="button"
                   onClick={() => setCurrentStep(1)}
-                  className="px-5 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50 border border-slate-300 transition-colors shadow-xs cursor-pointer focus:ring-2 focus:ring-slate-900/10 focus:outline-none flex items-center gap-1.5"
+                  className="px-5 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-[#f1effa] border border-slate-300 transition-colors shadow-xs cursor-pointer focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none flex items-center gap-1.5"
                 >
                   <ArrowLeft className="w-3.5 h-3.5 text-slate-600" aria-hidden="true" />
                   <span>Kembali ke Langkah 1</span>
@@ -599,7 +599,7 @@ export default function ExamCreatePage() {
                 <button
                   type="submit"
                   disabled={loading || !classId}
-                  className="px-6 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-card hover:shadow-card-hover disabled:opacity-50 cursor-pointer transition-all flex items-center gap-2 focus:ring-2 focus:ring-slate-900/10 focus:outline-none font-display tracking-wide"
+                  className="px-6 py-2.5 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white text-xs font-bold shadow-card hover:shadow-card-hover disabled:opacity-50 cursor-pointer transition-all flex items-center gap-2 focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none font-display tracking-wide"
                 >
                   {loading ? (
                     <>

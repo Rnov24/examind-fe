@@ -139,7 +139,7 @@ export default function SuperAdminTenantsPage() {
             disabled={statsBlock.isRefreshing || tenantsBlock.isRefreshing}
             title="Muat ulang data sekolah"
             aria-label="Muat ulang data sekolah"
-            className="p-2.5 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 transition-all shadow-xs cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#150f23] disabled:opacity-50"
+            className="p-2.5 rounded-full border border-slate-200 bg-white hover:bg-[#f1effa] text-slate-700 transition-all shadow-xs cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#150f23] disabled:opacity-50"
           >
             <RefreshCw
               className={`w-4 h-4 ${
@@ -168,8 +168,8 @@ export default function SuperAdminTenantsPage() {
           <StatCard
             title="Total Sekolah Terdaftar"
             value={stats?.total_tenants ?? 0}
-            icon={<Building2 className="w-5 h-5 text-indigo-600" aria-hidden="true" />}
-            tone="indigo"
+            icon={<Building2 className="w-5 h-5 text-violet-600" aria-hidden="true" />}
+            tone="violet"
             subtitle="Sekolah mitra terdaftar di platform CBT"
             className="min-h-[160px]"
           />

@@ -316,7 +316,7 @@ export default function SuperAdminPricingPage() {
             type="button"
             onClick={loadAllData}
             disabled={loading}
-            className="p-2.5 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 transition-all shadow-xs cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#150f23]"
+            className="p-2.5 rounded-full border border-slate-200 bg-white hover:bg-[#f1effa] text-slate-700 transition-all shadow-xs cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]"
             title="Muat ulang data tarif"
             aria-label="Muat ulang data tarif"
           >
@@ -325,7 +325,7 @@ export default function SuperAdminPricingPage() {
           <button
             type="button"
             onClick={() => setShowPromoModal(true)}
-            className="px-5 py-2.5 rounded-full bg-[#150f23] hover:bg-slate-800 text-white font-bold text-xs shadow-card hover:shadow-card-hover flex items-center gap-2 transition-all cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-[#150f23] focus:outline-none"
+            className="px-5 py-2.5 rounded-full bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-card hover:shadow-card-hover flex items-center gap-2 transition-all cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-[#6a5fc1] focus:outline-none"
           >
             <Plus className="w-4 h-4 text-[#c2ef4e]" aria-hidden="true" />
             <span>Tambah Kode Promo</span>
@@ -368,7 +368,7 @@ export default function SuperAdminPricingPage() {
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
             }`}
           >
-            <Layers className="w-3.5 h-3.5 text-indigo-400" />
+            <Layers className="w-3.5 h-3.5 text-violet-400" />
             <span>Pilihan Paket Langganan</span>
           </button>
 
@@ -390,7 +390,7 @@ export default function SuperAdminPricingPage() {
         {subTab === 'credits' && (
           <div className="space-y-6 tab-content-enter">
             {/* Tokenomics Explainer Banner */}
-            <div className="p-5 rounded-2xl bg-gradient-to-r from-indigo-50/90 via-violet-50/40 to-white border border-indigo-200/80 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-card">
+            <div className="p-5 rounded-2xl bg-gradient-to-r from-violet-50/90 via-violet-50/40 to-white border border-violet-200/80 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-card">
               <div className="flex items-start gap-3.5">
                 <div className="p-2.5 rounded-xl bg-[#150f23] text-[#c2ef4e] shadow-xs shrink-0 mt-0.5">
                   <Cpu className="w-5 h-5" />
@@ -405,9 +405,9 @@ export default function SuperAdminPricingPage() {
                 </div>
               </div>
               <div className="shrink-0 flex items-center gap-3">
-                <div className="p-3 bg-white rounded-xl border border-indigo-200/80 shadow-2xs text-center">
+                <div className="p-3 bg-white rounded-xl border border-violet-200/80 shadow-2xs text-center">
                   <span className="text-[10px] font-mono text-slate-500 font-bold block uppercase">Standar Rasio</span>
-                  <span className="font-display text-base font-extrabold text-indigo-700">1 Kredit = 1 Token Unit</span>
+                  <span className="font-display text-base font-extrabold text-violet-700">1 Kredit = 1 Token Unit</span>
                 </div>
               </div>
             </div>
@@ -542,12 +542,12 @@ export default function SuperAdminPricingPage() {
                     key={plan.id}
                     className={`bg-white rounded-2xl p-6 border transition-all flex flex-col justify-between relative shadow-card hover:shadow-card-hover ${
                       isPopular
-                        ? 'border-indigo-500 ring-2 ring-indigo-500/20 shadow-xl'
+                        ? 'border-violet-500 ring-2 ring-violet-500/20 shadow-xl'
                         : 'border-slate-200/80 hover:border-slate-300'
                     }`}
                   >
                     {isPopular && (
-                      <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-indigo-600 text-white text-[10px] font-bold uppercase tracking-wider font-mono shadow-xs">
+                      <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-violet-600 text-white text-[10px] font-bold uppercase tracking-wider font-mono shadow-xs">
                         Paling Banyak Dipilih
                       </div>
                     )}
@@ -618,7 +618,7 @@ export default function SuperAdminPricingPage() {
                         onClick={() => openEditPlan(plan)}
                         className={`w-full py-2.5 rounded-full text-xs font-bold transition-all cursor-pointer font-display flex items-center justify-center gap-2 ${
                           isPopular
-                            ? 'bg-[#150f23] hover:bg-slate-800 text-white shadow-card'
+                            ? 'bg-[#150f23] hover:bg-[#1f1633] text-white shadow-card'
                             : 'bg-white border border-slate-200 text-slate-800 hover:bg-slate-50'
                         }`}
                       >
@@ -790,7 +790,7 @@ export default function SuperAdminPricingPage() {
                           </div>
                           <div className="w-24 bg-slate-200 h-1.5 rounded-full overflow-hidden mt-1">
                             <div
-                              className="bg-indigo-600 h-full rounded-full"
+                              className="bg-violet-600 h-full rounded-full"
                               style={{ width: `${Math.min(100, (p.used_count / p.max_uses) * 100)}%` }}
                             />
                           </div>
@@ -862,7 +862,7 @@ export default function SuperAdminPricingPage() {
               <button
                 type="button"
                 onClick={closeEditPlan}
-                className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-lg hover:bg-slate-100 text-slate-500 hover:text-slate-800 cursor-pointer focus:outline-none focus:ring-2 focus:ring-slate-900/10"
+                className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-lg hover:bg-slate-100 text-slate-500 hover:text-slate-800 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]/40"
                 title="Tutup modal edit paket"
                 aria-label="Tutup modal edit paket"
               >
@@ -889,7 +889,7 @@ export default function SuperAdminPricingPage() {
                   placeholder="Contoh: Starter School"
                   value={planForm.name}
                   onChange={(e) => setPlanForm({ ...planForm, name: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#ddd9ef] bg-[#faf9fd] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]"
                 />
               </div>
 
@@ -901,7 +901,7 @@ export default function SuperAdminPricingPage() {
                   placeholder="Deskripsi singkat paket untuk calon sekolah..."
                   value={planForm.description}
                   onChange={(e) => setPlanForm({ ...planForm, description: e.target.value })}
-                  className="w-full px-3.5 py-2 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  className="w-full px-3.5 py-2 rounded-xl border border-[#ddd9ef] bg-[#faf9fd] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]"
                 />
               </div>
 
@@ -914,7 +914,7 @@ export default function SuperAdminPricingPage() {
                     min="0"
                     value={planForm.price_monthly}
                     onChange={(e) => setPlanForm({ ...planForm, price_monthly: Number(e.target.value) })}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 font-mono focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 font-mono focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]"
                   />
                 </div>
                 <div>
@@ -925,7 +925,7 @@ export default function SuperAdminPricingPage() {
                     min="0"
                     value={planForm.price_annually}
                     onChange={(e) => setPlanForm({ ...planForm, price_annually: Number(e.target.value) })}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 font-mono focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 font-mono focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]"
                   />
                 </div>
               </div>
@@ -939,7 +939,7 @@ export default function SuperAdminPricingPage() {
                     min="0"
                     value={planForm.max_students}
                     onChange={(e) => setPlanForm({ ...planForm, max_students: Number(e.target.value) })}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 font-mono focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 font-mono focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]"
                   />
                 </div>
                 <div>
@@ -950,7 +950,7 @@ export default function SuperAdminPricingPage() {
                     min="0"
                     value={planForm.max_teachers}
                     onChange={(e) => setPlanForm({ ...planForm, max_teachers: Number(e.target.value) })}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 font-mono focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 font-mono focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]"
                   />
                 </div>
               </div>
@@ -964,7 +964,7 @@ export default function SuperAdminPricingPage() {
                     min="0"
                     value={planForm.max_storage_gb}
                     onChange={(e) => setPlanForm({ ...planForm, max_storage_gb: Number(e.target.value) })}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 font-mono focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 font-mono focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]"
                   />
                 </div>
                 <div>
@@ -975,7 +975,7 @@ export default function SuperAdminPricingPage() {
                     min="0"
                     value={planForm.ai_credits_monthly}
                     onChange={(e) => setPlanForm({ ...planForm, ai_credits_monthly: Number(e.target.value) })}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 font-mono focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 font-mono focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]"
                   />
                 </div>
               </div>
@@ -986,7 +986,7 @@ export default function SuperAdminPricingPage() {
                   id="plan-proctoring"
                   value={planForm.proctoring_type}
                   onChange={(e) => setPlanForm({ ...planForm, proctoring_type: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900 cursor-pointer"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#ddd9ef] bg-[#faf9fd] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#6a5fc1] cursor-pointer"
                 >
                   <option value="single_camera">Satu Kamera (Webcam)</option>
                   <option value="dual_camera">Dua Kamera (HP + Laptop)</option>
@@ -999,7 +999,7 @@ export default function SuperAdminPricingPage() {
                   type="checkbox"
                   checked={planForm.is_popular}
                   onChange={(e) => setPlanForm({ ...planForm, is_popular: e.target.checked })}
-                  className="mt-0.5 w-4 h-4 rounded accent-indigo-600 cursor-pointer shrink-0"
+                  className="mt-0.5 w-4 h-4 rounded accent-violet-600 cursor-pointer shrink-0"
                 />
                 <div>
                   <label htmlFor="plan-popular" className="font-bold text-slate-700 block cursor-pointer">
@@ -1019,7 +1019,7 @@ export default function SuperAdminPricingPage() {
                   placeholder={'Satu fitur per baris, contoh:\nUjian CBT tanpa batas\nKoreksi esai AI'}
                   value={planForm.featuresText}
                   onChange={(e) => setPlanForm({ ...planForm, featuresText: e.target.value })}
-                  className="w-full px-3.5 py-2 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  className="w-full px-3.5 py-2 rounded-xl border border-[#ddd9ef] bg-[#faf9fd] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]"
                 />
                 <p className="text-[11px] text-slate-400 mt-1">Tulis satu fitur per baris. Baris kosong akan diabaikan.</p>
               </div>
@@ -1029,14 +1029,14 @@ export default function SuperAdminPricingPage() {
                   type="button"
                   onClick={closeEditPlan}
                   disabled={isSubmittingPlan}
-                  className="min-h-[44px] px-4 py-2.5 rounded-full border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold cursor-pointer flex items-center justify-center disabled:opacity-50"
+                  className="min-h-[44px] px-4 py-2.5 rounded-full border border-slate-200 text-slate-700 hover:bg-[#f1effa] font-bold cursor-pointer flex items-center justify-center disabled:opacity-50"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmittingPlan}
-                  className="min-h-[44px] px-5 py-2.5 rounded-full bg-[#150f23] hover:bg-slate-800 text-white font-bold shadow-card flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
+                  className="min-h-[44px] px-5 py-2.5 rounded-full bg-[#150f23] hover:bg-[#1f1633] text-white font-bold shadow-card flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
                 >
                   {isSubmittingPlan ? 'Menyimpan...' : 'Simpan Perubahan'}
                 </button>
@@ -1062,7 +1062,7 @@ export default function SuperAdminPricingPage() {
               <button
                 type="button"
                 onClick={() => setShowPromoModal(false)}
-                className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-lg hover:bg-slate-100 text-slate-500 hover:text-slate-800 cursor-pointer focus:outline-none focus:ring-2 focus:ring-slate-900/10"
+                className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-lg hover:bg-slate-100 text-slate-500 hover:text-slate-800 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]/40"
                 title="Tutup modal kode promo"
                 aria-label="Tutup modal kode promo"
               >
@@ -1079,7 +1079,7 @@ export default function SuperAdminPricingPage() {
                   placeholder="Contoh: MERDEKA2026"
                   value={promoForm.code}
                   onChange={(e) => setPromoForm({ ...promoForm, code: e.target.value.toUpperCase() })}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 font-mono font-bold uppercase focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 font-mono font-bold uppercase focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]"
                 />
               </div>
 
@@ -1089,7 +1089,7 @@ export default function SuperAdminPricingPage() {
                   <select
                     value={promoForm.discount_type}
                     onChange={(e) => setPromoForm({ ...promoForm, discount_type: e.target.value })}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900 cursor-pointer"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-[#ddd9ef] bg-[#faf9fd] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#6a5fc1] cursor-pointer"
                   >
                     <option value="percentage">Persentase (%)</option>
                     <option value="fixed">Nominal Tetap (Rp)</option>
@@ -1108,7 +1108,7 @@ export default function SuperAdminPricingPage() {
                     onChange={(e) =>
                       setPromoForm({ ...promoForm, discount_value: Number(e.target.value) })
                     }
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 font-mono disabled:opacity-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 font-mono disabled:opacity-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]"
                   />
                 </div>
               </div>
@@ -1123,7 +1123,7 @@ export default function SuperAdminPricingPage() {
                     onChange={(e) =>
                       setPromoForm({ ...promoForm, credit_bonus: Number(e.target.value) })
                     }
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 font-mono focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 font-mono focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]"
                   />
                 </div>
                 <div>
@@ -1133,7 +1133,7 @@ export default function SuperAdminPricingPage() {
                     min="1"
                     value={promoForm.max_uses}
                     onChange={(e) => setPromoForm({ ...promoForm, max_uses: Number(e.target.value) })}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 font-mono focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 font-mono focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]"
                   />
                 </div>
               </div>
@@ -1144,7 +1144,7 @@ export default function SuperAdminPricingPage() {
                   type="date"
                   value={promoForm.valid_until}
                   onChange={(e) => setPromoForm({ ...promoForm, valid_until: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 font-mono focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 font-mono focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]"
                 />
               </div>
 
@@ -1155,7 +1155,7 @@ export default function SuperAdminPricingPage() {
                   placeholder="Catatan kampanye promo..."
                   value={promoForm.description}
                   onChange={(e) => setPromoForm({ ...promoForm, description: e.target.value })}
-                  className="w-full px-3.5 py-2 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  className="w-full px-3.5 py-2 rounded-xl border border-[#ddd9ef] bg-[#faf9fd] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]"
                 />
               </div>
 
@@ -1163,14 +1163,14 @@ export default function SuperAdminPricingPage() {
                 <button
                   type="button"
                   onClick={() => setShowPromoModal(false)}
-                  className="min-h-[44px] px-4 py-2.5 rounded-full border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold cursor-pointer flex items-center justify-center"
+                  className="min-h-[44px] px-4 py-2.5 rounded-full border border-slate-200 text-slate-700 hover:bg-[#f1effa] font-bold cursor-pointer flex items-center justify-center"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmittingPromo}
-                  className="min-h-[44px] px-5 py-2.5 rounded-full bg-[#150f23] hover:bg-slate-800 text-white font-bold shadow-card flex items-center justify-center gap-2 cursor-pointer"
+                  className="min-h-[44px] px-5 py-2.5 rounded-full bg-[#150f23] hover:bg-[#1f1633] text-white font-bold shadow-card flex items-center justify-center gap-2 cursor-pointer"
                 >
                   {isSubmittingPromo ? 'Menyimpan...' : 'Simpan Kode Promo'}
                 </button>

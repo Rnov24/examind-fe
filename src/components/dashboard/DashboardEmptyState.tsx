@@ -26,7 +26,7 @@ export function DashboardEmptyState({
       {icon && (
         <div
           className={cn(
-            'w-12 h-12 bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 mb-3',
+            'w-12 h-12 bg-[#f1effa] border border-[#ddd9ef] flex items-center justify-center text-[#6a5fc1] mb-3',
             tokens.radius.xl,
             tokens.shadow.micro
           )}

@@ -12,7 +12,7 @@ export interface StatCardProps {
   icon: React.ReactNode
   trend?: StatTrend
   subtitle?: string
-  tone?: 'emerald' | 'indigo' | 'violet' | 'amber' | 'rose' | 'lime' | 'neutral'
+  tone?: 'emerald' | 'violet' | 'azure' | 'amber' | 'rose' | 'lime' | 'neutral'
   className?: string
   children?: React.ReactNode
 }
@@ -30,18 +30,21 @@ export function StatCard({
   const iconToneClasses = (() => {
     switch (tone) {
       case 'emerald':
-        return tokens.semantic.emerald.subtle
-      case 'indigo':
+        return tokens.tile.emerald
       case 'violet':
-        return tokens.semantic.violet.subtle
+        return tokens.tile.violet
+      case 'azure':
+        return tokens.tile.azure
       case 'amber':
-        return tokens.semantic.amber.subtle
+        return tokens.tile.amber
       case 'rose':
-        return tokens.semantic.rose.subtle
+        return tokens.tile.rose
       case 'lime':
-        return tokens.semantic.lime.subtle
+        // Lime is reserved for primary CTAs / active nav — a primary
+        // metric tile expresses that role with the midnight tile instead.
+        return tokens.tile.midnight
       default:
-        return tokens.semantic.neutral.subtle
+        return tokens.tile.neutral
     }
   })()
 
@@ -49,17 +52,18 @@ export function StatCard({
     switch (tone) {
       case 'emerald':
         return 'hover:border-emerald-300'
-      case 'indigo':
       case 'violet':
         return 'hover:border-violet-300'
+      case 'azure':
+        return 'hover:border-azure-300'
       case 'amber':
         return 'hover:border-amber-300'
       case 'rose':
         return 'hover:border-rose-300'
       case 'lime':
-        return 'hover:border-lime-400'
+        return 'hover:border-[#362d59]'
       default:
-        return 'hover:border-slate-300'
+        return 'hover:border-[#c9c2ec]'
     }
   })()
 
@@ -84,7 +88,7 @@ export function StatCard({
           </span>
           <div
             className={cn(
-              'w-9 h-9 border flex items-center justify-center shrink-0 transition-colors',
+              'w-10 h-10 border flex items-center justify-center shrink-0 transition-colors',
               tokens.radius.lg,
               tokens.shadow.micro,
               iconToneClasses
@@ -101,7 +105,7 @@ export function StatCard({
       </div>
 
       {/* Bottom: Trend Badge or Subtitle */}
-      <div className="mt-4 pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+      <div className="mt-4 pt-2 border-t border-[#e9e5f6] flex items-center justify-between text-xs">
         {trend && (
           <div
             className={cn(

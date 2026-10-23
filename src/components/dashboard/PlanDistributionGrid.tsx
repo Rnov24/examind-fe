@@ -41,11 +41,11 @@ export function PlanDistributionGrid({
     {
       name: 'Starter',
       count: distribution?.starter ?? 0,
-      containerClass: 'bg-slate-50/90 border-slate-100 hover:bg-slate-100/70',
-      dotClass: tokens.semantic.neutral.dot,
-      countClass: 'text-slate-900',
+      containerClass: 'bg-azure-50/70 border-azure-100 hover:bg-azure-50',
+      dotClass: 'bg-azure-500',
+      countClass: 'text-azure-950',
       tagText: 'Dasar CBT',
-      tagClass: 'text-slate-700 bg-slate-100 font-semibold',
+      tagClass: 'text-azure-800 bg-azure-100/90 font-bold',
     },
   ]
 

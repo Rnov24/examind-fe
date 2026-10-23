@@ -20,6 +20,7 @@ interface DashboardShellProps {
   greetingName?: string
   greetingSubtitle?: string
   greetingAction?: React.ReactNode
+  greetingVariant?: 'plain' | 'band'
   showGreeting?: boolean
   className?: string
   children: React.ReactNode
@@ -32,6 +33,7 @@ export function DashboardShell({
   greetingName,
   greetingSubtitle,
   greetingAction,
+  greetingVariant = 'plain',
   showGreeting = true,
   className = '',
   children,
@@ -55,7 +57,7 @@ export function DashboardShell({
               aria-label="Alihkan Sidebar Navigasi"
               aria-expanded={sidebarOpen}
               className={cn(
-                'md:hidden min-w-[44px] min-h-[44px] flex items-center justify-center p-2.5 bg-white text-slate-600 hover:text-slate-900 transition-colors cursor-pointer',
+                'md:hidden min-w-[44px] min-h-[44px] flex items-center justify-center p-2.5 bg-white text-slate-600 hover:text-[#150f23] transition-colors cursor-pointer',
                 tokens.radius.full,
                 tokens.border.default,
                 tokens.shadow.subtle
@@ -68,14 +70,14 @@ export function DashboardShell({
             <Link
               href="/dashboard"
               className={cn(
-                'bg-white px-3.5 py-1.5 flex items-center gap-2 hover:border-slate-300 transition-all group',
+                'bg-white px-3.5 py-1.5 flex items-center gap-2 hover:border-[#c9c2ec] transition-all group',
                 tokens.radius.full,
                 tokens.border.default,
                 tokens.shadow.subtle
               )}
             >
               <ExamindLogo variant="lockup" theme="color" className="h-5 sm:h-6 w-auto shrink-0" priority />
-              <span className={cn('text-[10px] font-bold px-1.5 py-0.2 font-mono tracking-wider shrink-0', tokens.radius.xs, tokens.semantic.lime.badge)}>
+              <span className={cn('text-[10px] font-bold px-1.5 py-0.2 font-mono tracking-wider shrink-0', tokens.radius.xs, tokens.semantic.violet.badge)}>
                 CBT
               </span>
             </Link>
@@ -111,6 +113,7 @@ export function DashboardShell({
           name={displayName}
           subtitle={greetingSubtitle}
           action={greetingAction}
+          variant={greetingVariant}
         />
       )}
 

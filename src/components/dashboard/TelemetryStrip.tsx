@@ -161,7 +161,7 @@ export function TelemetryStrip({
           <span className="text-slate-500 font-sans">Latensi DB:</span>
           <span
             className={cn(
-              'font-bold px-2 py-0.5 bg-slate-100 text-slate-800 border border-slate-200',
+              'font-bold px-2 py-0.5 bg-[#f1effa] text-[#1f1633] border border-[#ddd9ef]',
               tokens.radius.sm,
               tokens.shadow.micro
             )}
@@ -178,7 +178,7 @@ export function TelemetryStrip({
         title="Perbarui telemetri platform"
         aria-label="Perbarui data"
         className={cn(
-          'text-xs font-mono font-medium text-slate-500 hover:text-slate-900 px-3 py-1.5 border border-slate-200 hover:bg-slate-50 transition-colors flex items-center gap-1.5 cursor-pointer self-start sm:self-auto disabled:opacity-50',
+          'text-xs font-mono font-medium text-slate-500 hover:text-[#150f23] px-3 py-1.5 border border-[#ddd9ef] hover:bg-[#f1effa] transition-colors flex items-center gap-1.5 cursor-pointer self-start sm:self-auto disabled:opacity-50',
           tokens.radius.full
         )}
       >

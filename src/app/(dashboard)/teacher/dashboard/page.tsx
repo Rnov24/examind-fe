@@ -139,23 +139,23 @@ export default function TeacherDashboardPage() {
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto font-sans">
-      {/* Institutional Light Header with Ambient Glow */}
-      <div className="bg-gradient-to-r from-white via-white to-indigo-50/40 rounded-2xl border border-slate-200/90 p-5 sm:p-6 shadow-card relative overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-5">
-        <div className="absolute -right-16 -top-16 w-64 h-64 bg-indigo-100/40 rounded-full blur-3xl pointer-events-none"></div>
+      {/* Midnight-Violet Header Band */}
+      <div className="bg-[#150f23] bg-grid-dots-dark rounded-2xl border border-[#362d59] p-5 sm:p-6 shadow-midnight-elevated relative overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+        <div className="absolute -right-16 -top-16 w-64 h-64 bg-[#6a5fc1]/20 rounded-full blur-3xl pointer-events-none"></div>
 
         <div className="space-y-1.5 relative z-10 min-w-0 max-w-xl">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-[10px] font-black uppercase tracking-wider text-slate-950 bg-[#c2ef4e] px-2.5 py-0.5 rounded-md font-mono shadow-2xs">
+            <span className="text-[10px] font-black uppercase tracking-wider text-white bg-white/10 border border-white/15 px-2.5 py-0.5 rounded-md font-mono shadow-2xs">
               Portal Guru & Pengawas
             </span>
-            <span className="text-xs text-slate-500 font-mono truncate">
+            <span className="text-xs text-[#bdb8c0] font-mono truncate">
               NIP / Identitas: {user?.identifier || '-'}
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-display font-extrabold tracking-tight text-slate-900 truncate">
+          <h1 className="text-2xl sm:text-3xl font-display font-extrabold tracking-tight text-white truncate">
             Selamat Datang, {user?.full_name || 'Bapak/Ibu Guru'}
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
+          <p className="text-xs sm:text-sm text-[#bdb8c0] leading-relaxed">
             Pusat pemantauan ujian kelas real-time, validasi rubrik esai AI, dan penyusunan master bank butir soal.
           </p>
         </div>
@@ -164,16 +164,16 @@ export default function TeacherDashboardPage() {
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 shrink-0 relative z-10 w-full sm:w-auto">
           <Link
             href="/questions"
-            className="px-4 py-2.5 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs rounded-xl border border-slate-200 hover:border-slate-300 transition-colors shadow-xs flex items-center justify-center gap-2 cursor-pointer w-full sm:w-auto focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+            className="px-4 py-2.5 bg-white/10 hover:bg-white/15 text-white font-bold text-xs rounded-xl border border-white/15 transition-colors shadow-xs flex items-center justify-center gap-2 cursor-pointer w-full sm:w-auto focus:ring-2 focus:ring-[#6a5fc1] focus:outline-none"
           >
-            <BookOpen className="w-4 h-4 text-slate-600" aria-hidden="true" />
+            <BookOpen className="w-4 h-4 text-white" aria-hidden="true" />
             <span>Master Bank Soal</span>
           </Link>
           <Link
             href="/exams/create"
-            className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl transition-all shadow-card hover:shadow-card-hover flex items-center justify-center gap-2 cursor-pointer w-full sm:w-auto focus:ring-2 focus:ring-slate-900/10 focus:outline-none font-display tracking-wide"
+            className="px-5 py-2.5 bg-white hover:bg-[#f1effa] text-[#150f23] font-bold text-xs rounded-xl transition-all shadow-card hover:shadow-card-hover flex items-center justify-center gap-2 cursor-pointer w-full sm:w-auto focus:ring-2 focus:ring-[#6a5fc1] focus:outline-none font-display tracking-wide"
           >
-            <Plus className="w-4 h-4 text-[#c2ef4e]" aria-hidden="true" />
+            <Plus className="w-4 h-4 text-[#150f23]" aria-hidden="true" />
             <span>Buat Paket Ujian</span>
           </Link>
         </div>
@@ -181,8 +181,8 @@ export default function TeacherDashboardPage() {
 
       {/* Loading Skeleton */}
       {isLoading && (
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-12 text-center shadow-card space-y-3">
-          <Loader2 className="w-8 h-8 text-indigo-600 animate-spin mx-auto" aria-hidden="true" />
+        <div className="bg-white rounded-2xl border border-[#ddd9ef] p-12 text-center shadow-card space-y-3">
+          <Loader2 className="w-8 h-8 text-violet-600 animate-spin mx-auto" aria-hidden="true" />
           <h3 className="font-bold text-slate-900 text-sm">Memuat ringkasan aktivitas pengawas...</h3>
           <p className="text-xs text-slate-500 max-w-sm mx-auto">
             Menghubungkan data jadwal ujian, rombel siswa, dan status koreksi esai Anda.
@@ -203,7 +203,7 @@ export default function TeacherDashboardPage() {
           <button
             type="button"
             onClick={loadData}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition-colors cursor-pointer focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-xs transition-colors cursor-pointer focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
           >
             <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" />
             <span>Coba Lagi</span>
@@ -214,8 +214,8 @@ export default function TeacherDashboardPage() {
       {!isLoading && !errorMessage && (
         <>
           {/* PRIMARY FOCUS: "Perlu Perhatian & Tindakan Anda" Section */}
-          <div className="bg-white rounded-2xl border border-slate-200/90 shadow-card p-5 sm:p-6 space-y-4">
-            <div className="flex items-center justify-between gap-3 border-b border-slate-100 pb-3">
+          <div className="bg-white rounded-2xl border border-[#ddd9ef] shadow-card p-5 sm:p-6 space-y-4">
+            <div className="flex items-center justify-between gap-3 border-b border-[#e9e5f6] pb-3">
               <div className="flex items-center gap-2.5">
                 <div
                   className={`w-8 h-8 rounded-xl flex items-center justify-center font-bold text-xs shrink-0 ${
@@ -293,10 +293,10 @@ export default function TeacherDashboardPage() {
                 {completedExams.map((exam) => (
                   <div
                     key={`comp-${exam.id}`}
-                    className="p-4 rounded-xl border border-indigo-200 bg-indigo-50/30 flex items-center justify-between gap-3 hover:bg-indigo-50/60 transition-colors"
+                    className="p-4 rounded-xl border border-violet-200 bg-violet-50/30 flex items-center justify-between gap-3 hover:bg-violet-50/60 transition-colors"
                   >
                     <div className="min-w-0 space-y-1">
-                      <span className="text-[10px] font-bold uppercase font-mono text-indigo-700 tracking-wider">
+                      <span className="text-[10px] font-bold uppercase font-mono text-violet-700 tracking-wider">
                         Selesai • Siap Dinilai
                       </span>
                       <h3 className="font-display text-sm font-bold text-slate-900 truncate">
@@ -309,7 +309,7 @@ export default function TeacherDashboardPage() {
 
                     <Link
                       href={`/grading/${exam.id}`}
-                      className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition-colors shrink-0 flex items-center gap-1.5 focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+                      className="px-3.5 py-2 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-xs transition-colors shrink-0 flex items-center gap-1.5 focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
                     >
                       <span>Koreksi Esai</span>
                       <ChevronRight className="w-3.5 h-3.5 text-[#c2ef4e]" aria-hidden="true" />
@@ -318,7 +318,7 @@ export default function TeacherDashboardPage() {
                 ))}
               </div>
             ) : (
-              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 text-xs text-slate-600 flex items-center gap-3">
+              <div className="p-4 rounded-xl bg-[#faf9fd] border border-[#ddd9ef] text-xs text-slate-600 flex items-center gap-3">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" aria-hidden="true" />
                 <span>
                   Tidak ada sesi ujian aktif yang membutuhkan pengawasan langsung atau koreksi esai mendesak saat ini.
@@ -331,9 +331,9 @@ export default function TeacherDashboardPage() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <Link
               href="/questions"
-              className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-card hover:shadow-card-hover transition-all flex items-center gap-4 group"
+              className="bg-white p-5 rounded-2xl border border-[#ddd9ef] shadow-card hover:shadow-card-hover transition-all flex items-center gap-4 group"
             >
-              <div className="w-12 h-12 rounded-xl bg-slate-100 group-hover:bg-indigo-50 text-slate-700 group-hover:text-indigo-600 border border-slate-200/80 flex items-center justify-center font-bold shrink-0 transition-colors">
+              <div className="w-12 h-12 rounded-xl bg-[#f1effa] group-hover:bg-violet-100 text-[#6a5fc1] group-hover:text-violet-700 border border-[#ddd9ef] flex items-center justify-center font-bold shrink-0 transition-colors">
                 <BookOpen className="w-5 h-5" aria-hidden="true" />
               </div>
               <div className="min-w-0">
@@ -343,18 +343,18 @@ export default function TeacherDashboardPage() {
                 <span className="text-2xl font-black text-slate-900 font-display tabular-nums truncate block">
                   {banksCount} Paket
                 </span>
-                <span className="text-[11px] text-slate-500 flex items-center gap-1 group-hover:text-indigo-600 transition-colors">
+                <span className="text-[11px] text-slate-500 flex items-center gap-1 group-hover:text-violet-600 transition-colors">
                   <span>Kelola butir soal</span>
-                  <ArrowRight className="w-3 h-3 text-slate-400 group-hover:text-indigo-600 transition-colors" aria-hidden="true" />
+                  <ArrowRight className="w-3 h-3 text-slate-400 group-hover:text-violet-600 transition-colors" aria-hidden="true" />
                 </span>
               </div>
             </Link>
 
             <Link
               href="/exams"
-              className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-card hover:shadow-card-hover transition-all flex items-center gap-4 group"
+              className="bg-white p-5 rounded-2xl border border-[#ddd9ef] shadow-card hover:shadow-card-hover transition-all flex items-center gap-4 group"
             >
-              <div className="w-12 h-12 rounded-xl bg-slate-100 group-hover:bg-indigo-50 text-slate-700 group-hover:text-indigo-600 border border-slate-200/80 flex items-center justify-center font-bold shrink-0 transition-colors">
+              <div className="w-12 h-12 rounded-xl bg-azure-50 group-hover:bg-azure-100 text-azure-700 group-hover:text-azure-800 border border-azure-200/80 flex items-center justify-center font-bold shrink-0 transition-colors">
                 <FileSpreadsheet className="w-5 h-5" aria-hidden="true" />
               </div>
               <div className="min-w-0">
@@ -364,18 +364,18 @@ export default function TeacherDashboardPage() {
                 <span className="text-2xl font-black text-slate-900 font-display tabular-nums truncate block">
                   {examsCount} Jadwal
                 </span>
-                <span className="text-[11px] text-slate-500 flex items-center gap-1 group-hover:text-indigo-600 transition-colors">
+                <span className="text-[11px] text-slate-500 flex items-center gap-1 group-hover:text-violet-600 transition-colors">
                   <span>Lihat seluruh jadwal</span>
-                  <ArrowRight className="w-3 h-3 text-slate-400 group-hover:text-indigo-600 transition-colors" aria-hidden="true" />
+                  <ArrowRight className="w-3 h-3 text-slate-400 group-hover:text-violet-600 transition-colors" aria-hidden="true" />
                 </span>
               </div>
             </Link>
 
             <Link
               href="/classes"
-              className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-card hover:shadow-card-hover transition-all flex items-center gap-4 group"
+              className="bg-white p-5 rounded-2xl border border-[#ddd9ef] shadow-card hover:shadow-card-hover transition-all flex items-center gap-4 group"
             >
-              <div className="w-12 h-12 rounded-xl bg-slate-100 group-hover:bg-indigo-50 text-slate-700 group-hover:text-indigo-600 border border-slate-200/80 flex items-center justify-center font-bold shrink-0 transition-colors">
+              <div className="w-12 h-12 rounded-xl bg-emerald-50 group-hover:bg-emerald-100 text-emerald-700 group-hover:text-emerald-800 border border-emerald-200/80 flex items-center justify-center font-bold shrink-0 transition-colors">
                 <Users className="w-5 h-5" aria-hidden="true" />
               </div>
               <div className="min-w-0">
@@ -385,16 +385,16 @@ export default function TeacherDashboardPage() {
                 <span className="text-2xl font-black text-slate-900 font-display tabular-nums truncate block">
                   {classesCount} Kelas
                 </span>
-                <span className="text-[11px] text-slate-500 flex items-center gap-1 group-hover:text-indigo-600 transition-colors">
+                <span className="text-[11px] text-slate-500 flex items-center gap-1 group-hover:text-violet-600 transition-colors">
                   <span>Daftar rombel akademik</span>
-                  <ArrowRight className="w-3 h-3 text-slate-400 group-hover:text-indigo-600 transition-colors" aria-hidden="true" />
+                  <ArrowRight className="w-3 h-3 text-slate-400 group-hover:text-violet-600 transition-colors" aria-hidden="true" />
                 </span>
               </div>
             </Link>
           </div>
 
           {/* Recent Scheduled Exams Table Container */}
-          <div className="bg-white rounded-2xl border border-slate-200/90 shadow-card overflow-hidden">
+          <div className="bg-white rounded-2xl border border-[#ddd9ef] shadow-card overflow-hidden">
             <div className="p-4 sm:p-5 sm:px-6 border-b border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div>
                 <h2 className="text-base font-display font-bold text-slate-900">
@@ -407,7 +407,7 @@ export default function TeacherDashboardPage() {
 
               {/* Status Tab Filter */}
               <div className="flex items-center gap-2 flex-wrap">
-                <div className="flex items-center p-1 bg-slate-100 rounded-xl text-xs font-semibold">
+                <div className="flex items-center p-1 bg-[#f1effa] rounded-xl text-xs font-semibold">
                   <button
                     type="button"
                     onClick={() => setExamStatusFilter('all')}
@@ -435,7 +435,7 @@ export default function TeacherDashboardPage() {
                     onClick={() => setExamStatusFilter('completed')}
                     className={`px-3 py-1 rounded-lg transition-colors cursor-pointer ${
                       examStatusFilter === 'completed'
-                        ? 'bg-white text-indigo-800 shadow-2xs font-bold'
+                        ? 'bg-white text-violet-800 shadow-2xs font-bold'
                         : 'text-slate-600 hover:text-slate-900'
                     }`}
                   >
@@ -445,7 +445,7 @@ export default function TeacherDashboardPage() {
 
                 <Link
                   href="/exams"
-                  className="text-xs font-bold text-slate-900 hover:text-indigo-600 flex items-center gap-1 font-mono transition-colors shrink-0 rounded-lg px-2 py-1"
+                  className="text-xs font-bold text-slate-900 hover:text-violet-600 flex items-center gap-1 font-mono transition-colors shrink-0 rounded-lg px-2 py-1"
                 >
                   <span>Semua ({recentExams.length})</span>
                   <ChevronRight className="w-3.5 h-3.5 text-slate-500" aria-hidden="true" />
@@ -518,7 +518,7 @@ export default function TeacherDashboardPage() {
                         </Link>
                         <Link
                           href={`/grading/${exam.id}`}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-[11px] transition-colors cursor-pointer shadow-2xs focus-visible:ring-2 focus-visible:ring-[#6a5fc1] focus-visible:outline-none"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-[#f1effa] text-slate-700 font-bold text-[11px] transition-colors cursor-pointer shadow-2xs focus-visible:ring-2 focus-visible:ring-[#6a5fc1] focus-visible:outline-none"
                         >
                           <span>Koreksi Esai</span>
                         </Link>

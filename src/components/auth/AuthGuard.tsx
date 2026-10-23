@@ -47,7 +47,7 @@ export default function AuthGuard({ children, allowedRoles }: AuthGuardProps) {
         <div className="flex flex-col items-center gap-3">
           <ExamindLogo variant="symbol" theme="color" className="h-10 w-auto" priority />
           <div className="flex items-center gap-2 text-xs font-medium text-slate-500">
-            <span className="w-2 h-2 rounded-full bg-indigo-600 animate-ping"></span>
+            <span className="w-2 h-2 rounded-full bg-violet-600 animate-ping"></span>
             Memverifikasi sesi...
           </div>
         </div>

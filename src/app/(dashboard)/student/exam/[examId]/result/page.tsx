@@ -120,7 +120,7 @@ export default function ExamResultPage() {
         <div className="flex items-center gap-2">
           <button
             onClick={handlePrint}
-            className="px-4 py-2 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-xs flex items-center gap-2 transition-colors cursor-pointer"
+            className="px-4 py-2 rounded-lg border border-slate-300 bg-white hover:bg-[#f1effa] text-slate-700 font-bold text-xs shadow-xs flex items-center gap-2 transition-colors cursor-pointer"
           >
             <Printer className="w-4 h-4 text-slate-700" />
             <span>Cetak Lembar Nilai</span>
@@ -129,7 +129,7 @@ export default function ExamResultPage() {
           <button
             onClick={downloadPdf}
             disabled={isDownloadingPdf}
-            className="px-4 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs flex items-center gap-2 transition-colors cursor-pointer disabled:opacity-50"
+            className="px-4 py-2 rounded-lg bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-xs flex items-center gap-2 transition-colors cursor-pointer disabled:opacity-50"
           >
             <FileText className="w-4 h-4 text-rose-400" />
             <span>{isDownloadingPdf ? 'Mengunduh...' : 'Unduh PDF Transkrip'}</span>
@@ -313,7 +313,7 @@ export default function ExamResultPage() {
                   <span
                     className={`px-2.5 py-0.5 rounded-full text-xs font-bold uppercase font-mono ${
                       ans.question_type === 'multiple_choice'
-                        ? 'bg-indigo-50 text-indigo-700 border border-indigo-200'
+                        ? 'bg-violet-50 text-violet-700 border border-violet-200'
                         : 'bg-slate-100 text-slate-700 border border-slate-200'
                     }`}
                     >
@@ -360,9 +360,9 @@ export default function ExamResultPage() {
 
                   {/* Formative AI Explanation */}
                   {ans.ai_explanation && (
-                    <div className="p-4 rounded-xl bg-indigo-50/70 border border-indigo-200 text-xs space-y-1">
-                      <span className="font-bold text-indigo-900 flex items-center gap-1.5 font-mono">
-                        <Lightbulb className="w-3.5 h-3.5 text-indigo-700" />
+                    <div className="p-4 rounded-xl bg-violet-50/70 border border-violet-200 text-xs space-y-1">
+                      <span className="font-bold text-violet-900 flex items-center gap-1.5 font-mono">
+                        <Lightbulb className="w-3.5 h-3.5 text-violet-700" />
                         Penjelasan Konsep Pedagogis:
                       </span>
                       <p className="text-slate-800 leading-relaxed">{ans.ai_explanation}</p>
@@ -390,13 +390,13 @@ export default function ExamResultPage() {
 
                     if (parsed && parsed.evaluations && parsed.evaluations.length > 0) {
                       return (
-                        <div className="p-4 rounded-xl bg-indigo-50/70 border border-indigo-200 text-xs space-y-2.5">
+                        <div className="p-4 rounded-xl bg-violet-50/70 border border-violet-200 text-xs space-y-2.5">
                           <div className="flex items-center justify-between">
-                            <span className="font-bold text-indigo-900 flex items-center gap-1.5 font-mono">
-                              <Sparkles className="w-3.5 h-3.5 text-indigo-700" />
+                            <span className="font-bold text-violet-900 flex items-center gap-1.5 font-mono">
+                              <Sparkles className="w-3.5 h-3.5 text-violet-700" />
                               Penilaian Kriteria Semantik (Respan Decision Engine):
                             </span>
-                            <span className="text-[10px] font-mono text-indigo-600 font-semibold">
+                            <span className="text-[10px] font-mono text-violet-600 font-semibold">
                               Akurasi Probabilitas Terkalibrasi
                             </span>
                           </div>
@@ -428,7 +428,7 @@ export default function ExamResultPage() {
                           </div>
 
                           {ans.ai_explanation && (
-                            <p className="text-slate-800 leading-relaxed pt-1 border-t border-indigo-200/60 text-xs">
+                            <p className="text-slate-800 leading-relaxed pt-1 border-t border-violet-200/60 text-xs">
                               <strong className="text-slate-900 font-semibold">Catatan Formatif:</strong>{' '}
                               {ans.ai_explanation}
                             </p>
@@ -439,9 +439,9 @@ export default function ExamResultPage() {
 
                     if (ans.ai_explanation || ans.ai_grading_rationale) {
                       return (
-                        <div className="p-4 rounded-xl bg-indigo-50/70 border border-indigo-200 text-xs space-y-1">
-                          <span className="font-bold text-indigo-900 flex items-center gap-1.5 font-mono">
-                            <Sparkles className="w-3.5 h-3.5 text-indigo-700" />
+                        <div className="p-4 rounded-xl bg-violet-50/70 border border-violet-200 text-xs space-y-1">
+                          <span className="font-bold text-violet-900 flex items-center gap-1.5 font-mono">
+                            <Sparkles className="w-3.5 h-3.5 text-violet-700" />
                             Evaluasi & Pembahasan Esai:
                           </span>
                           <p className="text-slate-800 leading-relaxed">

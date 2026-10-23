@@ -434,9 +434,9 @@ export default function LandingPage() {
     <div className="min-h-screen overflow-x-clip bg-white text-slate-900 font-sans antialiased selection:bg-[#6a5fc1] selection:text-white">
       {/* Ambient Background Depth & Subtle Radial Bleed */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0 opacity-40">
-        <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[1100px] h-[550px] bg-gradient-to-b from-indigo-100/60 via-purple-50/40 to-transparent blur-3xl"></div>
-        <div className="absolute top-[900px] -left-48 w-[500px] h-[500px] bg-blue-100/30 blur-3xl rounded-full"></div>
-        <div className="absolute top-[1800px] -right-48 w-[600px] h-[600px] bg-indigo-100/30 blur-3xl rounded-full"></div>
+        <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[1100px] h-[550px] bg-gradient-to-b from-violet-100/60 via-violet-50/40 to-transparent blur-3xl"></div>
+        <div className="absolute top-[900px] -left-48 w-[500px] h-[500px] bg-violet-100/40 blur-3xl rounded-full"></div>
+        <div className="absolute top-[1800px] -right-48 w-[600px] h-[600px] bg-violet-100/30 blur-3xl rounded-full"></div>
       </div>
 
       <MarketingNavbar />
@@ -577,7 +577,7 @@ export default function LandingPage() {
                     {[38, 52, 44, 66, 58, 80, 72, 92, 84, 64, 74, 96, 86, 100].map((h, i) => (
                       <span
                         key={i}
-                        className={`flex-1 rounded-t-sm ${i === 13 ? 'bg-[#c2ef4e]' : i % 3 === 0 ? 'bg-[#6a5fc1]' : 'bg-indigo-200'}`}
+                        className={`flex-1 rounded-t-sm ${i === 13 ? 'bg-[#c2ef4e]' : i % 3 === 0 ? 'bg-[#6a5fc1]' : 'bg-violet-200'}`}
                         style={{ height: `${h}%` }}
                       />
                     ))}
@@ -679,7 +679,7 @@ export default function LandingPage() {
               style={{ '--reveal-delay': '0ms' } as React.CSSProperties}
               className="mkt-hover-lift hover:shadow-md md:col-span-2 rounded-xl border border-slate-200 bg-white p-5 sm:p-6 shadow-xs hover:border-slate-300"
             >
-              <span className="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-600 border border-indigo-100 flex items-center justify-center">
+              <span className="w-10 h-10 rounded-lg bg-violet-50 text-violet-600 border border-violet-100 flex items-center justify-center">
                 <Laptop className="w-5 h-5" />
               </span>
               <h3 className="mt-4 font-bold text-slate-900">Ujian CBT Online</h3>
@@ -727,7 +727,7 @@ export default function LandingPage() {
               style={{ '--reveal-delay': '200ms' } as React.CSSProperties}
               className="mkt-hover-lift hover:shadow-md rounded-xl border border-slate-200 bg-white p-5 sm:p-6 shadow-xs hover:border-slate-300"
             >
-              <span className="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-600 border border-indigo-100 flex items-center justify-center">
+              <span className="w-10 h-10 rounded-lg bg-violet-50 text-violet-600 border border-violet-100 flex items-center justify-center">
                 <MessageSquare className="w-5 h-5" />
               </span>
               <h3 className="mt-4 font-bold text-slate-900">Chatbot Paham Data Sekolah</h3>
@@ -777,10 +777,10 @@ export default function LandingPage() {
                   <span className="w-3.5 h-3.5 rounded-full bg-emerald-500 ring-4 ring-white shrink-0" />
                 </div>
                 <div className="flex items-center pl-6">
-                  <span className="w-3.5 h-3.5 rounded-full bg-indigo-600 ring-4 ring-white shrink-0" />
+                  <span className="w-3.5 h-3.5 rounded-full bg-violet-600 ring-4 ring-white shrink-0" />
                 </div>
                 <div className="flex items-center pl-6">
-                  <span className="w-3.5 h-3.5 rounded-full bg-purple-600 ring-4 ring-white shrink-0" />
+                  <span className="w-3.5 h-3.5 rounded-full bg-violet-600 ring-4 ring-white shrink-0" />
                 </div>
               </div>
             </div>
@@ -866,12 +866,12 @@ export default function LandingPage() {
               >
                 {/* Mobile Node Dot */}
                 <div className="md:hidden absolute -left-3.5 top-7 -translate-x-1/2 flex items-center justify-center">
-                  <span className="w-3.5 h-3.5 rounded-full bg-indigo-600 ring-4 ring-white shrink-0" />
+                  <span className="w-3.5 h-3.5 rounded-full bg-violet-600 ring-4 ring-white shrink-0" />
                 </div>
 
                 <div className="space-y-4">
                   <div className="space-y-1">
-                    <div className="flex items-center gap-1.5 text-xs font-mono font-bold tracking-wider text-indigo-600 uppercase">
+                    <div className="flex items-center gap-1.5 text-xs font-mono font-bold tracking-wider text-violet-600 uppercase">
                       <BookOpen className="w-3.5 h-3.5" />
                       <span>PENDIDIK</span>
                     </div>
@@ -921,12 +921,12 @@ export default function LandingPage() {
               >
                 {/* Mobile Node Dot */}
                 <div className="md:hidden absolute -left-3.5 top-7 -translate-x-1/2 flex items-center justify-center">
-                  <span className="w-3.5 h-3.5 rounded-full bg-purple-600 ring-4 ring-white shrink-0" />
+                  <span className="w-3.5 h-3.5 rounded-full bg-violet-600 ring-4 ring-white shrink-0" />
                 </div>
 
                 <div className="space-y-4">
                   <div className="space-y-1">
-                    <div className="flex items-center gap-1.5 text-xs font-mono font-bold tracking-wider text-purple-600 uppercase">
+                    <div className="flex items-center gap-1.5 text-xs font-mono font-bold tracking-wider text-violet-600 uppercase">
                       <Building2 className="w-3.5 h-3.5" />
                       <span>INSTITUSI</span>
                     </div>
@@ -1071,7 +1071,7 @@ export default function LandingPage() {
                     <Smartphone className="w-3.5 h-3.5" />
                     KAMERA HP
                   </span>
-                  <span className="flex items-center gap-1.5 text-[11px] font-bold text-indigo-300">
+                  <span className="flex items-center gap-1.5 text-[11px] font-bold text-violet-300">
                     <QrCode className="w-3.5 h-3.5" />
                     QR TERHUBUNG
                   </span>
@@ -1313,8 +1313,8 @@ export default function LandingPage() {
                           onClick={() => openInquiryModal(plan.name)}
                           className={
                             plan.is_popular
-                              ? 'mkt-btn-press block w-full py-3.5 px-4 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm text-center shadow-md cursor-pointer'
-                              : 'mkt-btn-press block w-full py-3.5 px-4 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm text-center shadow-sm cursor-pointer'
+                              ? 'mkt-btn-press block w-full py-3.5 px-4 rounded-lg bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-sm text-center shadow-md cursor-pointer'
+                              : 'mkt-btn-press block w-full py-3.5 px-4 rounded-lg bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-sm text-center shadow-sm cursor-pointer'
                           }
                         >
                           Pesan Paket Ini
@@ -1415,7 +1415,7 @@ export default function LandingPage() {
                 <button
                   onClick={() => toggleFaq(idx)}
                   aria-expanded={activeFaq === idx}
-                  className="w-full py-2 text-left font-bold text-base sm:text-lg text-slate-900 flex items-center justify-between gap-4 hover:text-indigo-600 transition-colors cursor-pointer"
+                  className="w-full py-2 text-left font-bold text-base sm:text-lg text-slate-900 flex items-center justify-between gap-4 hover:text-violet-600 transition-colors cursor-pointer"
                 >
                   <span className="leading-snug">{item.q}</span>
                   <span className="w-7 h-7 rounded-md bg-white border border-slate-200 text-slate-600 flex items-center justify-center font-mono text-base shrink-0 shadow-xs">

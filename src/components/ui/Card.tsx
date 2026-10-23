@@ -15,9 +15,9 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 
 const variantStyles: Record<CardVariant, string> = {
   default: cn(tokens.surface.card, tokens.border.default, tokens.shadow.subtle, 'text-slate-900'),
-  subtle: cn(tokens.surface.subtle, 'border border-slate-200/70 text-slate-900'),
+  subtle: cn(tokens.surface.subtle, 'border border-[#ddd9ef] text-slate-900'),
   midnight: cn(tokens.surface.midnight, tokens.border.midnight, tokens.shadow.midnight, 'text-white'),
-  paper: cn(tokens.surface.card, 'border border-slate-200', tokens.shadow.card, 'text-slate-900'),
+  paper: cn(tokens.surface.card, 'border border-[#ddd9ef]', tokens.shadow.card, 'text-slate-900'),
   elevated: cn(tokens.surface.card, tokens.border.default, tokens.shadow.elevated, 'text-slate-900'),
 }
 
@@ -56,7 +56,7 @@ export function Card({
         accentBarStyles[accent],
         paddingStyles[padding],
         interactive &&
-          'hover:border-slate-300 hover:shadow-card hover:-translate-y-0.5 active:translate-y-0 cursor-pointer',
+          'hover:border-[#c9c2ec] hover:shadow-card hover:-translate-y-0.5 active:translate-y-0 cursor-pointer',
         className
       )}
       {...props}
@@ -86,7 +86,7 @@ export function CardHeader({
     <div
       className={cn(
         'p-5 sm:p-6 pb-4 flex items-start justify-between gap-4',
-        !borderless && 'border-b border-slate-100',
+        !borderless && 'border-b border-[#e9e5f6]',
         className
       )}
       {...props}
@@ -171,8 +171,8 @@ export function CardFooter({
   return (
     <div
       className={cn(
-        'p-5 sm:p-6 pt-4 flex items-center justify-between gap-3 bg-slate-50/40',
-        !borderless && 'border-t border-slate-100',
+        'p-5 sm:p-6 pt-4 flex items-center justify-between gap-3 bg-[#faf9fd]',
+        !borderless && 'border-t border-[#e9e5f6]',
         className
       )}
       {...props}
@@ -221,7 +221,7 @@ export function StatCard({
       {...props}
     >
       {icon && (
-        <div className={cn('w-11 h-11 bg-slate-50 text-slate-700 flex items-center justify-center font-bold shrink-0', tokens.radius.lg, tokens.border.default, tokens.shadow.micro)}>
+        <div className={cn('w-11 h-11 bg-[#f1effa] text-[#6a5fc1] border border-[#ddd9ef] flex items-center justify-center font-bold shrink-0', tokens.radius.lg, tokens.shadow.micro)}>
           {icon}
         </div>
       )}

@@ -141,7 +141,7 @@ export function TopRightCluster({ className = '' }: TopRightClusterProps) {
   }
 
   const circularButtonClass = cn(
-    'w-10 h-10 bg-white flex items-center justify-center text-slate-500 hover:text-slate-900 hover:border-slate-300 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#150f23]',
+    'w-10 h-10 bg-white flex items-center justify-center text-slate-500 hover:text-slate-900 hover:border-[#c9c2ec] transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]',
     tokens.radius.full,
     tokens.border.default,
     tokens.shadow.subtle
@@ -169,7 +169,7 @@ export function TopRightCluster({ className = '' }: TopRightClusterProps) {
           >
             <div
               className={cn(
-                'bg-white border border-slate-200 w-full max-w-lg p-4 space-y-3',
+                'bg-white border border-[#ddd9ef] w-full max-w-lg p-4 space-y-3',
                 tokens.radius.xl,
                 tokens.shadow.modal
               )}
@@ -194,7 +194,7 @@ export function TopRightCluster({ className = '' }: TopRightClusterProps) {
               </div>
               <div className="text-[11px] text-slate-500 px-2 py-1 flex items-center justify-between">
                 <span>Pencarian Cepat Navigasi Platform</span>
-                <span className={cn('font-mono text-[10px] bg-slate-100 px-1.5 py-0.5 text-slate-600', tokens.radius.xs)}>
+                <span className={cn('font-mono text-[10px] bg-[#f1effa] px-1.5 py-0.5 text-slate-600', tokens.radius.xs)}>
                   ESC untuk keluar
                 </span>
               </div>
@@ -231,12 +231,12 @@ export function TopRightCluster({ className = '' }: TopRightClusterProps) {
 
         {notificationOpen && (
           <div className={cn('absolute right-0 mt-2 w-72 sm:w-80 bg-white p-3 z-50 space-y-2', tokens.radius.xl, tokens.border.default, tokens.shadow.modal)}>
-            <div className="flex items-center justify-between pb-2 border-b border-slate-100 px-1">
+            <div className="flex items-center justify-between pb-2 border-b border-[#e9e5f6] px-1">
               <span className="font-display font-bold text-xs text-slate-900">
                 Pemberitahuan Sistem
               </span>
               {notifications.length > 0 && (
-                <span className={cn('text-[10px] font-mono text-[#150f23] font-bold bg-slate-100 px-1.5 py-0.5', tokens.radius.xs)}>
+                <span className={cn('text-[10px] font-mono text-[#150f23] font-bold bg-[#f1effa] px-1.5 py-0.5', tokens.radius.xs)}>
                   {notifications.length} Baru
                 </span>
               )}
@@ -299,7 +299,7 @@ export function TopRightCluster({ className = '' }: TopRightClusterProps) {
           aria-expanded={profileOpen}
           aria-label="Menu Profil Pengguna"
           className={cn(
-            'bg-white p-1.5 pr-3 sm:pr-4 flex items-center gap-2.5 sm:gap-3 hover:border-slate-300 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#150f23]',
+            'bg-white p-1.5 pr-3 sm:pr-4 flex items-center gap-2.5 sm:gap-3 hover:border-[#c9c2ec] transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]',
             tokens.radius.full,
             tokens.border.default,
             tokens.shadow.subtle
@@ -331,7 +331,7 @@ export function TopRightCluster({ className = '' }: TopRightClusterProps) {
         {/* Profile Dropdown Menu */}
         {profileOpen && (
           <div className={cn('absolute right-0 mt-2 w-64 bg-white p-3 z-50 space-y-2 select-none animate-in fade-in-50 zoom-in-95 duration-150', tokens.radius.xl, tokens.border.default, tokens.shadow.modal)}>
-            <div className={cn('p-2.5 bg-slate-50 border border-slate-100 space-y-1', tokens.radius.lg)}>
+            <div className={cn('p-2.5 bg-[#faf9fd] border border-[#e9e5f6] space-y-1', tokens.radius.lg)}>
               <div className="flex items-center gap-2">
                 <div className={cn('w-7 h-7 bg-[#150f23] text-[#c2ef4e] flex items-center justify-center text-[10px] font-bold', tokens.radius.full)}>
                   {userInitials}
@@ -347,13 +347,13 @@ export function TopRightCluster({ className = '' }: TopRightClusterProps) {
               </div>
               <div className="pt-1.5 flex items-center justify-between text-[10px]">
                 <span className="font-semibold text-slate-500">Peran Akun:</span>
-                <span className={cn('font-mono font-bold px-2 py-0.5 bg-slate-200 text-slate-800', tokens.radius.full)}>
+                <span className={cn('font-mono font-bold px-2 py-0.5 bg-[#e9e5f6] text-slate-800', tokens.radius.full)}>
                   {roleLabel}
                 </span>
               </div>
             </div>
 
-            <div className="pt-1 border-t border-slate-100 space-y-1">
+            <div className="pt-1 border-t border-[#e9e5f6] space-y-1">
               <button
                 type="button"
                 onClick={handleLogout}

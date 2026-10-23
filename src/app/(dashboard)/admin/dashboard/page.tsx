@@ -161,44 +161,43 @@ export default function AdminDashboardPage() {
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto font-sans">
-      {/* Institutional Daylight Header */}
-      <div className="relative overflow-hidden bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-card flex flex-col sm:flex-row sm:items-center justify-between gap-5">
-        <div className="pointer-events-none absolute -top-16 -right-16 w-72 h-72 bg-indigo-50/70 rounded-full blur-3xl"></div>
-        <div className="pointer-events-none absolute -bottom-16 -left-16 w-60 h-60 bg-emerald-50/50 rounded-full blur-2xl"></div>
+      {/* Midnight-Violet Header Band */}
+      <div className="relative overflow-hidden bg-[#150f23] bg-grid-dots-dark rounded-2xl border border-[#362d59] p-5 sm:p-6 shadow-midnight-elevated flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+        <div className="pointer-events-none absolute -top-16 -right-16 w-72 h-72 bg-[#6a5fc1]/20 rounded-full blur-3xl"></div>
 
         <div className="relative space-y-2 max-w-xl min-w-0">
           <div className="flex items-center gap-2.5 flex-wrap">
-            <Badge variant="lime" size="xs">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-white bg-white/10 border border-white/15 px-2 py-0.5 rounded-md font-mono">
               Administrator Institusi
-            </Badge>
-            <span className="text-xs font-semibold text-slate-500 font-mono bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200/60 truncate">
+            </span>
+            <span className="text-xs font-semibold text-[#bdb8c0] font-mono bg-white/10 px-2 py-0.5 rounded-md border border-white/15 truncate">
               {user?.identifier || 'Admin'}
             </span>
           </div>
-          <h1 className="font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 truncate">
+          <h1 className="font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-white truncate">
             Panel Administrasi: {user?.full_name || 'Admin Sekolah'}
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
+          <p className="text-xs sm:text-sm text-[#bdb8c0] leading-relaxed">
             Pusat tata kelola akun pengguna, pengawasan infrastruktur CBT sekolah, dan integritas sesi ujian.
           </p>
         </div>
 
         {/* ONE Primary Action ("Tambah Pengguna") + Secondary Action ("Kelola Kelas") */}
-        <div className="relative flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 shrink-0 pt-4 sm:pt-0 border-t sm:border-t-0 border-slate-100 w-full sm:w-auto">
+        <div className="relative flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 shrink-0 pt-4 sm:pt-0 border-t sm:border-t-0 border-white/10 w-full sm:w-auto">
           <Link
             href="/classes"
-            className="px-4 py-2.5 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs rounded-xl border border-slate-200 transition-colors shadow-xs cursor-pointer flex items-center justify-center w-full sm:w-auto focus-visible:ring-2 focus-visible:ring-[#6a5fc1] focus-visible:outline-none"
+            className="px-4 py-2.5 bg-white/10 hover:bg-white/15 text-white font-semibold text-xs rounded-xl border border-white/15 transition-colors shadow-xs cursor-pointer flex items-center justify-center w-full sm:w-auto focus-visible:ring-2 focus-visible:ring-[#6a5fc1] focus-visible:outline-none"
           >
             Kelola Kelas
           </Link>
           <Button
-            variant="primary"
+            variant="inverted"
             size="md"
             onClick={() => {
               setFormErrorMessage('')
               setShowAddUserModal(true)
             }}
-            leftIcon={<UserPlus className="w-3.5 h-3.5 text-[#c2ef4e]" aria-hidden="true" />}
+            leftIcon={<UserPlus className="w-3.5 h-3.5 text-[#150f23]" aria-hidden="true" />}
           >
             Tambah Pengguna
           </Button>
@@ -206,10 +205,10 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* PRIMARY GOAL ELEVATION: System Health & Infrastructure Overview First */}
-      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-card p-5 sm:p-6 space-y-4">
-        <div className="flex items-center justify-between border-b border-slate-100 pb-3 flex-wrap gap-2">
+      <div className="bg-white rounded-2xl border border-[#ddd9ef] shadow-card p-5 sm:p-6 space-y-4">
+        <div className="flex items-center justify-between border-b border-[#e9e5f6] pb-3 flex-wrap gap-2">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-200 flex items-center justify-center font-bold text-xs">
+            <div className="w-8 h-8 rounded-xl bg-violet-50 text-violet-700 border border-violet-200 flex items-center justify-center font-bold text-xs">
               <Activity className="w-4 h-4" aria-hidden="true" />
             </div>
             <div>
@@ -226,7 +225,7 @@ export default function AdminDashboardPage() {
             type="button"
             onClick={fetchStats}
             title="Perbarui status sistem"
-            className="text-xs font-mono font-semibold text-slate-600 hover:text-slate-900 px-2.5 py-1 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors flex items-center gap-1.5 cursor-pointer"
+            className="text-xs font-mono font-semibold text-slate-600 hover:text-slate-900 px-2.5 py-1 rounded-lg border border-slate-200 hover:bg-[#f1effa] transition-colors flex items-center gap-1.5 cursor-pointer"
           >
             <RefreshCw className="w-3 h-3 text-slate-500" aria-hidden="true" />
             <span>Sinkronkan Status</span>
@@ -235,12 +234,12 @@ export default function AdminDashboardPage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Database Health Pill */}
-          <div className="p-4 rounded-xl border border-slate-200/80 bg-slate-50/70 space-y-1.5">
+          <div className="p-4 rounded-xl border border-[#ddd9ef] bg-[#faf9fd] space-y-1.5">
             <div className="flex items-center justify-between">
               <span className="text-[10px] font-mono uppercase font-bold text-slate-500">
                 Koneksi Database
               </span>
-              <Database className="w-4 h-4 text-indigo-600" aria-hidden="true" />
+              <Database className="w-4 h-4 text-violet-600" aria-hidden="true" />
             </div>
             <div className="flex items-center gap-2">
               {isLoadingStats ? (
@@ -276,7 +275,7 @@ export default function AdminDashboardPage() {
           </div>
 
           {/* Edge CV Proctoring Health */}
-          <div className="p-4 rounded-xl border border-slate-200/80 bg-slate-50/70 space-y-1.5">
+          <div className="p-4 rounded-xl border border-[#ddd9ef] bg-[#faf9fd] space-y-1.5">
             <div className="flex items-center justify-between">
               <span className="text-[10px] font-mono uppercase font-bold text-slate-500">
                 Edge AI Proctoring
@@ -311,7 +310,7 @@ export default function AdminDashboardPage() {
           </div>
 
           {/* Active Sessions */}
-          <div className="p-4 rounded-xl border border-slate-200/80 bg-slate-50/70 space-y-1.5">
+          <div className="p-4 rounded-xl border border-[#ddd9ef] bg-[#faf9fd] space-y-1.5">
             <div className="flex items-center justify-between">
               <span className="text-[10px] font-mono uppercase font-bold text-slate-500">
                 Sesi Ujian Berjalan
@@ -329,7 +328,7 @@ export default function AdminDashboardPage() {
           </div>
 
           {/* Disqualified / Flagged Incidents */}
-          <div className="p-4 rounded-xl border border-slate-200/80 bg-slate-50/70 space-y-1.5">
+          <div className="p-4 rounded-xl border border-[#ddd9ef] bg-[#faf9fd] space-y-1.5">
             <div className="flex items-center justify-between">
               <span className="text-[10px] font-mono uppercase font-bold text-slate-500">
                 Catatan Pelanggaran
@@ -348,7 +347,7 @@ export default function AdminDashboardPage() {
       {/* KPI Overview Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-card flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-slate-100 text-slate-700 border border-slate-200/80 flex items-center justify-center font-bold shrink-0">
+          <div className="w-12 h-12 rounded-xl bg-[#f1effa] text-[#6a5fc1] border border-[#ddd9ef] flex items-center justify-center font-bold shrink-0">
             <Users className="w-6 h-6" aria-hidden="true" />
           </div>
           <div className="min-w-0">
@@ -365,7 +364,7 @@ export default function AdminDashboardPage() {
         </div>
 
         <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-card flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-slate-100 text-slate-700 border border-slate-200/80 flex items-center justify-center font-bold shrink-0">
+          <div className="w-12 h-12 rounded-xl bg-azure-50 text-azure-700 border border-azure-200/80 flex items-center justify-center font-bold shrink-0">
             <GraduationCap className="w-6 h-6" aria-hidden="true" />
           </div>
           <div className="min-w-0">
@@ -380,7 +379,7 @@ export default function AdminDashboardPage() {
         </div>
 
         <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-card flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-slate-100 text-slate-700 border border-slate-200/80 flex items-center justify-center font-bold shrink-0">
+          <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200/80 flex items-center justify-center font-bold shrink-0">
             <FileSpreadsheet className="w-6 h-6" aria-hidden="true" />
           </div>
 
@@ -399,8 +398,8 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* User Management Section (Secondary) */}
-      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-card overflow-hidden">
-        <div className="p-5 sm:px-6 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white rounded-2xl border border-[#ddd9ef] shadow-card overflow-hidden">
+        <div className="p-5 sm:px-6 border-b border-[#e9e5f6] flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h3 className="font-display text-base font-bold text-slate-900">
               Manajemen Akun Pengguna
@@ -447,7 +446,7 @@ export default function AdminDashboardPage() {
         {/* Loading Users State */}
         {isLoadingUsers && (
           <div className="p-12 text-center flex flex-col items-center justify-center space-y-3">
-            <Loader2 className="w-8 h-8 text-indigo-600 animate-spin" aria-hidden="true" />
+            <Loader2 className="w-8 h-8 text-violet-600 animate-spin" aria-hidden="true" />
             <p className="text-xs font-bold text-slate-900">Memuat data pengguna sekolah...</p>
           </div>
         )}
@@ -488,7 +487,7 @@ export default function AdminDashboardPage() {
                   <TableRow key={usr.id}>
                     <TableCell className="px-6 py-4">
                       <div className="flex items-center gap-3 min-w-0">
-                        <div className="w-9 h-9 rounded-xl bg-slate-100 text-slate-800 border border-slate-200 flex items-center justify-center font-bold text-xs font-mono shadow-xs shrink-0">
+                        <div className="w-9 h-9 rounded-xl bg-[#f1effa] text-[#584dae] border border-[#ddd9ef] flex items-center justify-center font-bold text-xs font-mono shadow-xs shrink-0">
                           {usr.full_name?.charAt(0) || 'U'}
                         </div>
                         <div className="min-w-0 max-w-xs">

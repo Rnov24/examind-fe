@@ -128,7 +128,7 @@ export default function ClassDetailPage() {
           href="/classes"
           title="Kembali ke Daftar Kelas"
           aria-label="Kembali ke Daftar Kelas"
-          className="p-2 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 transition-colors shadow-xs focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+          className="p-2 rounded-xl border border-slate-300 bg-white hover:bg-[#f1effa] text-slate-700 transition-colors shadow-xs focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
         >
           <ArrowLeft className="w-4 h-4" aria-hidden="true" />
         </Link>
@@ -152,7 +152,7 @@ export default function ClassDetailPage() {
 
           <button
             onClick={openAddMemberModal}
-            className="px-4 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs flex items-center gap-2 cursor-pointer transition-colors focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+            className="px-4 py-2 rounded-lg bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-xs flex items-center gap-2 cursor-pointer transition-colors focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
           >
             <UserPlus className="w-3.5 h-3.5" aria-hidden="true" />
             <span>Tambah Siswa ke Kelas</span>
@@ -161,12 +161,12 @@ export default function ClassDetailPage() {
 
         {isLoading ? (
           <div className="flex items-center justify-center p-12">
-            <Loader2 className="w-8 h-8 text-indigo-600 animate-spin" />
+            <Loader2 className="w-8 h-8 text-violet-600 animate-spin" />
           </div>
         ) : (
           <div className="overflow-x-auto touch-pan-x">
             <table className="w-full text-left text-sm text-slate-600">
-              <thead className="bg-slate-50 text-xs uppercase font-bold text-slate-600 tracking-wider font-mono border-b border-slate-200">
+              <thead className="bg-[#f1effa] text-xs uppercase font-bold text-slate-600 tracking-wider font-mono border-b border-[#ddd9ef]">
                 <tr>
                   <th className="px-6 py-4">NISN / Identifier</th>
                   <th className="px-6 py-4">Nama Lengkap</th>
@@ -177,7 +177,7 @@ export default function ClassDetailPage() {
               </thead>
               <tbody className="divide-y divide-slate-100 font-medium">
                 {(classDetail?.members || []).map((m) => (
-                  <tr key={m.id} className="hover:bg-slate-50 transition-colors">
+                  <tr key={m.id} className="hover:bg-[#f1effa] transition-colors">
                     <td className="px-6 py-4 font-mono text-xs font-bold text-slate-900">
                       {m.user?.identifier}
                     </td>
@@ -187,7 +187,7 @@ export default function ClassDetailPage() {
                       <span
                         className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold capitalize font-mono ${
                           m.role === 'teacher'
-                            ? 'bg-indigo-50 text-indigo-700 border border-indigo-200'
+                            ? 'bg-violet-50 text-violet-700 border border-violet-200'
                             : 'bg-slate-100 text-slate-700 border border-slate-200'
                         }`}
                       >
@@ -218,7 +218,7 @@ export default function ClassDetailPage() {
                         <button
                           type="button"
                           onClick={openAddMemberModal}
-                          className="px-3.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs flex items-center gap-1.5 cursor-pointer focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+                          className="px-3.5 py-1.5 rounded-lg bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-xs flex items-center gap-1.5 cursor-pointer focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
                         >
                           <UserPlus className="w-3.5 h-3.5" aria-hidden="true" />
                           <span>Tambah Siswa</span>
@@ -247,7 +247,7 @@ export default function ClassDetailPage() {
                 onClick={() => setShowAddModal(false)}
                 title="Tutup modal"
                 aria-label="Tutup modal"
-                className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-slate-900/10"
+                className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]/40"
               >
                 <X className="w-4 h-4" aria-hidden="true" />
               </button>
@@ -259,7 +259,7 @@ export default function ClassDetailPage() {
                 <select
                   value={selectedStudentId ?? ''}
                   onChange={(e) => setSelectedStudentId(e.target.value ? Number(e.target.value) : null)}
-                  className="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs font-medium focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 outline-none bg-slate-50 text-slate-900"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-300 text-xs font-medium focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-[#6a5fc1]/40 outline-none bg-slate-50 text-slate-900"
                 >
                   <option value="">-- Pilih Siswa --</option>
                   {availableStudents.map((s) => (
@@ -274,7 +274,7 @@ export default function ClassDetailPage() {
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="px-4 py-2 rounded-lg text-xs font-bold text-slate-700 hover:bg-slate-50 border border-slate-300 cursor-pointer shadow-xs transition-colors focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+                  className="px-4 py-2 rounded-lg text-xs font-bold text-slate-700 hover:bg-[#f1effa] border border-slate-300 cursor-pointer shadow-xs transition-colors focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
                 >
                   Batal
                 </button>
@@ -282,7 +282,7 @@ export default function ClassDetailPage() {
                   type="button"
                   disabled={!selectedStudentId || isSubmitting}
                   onClick={handleAddMember}
-                  className="px-5 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-xs disabled:opacity-50 cursor-pointer transition-colors flex items-center gap-1.5 focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+                  className="px-5 py-2 rounded-lg bg-[#150f23] hover:bg-[#1f1633] text-white text-xs font-bold shadow-xs disabled:opacity-50 cursor-pointer transition-colors flex items-center gap-1.5 focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
                 >
                   {isSubmitting && <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" />}
                   <span>{isSubmitting ? 'Menambahkan...' : 'Tambahkan'}</span>

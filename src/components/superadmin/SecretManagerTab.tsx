@@ -487,7 +487,7 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
             }}
             disabled={isSecretsLoading || isTaskLoading}
             title="Muat ulang seluruh konfigurasi vault & task"
-            className="p-2 sm:px-3 sm:py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold flex items-center gap-1.5 cursor-pointer disabled:opacity-50 transition-colors shadow-xs"
+            className="p-2 sm:px-3 sm:py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-[#f1effa] text-slate-700 text-xs font-bold flex items-center gap-1.5 cursor-pointer disabled:opacity-50 transition-colors shadow-xs"
           >
             <RefreshCw
               className={`w-3.5 h-3.5 text-slate-600 ${isSecretsLoading || isTaskLoading ? 'animate-spin' : ''}`}
@@ -528,7 +528,7 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
                       <div
                         className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 border shadow-2xs ${
                           p.id === 'gemini'
-                            ? 'bg-indigo-50 text-indigo-600 border-indigo-200/80'
+                            ? 'bg-violet-50 text-violet-600 border-violet-200/80'
                             : p.id === 'openai'
                             ? 'bg-emerald-50 text-emerald-600 border-emerald-200/80'
                             : p.id === 'claude'
@@ -538,7 +538,7 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
                             : p.id === 'resend'
                             ? 'bg-rose-50 text-rose-600 border-rose-200/80'
                             : p.id === 'openrouter'
-                            ? 'bg-cyan-50 text-cyan-700 border-cyan-200/80'
+                            ? 'bg-sky-50 text-sky-700 border-sky-200/80'
                             : 'bg-slate-100 text-slate-700 border-slate-200'
                         }`}
                       >
@@ -623,7 +623,7 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
                   aria-label="Cari kunci atau provider"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-8 pr-3 py-1.5 rounded-xl border border-slate-200 bg-white text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-900 w-48 sm:w-56"
+                  className="pl-8 pr-3 py-1.5 rounded-xl border border-slate-200 bg-white text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-[#6a5fc1] w-48 sm:w-56"
                 />
               </div>
 
@@ -640,7 +640,7 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
                   setShowFormValue(false)
                   setIsModalOpen(true)
                 }}
-                className="px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs flex items-center gap-1.5 cursor-pointer font-display"
+                className="px-3.5 py-1.5 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-xs flex items-center gap-1.5 cursor-pointer font-display"
               >
                 <Plus className="w-3.5 h-3.5 text-[#c2ef4e]" />
                 <span>Tambah Kunci</span>
@@ -746,7 +746,7 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
                       <button
                         onClick={() => testSecretConnection(s.provider, s.key_name)}
                         disabled={testingKey === s.key_name}
-                        className="min-h-[44px] px-3 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+                        className="min-h-[44px] px-3 py-2 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
                       >
                         {testingKey === s.key_name ? (
                           <Loader2 className="w-3.5 h-3.5 animate-spin text-[#c2ef4e]" />
@@ -758,7 +758,7 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
 
                       <button
                         onClick={() => handleEditSecret(s)}
-                        className="min-h-[44px] px-3 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-800 font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+                        className="min-h-[44px] px-3 py-2 rounded-xl border border-slate-200 bg-white hover:bg-[#f1effa] text-slate-800 font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
                       >
                         <Settings className="w-3.5 h-3.5 text-slate-500" />
                         <span>Konfigurasi</span>
@@ -766,7 +766,7 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
 
                       <button
                         onClick={() => handleToggleStatus(s.key_name)}
-                        className="min-h-[44px] px-3 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 bg-white text-slate-700 text-xs font-semibold flex items-center justify-center"
+                        className="min-h-[44px] px-3 py-2 rounded-xl border border-slate-200 hover:bg-[#f1effa] bg-white text-slate-700 text-xs font-semibold flex items-center justify-center"
                       >
                         {s.is_active ? 'Nonaktifkan' : 'Aktifkan'}
                       </button>
@@ -804,7 +804,7 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
                   const isCopied = copiedKey === s.key_name
 
                   return (
-                    <tr key={s.id} className="hover:bg-slate-50/70 transition-colors">
+                    <tr key={s.id} className="hover:bg-[#f1effa] transition-colors">
                       {/* Key Name */}
                       <td className="py-3.5 px-6">
                         <div className="flex items-center gap-2">
@@ -1018,7 +1018,7 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
                     <div>
                       <span className="text-slate-400 text-[10px] uppercase block">Provider & Model</span>
                       <span className="font-bold text-slate-900">
-                        {task.provider.toUpperCase()} / <span className="text-indigo-700">{task.model}</span>
+                        {task.provider.toUpperCase()} / <span className="text-violet-700">{task.model}</span>
                       </span>
                     </div>
 
@@ -1049,7 +1049,7 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
                   <button
                     onClick={() => testSecretConnection(task.provider, task.task_id)}
                     disabled={testingKey === task.task_id}
-                    className="py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer disabled:opacity-50 shadow-xs font-display"
+                    className="py-2 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer disabled:opacity-50 shadow-xs font-display"
                   >
                     {testingKey === task.task_id ? (
                       <Loader2 className="w-3.5 h-3.5 animate-spin text-[#c2ef4e]" />
@@ -1061,7 +1061,7 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
 
                   <button
                     onClick={() => openTaskConfigModal(task)}
-                    className="py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-xs font-display"
+                    className="py-2 rounded-xl bg-white hover:bg-[#f1effa] border border-slate-200 text-slate-800 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-xs font-display"
                   >
                     <Sliders className="w-3.5 h-3.5 text-slate-500" />
                     <span>Konfigurasi Engine</span>
@@ -1104,7 +1104,7 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
                 type="button"
                 onClick={() => setDeletingSecret(null)}
                 disabled={isDeleting}
-                className="min-h-[44px] px-4 py-2.5 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold cursor-pointer flex items-center justify-center"
+                className="min-h-[44px] px-4 py-2.5 rounded-xl border border-slate-200 text-slate-700 hover:bg-[#f1effa] text-xs font-bold cursor-pointer flex items-center justify-center"
               >
                 Batal
               </button>
@@ -1174,7 +1174,7 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
                           : form.key_name,
                     })
                   }}
-                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 font-semibold focus:bg-white focus:outline-none focus:ring-1 focus:ring-slate-900"
+                  className="w-full px-3 py-2 rounded-xl bg-[#faf9fd] border border-[#c9c2ec] text-slate-900 font-semibold focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#6a5fc1]"
                 >
                   <option value="gemini">Google Gemini AI</option>
                   <option value="openai">OpenAI API</option>
@@ -1193,7 +1193,7 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
                   required
                   type="text"
                   placeholder="Contoh: GEMINI_API_KEY"
-                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 font-mono focus:bg-white focus:outline-none focus:ring-1 focus:ring-slate-900"
+                  className="w-full px-3 py-2 rounded-xl bg-[#faf9fd] border border-[#c9c2ec] text-slate-900 font-mono focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#6a5fc1]"
                 />
               </div>
 
@@ -1215,7 +1215,7 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
                   required
                   type={showFormValue ? 'text' : 'password'}
                   placeholder="Tempel kunci API Anda di sini..."
-                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 font-mono focus:bg-white focus:outline-none focus:ring-1 focus:ring-slate-900"
+                  className="w-full px-3 py-2 rounded-xl bg-[#faf9fd] border border-[#c9c2ec] text-slate-900 font-mono focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#6a5fc1]"
                 />
               </div>
 
@@ -1226,7 +1226,7 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
                   type="text"
                   placeholder="Opsional: Keterangan peruntukan kunci"
-                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-slate-900"
+                  className="w-full px-3 py-2 rounded-xl bg-[#faf9fd] border border-[#c9c2ec] text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#6a5fc1]"
                 />
               </div>
 
@@ -1247,14 +1247,14 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="min-h-[44px] px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold cursor-pointer flex items-center justify-center"
+                  className="min-h-[44px] px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-[#f1effa] text-slate-700 font-bold cursor-pointer flex items-center justify-center"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="min-h-[44px] px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold disabled:opacity-50 cursor-pointer shadow-xs font-display flex items-center justify-center"
+                  className="min-h-[44px] px-4 py-2.5 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold disabled:opacity-50 cursor-pointer shadow-xs font-display flex items-center justify-center"
                 >
                   {isSubmitting ? 'Menyimpan...' : 'Simpan Kunci API'}
                 </button>
@@ -1334,7 +1334,7 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
                 <select
                   value={taskForm.model}
                   onChange={(e) => setTaskForm({ ...taskForm, model: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 font-mono font-bold text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-slate-900"
+                  className="w-full px-3 py-2 rounded-xl bg-[#faf9fd] border border-[#c9c2ec] font-mono font-bold text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#6a5fc1]"
                 >
                   {(PROVIDER_MODELS[taskForm.provider] || []).map((m) => (
                     <option key={m.id} value={m.id}>
@@ -1348,7 +1348,7 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
                   placeholder="cth: respan/span-01 — isi untuk menimpa pilihan di atas"
                   value={taskForm.model}
                   onChange={(e) => setTaskForm({ ...taskForm, model: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 font-mono text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-slate-900"
+                  className="w-full px-3 py-2 rounded-xl bg-[#faf9fd] border border-[#c9c2ec] font-mono text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#6a5fc1]"
                 />
                 <p className="text-[10px] text-slate-500 mt-1">Ketik manual untuk memakai model di luar daftar — menimpa pilihan dropdown di atas.</p>
               </div>
@@ -1371,7 +1371,7 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
                   placeholder="Kosongkan untuk otomatis menggunakan Vault Global"
                   value={taskForm.api_key}
                   onChange={(e) => setTaskForm({ ...taskForm, api_key: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 font-mono text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-slate-900"
+                  className="w-full px-3 py-2 rounded-xl bg-[#faf9fd] border border-[#c9c2ec] font-mono text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#6a5fc1]"
                 />
               </div>
 
@@ -1380,7 +1380,7 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
                 <div>
                   <div className="flex justify-between items-center mb-1">
                     <label className="font-bold text-slate-700">Temperature</label>
-                    <span className="font-mono font-bold text-indigo-700">{taskForm.temperature}</span>
+                    <span className="font-mono font-bold text-violet-700">{taskForm.temperature}</span>
                   </div>
                   <input
                     type="range"
@@ -1403,12 +1403,12 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
                 <div>
                   <div className="flex justify-between items-center mb-1">
                     <label className="font-bold text-slate-700">Max Tokens</label>
-                    <span className="font-mono font-bold text-indigo-700">{taskForm.max_tokens}</span>
+                    <span className="font-mono font-bold text-violet-700">{taskForm.max_tokens}</span>
                   </div>
                   <select
                     value={taskForm.max_tokens}
                     onChange={(e) => setTaskForm({ ...taskForm, max_tokens: parseInt(e.target.value) })}
-                    className="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 bg-white font-mono text-xs focus:outline-none focus:ring-1 focus:ring-slate-900"
+                    className="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 bg-white font-mono text-xs focus:outline-none focus:ring-1 focus:ring-[#6a5fc1]"
                   >
                     <option value={1024}>1.024 tokens</option>
                     <option value={2048}>2.048 tokens</option>
@@ -1437,14 +1437,14 @@ const SecretManagerTab = forwardRef<SecretManagerTabRef>((_props, ref) => {
                 <button
                   type="button"
                   onClick={() => setEditingTask(null)}
-                  className="min-h-[44px] px-4 py-2 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold flex items-center justify-center"
+                  className="min-h-[44px] px-4 py-2 rounded-xl border border-slate-200 text-slate-700 hover:bg-[#f1effa] font-bold flex items-center justify-center"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
                   disabled={isSavingTask}
-                  className="min-h-[44px] px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold shadow-xs flex items-center justify-center gap-2 font-display cursor-pointer"
+                  className="min-h-[44px] px-4 py-2 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold shadow-xs flex items-center justify-center gap-2 font-display cursor-pointer"
                 >
                   {isSavingTask ? 'Menyimpan...' : 'Simpan Konfigurasi Engine'}
                 </button>

@@ -59,9 +59,9 @@ export function EmptyState({
         <div className="relative mb-3.5">
           <div
             className={cn(
-              'w-14 h-14 bg-slate-50 text-slate-600 flex items-center justify-center',
+              'w-14 h-14 bg-[#f1effa] text-[#6a5fc1] flex items-center justify-center',
               tokens.radius.xl,
-              tokens.border.default,
+              'border border-[#ddd9ef]',
               tokens.shadow.micro
             )}
           >
@@ -69,7 +69,7 @@ export function EmptyState({
           </div>
           <div
             className={cn(
-              'absolute inset-0 border border-slate-100 scale-125 -z-10 pointer-events-none opacity-60',
+              'absolute inset-0 border border-[#e3dff5] scale-125 -z-10 pointer-events-none opacity-60',
               tokens.radius.xl
             )}
           />

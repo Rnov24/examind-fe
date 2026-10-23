@@ -163,7 +163,7 @@ export default function TenantModal({
           <div className="border-t border-slate-100 pt-3.5 space-y-3">
             <div className="flex items-center justify-between">
               <h4 className="font-bold text-slate-900 text-xs font-display flex items-center gap-1.5">
-                <KeyRound className="w-3.5 h-3.5 text-indigo-600" aria-hidden="true" />
+                <KeyRound className="w-3.5 h-3.5 text-violet-600" aria-hidden="true" />
                 <span>Akun Administrator Pertama</span>
               </h4>
               <span className="text-[10px] font-mono text-slate-500">Kredensial Superuser</span>

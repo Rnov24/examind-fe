@@ -14,7 +14,7 @@ interface TelemetryItem {
   detail: string
   icon: React.ComponentType<{ className?: string }>
   badgeText: string
-  badgeColor: 'lime' | 'emerald' | 'violet' | 'indigo'
+  badgeColor: 'lime' | 'emerald' | 'violet' | 'violet'
 }
 
 const TELEMETRY_DATA: TelemetryItem[] = [
@@ -62,7 +62,7 @@ const TELEMETRY_DATA: TelemetryItem[] = [
     detail: 'Enkripsi data biometrik AES-256 dan penghapusan otomatis snapshot wajah setelah 60 hari.',
     icon: Cpu,
     badgeText: 'LEGAL ACCREDITED',
-    badgeColor: 'indigo',
+    badgeColor: 'violet',
   },
 ]
 
@@ -138,8 +138,8 @@ export function TelemetryTicker() {
                         : item.badgeColor === 'emerald'
                         ? 'bg-emerald-50 text-emerald-700'
                         : item.badgeColor === 'violet'
-                        ? 'bg-purple-50 text-purple-700'
-                        : 'bg-indigo-50 text-indigo-700'
+                        ? 'bg-violet-50 text-violet-700'
+                        : 'bg-violet-50 text-violet-700'
                     }`}
                   >
                     <Icon className="w-4 h-4" />

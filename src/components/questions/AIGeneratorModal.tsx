@@ -204,7 +204,7 @@ export default function AIGeneratorModal({
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="px-2 py-0.5 rounded text-[10px] font-bold font-mono uppercase tracking-wider bg-indigo-50 text-indigo-700 border border-indigo-200">
+                <span className="px-2 py-0.5 rounded text-[10px] font-bold font-mono uppercase tracking-wider bg-violet-50 text-violet-700 border border-violet-200">
                   AI Question Studio
                 </span>
               </div>
@@ -239,7 +239,7 @@ export default function AIGeneratorModal({
                 onChange={(e) => setTopicContent(e.target.value)}
                 rows={4}
                 placeholder="Ketik topik materi secara spesifik, contoh: Teori Kuantum Planck, Efek Fotolistrik Einstein, dan spektrum garis atom hidrogen..."
-                className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-sm font-medium focus:bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none placeholder:text-slate-400"
+                className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-sm font-medium focus:bg-white focus:ring-2 focus:ring-[#6a5fc1]/40 focus:border-slate-900 outline-none placeholder:text-slate-400"
               />
             </div>
 
@@ -252,7 +252,7 @@ export default function AIGeneratorModal({
                   type="number"
                   min={1}
                   max={20}
-                  className="w-full px-3 py-2.5 rounded-lg border border-slate-300 bg-slate-50 text-slate-900 text-sm font-medium focus:bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none"
+                  className="w-full px-3 py-2.5 rounded-lg border border-slate-300 bg-slate-50 text-slate-900 text-sm font-medium focus:bg-white focus:ring-2 focus:ring-[#6a5fc1]/40 focus:border-slate-900 outline-none"
                 />
               </div>
 
@@ -264,7 +264,7 @@ export default function AIGeneratorModal({
                   type="number"
                   min={0}
                   max={10}
-                  className="w-full px-3 py-2.5 rounded-lg border border-slate-300 bg-slate-50 text-slate-900 text-sm font-medium focus:bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none"
+                  className="w-full px-3 py-2.5 rounded-lg border border-slate-300 bg-slate-50 text-slate-900 text-sm font-medium focus:bg-white focus:ring-2 focus:ring-[#6a5fc1]/40 focus:border-slate-900 outline-none"
                 />
               </div>
 
@@ -273,7 +273,7 @@ export default function AIGeneratorModal({
                 <select
                   value={difficulty}
                   onChange={(e) => setDifficulty(e.target.value)}
-                  className="w-full px-3 py-2.5 rounded-lg border border-slate-300 bg-slate-50 text-slate-900 text-sm font-medium focus:bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none"
+                  className="w-full px-3 py-2.5 rounded-lg border border-slate-300 bg-slate-50 text-slate-900 text-sm font-medium focus:bg-white focus:ring-2 focus:ring-[#6a5fc1]/40 focus:border-slate-900 outline-none"
                 >
                   <option value="easy">Mudah (C1-C2)</option>
                   <option value="medium">Sedang (C3-C4)</option>
@@ -286,14 +286,14 @@ export default function AIGeneratorModal({
             <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-indigo-600" aria-hidden="true" />
+                  <Sparkles className="w-4 h-4 text-violet-600" aria-hidden="true" />
                   <span className="text-xs font-bold text-slate-900">AI Provider: Google Gemini</span>
                 </div>
                 <span
                   className={`px-2 py-0.5 rounded-full text-[10px] font-bold font-mono ${
                     geminiApiKey
                       ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                      : 'bg-indigo-50 text-indigo-700 border border-indigo-200'
+                      : 'bg-violet-50 text-violet-700 border border-violet-200'
                   }`}
                 >
                   {geminiApiKey ? '● Gemini Live Online' : '● Mode Cerdas (Tanpa Key)'}
@@ -317,7 +317,7 @@ export default function AIGeneratorModal({
                     href="https://aistudio.google.com/app/apikey"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-indigo-600 underline font-semibold"
+                    className="text-violet-600 underline font-semibold"
                   >
                     Google AI Studio
                   </a>
@@ -344,7 +344,7 @@ export default function AIGeneratorModal({
                 type="button"
                 disabled={loading || !topicContent}
                 onClick={handleGenerate}
-                className="px-6 py-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs flex items-center gap-2 disabled:opacity-50 cursor-pointer transition-colors"
+                className="px-6 py-2.5 rounded-lg bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-xs flex items-center gap-2 disabled:opacity-50 cursor-pointer transition-colors"
               >
                 {loading ? (
                   <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
@@ -384,7 +384,7 @@ export default function AIGeneratorModal({
                         {idx + 1}. {mcq.prompt}
                       </p>
                       {mcq.bloom_level && (
-                        <span className="px-2 py-0.5 bg-indigo-50 text-indigo-700 border border-indigo-200 rounded text-[10px] font-black uppercase font-mono">
+                        <span className="px-2 py-0.5 bg-violet-50 text-violet-700 border border-violet-200 rounded text-[10px] font-black uppercase font-mono">
                           {mcq.bloom_level}
                         </span>
                       )}
@@ -441,12 +441,12 @@ export default function AIGeneratorModal({
                     </p>
                     {/* Respan Atomic Reference Criteria or Legacy 4D Rubric */}
                     {essay.rubric?.ref_points && essay.rubric.ref_points.length > 0 ? (
-                      <div className="p-3 bg-white rounded-lg border border-indigo-200/80 text-xs text-slate-700 space-y-2 shadow-xs">
+                      <div className="p-3 bg-white rounded-lg border border-violet-200/80 text-xs text-slate-700 space-y-2 shadow-xs">
                         <div className="flex items-center justify-between">
-                          <span className="font-bold text-[11px] uppercase tracking-wider text-indigo-900 font-mono">
+                          <span className="font-bold text-[11px] uppercase tracking-wider text-violet-900 font-mono">
                             Kriteria Acuan Respan Decision Model:
                           </span>
-                          <span className="px-2 py-0.5 rounded text-[10px] font-bold font-mono bg-indigo-50 text-indigo-700 border border-indigo-200">
+                          <span className="px-2 py-0.5 rounded text-[10px] font-bold font-mono bg-violet-50 text-violet-700 border border-violet-200">
                             0 Output Tokens • Deterministic
                           </span>
                         </div>
@@ -516,7 +516,7 @@ export default function AIGeneratorModal({
                 type="button"
                 disabled={saving}
                 onClick={handleSaveAllToBank}
-                className="px-6 py-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs flex items-center gap-2 disabled:opacity-50 cursor-pointer transition-colors"
+                className="px-6 py-2.5 rounded-lg bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-xs flex items-center gap-2 disabled:opacity-50 cursor-pointer transition-colors"
               >
                 {saving ? (
                   <Loader2 className="w-4 h-4 animate-spin" />

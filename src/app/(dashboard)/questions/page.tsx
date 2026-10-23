@@ -181,9 +181,9 @@ export default function QuestionBankPage() {
         <div className="flex items-center gap-2.5 shrink-0 w-full sm:w-auto">
           <button
             onClick={handleOpenAIStudio}
-            className="flex-1 sm:flex-none min-h-[44px] px-4 py-2.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 font-bold text-xs shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer focus:ring-2 focus:ring-[#6a5fc1]/20 focus:outline-none"
+            className="flex-1 sm:flex-none min-h-[44px] px-4 py-2.5 rounded-xl bg-violet-50 hover:bg-violet-100 text-violet-700 border border-violet-200 font-bold text-xs shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer focus:ring-2 focus:ring-[#6a5fc1]/20 focus:outline-none"
           >
-            <Sparkles className="w-4 h-4 text-indigo-600" aria-hidden="true" />
+            <Sparkles className="w-4 h-4 text-violet-600" aria-hidden="true" />
             <span>AI Studio</span>
           </button>
           <button
@@ -191,7 +191,7 @@ export default function QuestionBankPage() {
               setCreateError(null)
               setShowCreateModal(true)
             }}
-            className="flex-1 sm:flex-none min-h-[44px] px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-card hover:shadow-card-hover transition-all flex items-center justify-center gap-2 cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+            className="flex-1 sm:flex-none min-h-[44px] px-5 py-2.5 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-card hover:shadow-card-hover transition-all flex items-center justify-center gap-2 cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
           >
             <Plus className="w-4 h-4 text-[#c2ef4e]" aria-hidden="true" />
             <span>Buat Bank Soal</span>
@@ -235,7 +235,7 @@ export default function QuestionBankPage() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Cari bank soal berdasarkan judul, mata pelajaran, atau deskripsi..."
-            className="w-full pl-10 pr-9 py-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium placeholder:text-slate-400 focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 outline-none transition-all"
+            className="w-full pl-10 pr-9 py-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium placeholder:text-slate-400 focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-[#6a5fc1]/40 outline-none transition-all"
           />
           {searchQuery && (
             <button
@@ -255,7 +255,7 @@ export default function QuestionBankPage() {
             <select
               value={selectedSubject}
               onChange={(e) => setSelectedSubject(e.target.value)}
-              className="px-3 py-2 text-xs font-semibold rounded-xl border border-slate-200 bg-slate-50 hover:bg-white text-slate-700 outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900"
+              className="px-3 py-2 text-xs font-semibold rounded-xl border border-slate-200 bg-slate-50 hover:bg-white text-slate-700 outline-none focus:ring-2 focus:ring-[#6a5fc1]/40 focus:border-slate-900"
             >
               <option value="all">Semua Mata Pelajaran</option>
               {availableSubjects.map((subj) => (
@@ -271,7 +271,7 @@ export default function QuestionBankPage() {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as any)}
-              className="px-3 py-2 text-xs font-semibold rounded-xl border border-slate-200 bg-slate-50 hover:bg-white text-slate-700 outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900"
+              className="px-3 py-2 text-xs font-semibold rounded-xl border border-slate-200 bg-slate-50 hover:bg-white text-slate-700 outline-none focus:ring-2 focus:ring-[#6a5fc1]/40 focus:border-slate-900"
             >
               <option value="newest">Terbaru</option>
               <option value="questions">Butir Soal Terbanyak</option>
@@ -284,7 +284,7 @@ export default function QuestionBankPage() {
       {/* Question Banks Grid */}
       {isFetching ? (
         <div className="bg-white rounded-2xl border border-slate-200/80 p-12 text-center shadow-card space-y-3">
-          <Loader2 className="w-8 h-8 text-indigo-600 animate-spin mx-auto" aria-hidden="true" />
+          <Loader2 className="w-8 h-8 text-violet-600 animate-spin mx-auto" aria-hidden="true" />
           <p className="text-xs font-bold text-slate-900">Memuat master bank soal...</p>
         </div>
       ) : fetchError ? (
@@ -299,7 +299,7 @@ export default function QuestionBankPage() {
           <button
             type="button"
             onClick={loadBanks}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition-colors cursor-pointer focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-xs transition-colors cursor-pointer focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
           >
             <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" />
             <span>Coba Lagi</span>
@@ -314,7 +314,7 @@ export default function QuestionBankPage() {
             >
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <span className="px-2.5 py-0.5 bg-indigo-50 text-indigo-700 border border-indigo-200 rounded-md text-[11px] font-bold font-mono">
+                  <span className="px-2.5 py-0.5 bg-violet-50 text-violet-700 border border-violet-200 rounded-md text-[11px] font-bold font-mono">
                     {b.subject}
                   </span>
                   <span className="text-xs text-slate-500 font-mono font-medium tabular-nums flex items-center gap-1.5">
@@ -323,7 +323,7 @@ export default function QuestionBankPage() {
                   </span>
                 </div>
 
-                <h3 className="text-base font-bold text-slate-900 leading-snug font-display line-clamp-2 group-hover:text-indigo-600 transition-colors">
+                <h3 className="text-base font-bold text-slate-900 leading-snug font-display line-clamp-2 group-hover:text-violet-600 transition-colors">
                   {b.title}
                 </h3>
                 <p className="text-xs text-slate-500 mt-2 line-clamp-2 leading-relaxed">
@@ -338,16 +338,16 @@ export default function QuestionBankPage() {
                     setSelectedBankForAI(b)
                     setShowAIModal(true)
                   }}
-                  className="px-3 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-[11px] border border-indigo-200 transition-colors flex items-center gap-1.5 shadow-2xs focus:ring-2 focus:ring-indigo-500/20 focus:outline-none cursor-pointer"
+                  className="px-3 py-1.5 rounded-xl bg-violet-50 hover:bg-violet-100 text-violet-700 font-bold text-[11px] border border-violet-200 transition-colors flex items-center gap-1.5 shadow-2xs focus:ring-2 focus:ring-violet-500/20 focus:outline-none cursor-pointer"
                   title="Generate soal AI untuk bank ini"
                 >
-                  <Sparkles className="w-3 h-3 text-indigo-600" aria-hidden="true" />
+                  <Sparkles className="w-3 h-3 text-violet-600" aria-hidden="true" />
                   <span>AI Gen</span>
                 </button>
 
                 <Link
                   href={`/questions/${b.id}`}
-                  className="px-3.5 py-1.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs border border-slate-200 hover:border-slate-300 transition-colors flex items-center gap-1.5 shadow-xs focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+                  className="px-3.5 py-1.5 rounded-xl bg-white hover:bg-[#f1effa] text-slate-700 font-bold text-xs border border-slate-200 hover:border-slate-300 transition-colors flex items-center gap-1.5 shadow-xs focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
                 >
                   <span>Buka Bank Soal</span>
                   <ArrowRight className="w-3.5 h-3.5 text-slate-500" aria-hidden="true" />
@@ -372,7 +372,7 @@ export default function QuestionBankPage() {
                   setSearchQuery('')
                   setSelectedSubject('all')
                 }}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-colors cursor-pointer focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-colors cursor-pointer focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
               >
                 <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" />
                 <span>Reset Pencarian</span>
@@ -383,7 +383,7 @@ export default function QuestionBankPage() {
           {/* Total Empty State with Action Guidance */}
           {banks.length === 0 && (
             <div className="col-span-full bg-white rounded-2xl p-10 sm:p-12 text-center border border-slate-200/80 shadow-card space-y-6">
-              <div className="w-14 h-14 rounded-2xl bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center mx-auto">
+              <div className="w-14 h-14 rounded-2xl bg-violet-50 border border-violet-100 text-violet-600 flex items-center justify-center mx-auto">
                 <BookOpen className="w-7 h-7" aria-hidden="true" />
               </div>
 
@@ -433,7 +433,7 @@ export default function QuestionBankPage() {
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(true)}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-card hover:shadow-card-hover transition-all cursor-pointer font-display focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-card hover:shadow-card-hover transition-all cursor-pointer font-display focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
                 >
                   <Plus className="w-4 h-4 text-[#c2ef4e]" aria-hidden="true" />
                   <span>Buat Bank Soal Pertama</span>
@@ -462,7 +462,7 @@ export default function QuestionBankPage() {
                 type="button"
                 onClick={() => setShowCreateModal(false)}
                 aria-label="Tutup modal"
-                className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-slate-500 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-slate-900/10"
+                className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-slate-500 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]/40"
               >
                 <X className="w-4 h-4" aria-hidden="true" />
               </button>
@@ -487,7 +487,7 @@ export default function QuestionBankPage() {
                   type="text"
                   required
                   placeholder="Contoh: Fisika, Matematika, Biologi"
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs font-semibold focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 outline-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs font-semibold focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-[#6a5fc1]/40 outline-none"
                 />
               </div>
 
@@ -501,7 +501,7 @@ export default function QuestionBankPage() {
                   type="text"
                   required
                   placeholder="Contoh: Bank Soal Teori Kuantum & Relativitas"
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs font-semibold focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 outline-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs font-semibold focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-[#6a5fc1]/40 outline-none"
                 />
               </div>
 
@@ -514,7 +514,7 @@ export default function QuestionBankPage() {
                   onChange={(e) => setNewBankDesc(e.target.value)}
                   rows={3}
                   placeholder="Catatan lingkup materi atau silabus..."
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs font-normal focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 outline-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs font-normal focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-[#6a5fc1]/40 outline-none"
                 />
               </div>
 
@@ -522,14 +522,14 @@ export default function QuestionBankPage() {
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="min-h-[44px] px-4 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50 bg-white border border-slate-200 cursor-pointer focus:ring-2 focus:ring-slate-900/10 focus:outline-none flex items-center justify-center"
+                  className="min-h-[44px] px-4 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-[#f1effa] bg-white border border-slate-200 cursor-pointer focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none flex items-center justify-center"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="min-h-[44px] px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs disabled:opacity-50 cursor-pointer flex items-center justify-center gap-1.5 focus:ring-2 focus:ring-slate-900/10 focus:outline-none font-display tracking-wide"
+                  className="min-h-[44px] px-5 py-2.5 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-xs disabled:opacity-50 cursor-pointer flex items-center justify-center gap-1.5 focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none font-display tracking-wide"
                 >
                   {loading && <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" />}
                   <span>{loading ? 'Menyimpan...' : 'Simpan Bank Soal'}</span>

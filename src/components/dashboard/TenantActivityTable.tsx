@@ -53,7 +53,7 @@ export function TenantActivityTable({
   return (
     <DashboardCard noPadding className={className}>
       {/* Table Header with Search & Filter */}
-      <div className="p-5 sm:p-6 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="p-5 sm:p-6 border-b border-[#e9e5f6] flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className={cn(tokens.typography.title, 'text-base font-extrabold text-slate-900')}>
             {title}
@@ -78,7 +78,7 @@ export function TenantActivityTable({
               onChange={(e) => onSearchChange(e.target.value)}
               placeholder="Cari sekolah..."
               className={cn(
-                'pl-8 pr-3 py-1.5 bg-slate-50 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]/30 w-full sm:w-52 transition-all',
+                'pl-8 pr-3 py-1.5 bg-[#faf9fd] text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]/30 w-full sm:w-52 transition-all',
                 tokens.radius.full,
                 tokens.border.default
               )}
@@ -93,7 +93,7 @@ export function TenantActivityTable({
             }
             aria-label="Filter status sekolah"
             className={cn(
-              'px-3 py-1.5 bg-slate-50 text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]/30 cursor-pointer transition-all',
+              'px-3 py-1.5 bg-[#faf9fd] text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]/30 cursor-pointer transition-all',
               tokens.radius.full,
               tokens.border.default
             )}
@@ -193,7 +193,7 @@ export function TenantActivityTable({
                   )}
                 </div>
 
-                <div className="grid grid-cols-3 gap-2 text-[11px] font-mono p-2 bg-slate-50/80 rounded-xl border border-slate-100">
+                <div className="grid grid-cols-3 gap-2 text-[11px] font-mono p-2 bg-[#faf9fd] rounded-xl border border-[#e9e5f6]">
                   <div>
                     <span className="text-slate-400 text-[9px] uppercase block font-sans font-bold">Kode CBT</span>
                     <span className="font-bold text-slate-800">{tenant.code}</span>
@@ -222,7 +222,7 @@ export function TenantActivityTable({
                 <div className="pt-1">
                   <Link
                     href={manageAllHref}
-                    className="w-full min-h-[44px] px-3 py-2 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-semibold flex items-center justify-between border border-slate-200/70 transition-colors"
+                    className="w-full min-h-[44px] px-3 py-2 rounded-xl bg-[#faf9fd] hover:bg-[#f1effa] text-slate-700 text-xs font-semibold flex items-center justify-between border border-[#ddd9ef] transition-colors"
                   >
                     <span>Kelola Data Sekolah</span>
                     <ChevronRight className="w-4 h-4 text-slate-400" />
@@ -238,7 +238,7 @@ export function TenantActivityTable({
       <div className="hidden md:block overflow-x-auto">
         <table className="w-full text-left text-xs" aria-label="Tabel Aktivitas Sekolah">
           <thead>
-            <tr className="bg-slate-50/70 border-b border-slate-100 text-[11px] font-mono text-slate-500 uppercase tracking-wider">
+            <tr className="bg-[#faf9fd] border-b border-[#e9e5f6] text-[11px] font-mono text-slate-500 uppercase tracking-wider">
               <th scope="col" className="py-3 px-5 font-semibold">
                 Nama Sekolah
               </th>
@@ -293,7 +293,7 @@ export function TenantActivityTable({
                 return (
                   <tr
                     key={tenant.id}
-                    className="hover:bg-slate-50/70 transition-colors group"
+                    className="hover:bg-[#f1effa] transition-colors group"
                   >
                     {/* School Name & Domain */}
                     <td className="py-3.5 px-5">

@@ -40,10 +40,10 @@ export function DashboardCard({
     >
       {/* Optional Card Header */}
       {hasHeader && (
-        <div className={cn(tokens.spacing.headerPadding, 'border-b border-slate-100 flex items-center justify-between gap-3')}>
+        <div className={cn(tokens.spacing.headerPadding, 'border-b border-[#e9e5f6] flex items-center justify-between gap-3')}>
           <div className="flex items-center gap-2.5 min-w-0">
             {icon && (
-              <div className={cn('w-8 h-8 bg-slate-50 text-slate-700 flex items-center justify-center shrink-0', tokens.radius.lg, tokens.border.default)}>
+              <div className={cn('w-8 h-8 bg-[#f1effa] text-[#6a5fc1] border border-[#ddd9ef] flex items-center justify-center shrink-0', tokens.radius.lg)}>
                 {icon}
               </div>
             )}
@@ -74,7 +74,7 @@ export function DashboardCard({
 
       {/* Optional Card Footer */}
       {footer && (
-        <div className={cn(tokens.spacing.footerPadding, 'bg-slate-50/60 border-t border-slate-100 text-xs text-slate-500')}>
+        <div className={cn(tokens.spacing.footerPadding, 'bg-[#faf9fd] border-t border-[#e9e5f6] text-xs text-slate-500')}>
           {footer}
         </div>
       )}

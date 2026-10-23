@@ -51,7 +51,7 @@ export default function SecurityWarningModal({
             <span>{details || 'Keluar dari mode layar penuh atau berpindah jendela/tab aplikasi'}</span>
           </div>
           <div className="p-3 rounded-xl bg-white text-slate-600 text-[11px] leading-relaxed border border-slate-200/80 shadow-xs flex items-start gap-2.5">
-            <Info className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" aria-hidden="true" />
+            <Info className="w-4 h-4 text-violet-600 shrink-0 mt-0.5" aria-hidden="true" />
             <div>
               <strong className="text-slate-900 font-semibold">Prinsip Human-in-the-Loop:</strong> Sistem EXAMIND tidak
               menggugurkan ujian Anda secara sepihak. Rekaman timestamp dan snapshot dikirimkan ke guru

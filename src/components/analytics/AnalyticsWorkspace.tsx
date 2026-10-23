@@ -217,7 +217,7 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
           <button
             type="button"
             onClick={handlePrint}
-            className="min-h-[40px] sm:min-h-[44px] px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
+            className="min-h-[40px] sm:min-h-[44px] px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-full border border-slate-200 bg-white hover:bg-[#f1effa] text-slate-700 font-bold text-xs shadow-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
           >
             <Printer className="w-4 h-4 text-slate-600" />
             <span>Cetak Rekapitulasi</span>
@@ -359,8 +359,8 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
           <StatCard
             title="Rata-Rata Kelas"
             value={analyticsData?.average_score ?? 0}
-            icon={<Activity className="w-5 h-5 text-indigo-600" aria-hidden="true" />}
-            tone="indigo"
+            icon={<Activity className="w-5 h-5 text-violet-600" aria-hidden="true" />}
+            tone="violet"
             subtitle={`Dari ${analyticsData?.total_examinees ?? analyticsData?.total_submissions ?? 0} siswa dinilai`}
             className="min-h-[160px]"
           />
@@ -435,7 +435,7 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
         >
           {isLoading ? (
             <div className="flex items-center justify-center p-16">
-              <Loader2 className="w-8 h-8 text-indigo-600 animate-spin" />
+              <Loader2 className="w-8 h-8 text-violet-600 animate-spin" />
             </div>
           ) : (
             <div>
@@ -451,7 +451,7 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
                         <span
                           className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold uppercase font-mono shadow-2xs ${
                             item.question_type === 'multiple_choice'
-                              ? 'bg-indigo-50 text-indigo-700 border border-indigo-200'
+                              ? 'bg-violet-50 text-violet-700 border border-violet-200'
                               : 'bg-slate-100 text-slate-700 border border-slate-200'
                           }`}
                         >
@@ -526,13 +526,13 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
                   </thead>
                   <tbody className="divide-y divide-slate-100 font-medium">
                     {(analyticsData?.item_analysis || []).map((item, idx) => (
-                      <tr key={item.question_id} className="hover:bg-slate-50/70 transition-colors">
+                      <tr key={item.question_id} className="hover:bg-[#f1effa] transition-colors">
                         <td className="py-3.5 px-5 font-bold text-slate-900 font-mono">{idx + 1}</td>
                         <td className="py-3.5 px-4">
                           <span
                             className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase font-mono shadow-2xs ${
                               item.question_type === 'multiple_choice'
-                                ? 'bg-indigo-50 text-indigo-700 border border-indigo-200'
+                                ? 'bg-violet-50 text-violet-700 border border-violet-200'
                                 : 'bg-slate-100 text-slate-700 border border-slate-200'
                             }`}
                           >

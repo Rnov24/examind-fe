@@ -318,7 +318,7 @@ export default function ExamDetailPage() {
             href="/exams"
             title="Kembali ke Daftar Ujian"
             aria-label="Kembali ke Daftar Ujian"
-            className="p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 transition-colors shadow-xs focus:ring-2 focus:ring-slate-900/10 focus:outline-none shrink-0"
+            className="p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-[#f1effa] text-slate-700 transition-colors shadow-xs focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none shrink-0"
           >
             <ArrowLeft className="w-4 h-4" aria-hidden="true" />
           </Link>
@@ -351,7 +351,7 @@ export default function ExamDetailPage() {
             <>
               <button
                 onClick={() => setShowAddQuestionModal(true)}
-                className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-xs flex items-center justify-center gap-2 cursor-pointer transition-colors focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+                className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-[#f1effa] text-slate-700 font-bold text-xs shadow-xs flex items-center justify-center gap-2 cursor-pointer transition-colors focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
               >
                 <Plus className="w-4 h-4 text-slate-600" aria-hidden="true" />
                 <span>Pilih Soal dari Bank</span>
@@ -360,7 +360,7 @@ export default function ExamDetailPage() {
               <button
                 onClick={handlePublish}
                 disabled={isPublishing}
-                className="flex-1 sm:flex-none px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-card hover:shadow-card-hover flex items-center justify-center gap-2 cursor-pointer transition-all font-display tracking-wide focus:ring-2 focus:ring-slate-900/10 focus:outline-none disabled:opacity-50"
+                className="flex-1 sm:flex-none px-5 py-2.5 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-card hover:shadow-card-hover flex items-center justify-center gap-2 cursor-pointer transition-all font-display tracking-wide focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none disabled:opacity-50"
               >
                 {isPublishing ? (
                   <Loader2 className="w-4 h-4 animate-spin text-[#c2ef4e]" aria-hidden="true" />
@@ -386,7 +386,7 @@ export default function ExamDetailPage() {
             <>
               <Link
                 href={`/grading/${examDetail.id}`}
-                className="px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+                className="px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-[#f1effa] text-slate-700 font-bold text-xs shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
               >
                 <CheckSquare className="w-4 h-4 text-slate-600" aria-hidden="true" />
                 <span>Koreksi Esai</span>
@@ -394,7 +394,7 @@ export default function ExamDetailPage() {
 
               <Link
                 href={`/exams/${examDetail.id}/analytics`}
-                className="px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+                className="px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-[#f1effa] text-slate-700 font-bold text-xs shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
               >
                 <BarChart3 className="w-4 h-4 text-slate-600" aria-hidden="true" />
                 <span>Analisis Butir Soal</span>
@@ -433,7 +433,7 @@ export default function ExamDetailPage() {
                 <span>Kurang {pointsRemaining} Poin Menuju 100</span>
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-200 text-xs font-bold font-mono">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-violet-50 text-violet-700 border border-violet-200 text-xs font-bold font-mono">
                 <span>Total Poin: {totalPoints}</span>
               </span>
             )}
@@ -448,7 +448,7 @@ export default function ExamDetailPage() {
                 ? 'bg-emerald-500'
                 : totalPoints < 100
                 ? 'bg-amber-500'
-                : 'bg-indigo-600'
+                : 'bg-violet-600'
             }`}
             style={{ width: `${Math.min(100, (totalPoints / 100) * 100)}%` }}
           />
@@ -480,7 +480,7 @@ export default function ExamDetailPage() {
 
         {isLoading ? (
           <div className="flex flex-col items-center justify-center p-16 space-y-3">
-            <Loader2 className="w-8 h-8 text-indigo-600 animate-spin" aria-hidden="true" />
+            <Loader2 className="w-8 h-8 text-violet-600 animate-spin" aria-hidden="true" />
             <p className="text-xs font-bold text-slate-700">Memuat butir soal ujian...</p>
           </div>
         ) : (
@@ -488,7 +488,7 @@ export default function ExamDetailPage() {
             {(examDetail?.exam_questions || []).map((eq, idx) => (
               <div
                 key={eq.id}
-                className="p-5 sm:p-6 hover:bg-slate-50/70 transition-colors space-y-3"
+                className="p-5 sm:p-6 hover:bg-[#f1effa] transition-colors space-y-3"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-center gap-2.5">
@@ -498,7 +498,7 @@ export default function ExamDetailPage() {
                     <span
                       className={`px-2.5 py-0.5 rounded-lg text-[11px] font-bold uppercase font-mono shadow-2xs ${
                         eq.question?.question_type === 'multiple_choice'
-                          ? 'bg-indigo-50 text-indigo-700 border border-indigo-200'
+                          ? 'bg-violet-50 text-violet-700 border border-violet-200'
                           : 'bg-slate-100 text-slate-700 border border-slate-200'
                       }`}
                     >
@@ -549,7 +549,7 @@ export default function ExamDetailPage() {
             {/* Actionable Empty State */}
             {(!examDetail?.exam_questions || examDetail.exam_questions.length === 0) && (
               <div className="p-10 sm:p-12 text-center flex flex-col items-center justify-center space-y-4">
-                <div className="w-14 h-14 rounded-2xl bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center">
+                <div className="w-14 h-14 rounded-2xl bg-violet-50 border border-violet-100 text-violet-600 flex items-center justify-center">
                   <CheckSquare className="w-7 h-7" aria-hidden="true" />
                 </div>
                 <div className="space-y-1 max-w-md">
@@ -566,14 +566,14 @@ export default function ExamDetailPage() {
                     <button
                       type="button"
                       onClick={() => setShowAddQuestionModal(true)}
-                      className="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-card hover:shadow-card-hover transition-all flex items-center gap-2 cursor-pointer focus:ring-2 focus:ring-slate-900/10 focus:outline-none font-display"
+                      className="px-5 py-2.5 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-card hover:shadow-card-hover transition-all flex items-center gap-2 cursor-pointer focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none font-display"
                     >
                       <Plus className="w-4 h-4 text-[#c2ef4e]" aria-hidden="true" />
                       <span>Pilih Soal dari Bank</span>
                     </button>
                     <Link
                       href="/questions"
-                      className="px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-xs transition-colors"
+                      className="px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-[#f1effa] text-slate-700 font-bold text-xs shadow-xs transition-colors"
                     >
                       Buka Master Bank Soal
                     </Link>
@@ -608,7 +608,7 @@ export default function ExamDetailPage() {
                 onClick={() => setShowAddQuestionModal(false)}
                 title="Tutup modal"
                 aria-label="Tutup modal"
-                className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-slate-900/10"
+                className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]/40"
               >
                 <X className="w-4 h-4" aria-hidden="true" />
               </button>
@@ -627,7 +627,7 @@ export default function ExamDetailPage() {
                       const val = e.target.value ? Number(e.target.value) : null
                       setSelectedBankId(val)
                     }}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-xs font-semibold focus:bg-white focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 outline-none"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-xs font-semibold focus:bg-white focus:ring-2 focus:ring-[#6a5fc1]/40 focus:border-slate-900 outline-none"
                   >
                     <option value="">-- Pilih Bank Soal --</option>
                     {availableBanks.map((b) => (
@@ -649,7 +649,7 @@ export default function ExamDetailPage() {
                       value={modalSearch}
                       onChange={(e) => setModalSearch(e.target.value)}
                       placeholder="Cari teks soal..."
-                      className="w-full pl-9 pr-3 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-xl text-slate-900 font-medium placeholder:text-slate-400 focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 outline-none"
+                      className="w-full pl-9 pr-3 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-xl text-slate-900 font-medium placeholder:text-slate-400 focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-[#6a5fc1]/40 outline-none"
                     />
                   </div>
                 </div>
@@ -665,7 +665,7 @@ export default function ExamDetailPage() {
                       className="inline-flex items-center gap-1.5 font-bold text-slate-700 hover:text-slate-900 cursor-pointer"
                     >
                       {selectedModalQuestionIds.size === filteredModalQuestions.length ? (
-                        <CheckSquare className="w-4 h-4 text-indigo-600" aria-hidden="true" />
+                        <CheckSquare className="w-4 h-4 text-violet-600" aria-hidden="true" />
                       ) : (
                         <Square className="w-4 h-4 text-slate-400" aria-hidden="true" />
                       )}
@@ -683,7 +683,7 @@ export default function ExamDetailPage() {
                       type="button"
                       disabled={isBatchAdding}
                       onClick={handleBatchAddQuestions}
-                      className="px-3.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition-colors cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
+                      className="px-3.5 py-1.5 rounded-lg bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs transition-colors cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
                     >
                       {isBatchAdding && <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" />}
                       <span>Tambahkan {selectedModalQuestionIds.size} Soal Terpilih</span>
@@ -701,25 +701,25 @@ export default function ExamDetailPage() {
                       <div
                         key={q.id}
                         className={`p-3 rounded-xl border transition-colors flex items-start justify-between gap-3 text-xs ${
-                          isSelected ? 'bg-indigo-50/60 border-indigo-300' : 'bg-white border-slate-200 hover:bg-slate-50'
+                          isSelected ? 'bg-violet-50/60 border-violet-300' : 'bg-white border-slate-200 hover:bg-slate-50'
                         }`}
                       >
                         <div className="flex items-start gap-2.5 min-w-0">
                           <button
                             type="button"
                             onClick={() => toggleModalQuestionSelect(q.id)}
-                            className="mt-0.5 text-slate-400 hover:text-indigo-600 cursor-pointer shrink-0"
+                            className="mt-0.5 text-slate-400 hover:text-violet-600 cursor-pointer shrink-0"
                             aria-label="Pilih butir soal ini"
                           >
                             {isSelected ? (
-                              <CheckSquare className="w-4 h-4 text-indigo-600" aria-hidden="true" />
+                              <CheckSquare className="w-4 h-4 text-violet-600" aria-hidden="true" />
                             ) : (
                               <Square className="w-4 h-4 text-slate-300" aria-hidden="true" />
                             )}
                           </button>
                           <div className="space-y-1 min-w-0">
                             <div className="flex items-center gap-2">
-                              <span className="px-2 py-0.5 bg-indigo-50 text-indigo-700 border border-indigo-200 rounded text-[10px] font-bold uppercase font-mono">
+                              <span className="px-2 py-0.5 bg-violet-50 text-violet-700 border border-violet-200 rounded text-[10px] font-bold uppercase font-mono">
                                 {q.question_type === 'multiple_choice' ? 'PG' : 'Esai'}
                               </span>
                               <span className="text-[10px] font-mono text-slate-500">
@@ -734,7 +734,7 @@ export default function ExamDetailPage() {
 
                         <button
                           onClick={() => handleAddSingleQuestion(q)}
-                          className="px-3 py-1.5 rounded-lg bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 font-bold text-xs shrink-0 cursor-pointer transition-colors focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+                          className="px-3 py-1.5 rounded-lg bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 font-bold text-xs shrink-0 cursor-pointer transition-colors focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
                         >
                           + Tambah
                         </button>
@@ -759,7 +759,7 @@ export default function ExamDetailPage() {
                 <button
                   type="button"
                   onClick={() => setShowAddQuestionModal(false)}
-                  className="px-4 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50 border border-slate-200 cursor-pointer transition-colors"
+                  className="px-4 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-[#f1effa] border border-slate-200 cursor-pointer transition-colors"
                 >
                   Tutup
                 </button>
@@ -768,7 +768,7 @@ export default function ExamDetailPage() {
                     type="button"
                     disabled={isBatchAdding}
                     onClick={handleBatchAddQuestions}
-                    className="px-5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition-colors cursor-pointer flex items-center gap-1.5 disabled:opacity-50 font-display"
+                    className="px-5 py-2 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-xs transition-colors cursor-pointer flex items-center gap-1.5 disabled:opacity-50 font-display"
                   >
                     {isBatchAdding && <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" />}
                     <span>Tambahkan ke Ujian</span>

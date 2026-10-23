@@ -314,7 +314,7 @@ export default function LiveMonitoringPage() {
             href={`/exams/${examId}`}
             title="Kembali ke Detail Ujian"
             aria-label="Kembali ke Detail Ujian"
-            className="p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 transition-colors shadow-xs focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+            className="p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-[#f1effa] text-slate-700 transition-colors shadow-xs focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
           >
             <ArrowLeft className="w-4 h-4" aria-hidden="true" />
           </Link>
@@ -341,10 +341,10 @@ export default function LiveMonitoringPage() {
         <div className="flex items-center gap-2 self-stretch sm:self-auto">
           <button
             onClick={() => setFilterMode('all')}
-            className={`flex-1 sm:flex-initial px-4 py-2 rounded-xl font-bold text-xs transition-all cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-slate-900/10 focus:outline-none ${
+            className={`flex-1 sm:flex-initial px-4 py-2 rounded-xl font-bold text-xs transition-all cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none ${
               filterMode === 'all'
                 ? 'bg-slate-900 text-white shadow-card'
-                : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 shadow-xs'
+                : 'bg-white border border-slate-200 text-slate-700 hover:bg-[#f1effa] shadow-xs'
             }`}
           >
             Semua Siswa ({studentsList.length})
@@ -453,7 +453,7 @@ export default function LiveMonitoringPage() {
                 {/* Secondary Camera (Companion) Picture-in-Picture Thumbnail */}
                 {student.companion_snapshot_url ? (
                   <div
-                    className="absolute top-2 right-2 w-20 h-14 rounded-lg overflow-hidden border-2 border-indigo-500 bg-black shadow-lg"
+                    className="absolute top-2 right-2 w-20 h-14 rounded-lg overflow-hidden border-2 border-violet-500 bg-black shadow-lg"
                     title="Cam 2 (Mobile Desk Cam)"
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -466,7 +466,7 @@ export default function LiveMonitoringPage() {
                   <div
                     className={`absolute top-2 right-2 px-1.5 py-0.5 rounded text-[9px] font-semibold border backdrop-blur font-mono ${
                       student.companion_paired
-                        ? 'bg-indigo-950/80 border-indigo-500/80 text-emerald-300'
+                        ? 'bg-violet-950/80 border-violet-500/80 text-emerald-300'
                         : 'bg-black/60 border-slate-700 text-slate-400'
                     }`}
                   >
@@ -492,16 +492,16 @@ export default function LiveMonitoringPage() {
                   <button
                     onClick={() => openWarningModal(student)}
                     disabled={student.status === 'aborted'}
-                    className="py-2 px-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-50 text-slate-700 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-xs focus:ring-2 focus:ring-amber-500/20 focus:outline-none"
+                    className="py-2 px-3 rounded-xl border border-slate-200 bg-white hover:bg-[#f1effa] disabled:opacity-50 text-slate-700 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-xs focus:ring-2 focus:ring-amber-500/20 focus:outline-none"
                   >
                     <Bell className="w-3.5 h-3.5 text-amber-600" aria-hidden="true" />
                     <span>Peringatkan</span>
                   </button>
                   <button
                     onClick={() => openSnapshotModal(student)}
-                    className="py-2 px-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-800 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-xs focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+                    className="py-2 px-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-800 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-xs focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
                   >
-                    <History className="w-3.5 h-3.5 text-indigo-600" aria-hidden="true" />
+                    <History className="w-3.5 h-3.5 text-violet-600" aria-hidden="true" />
                     <span>Log Bukti</span>
                   </button>
                 </div>
@@ -542,7 +542,7 @@ export default function LiveMonitoringPage() {
 
         {filteredStudents.length === 0 && (
           <div className="col-span-full bg-white rounded-2xl p-12 text-center flex flex-col items-center justify-center border border-slate-200/80 shadow-card">
-            <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-3">
+            <div className="w-12 h-12 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center mb-3">
               <UserCheck className="w-6 h-6" aria-hidden="true" />
             </div>
             <h4 className="font-bold text-slate-900 text-base">Tidak Ada Peserta yang Sesuai</h4>
@@ -555,7 +555,7 @@ export default function LiveMonitoringPage() {
               <button
                 type="button"
                 onClick={() => setFilterMode('all')}
-                className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition-all cursor-pointer focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+                className="px-4 py-2 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-xs transition-all cursor-pointer focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
               >
                 Tampilkan Semua Peserta
               </button>
@@ -563,7 +563,7 @@ export default function LiveMonitoringPage() {
               <button
                 type="button"
                 onClick={loadExamSessions}
-                className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition-all cursor-pointer focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+                className="px-4 py-2 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-xs transition-all cursor-pointer focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
               >
                 Muat Ulang Sesi
               </button>
@@ -597,14 +597,14 @@ export default function LiveMonitoringPage() {
                 rows={3}
                 autoFocus
                 placeholder="Contoh: Harap fokus dan pandangan tetap ke arah layar laptop..."
-                className="w-full p-3.5 rounded-lg bg-slate-50 border border-slate-300 text-slate-900 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900"
+                className="w-full p-3.5 rounded-lg bg-slate-50 border border-slate-300 text-slate-900 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]/40 focus:border-slate-900"
               />
             </div>
 
             <div className="flex items-center justify-end gap-3 pt-2">
               <button
                 onClick={() => setActiveWarningStudent(null)}
-                className="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 font-bold text-xs bg-white cursor-pointer shadow-xs focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+                className="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 hover:bg-[#f1effa] font-bold text-xs bg-white cursor-pointer shadow-xs focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
               >
                 Batal
               </button>
@@ -640,7 +640,7 @@ export default function LiveMonitoringPage() {
                 onClick={() => setSelectedStudentLogs(null)}
                 title="Tutup log insiden"
                 aria-label="Tutup log insiden"
-                className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl hover:bg-slate-100 text-slate-500 hover:text-slate-800 cursor-pointer focus:outline-none focus:ring-2 focus:ring-slate-900/10"
+                className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl hover:bg-slate-100 text-slate-500 hover:text-slate-800 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]/40"
               >
                 <X className="w-5 h-5" aria-hidden="true" />
               </button>
@@ -689,7 +689,7 @@ export default function LiveMonitoringPage() {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => setVerdict(log.id, 'ignored_false_positive')}
-                      className="px-2.5 py-1 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-[11px] font-bold text-slate-700 cursor-pointer shadow-xs focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+                      className="px-2.5 py-1 rounded-lg border border-slate-300 bg-white hover:bg-[#f1effa] text-[11px] font-bold text-slate-700 cursor-pointer shadow-xs focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
                     >
                       Abaikan
                     </button>
@@ -784,7 +784,7 @@ export default function LiveMonitoringPage() {
                 <select
                   value={disqualifyReason}
                   onChange={(e) => setDisqualifyReason(e.target.value)}
-                  className="w-full p-2.5 rounded-lg bg-slate-50 border border-slate-300 text-slate-900 text-xs font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900"
+                  className="w-full p-2.5 rounded-lg bg-slate-50 border border-slate-300 text-slate-900 text-xs font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]/40 focus:border-slate-900"
                 >
                   <option value="Kerjasama / Menyontek Terang-terangan">
                     Kerjasama / Menyontek Terang-terangan (Orang lain / Gadget)
@@ -813,7 +813,7 @@ export default function LiveMonitoringPage() {
                   onChange={(e) => setDisqualifyNotes(e.target.value)}
                   rows={3}
                   placeholder="Contoh: Terkonfirmasi membuka buku materi dan mengabaikan 2 kali peringatan pengawas pada menit 15 dan 22."
-                  className="w-full p-3 rounded-lg bg-slate-50 border border-slate-300 text-slate-900 text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900"
+                  className="w-full p-3 rounded-lg bg-slate-50 border border-slate-300 text-slate-900 text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]/40 focus:border-slate-900"
                 />
               </div>
             </div>
@@ -821,7 +821,7 @@ export default function LiveMonitoringPage() {
             <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-200">
               <button
                 onClick={() => setActiveDisqualifyStudent(null)}
-                className="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 font-bold text-xs bg-white cursor-pointer shadow-xs focus:ring-2 focus:ring-slate-900/10 focus:outline-none"
+                className="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 hover:bg-[#f1effa] font-bold text-xs bg-white cursor-pointer shadow-xs focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
               >
                 Batalkan
               </button>

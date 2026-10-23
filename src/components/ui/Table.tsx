@@ -70,7 +70,7 @@ export const TableHeader = forwardRef<
   <thead
     ref={ref}
     className={cn(
-      'bg-slate-50/80 border-b border-slate-200 text-slate-500 font-bold uppercase tracking-wider font-mono text-[10px] sm:text-[11px] select-none',
+      'bg-[#faf9fd] border-b border-[#ddd9ef] text-slate-500 font-bold uppercase tracking-wider font-mono text-[10px] sm:text-[11px] select-none',
       className
     )}
     {...props}
@@ -84,7 +84,7 @@ export const TableBody = forwardRef<
 >(({ className, ...props }, ref) => (
   <tbody
     ref={ref}
-    className={cn('divide-y divide-slate-100 font-medium text-slate-700', className)}
+    className={cn('divide-y divide-[#e9e5f6] font-medium text-slate-700', className)}
     {...props}
   />
 ))
@@ -97,7 +97,7 @@ export const TableFooter = forwardRef<
   <tfoot
     ref={ref}
     className={cn(
-      'border-t border-slate-200 bg-slate-50/60 font-medium text-slate-600',
+      'border-t border-[#ddd9ef] bg-[#faf9fd] font-medium text-slate-600',
       className
     )}
     {...props}
@@ -112,7 +112,7 @@ export const TableRow = forwardRef<
   <tr
     ref={ref}
     className={cn(
-      'hover:bg-slate-50/80 data-[state=selected]:bg-[#6a5fc1]/[0.05] transition-colors duration-150',
+      'hover:bg-[#f1effa] data-[state=selected]:bg-[#6a5fc1]/[0.06] transition-colors duration-150',
       className
     )}
     {...props}

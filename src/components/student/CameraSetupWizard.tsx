@@ -650,14 +650,14 @@ export default function CameraSetupWizard({
                       lightState === 'ok'
                         ? 'bg-emerald-50 border-emerald-200'
                         : lightState === 'dark'
-                          ? 'bg-indigo-50 border-indigo-200'
+                          ? 'bg-violet-50 border-violet-200'
                           : lightState === 'bright'
                             ? 'bg-amber-50 border-amber-200'
                             : 'bg-slate-50 border-slate-200'
                     }`}
                   >
                     {lightState === 'dark' ? (
-                      <Moon className="w-6 h-6 shrink-0 text-indigo-600" aria-hidden="true" />
+                      <Moon className="w-6 h-6 shrink-0 text-violet-600" aria-hidden="true" />
                     ) : (
                       <Sun
                         className={`w-6 h-6 shrink-0 ${
@@ -676,8 +676,8 @@ export default function CameraSetupWizard({
                       )}
                       {lightState === 'dark' && (
                         <>
-                          <p className="font-bold text-indigo-950">Ruangan terlalu gelap.</p>
-                          <p className="text-indigo-900 mt-0.5">
+                          <p className="font-bold text-violet-950">Ruangan terlalu gelap.</p>
+                          <p className="text-violet-900 mt-0.5">
                             Nyalakan lampu atau pindah ke tempat yang lebih terang sampai wajah
                             Anda terlihat jelas di pratinjau.
                           </p>

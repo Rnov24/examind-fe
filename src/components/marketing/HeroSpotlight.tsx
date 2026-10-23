@@ -93,11 +93,11 @@ export function HeroSpotlight({ children, className = '' }: HeroSpotlightProps) 
 
       {/* Subtle institutional contour watermark circles */}
       <div
-        className="pointer-events-none absolute -top-24 right-[-10%] w-[580px] h-[580px] rounded-full border border-indigo-200/40 opacity-30 blur-[0.5px]"
+        className="pointer-events-none absolute -top-24 right-[-10%] w-[580px] h-[580px] rounded-full border border-violet-200/40 opacity-30 blur-[0.5px]"
         aria-hidden="true"
       />
       <div
-        className="pointer-events-none absolute -top-40 right-[-18%] w-[820px] h-[820px] rounded-full border border-indigo-100/30 opacity-20"
+        className="pointer-events-none absolute -top-40 right-[-18%] w-[820px] h-[820px] rounded-full border border-violet-100/30 opacity-20"
         aria-hidden="true"
       />
       <div

@@ -143,7 +143,7 @@ export function Stamp({
   const stampVariants = {
     midnight: 'border-2 border-[#150f23] text-[#150f23] bg-white',
     emerald: 'border-2 border-emerald-700 text-emerald-800 bg-emerald-50/60',
-    violet: 'border-2 border-[#584dae] text-[#584dae] bg-indigo-50/60',
+    violet: 'border-2 border-[#584dae] text-[#584dae] bg-violet-50/60',
     lime: 'border-2 border-[#150f23] text-[#150f23] bg-[#c2ef4e]',
   }
 

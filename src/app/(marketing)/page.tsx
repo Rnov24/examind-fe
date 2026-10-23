@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
 import {
   ShieldCheck,
@@ -11,7 +11,6 @@ import {
   GraduationCap,
   BookOpen,
   Building2,
-  AlertCircle,
   ArrowRight,
   CheckCircle2,
   X,
@@ -27,6 +26,8 @@ import {
   Eye,
   Video,
   QrCode,
+  ChevronDown,
+  AlertCircle,
 } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { formatIDR, useCountUp } from '@/hooks/useCountUp'
@@ -238,7 +239,20 @@ export default function LandingPage() {
 
   // Modal & Inquiry State
   const [isInquiryModalOpen, setIsInquiryModalOpen] = useState(false)
+  const [isInquiryClosing, setIsInquiryClosing] = useState(false)
   const [submissionStatus, setSubmissionStatus] = useState(false)
+  const [inquirySubmitting, setInquirySubmitting] = useState(false)
+  const [inquirySubmitError, setInquirySubmitError] = useState<string | null>(null)
+  const [inquiryErrors, setInquiryErrors] = useState<{
+    fullName?: string
+    schoolName?: string
+    whatsapp?: string
+  }>({})
+  const inquiryModalRef = useRef<HTMLDivElement | null>(null)
+  const inquiryCloseTimerRef = useRef<number | null>(null)
+  // CS WhatsApp number comes only from env — no hardcoded fallback number.
+  // When unset, WhatsApp actions are simply not rendered.
+  const csWhatsAppNumber = process.env.NEXT_PUBLIC_CS_WHATSAPP
   const [inquiryForm, setInquiryForm] = useState({
     packageType: 'Paket Institusi Terpadu',
     fullName: '',
@@ -250,27 +264,171 @@ export default function LandingPage() {
   })
 
   const openInquiryModal = (pkgName?: string) => {
+    if (inquiryCloseTimerRef.current !== null) {
+      window.clearTimeout(inquiryCloseTimerRef.current)
+      inquiryCloseTimerRef.current = null
+    }
     if (pkgName && pkgName !== 'demo' && pkgName !== 'tech' && pkgName !== 'spk' && pkgName !== 'cs') {
       setInquiryForm((prev) => ({ ...prev, packageType: pkgName }))
     } else {
       setInquiryForm((prev) => ({ ...prev, packageType: 'Paket Institusi Terpadu (Konsultasi Demo)' }))
     }
     setSubmissionStatus(false)
+    setInquiryErrors({})
+    setIsInquiryClosing(false)
     setIsInquiryModalOpen(true)
   }
 
+  const closeInquiryModal = useCallback(() => {
+    if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setIsInquiryModalOpen(false)
+      setIsInquiryClosing(false)
+      return
+    }
+    setIsInquiryClosing(true)
+    inquiryCloseTimerRef.current = window.setTimeout(() => {
+      setIsInquiryModalOpen(false)
+      setIsInquiryClosing(false)
+      inquiryCloseTimerRef.current = null
+    }, 200)
+  }, [])
+
   const submitInquiry = (e: React.FormEvent) => {
     e.preventDefault()
-    setSubmissionStatus(true)
+    // Same required fields as before (nama, sekolah, WhatsApp) — validation
+    // is now reported inline under each field instead of a browser bubble.
+    const errors: { fullName?: string; schoolName?: string; whatsapp?: string } = {}
+    if (!inquiryForm.fullName.trim()) errors.fullName = 'Nama lengkap wajib diisi.'
+    if (!inquiryForm.schoolName.trim()) errors.schoolName = 'Nama sekolah / institusi wajib diisi.'
+    if (!inquiryForm.whatsapp.trim())
+      errors.whatsapp = 'Nomor WhatsApp wajib diisi agar tim kami dapat menghubungi Anda.'
+    setInquiryErrors(errors)
+    const firstInvalidId = errors.fullName
+      ? 'inq-fullname'
+      : errors.schoolName
+        ? 'inq-schoolname'
+        : errors.whatsapp
+          ? 'inq-whatsapp'
+          : null
+    if (firstInvalidId) {
+      document.getElementById(firstInvalidId)?.focus()
+      return
+    }
+    // Real submission: the inquiry is persisted server-side (superadmin
+    // follow-up queue). Success is shown ONLY after the server confirms —
+    // never optimistically.
+    void (async () => {
+      setInquirySubmitting(true)
+      setInquirySubmitError(null)
+      try {
+        const res = await fetch('/api/v1/public/inquiries', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            full_name: inquiryForm.fullName.trim(),
+            role: inquiryForm.role,
+            school_name: inquiryForm.schoolName.trim(),
+            whatsapp: inquiryForm.whatsapp.trim(),
+            package_interest: inquiryForm.packageType,
+            student_count_range: inquiryForm.studentCount,
+            notes: inquiryForm.notes,
+          }),
+        })
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        setSubmissionStatus(true)
+      } catch {
+        setInquirySubmitError(
+          'Permohonan belum terkirim. Periksa koneksi internet Anda, lalu coba lagi. Anda juga bisa menghubungi kami langsung lewat WhatsApp bila tombolnya tersedia di bawah.'
+        )
+      } finally {
+        setInquirySubmitting(false)
+      }
+    })()
   }
 
   const directWhatsAppChat = () => {
-    const phone = process.env.NEXT_PUBLIC_CS_WHATSAPP || '6281234567890'
+    const phone = csWhatsAppNumber
+    if (!phone) return
     const text = encodeURIComponent(
       `Halo Tim Konsultan Edukasi EXAMIND, saya ${inquiryForm.fullName || 'Pihak Sekolah'} (${inquiryForm.role || 'Perwakilan Sekolah'}) dari ${inquiryForm.schoolName || 'Institusi Pendidikan'}. Kami ingin berkonsultasi mengenai pengadaan ${inquiryForm.packageType} untuk estimasi ${inquiryForm.studentCount}. Mohon info penjadwalan demo dan pengiriman draf penawaran resminya. Terima kasih.`
     )
     window.open(`https://wa.me/${phone}?text=${text}`, '_blank')
   }
+
+  // Inquiry modal: Esc to close, Tab trapped inside the panel, body scroll
+  // locked while open, initial focus moved into the dialog.
+  useEffect(() => {
+    if (!isInquiryModalOpen) return
+    const prevOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        closeInquiryModal()
+        return
+      }
+      if (e.key !== 'Tab') return
+      const panel = inquiryModalRef.current
+      if (!panel) return
+      const focusable = Array.from(
+        panel.querySelectorAll<HTMLElement>('button, [href], input, select, textarea, [tabIndex]:not([tabIndex="-1"])')
+      ).filter((el) => !el.hasAttribute('disabled'))
+      const visible = focusable.filter((el) => el.offsetParent !== null)
+      const list = visible.length > 0 ? visible : focusable
+      if (list.length === 0) return
+      const first = list[0]
+      const last = list[list.length - 1]
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault()
+        last.focus()
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault()
+        first.focus()
+      }
+    }
+    document.addEventListener('keydown', handleKey)
+
+    const focusTimer = window.setTimeout(() => {
+      const panel = inquiryModalRef.current
+      if (!panel) return
+      const firstField = panel.querySelector<HTMLElement>('input, select, textarea')
+      ;(firstField ?? panel).focus()
+    }, 60)
+
+    return () => {
+      document.body.style.overflow = prevOverflow
+      document.removeEventListener('keydown', handleKey)
+      window.clearTimeout(focusTimer)
+    }
+  }, [isInquiryModalOpen, closeInquiryModal])
+
+  // Keep focus on the dialog when the success view replaces the form.
+  useEffect(() => {
+    if (submissionStatus) inquiryModalRef.current?.focus()
+  }, [submissionStatus])
+
+  // Plan summary shown at the top of the inquiry modal — always derived from
+  // the real plans state (same price / per-student math as the pricing cards).
+  const selectedPlan = plans?.find((p) => p.name === inquiryForm.packageType) ?? null
+  const selectedPlanPrice = selectedPlan
+    ? billingPeriod === 'monthly'
+      ? selectedPlan.price_monthly
+      : selectedPlan.price_annually
+    : 0
+  const selectedPlanPerStudentRaw =
+    selectedPlan && selectedPlan.max_students > 0
+      ? (billingPeriod === 'monthly' ? selectedPlan.price_monthly : selectedPlan.price_annually / 12) /
+        selectedPlan.max_students
+      : 0
+  const selectedPlanPerStudent = Math.max(100, Math.round(selectedPlanPerStudentRaw / 100) * 100)
+
+  const inquiryInputCls = (hasError: boolean) =>
+    `w-full min-h-[44px] px-3.5 py-2.5 bg-slate-50 border rounded-lg text-sm text-slate-900 placeholder:text-slate-400 outline-none transition-colors focus:bg-white ${
+      hasError
+        ? 'border-rose-400 focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20'
+        : 'border-slate-300 focus:border-[#6a5fc1] focus:ring-2 focus:ring-[#6a5fc1]/25'
+    }`
+  const inquirySelectCls = `${inquiryInputCls(false)} appearance-none pr-10 cursor-pointer`
 
   return (
     <div className="min-h-screen overflow-x-clip bg-white text-slate-900 font-sans antialiased selection:bg-[#6a5fc1] selection:text-white">
@@ -1342,159 +1500,383 @@ export default function LandingPage() {
       {isInquiryModalOpen && (
         <div
           onClick={(e) => {
-            if (e.target === e.currentTarget) setIsInquiryModalOpen(false)
+            if (e.target === e.currentTarget) closeInquiryModal()
           }}
-          className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto"
+          className={`fixed inset-0 z-50 bg-[#150f23]/60 backdrop-blur-sm flex items-center justify-center p-4 ${
+            isInquiryClosing ? 'anim-fade-out' : 'anim-fade'
+          }`}
+          style={{ '--anim-duration': '200ms' } as React.CSSProperties}
           role="dialog"
           aria-modal="true"
+          aria-labelledby="inquiry-modal-title"
         >
-          <div className="bg-white rounded-xl shadow-2xl border border-slate-200 max-w-lg w-full overflow-hidden text-slate-900">
+          <div
+            ref={inquiryModalRef}
+            tabIndex={-1}
+            className={`bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-lg w-full max-h-[calc(100dvh-2rem)] flex flex-col overflow-hidden text-slate-900 outline-none ${
+              isInquiryClosing ? 'anim-pop-out' : 'anim-pop'
+            }`}
+            style={{ '--anim-duration': '220ms' } as React.CSSProperties}
+          >
             {/* Modal Header */}
-            <div className="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-800 border border-indigo-200 flex items-center justify-center shrink-0">
-                  <MessageSquare className="w-4 h-4" />
+            <div className="px-6 py-4 border-b border-slate-200 flex items-start justify-between gap-4 shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-[#6a5fc1]/10 text-[#6a5fc1] border border-[#6a5fc1]/20 flex items-center justify-center shrink-0">
+                  <MessageSquare className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-slate-900 tracking-tight">Konsultasi Pengadaan Lisensi Sekolah</h3>
-                  <p className="text-xs text-slate-500">Tim kami siap membantu kebutuhan sekolah Anda</p>
+                  <h3 id="inquiry-modal-title" className="text-base font-bold text-slate-900 tracking-tight">
+                    Konsultasi Pengadaan Lisensi Sekolah
+                  </h3>
+                  <p className="text-xs text-slate-500 mt-0.5">Tim kami siap membantu kebutuhan sekolah Anda</p>
                 </div>
               </div>
               <button
-                onClick={() => setIsInquiryModalOpen(false)}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+                onClick={closeInquiryModal}
+                className="w-11 h-11 -mr-2.5 -mt-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer flex items-center justify-center shrink-0"
                 aria-label="Tutup modal"
               >
-                <X className="w-4 h-4" />
+                <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Form Body */}
-            <div className="p-6 space-y-4">
-              <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-900 text-xs sm:text-sm leading-relaxed flex items-start gap-2.5">
-                <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-                <div>
-                  <strong className="text-amber-950">Tata Kelola Resmi:</strong> Pengadaan lisensi diproses menggunakan Surat Perjanjian Kerja (SPK) resmi sekolah dan transfer antar-rekening instansi.
-                </div>
-              </div>
+            {/* Modal Body */}
+            <div className="p-6 overflow-y-auto">
+              {!submissionStatus ? (
+                <div className="space-y-5">
+                  {/* Step 1 — Plan summary (real data from the landing plans state) */}
+                  <div className="rounded-xl border border-[#6a5fc1]/25 bg-[#6a5fc1]/[0.06] p-4 space-y-3">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="text-xs font-semibold text-[#6a5fc1]">Paket yang dipilih</p>
+                        <p className="text-base font-bold text-slate-900 mt-0.5 leading-snug">{inquiryForm.packageType}</p>
+                      </div>
+                      {selectedPlan?.is_popular && (
+                        <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#150f23] text-white shrink-0">
+                          Paling Direkomendasikan
+                        </span>
+                      )}
+                    </div>
 
-              <form onSubmit={submitInquiry} className="space-y-4 text-xs sm:text-sm">
-                <div>
-                  <label className="block font-semibold text-slate-700 mb-1.5">Paket yang Dipilih</label>
-                  <input
-                    type="text"
-                    value={inquiryForm.packageType}
-                    readOnly
-                    className="w-full px-3.5 py-2.5 bg-slate-100 border border-slate-300 rounded-lg text-slate-900 font-semibold text-sm outline-none"
-                  />
-                </div>
+                    {selectedPlan && (
+                      <div className="space-y-0.5">
+                        <p className="text-sm text-slate-700">
+                          <span className="font-extrabold font-mono text-slate-900 tracking-tight">
+                            {formatIDR(selectedPlanPrice)}
+                          </span>{' '}
+                          {billingPeriod === 'monthly' ? 'per bulan' : 'per tahun'}
+                        </p>
+                        {selectedPlanPerStudentRaw > 0 && (
+                          <p className="text-xs text-slate-500">
+                            setara {formatIDR(selectedPlanPerStudent)} per siswa per bulan · hingga{' '}
+                            {formatCount(selectedPlan.max_students)} siswa
+                          </p>
+                        )}
+                      </div>
+                    )}
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                  <div>
-                    <label className="block font-semibold text-slate-700 mb-1.5">Nama Lengkap & Gelar Akademik *</label>
-                    <input
-                      type="text"
-                      required
-                      value={inquiryForm.fullName}
-                      onChange={(e) => setInquiryForm({ ...inquiryForm, fullName: e.target.value })}
-                      placeholder="Contoh: Drs. Bambang Sutrisno, M.Pd."
-                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg focus:bg-white focus:border-slate-900 text-slate-900 placeholder:text-slate-400 text-sm outline-none"
-                    />
+                    {plans && plans.length > 0 && (
+                      <div>
+                        <label htmlFor="inq-package" className="block text-xs font-semibold text-slate-600 mb-1.5">
+                          Ganti paket
+                        </label>
+                        <div className="relative">
+                          <select
+                            id="inq-package"
+                            value={inquiryForm.packageType}
+                            onChange={(e) => setInquiryForm({ ...inquiryForm, packageType: e.target.value })}
+                            className={`${inquirySelectCls} bg-white`}
+                          >
+                            {!selectedPlan && <option value={inquiryForm.packageType}>{inquiryForm.packageType}</option>}
+                            {plans.map((plan) => (
+                              <option key={plan.id} value={plan.name}>
+                                {plan.name}
+                              </option>
+                            ))}
+                          </select>
+                          <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                        </div>
+                      </div>
+                    )}
                   </div>
-                  <div>
-                    <label className="block font-semibold text-slate-700 mb-1.5">Jabatan di Sekolah *</label>
-                    <select
-                      value={inquiryForm.role}
-                      onChange={(e) => setInquiryForm({ ...inquiryForm, role: e.target.value })}
-                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg focus:bg-white focus:border-slate-900 text-slate-900 text-sm outline-none"
+
+                  {/* Governance note (existing copy) */}
+                  <div className="p-3.5 bg-[#6a5fc1]/[0.06] border border-[#6a5fc1]/25 rounded-lg text-slate-700 text-xs sm:text-sm leading-relaxed flex items-start gap-2.5">
+                    <FileText className="w-4 h-4 text-[#6a5fc1] shrink-0 mt-0.5" />
+                    <div>
+                      <strong className="text-slate-900">Tata Kelola Resmi:</strong> Pengadaan lisensi diproses menggunakan
+                      Surat Perjanjian Kerja (SPK) resmi sekolah dan transfer antar-rekening instansi.
+                    </div>
+                  </div>
+
+                  {/* Step 2 — The form */}
+                  <form noValidate onSubmit={submitInquiry} className="space-y-4 text-sm">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                      <div>
+                        <label htmlFor="inq-fullname" className="block font-semibold text-slate-700 mb-1.5">
+                          Nama Lengkap & Gelar Akademik <span className="text-rose-600">*</span>
+                        </label>
+                        <input
+                          id="inq-fullname"
+                          type="text"
+                          required
+                          aria-invalid={!!inquiryErrors.fullName}
+                          aria-describedby={inquiryErrors.fullName ? 'inq-fullname-error' : undefined}
+                          value={inquiryForm.fullName}
+                          onChange={(e) => {
+                            setInquiryForm({ ...inquiryForm, fullName: e.target.value })
+                            if (inquiryErrors.fullName)
+                              setInquiryErrors((prev) => ({ ...prev, fullName: undefined }))
+                          }}
+                          placeholder="Contoh: Drs. Bambang Sutrisno, M.Pd."
+                          className={inquiryInputCls(!!inquiryErrors.fullName)}
+                        />
+                        {inquiryErrors.fullName && (
+                          <p id="inq-fullname-error" role="alert" className="mt-1.5 text-xs font-medium text-rose-600">
+                            {inquiryErrors.fullName}
+                          </p>
+                        )}
+                      </div>
+                      <div>
+                        <label htmlFor="inq-role" className="block font-semibold text-slate-700 mb-1.5">
+                          Jabatan di Sekolah <span className="text-rose-600">*</span>
+                        </label>
+                        <div className="relative">
+                          <select
+                            id="inq-role"
+                            value={inquiryForm.role}
+                            onChange={(e) => setInquiryForm({ ...inquiryForm, role: e.target.value })}
+                            className={inquirySelectCls}
+                          >
+                            <option value="Kepala Sekolah">Kepala Sekolah</option>
+                            <option value="Wakil Kepala Sekolah Bidang Kurikulum">
+                              Wakil Kepala Sekolah Bidang Kurikulum
+                            </option>
+                            <option value="Koordinator Asesmen / Ujian">Koordinator Asesmen / Ujian</option>
+                            <option value="Kepala Laboratorium Komputer / IT">Kepala Laboratorium Komputer / IT</option>
+                            <option value="Pengurus Yayasan Pendidikan">Pengurus Yayasan Pendidikan</option>
+                          </select>
+                          <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label htmlFor="inq-schoolname" className="block font-semibold text-slate-700 mb-1.5">
+                        Nama Sekolah / Institusi Pendidikan <span className="text-rose-600">*</span>
+                      </label>
+                      <input
+                        id="inq-schoolname"
+                        type="text"
+                        required
+                        aria-invalid={!!inquiryErrors.schoolName}
+                        aria-describedby={inquiryErrors.schoolName ? 'inq-schoolname-error' : undefined}
+                        value={inquiryForm.schoolName}
+                        onChange={(e) => {
+                          setInquiryForm({ ...inquiryForm, schoolName: e.target.value })
+                          if (inquiryErrors.schoolName)
+                            setInquiryErrors((prev) => ({ ...prev, schoolName: undefined }))
+                        }}
+                        placeholder="Contoh: SMA Negeri 1 Teladan"
+                        className={inquiryInputCls(!!inquiryErrors.schoolName)}
+                      />
+                      {inquiryErrors.schoolName && (
+                        <p id="inq-schoolname-error" role="alert" className="mt-1.5 text-xs font-medium text-rose-600">
+                          {inquiryErrors.schoolName}
+                        </p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label htmlFor="inq-whatsapp" className="block font-semibold text-slate-700 mb-1.5">
+                        Nomor WhatsApp Kontak Resmi <span className="text-rose-600">*</span>
+                      </label>
+                      <div className="flex">
+                        <span
+                          aria-hidden="true"
+                          className={`inline-flex items-center px-3 rounded-l-lg border border-r-0 bg-slate-100 text-sm font-semibold text-slate-500 select-none ${
+                            inquiryErrors.whatsapp ? 'border-rose-400' : 'border-slate-300'
+                          }`}
+                        >
+                          +62
+                        </span>
+                        <input
+                          id="inq-whatsapp"
+                          type="tel"
+                          required
+                          aria-invalid={!!inquiryErrors.whatsapp}
+                          aria-describedby={`inq-whatsapp-hint${inquiryErrors.whatsapp ? ' inq-whatsapp-error' : ''}`}
+                          value={inquiryForm.whatsapp}
+                          onChange={(e) => {
+                            setInquiryForm({ ...inquiryForm, whatsapp: e.target.value })
+                            if (inquiryErrors.whatsapp)
+                              setInquiryErrors((prev) => ({ ...prev, whatsapp: undefined }))
+                          }}
+                          placeholder="Contoh: 081234567890"
+                          className={`flex-1 min-w-0 min-h-[44px] px-3.5 py-2.5 bg-slate-50 border rounded-r-lg text-sm text-slate-900 placeholder:text-slate-400 outline-none transition-colors focus:bg-white ${
+                            inquiryErrors.whatsapp
+                              ? 'border-rose-400 focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20'
+                              : 'border-slate-300 focus:border-[#6a5fc1] focus:ring-2 focus:ring-[#6a5fc1]/25'
+                          }`}
+                        />
+                      </div>
+                      <p id="inq-whatsapp-hint" className="mt-1.5 text-xs text-slate-500">
+                        Tulis dengan awalan 08 atau +62 — nomor ini yang akan dihubungi tim kami.
+                      </p>
+                      {inquiryErrors.whatsapp && (
+                        <p id="inq-whatsapp-error" role="alert" className="mt-1.5 text-xs font-medium text-rose-600">
+                          {inquiryErrors.whatsapp}
+                        </p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label htmlFor="inq-students" className="block font-semibold text-slate-700 mb-1.5">
+                        Estimasi Jumlah Siswa Peserta Ujian
+                      </label>
+                      <div className="relative">
+                        <select
+                          id="inq-students"
+                          value={inquiryForm.studentCount}
+                          onChange={(e) => setInquiryForm({ ...inquiryForm, studentCount: e.target.value })}
+                          className={inquirySelectCls}
+                        >
+                          <option value="< 300 Siswa (Paket Rintisan)">&lt; 300 Siswa (Paket Rintisan)</option>
+                          <option value="300 - 800 Siswa (Paket Menengah)">300 - 800 Siswa (Paket Menengah)</option>
+                          <option value="800 - 1.500 Siswa (Paket Institusi Terpadu)">
+                            800 - 1.500 Siswa (Paket Institusi Terpadu)
+                          </option>
+                          <option value="> 1.500 Siswa (Konsorsium / Multi-Sekolah)">
+                            &gt; 1.500 Siswa (Konsorsium / Multi-Sekolah)
+                          </option>
+                        </select>
+                        <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label htmlFor="inq-notes" className="block font-semibold text-slate-700 mb-1.5">
+                        Kebutuhan Khusus / Jadwal Ujian Terdekat{' '}
+                        <span className="font-normal text-slate-400">(opsional)</span>
+                      </label>
+                      <textarea
+                        id="inq-notes"
+                        value={inquiryForm.notes}
+                        onChange={(e) => setInquiryForm({ ...inquiryForm, notes: e.target.value })}
+                        rows={3}
+                        placeholder="Contoh: Rencana Penilaian Akhir Semester bulan depan untuk 650 siswa, memerlukan pelatihan teknis pengawas..."
+                        className={`${inquiryInputCls(false)} resize-none`}
+                      ></textarea>
+                    </div>
+
+                    {inquirySubmitError && (
+                      <div
+                        role="alert"
+                        className="flex items-start gap-2.5 rounded-lg border border-rose-200 bg-rose-50 px-3.5 py-3 text-xs sm:text-sm text-rose-800 leading-relaxed"
+                      >
+                        <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                        <span>{inquirySubmitError}</span>
+                      </div>
+                    )}
+
+                    {/* Action Buttons */}
+                    <div className="pt-1 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                      <button
+                        type="submit"
+                        disabled={inquirySubmitting}
+                        className="mkt-btn-press w-full sm:flex-1 min-h-[48px] py-3 px-4 bg-[#c2ef4e] hover:bg-[#b2e233] text-slate-950 font-bold text-sm rounded-lg flex items-center justify-center gap-2 cursor-pointer shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2 disabled:opacity-60 disabled:cursor-wait"
+                      >
+                        <Send className="w-4 h-4" />
+                        <span>{inquirySubmitting ? 'Mengirim…' : 'Ajukan Jadwal Demo & Konsultasi'}</span>
+                      </button>
+
+                      {csWhatsAppNumber && (
+                        <button
+                          type="button"
+                          onClick={directWhatsAppChat}
+                          className="mkt-btn-press w-full sm:w-auto min-h-[48px] py-3 px-4 bg-white hover:bg-emerald-50 border border-emerald-600 text-emerald-700 font-bold text-sm rounded-lg flex items-center justify-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
+                        >
+                          <MessageSquare className="w-4 h-4" />
+                          <span>Hubungi via WhatsApp Resmi</span>
+                        </button>
+                      )}
+                    </div>
+                  </form>
+
+                  {/* What happens next (claim already used on this page) */}
+                  <div className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-600 leading-relaxed">
+                    <MessageSquare className="w-4 h-4 text-[#6a5fc1] shrink-0 mt-0.5" />
+                    <p>
+                      <strong className="font-semibold text-slate-800">Langkah berikutnya:</strong> Konsultan Edukasi
+                      EXAMIND akan menghubungi nomor WhatsApp Anda dalam waktu maksimal 1x24 jam kerja untuk penjadwalan
+                      demo dan pengiriman draf penawaran.
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                /* Success State — confirmation with the submitted summary */
+                <div className="space-y-5" role="status">
+                  <div className="text-center space-y-2.5 pt-1">
+                    <div className="w-12 h-12 mx-auto rounded-full bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center">
+                      <CheckCircle2 className="w-6 h-6" />
+                    </div>
+                    <h4 className="text-lg font-bold text-slate-900 tracking-tight">Permohonan Anda Berhasil Terkirim!</h4>
+                    <p className="text-sm text-slate-600 leading-relaxed max-w-sm mx-auto">
+                      Konsultan Edukasi EXAMIND akan menghubungi nomor WhatsApp Anda dalam waktu maksimal 1x24 jam kerja
+                      untuk penjadwalan demo dan pengiriman draf penawaran.
+                    </p>
+                  </div>
+
+                  <dl className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3.5 space-y-2.5 text-sm">
+                    <div className="flex items-start justify-between gap-4">
+                      <dt className="text-xs font-semibold text-slate-500 pt-0.5 shrink-0">Paket</dt>
+                      <dd className="font-semibold text-slate-900 text-right">{inquiryForm.packageType}</dd>
+                    </div>
+                    <div className="flex items-start justify-between gap-4">
+                      <dt className="text-xs font-semibold text-slate-500 pt-0.5 shrink-0">Nama</dt>
+                      <dd className="font-semibold text-slate-900 text-right break-words min-w-0">{inquiryForm.fullName}</dd>
+                    </div>
+                    <div className="flex items-start justify-between gap-4">
+                      <dt className="text-xs font-semibold text-slate-500 pt-0.5 shrink-0">Sekolah</dt>
+                      <dd className="font-semibold text-slate-900 text-right break-words min-w-0">{inquiryForm.schoolName}</dd>
+                    </div>
+                    <div className="flex items-start justify-between gap-4">
+                      <dt className="text-xs font-semibold text-slate-500 pt-0.5 shrink-0">WhatsApp</dt>
+                      <dd className="font-semibold text-slate-900 text-right tabular-nums">{inquiryForm.whatsapp}</dd>
+                    </div>
+                    <div className="flex items-start justify-between gap-4">
+                      <dt className="text-xs font-semibold text-slate-500 pt-0.5 shrink-0">Estimasi Siswa</dt>
+                      <dd className="font-semibold text-slate-900 text-right">{inquiryForm.studentCount}</dd>
+                    </div>
+                  </dl>
+
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <button
+                      type="button"
+                      onClick={closeInquiryModal}
+                      className="mkt-btn-press w-full sm:flex-1 min-h-[48px] py-3 px-4 bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-sm rounded-lg flex items-center justify-center gap-2 cursor-pointer shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#150f23] focus-visible:ring-offset-2"
                     >
-                      <option value="Kepala Sekolah">Kepala Sekolah</option>
-                      <option value="Wakil Kepala Sekolah Bidang Kurikulum">Wakil Kepala Sekolah Bidang Kurikulum</option>
-                      <option value="Koordinator Asesmen / Ujian">Koordinator Asesmen / Ujian</option>
-                      <option value="Kepala Laboratorium Komputer / IT">Kepala Laboratorium Komputer / IT</option>
-                      <option value="Pengurus Yayasan Pendidikan">Pengurus Yayasan Pendidikan</option>
-                    </select>
+                      <span>Selesai</span>
+                    </button>
+                    {csWhatsAppNumber && (
+                      <button
+                        type="button"
+                        onClick={directWhatsAppChat}
+                        className="mkt-btn-press w-full sm:w-auto min-h-[48px] py-3 px-4 bg-white hover:bg-emerald-50 border border-emerald-600 text-emerald-700 font-bold text-sm rounded-lg flex items-center justify-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
+                      >
+                        <MessageSquare className="w-4 h-4" />
+                        <span>Lanjut via WhatsApp</span>
+                      </button>
+                    )}
                   </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                  <div>
-                    <label className="block font-semibold text-slate-700 mb-1.5">Nama Sekolah / Institusi Pendidikan *</label>
-                    <input
-                      type="text"
-                      required
-                      value={inquiryForm.schoolName}
-                      onChange={(e) => setInquiryForm({ ...inquiryForm, schoolName: e.target.value })}
-                      placeholder="Contoh: SMA Negeri 1 Teladan"
-                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg focus:bg-white focus:border-slate-900 text-slate-900 placeholder:text-slate-400 text-sm outline-none"
-                    />
-                  </div>
-                  <div>
-                    <label className="block font-semibold text-slate-700 mb-1.5">Nomor WhatsApp Kontak Resmi *</label>
-                    <input
-                      type="tel"
-                      required
-                      value={inquiryForm.whatsapp}
-                      onChange={(e) => setInquiryForm({ ...inquiryForm, whatsapp: e.target.value })}
-                      placeholder="Contoh: 081234567890"
-                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg focus:bg-white focus:border-slate-900 text-slate-900 placeholder:text-slate-400 text-sm outline-none"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block font-semibold text-slate-700 mb-1.5">Estimasi Jumlah Siswa Peserta Ujian</label>
-                  <select
-                    value={inquiryForm.studentCount}
-                    onChange={(e) => setInquiryForm({ ...inquiryForm, studentCount: e.target.value })}
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg focus:bg-white focus:border-slate-900 text-slate-900 text-sm outline-none"
-                  >
-                    <option value="< 300 Siswa (Paket Rintisan)">&lt; 300 Siswa (Paket Rintisan)</option>
-                    <option value="300 - 800 Siswa (Paket Menengah)">300 - 800 Siswa (Paket Menengah)</option>
-                    <option value="800 - 1.500 Siswa (Paket Institusi Terpadu)">800 - 1.500 Siswa (Paket Institusi Terpadu)</option>
-                    <option value="> 1.500 Siswa (Konsorsium / Multi-Sekolah)">&gt; 1.500 Siswa (Konsorsium / Multi-Sekolah)</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block font-semibold text-slate-700 mb-1.5">Kebutuhan Khusus / Jadwal Ujian Terdekat</label>
-                  <textarea
-                    value={inquiryForm.notes}
-                    onChange={(e) => setInquiryForm({ ...inquiryForm, notes: e.target.value })}
-                    rows={2}
-                    placeholder="Contoh: Rencana Penilaian Akhir Semester bulan depan untuk 650 siswa, memerlukan pelatihan teknis pengawas..."
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg focus:bg-white focus:border-slate-900 text-slate-900 placeholder:text-slate-400 text-sm outline-none"
-                  ></textarea>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="pt-2 flex flex-col sm:flex-row items-center gap-3">
-                  <button
-                    type="submit"
-                    className="w-full sm:flex-1 py-3 px-4 bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm rounded-lg transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm"
-                  >
-                    <Send className="w-4 h-4" />
-                    <span>Ajukan Jadwal Demo & Konsultasi</span>
-                  </button>
 
                   <button
                     type="button"
-                    onClick={directWhatsAppChat}
-                    className="w-full sm:w-auto py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-lg transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm"
+                    onClick={() => setSubmissionStatus(false)}
+                    className="w-full text-center text-xs font-semibold text-slate-500 hover:text-slate-800 underline underline-offset-4 cursor-pointer"
                   >
-                    <MessageSquare className="w-4 h-4" />
-                    <span>Hubungi via WhatsApp Resmi</span>
+                    Ubah data permohonan
                   </button>
-                </div>
-              </form>
-
-              {/* Feedback Success State */}
-              {submissionStatus && (
-                <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-800 text-xs text-center space-y-1">
-                  <p className="font-bold text-emerald-950">Permohonan Anda Berhasil Terkirim!</p>
-                  <p className="text-xs text-emerald-700">
-                    Konsultan Edukasi EXAMIND akan menghubungi nomor WhatsApp Anda dalam waktu maksimal 1x24 jam kerja untuk penjadwalan demo dan pengiriman draf penawaran.
-                  </p>
                 </div>
               )}
             </div>

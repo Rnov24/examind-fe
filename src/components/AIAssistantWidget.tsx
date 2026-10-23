@@ -8,6 +8,8 @@ import {
   Copy,
   Check,
   AlertCircle,
+  MessageCircle,
+  MessageSquarePlus,
   BarChart3,
   CalendarClock,
   ListChecks,
@@ -24,6 +26,7 @@ import remarkGfm from 'remark-gfm'
 import clsx from 'clsx'
 import api from '@/lib/api'
 import { useAuthStore } from '@/stores/authStore'
+import { ExamindLogo } from '@/components/brand/ExamindLogo'
 
 interface ChatMessage {
   role: 'user' | 'assistant'
@@ -125,13 +128,34 @@ const markdownComponents: Components = {
   ),
 }
 
+function ExaAvatar({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) {
+  const tile =
+    size === 'lg'
+      ? 'w-14 h-14 rounded-2xl'
+      : size === 'sm'
+        ? 'w-7 h-7 rounded-lg'
+        : 'w-8 h-8 rounded-lg'
+  const mark = size === 'lg' ? 'h-8' : size === 'sm' ? 'h-4' : 'h-5'
+  return (
+    <div
+      className={clsx(
+        tile,
+        'bg-[#150f23] border border-[#362d59] flex items-center justify-center shrink-0'
+      )}
+      aria-hidden="true"
+    >
+      <ExamindLogo variant="symbol" theme="white" className={clsx(mark, 'w-auto')} />
+    </div>
+  )
+}
+
 export default function AIAssistantWidget() {
   const { user, isAuthenticated } = useAuthStore()
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [inputQuery, setInputQuery] = useState<string>('')
   const [messages, setMessages] = useState<ChatMessage[]>([])
-  const [provider, setProvider] = useState<string>('AI')
+  const [view, setView] = useState<'onboarding' | 'chat'>('onboarding')
   const [copiedIdx, setCopiedIdx] = useState<number | null>(null)
 
   const chatContainerRef = useRef<HTMLDivElement | null>(null)
@@ -141,6 +165,7 @@ export default function AIAssistantWidget() {
   const isTeacher = user?.role === 'teacher'
   const userName = user?.full_name || user?.identifier || 'Pengguna'
   const storageKey = `examind_ai_chat_mem_${user?.id || 'guest'}`
+  const openedKey = `examind_exa_opened_${user?.id || 'guest'}`
 
   const formatCurrentTime = (): string => {
     const d = new Date()
@@ -149,33 +174,40 @@ export default function AIAssistantWidget() {
     return `${hours}:${mins}`
   }
 
-  // Load chat memory and provider from localStorage
+  // Load chat memory from localStorage; returning users with history skip
+  // the onboarding screen and land straight in the conversation.
   useEffect(() => {
     try {
       const raw = localStorage.getItem(storageKey)
       if (raw) {
-        setMessages(JSON.parse(raw))
+        const parsed = JSON.parse(raw)
+        setMessages(parsed)
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setView('chat')
+        }
       } else {
         setMessages([])
       }
     } catch {
       setMessages([])
     }
-
-    try {
-      const savedProvider = localStorage.getItem('examind_ai_provider')
-      if (savedProvider) {
-        setProvider(savedProvider)
-      }
-    } catch {}
   }, [storageKey])
+
+  // Remember that EXA has been opened at least once for this user.
+  useEffect(() => {
+    if (isOpen) {
+      try {
+        localStorage.setItem(openedKey, '1')
+      } catch {}
+    }
+  }, [isOpen, openedKey])
 
   // Scroll to bottom on updates
   useEffect(() => {
     if (isOpen && chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight
     }
-  }, [isOpen, messages, isLoading])
+  }, [isOpen, messages, isLoading, view])
 
   // Escape key handler to close chat drawer
   useEffect(() => {
@@ -206,8 +238,9 @@ export default function AIAssistantWidget() {
     }
   }
 
-  const clearMessages = () => {
+  const startNewConversation = () => {
     setMessages([])
+    setView('onboarding')
     try {
       localStorage.removeItem(storageKey)
     } catch (e) {
@@ -230,33 +263,47 @@ export default function AIAssistantWidget() {
   const currentQuickChips: QuickChip[] = (() => {
     if (isStudent) {
       return [
+        { label: 'Kapan ujian saya berikutnya?', icon: CalendarClock },
         { label: 'Berapa nilai ujian terakhir saya?', icon: BarChart3 },
-        { label: 'Apa jadwal ujian mendatang?', icon: CalendarClock },
-        { label: 'Tampilkan daftar ujian saya', icon: ListChecks },
+        { label: 'Ujian apa saja yang sedang aktif?', icon: ListChecks },
         { label: 'Berapa rata-rata nilai saya?', icon: TrendingUp },
+        { label: 'Kelas apa saja yang saya ikuti?', icon: Users },
       ]
     } else if (isTeacher) {
       return [
-        { label: 'Ringkasan Nilai Ujian Siswa', icon: BarChart3 },
-        { label: 'Ide Paket Soal Baru', icon: Sparkles },
-        { label: 'Panduan Rubrik Esai 4D', icon: FileText },
-        { label: 'Status Proctoring Kelas', icon: ShieldCheck },
+        { label: 'Bagaimana hasil ujian terakhir kelas saya?', icon: BarChart3 },
+        { label: 'Ujian apa yang sedang berjalan saat ini?', icon: CalendarClock },
+        { label: 'Kelas apa saja yang saya ampu?', icon: Users },
+        { label: 'Bantu saya menyusun rubrik penilaian esai', icon: FileText },
       ]
     } else {
       // admin, superadmin, and school managers
       return [
-        { label: 'Ringkasan Statistik Sekolah', icon: BarChart3 },
-        { label: 'Total Siswa & Guru Aktif', icon: Users },
-        { label: 'Insiden Proctoring Terbaru', icon: ShieldCheck },
-        { label: 'Lihat promo & paket harga', icon: Sparkles },
+        { label: 'Ringkasan statistik sekolah', icon: BarChart3 },
+        { label: 'Berapa jumlah siswa & guru aktif?', icon: Users },
+        { label: 'Insiden proctoring terbaru', icon: ShieldCheck },
+        { label: 'Paket harga & promo yang aktif', icon: Sparkles },
       ]
     }
   })()
+
+  const statusLine = isStudent
+    ? 'Siap membantu soal nilai & jadwal ujianmu'
+    : isTeacher
+      ? 'Siap membantu memantau kelasmu'
+      : 'Siap membantu ringkasan data sekolah'
+
+  const onboardingIntro = isStudent
+    ? 'Aku bisa membantumu mengecek nilai ujian, jadwal ujian berikutnya, dan info kelasmu — langsung dari data akunmu.'
+    : isTeacher
+      ? 'Aku bisa membantumu melihat hasil ujian kelasmu, memantau ujian yang sedang berjalan, dan menyusun rubrik penilaian.'
+      : 'Aku bisa membantumu melihat ringkasan statistik sekolah, jumlah pengguna aktif, insiden proctoring, serta info paket & promo.'
 
   const handleSend = async (overridePrompt?: string, baseHistory?: ChatMessage[]) => {
     const query = (overridePrompt !== undefined ? overridePrompt : inputQuery).trim()
     if (!query || isLoading) return
 
+    setView('chat')
     const historyToUse = baseHistory || messages
     const userMsg: ChatMessage = {
       role: 'user',
@@ -279,15 +326,7 @@ export default function AIAssistantWidget() {
         api_key: savedKey,
       })
 
-      const resProvider = res.data?.data?.provider
-      if (resProvider && typeof resProvider === 'string') {
-        setProvider(resProvider)
-        try {
-          localStorage.setItem('examind_ai_provider', resProvider)
-        } catch {}
-      }
-
-      const reply = res.data?.data?.reply || 'Respon diterima dari asisten.'
+      const reply = res.data?.data?.reply || 'Jawaban diterima dari EXA.'
       const assistantMsg: ChatMessage = {
         role: 'assistant',
         content: reply,
@@ -297,12 +336,10 @@ export default function AIAssistantWidget() {
       setMessages(finalMsgs)
       saveMessages(finalMsgs)
     } catch (err: any) {
-      const errorDetail = err.response?.data?.message || err.response?.data?.detail
       const errorMsg: ChatMessage = {
         role: 'assistant',
         content:
-          errorDetail ||
-          'Maaf, terjadi gangguan saat menghubungi asisten AI. Pastikan server backend aktif dan silakan coba kembali.',
+          'Maaf, EXA sedang tidak bisa dihubungi saat ini. Periksa koneksimu, lalu coba lagi sebentar lagi ya.',
         timestamp: formatCurrentTime(),
         isError: true,
       }
@@ -336,26 +373,16 @@ export default function AIAssistantWidget() {
 
   return (
     <div>
-      {/* Floating Action Button */}
+      {/* Floating Action Button — icon only */}
       {!isOpen && (
         <button
           type="button"
           onClick={() => setIsOpen(true)}
-          aria-label="Buka Asisten AI EXAMIND"
-          className="fixed bottom-[max(1.5rem,env(safe-area-inset-bottom))] right-[max(1.5rem,env(safe-area-inset-right))] z-40 px-4 py-2.5 min-h-[44px] rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-semibold text-xs shadow-xl shadow-[#150f23]/30 border border-[#362d59] flex items-center gap-2.5 transition-all cursor-pointer focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none anim-rise"
+          aria-label="Buka chat dengan EXA"
+          title="Chat dengan EXA"
+          className="fixed bottom-[max(1.5rem,env(safe-area-inset-bottom))] right-[max(1.5rem,env(safe-area-inset-right))] z-40 w-14 h-14 rounded-full bg-[#150f23] hover:bg-[#1f1633] border border-[#362d59] shadow-xl shadow-[#150f23]/30 flex items-center justify-center transition-colors cursor-pointer focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none anim-pop"
         >
-          <div className="w-5 h-5 rounded-md bg-[#6a5fc1]/20 text-[#c2ef4e] border border-[#6a5fc1]/40 flex items-center justify-center font-mono text-[10px] font-bold">
-            AI
-          </div>
-          <span>Asisten EXAMIND</span>
-          <span className="px-1.5 py-0.5 rounded text-[9px] font-medium bg-[#1f1633] text-slate-300 border border-[#362d59] font-mono">
-            {provider}
-          </span>
-          {isStudent && (
-            <span className="px-1.5 py-0.5 rounded-md text-[10px] font-medium bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 font-mono">
-              Data Ujian
-            </span>
-          )}
+          <MessageCircle className="w-6 h-6 text-[#c2ef4e]" aria-hidden="true" />
         </button>
       )}
 
@@ -373,30 +400,18 @@ export default function AIAssistantWidget() {
         <div
           role="dialog"
           aria-modal="true"
-          aria-label="Jendela Chat Asisten EXAMIND"
+          aria-label="Jendela chat dengan EXA"
           className="fixed bottom-[max(1.5rem,env(safe-area-inset-bottom))] right-4 sm:right-[max(1.5rem,env(safe-area-inset-right))] left-4 sm:left-auto z-50 w-[min(24rem,calc(100vw-2rem))] h-[min(600px,calc(100dvh-6rem))] bg-white rounded-xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden text-slate-900 anim-rise"
         >
           {/* Drawer Header */}
           <div className="p-4 px-5 bg-[#150f23] text-white flex items-center justify-between border-b border-[#362d59] shrink-0">
             <div className="flex items-center gap-2.5">
-              <div className="w-7 h-7 rounded-lg bg-[#6a5fc1]/20 border border-[#6a5fc1]/40 flex items-center justify-center text-[#c2ef4e] font-mono text-[11px] font-bold">
-                AI
-              </div>
+              <ExaAvatar size="md" />
               <div>
-                <h3 className="text-xs font-semibold leading-tight flex items-center gap-1.5">
-                  <span>Asisten EXAMIND</span>
-                  <span className="px-1.5 py-0.5 rounded text-[9px] font-medium bg-[#1f1633] text-slate-300 border border-[#362d59] font-mono">
-                    {provider}
-                  </span>
-                  <span className="px-1.5 py-0.5 rounded text-[9px] font-medium bg-emerald-950/60 text-emerald-400 border border-emerald-800/40 flex items-center gap-1 font-mono">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" aria-hidden="true" />
-                    Memori Aktif
-                  </span>
-                </h3>
-                <p className="text-[10px] text-slate-400">
-                  {isStudent
-                    ? 'Data Akademik, Nilai & Jadwal Ujian'
-                    : 'Asisten Kurikulum & Evaluasi Belajar'}
+                <h3 className="text-sm font-semibold leading-tight">EXA</h3>
+                <p className="text-[11px] text-slate-400 flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" aria-hidden="true" />
+                  {statusLine}
                 </p>
               </div>
             </div>
@@ -405,12 +420,12 @@ export default function AIAssistantWidget() {
               {messages.length > 0 && (
                 <button
                   type="button"
-                  onClick={clearMessages}
-                  title="Bersihkan Percakapan"
-                  aria-label="Bersihkan Percakapan"
+                  onClick={startNewConversation}
+                  title="Mulai percakapan baru"
+                  aria-label="Mulai percakapan baru"
                   className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg hover:bg-[#1f1633] text-slate-300 hover:text-white transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]/40"
                 >
-                  <RotateCcw className="w-4 h-4" aria-hidden="true" />
+                  <MessageSquarePlus className="w-4 h-4" aria-hidden="true" />
                 </button>
               )}
               <button
@@ -425,180 +440,197 @@ export default function AIAssistantWidget() {
             </div>
           </div>
 
-          {/* Messages Stream Area */}
+          {/* Main Area: onboarding on first open, chat stream afterwards */}
           <div
             ref={chatContainerRef}
             className="flex-1 p-4 overflow-y-auto space-y-3.5 bg-slate-50 text-xs"
           >
-            {/* Initial Welcome Message */}
-            <div className="flex items-start gap-2.5 anim-rise">
-              <div className="w-6 h-6 rounded-md bg-[#6a5fc1]/10 text-[#6a5fc1] border border-[#6a5fc1]/20 font-mono text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">
-                AI
-              </div>
-              <div className="bg-white border border-slate-200 text-slate-800 rounded-xl rounded-tl-xs p-3 shadow-xs leading-relaxed max-w-[85%] text-xs">
-                {isStudent ? (
-                  <>
-                    Halo, <span className="font-bold text-slate-900">{userName}</span>!<br />
-                    Saya asisten pintar EXAMIND yang terhubung langsung dengan riwayat akademikmu.
-                    Kamu bisa menanyakan <b>nilai ujian terakhir</b>, <b>jadwal ujian mendatang</b>, atau <b>rekapitulasi nilaimu</b> secara langsung!
-                  </>
-                ) : isTeacher ? (
-                  <>
-                    Halo, <span className="font-bold text-slate-900">{userName}</span>!<br />
-                    Saya siap membantu Anda memantau ringkasan hasil belajar kelas, membuat butir soal, atau menyusun rubrik esai 4 Dimensi.
-                  </>
-                ) : (
-                  <>
-                    Halo, <span className="font-bold text-slate-900">{userName}</span>!<br />
-                    Saya siap memberikan ringkasan statistik sekolah dan aktivitas ujian pada platform EXAMIND.
-                  </>
-                )}
-              </div>
-            </div>
+            {view === 'onboarding' ? (
+              <div className="flex flex-col items-center text-center pt-4 pb-2 anim-rise">
+                <ExaAvatar size="lg" />
+                <h4 className="mt-3.5 text-base font-bold text-slate-900">Halo, aku EXA</h4>
+                <p className="mt-1 text-xs text-slate-600 leading-relaxed max-w-[17rem]">
+                  Senang bertemu denganmu,{' '}
+                  <span className="font-semibold text-slate-900">{userName}</span>.{' '}
+                  {onboardingIntro}
+                </p>
 
-            {/* Chat History */}
-            {messages.map((msg, idx) => (
-              <div
-                key={idx}
-                className={clsx(
-                  'flex items-start gap-2.5',
-                  msg.role === 'user' ? 'justify-end' : 'justify-start'
-                )}
-              >
-                {msg.role === 'assistant' && (
-                  <div
-                    className={clsx(
-                      'w-6 h-6 rounded-md font-mono text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5',
-                      msg.isError
-                        ? 'bg-rose-100 text-rose-600 border border-rose-200'
-                        : 'bg-[#6a5fc1]/10 text-[#6a5fc1] border border-[#6a5fc1]/20'
-                    )}
-                  >
-                    {msg.isError ? (
-                      <AlertCircle className="w-3.5 h-3.5" aria-hidden="true" />
-                    ) : (
-                      'AI'
-                    )}
-                  </div>
-                )}
-
-                <div
-                  className={clsx(
-                    'flex flex-col',
-                    msg.role === 'user' ? 'items-end max-w-[85%]' : 'items-start max-w-[85%]'
-                  )}
-                >
-                  <div
-                    className={clsx(
-                      'p-3 rounded-xl text-xs leading-relaxed shadow-xs',
-                      msg.role === 'user'
-                        ? 'bg-[#150f23] text-white rounded-tr-xs whitespace-pre-line'
-                        : msg.isError
-                        ? 'bg-rose-50/70 border border-rose-200 text-rose-950 rounded-tl-xs w-full'
-                        : 'bg-white border border-slate-200 text-slate-800 rounded-tl-xs'
-                    )}
-                  >
-                    {msg.role === 'user' ? (
-                      <div>{msg.content}</div>
-                    ) : msg.isError ? (
-                      <div>
-                        <div className="font-semibold text-rose-900 mb-1 flex items-center gap-1.5">
-                          <AlertCircle className="w-3.5 h-3.5 text-rose-600 shrink-0" aria-hidden="true" />
-                          <span>Gagal Mendapatkan Respon</span>
-                        </div>
-                        <p className="text-slate-700 mb-2.5 text-xs">{msg.content}</p>
-                        <button
-                          type="button"
-                          onClick={handleRetry}
-                          disabled={isLoading}
-                          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white hover:bg-rose-50 text-rose-700 border border-rose-300 text-[11px] font-semibold transition-colors cursor-pointer disabled:opacity-50 shadow-xs focus:ring-2 focus:ring-rose-500/20 focus:outline-none"
-                        >
-                          <RotateCcw className="w-3 h-3 text-rose-600" aria-hidden="true" />
-                          <span>Coba lagi</span>
-                        </button>
-                      </div>
-                    ) : (
-                      <ReactMarkdown
-                        remarkPlugins={[remarkGfm]}
-                        components={markdownComponents}
+                <div className="mt-4 w-full flex flex-col gap-2">
+                  {currentQuickChips.map((chip) => {
+                    const Icon = chip.icon
+                    return (
+                      <button
+                        key={chip.label}
+                        type="button"
+                        onClick={() => handleSend(chip.label)}
+                        disabled={isLoading}
+                        className="w-full min-h-[44px] flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 hover:border-[#6a5fc1]/50 hover:bg-[#6a5fc1]/5 text-left text-xs font-medium text-slate-700 hover:text-slate-900 transition-colors cursor-pointer disabled:opacity-50 shadow-xs focus:ring-2 focus:ring-[#6a5fc1]/20 focus:outline-none"
                       >
-                        {msg.content}
-                      </ReactMarkdown>
-                    )}
-                  </div>
+                        <span className="w-7 h-7 rounded-lg bg-[#6a5fc1]/10 text-[#6a5fc1] flex items-center justify-center shrink-0">
+                          <Icon className="w-3.5 h-3.5" aria-hidden="true" />
+                        </span>
+                        <span>{chip.label}</span>
+                      </button>
+                    )
+                  })}
+                </div>
 
-                  {/* Message extras: timestamp & copy button */}
+                <p className="mt-4 text-[11px] text-slate-400">
+                  Atau ketik pertanyaanmu sendiri di kolom bawah.
+                </p>
+              </div>
+            ) : (
+              <>
+                {/* Chat History */}
+                {messages.map((msg, idx) => (
                   <div
+                    key={idx}
                     className={clsx(
-                      'flex items-center gap-2 mt-1 px-1',
+                      'flex items-start gap-2.5',
                       msg.role === 'user' ? 'justify-end' : 'justify-start'
                     )}
                   >
-                    {msg.timestamp && (
-                      <span className="text-[10px] text-slate-400 font-mono">
-                        {msg.timestamp}
-                      </span>
-                    )}
-                    {msg.role === 'assistant' && !msg.isError && (
-                      <button
-                        type="button"
-                        onClick={() => handleCopy(msg.content, idx)}
-                        title={copiedIdx === idx ? 'Tersalin' : 'Salin jawaban'}
-                        aria-label={copiedIdx === idx ? 'Teks berhasil disalin' : 'Salin jawaban asisten'}
-                        className="inline-flex items-center gap-1 text-[10px] text-slate-400 hover:text-slate-700 transition-colors cursor-pointer py-0.5 px-1 rounded hover:bg-slate-200/50"
-                      >
-                        {copiedIdx === idx ? (
-                          <>
-                            <Check className="w-3 h-3 text-emerald-600" aria-hidden="true" />
-                            <span className="text-emerald-600 font-medium">Tersalin</span>
-                          </>
-                        ) : (
-                          <>
-                            <Copy className="w-3 h-3" aria-hidden="true" />
-                            <span>Salin</span>
-                          </>
-                        )}
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))}
+                    {msg.role === 'assistant' &&
+                      (msg.isError ? (
+                        <div className="w-7 h-7 rounded-lg bg-rose-100 text-rose-600 border border-rose-200 flex items-center justify-center shrink-0 mt-0.5">
+                          <AlertCircle className="w-3.5 h-3.5" aria-hidden="true" />
+                        </div>
+                      ) : (
+                        <div className="mt-0.5">
+                          <ExaAvatar size="sm" />
+                        </div>
+                      ))}
 
-            {/* Typing Indicator */}
-            {isLoading && (
-              <div className="flex items-start gap-2.5 anim-rise">
-                <div className="w-6 h-6 rounded-md bg-[#6a5fc1]/10 text-[#6a5fc1] border border-[#6a5fc1]/20 font-mono text-[10px] font-bold flex items-center justify-center shrink-0 animate-pulse mt-0.5">
-                  AI
-                </div>
-                <div className="bg-white border border-slate-200 rounded-xl rounded-tl-xs p-3 text-slate-500 flex items-center gap-2 shadow-xs">
-                  <span className="w-2 h-2 rounded-full bg-[#6a5fc1] animate-ping" aria-hidden="true" />
-                  <span className="text-[11px] font-medium">
-                    {provider} sedang mencari data &amp; merespon...
-                  </span>
-                </div>
-              </div>
+                    <div
+                      className={clsx(
+                        'flex flex-col',
+                        msg.role === 'user' ? 'items-end max-w-[85%]' : 'items-start max-w-[85%]'
+                      )}
+                    >
+                      <div
+                        className={clsx(
+                          'p-3 rounded-xl text-xs leading-relaxed shadow-xs',
+                          msg.role === 'user'
+                            ? 'bg-[#150f23] text-white rounded-tr-xs whitespace-pre-line'
+                            : msg.isError
+                              ? 'bg-rose-50/70 border border-rose-200 text-rose-950 rounded-tl-xs w-full'
+                              : 'bg-white border border-slate-200 text-slate-800 rounded-tl-xs'
+                        )}
+                      >
+                        {msg.role === 'user' ? (
+                          <div>{msg.content}</div>
+                        ) : msg.isError ? (
+                          <div>
+                            <div className="font-semibold text-rose-900 mb-1 flex items-center gap-1.5">
+                              <AlertCircle className="w-3.5 h-3.5 text-rose-600 shrink-0" aria-hidden="true" />
+                              <span>Ups, ada gangguan</span>
+                            </div>
+                            <p className="text-slate-700 mb-2.5 text-xs">{msg.content}</p>
+                            <button
+                              type="button"
+                              onClick={handleRetry}
+                              disabled={isLoading}
+                              className="inline-flex items-center gap-1.5 px-2.5 py-1 min-h-[28px] rounded-md bg-white hover:bg-rose-50 text-rose-700 border border-rose-300 text-[11px] font-semibold transition-colors cursor-pointer disabled:opacity-50 shadow-xs focus:ring-2 focus:ring-rose-500/20 focus:outline-none"
+                            >
+                              <RotateCcw className="w-3 h-3 text-rose-600" aria-hidden="true" />
+                              <span>Coba lagi</span>
+                            </button>
+                          </div>
+                        ) : (
+                          <ReactMarkdown
+                            remarkPlugins={[remarkGfm]}
+                            components={markdownComponents}
+                          >
+                            {msg.content}
+                          </ReactMarkdown>
+                        )}
+                      </div>
+
+                      {/* Message extras: timestamp & copy button */}
+                      <div
+                        className={clsx(
+                          'flex items-center gap-2 mt-1 px-1',
+                          msg.role === 'user' ? 'justify-end' : 'justify-start'
+                        )}
+                      >
+                        {msg.timestamp && (
+                          <span className="text-[10px] text-slate-400">
+                            {msg.timestamp}
+                          </span>
+                        )}
+                        {msg.role === 'assistant' && !msg.isError && (
+                          <button
+                            type="button"
+                            onClick={() => handleCopy(msg.content, idx)}
+                            title={copiedIdx === idx ? 'Tersalin' : 'Salin jawaban'}
+                            aria-label={copiedIdx === idx ? 'Teks berhasil disalin' : 'Salin jawaban EXA'}
+                            className="inline-flex items-center gap-1 text-[10px] text-slate-400 hover:text-slate-700 transition-colors cursor-pointer py-0.5 px-1 rounded hover:bg-slate-200/50"
+                          >
+                            {copiedIdx === idx ? (
+                              <>
+                                <Check className="w-3 h-3 text-emerald-600" aria-hidden="true" />
+                                <span className="text-emerald-600 font-medium">Tersalin</span>
+                              </>
+                            ) : (
+                              <>
+                                <Copy className="w-3 h-3" aria-hidden="true" />
+                                <span>Salin</span>
+                              </>
+                            )}
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+
+                {/* Typing Indicator */}
+                {isLoading && (
+                  <div className="flex items-start gap-2.5 anim-rise">
+                    <ExaAvatar size="sm" />
+                    <div
+                      className="bg-white border border-slate-200 rounded-xl rounded-tl-xs px-3.5 py-3 shadow-xs flex items-center gap-1.5"
+                      role="status"
+                      aria-label="EXA sedang mengetik"
+                    >
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#6a5fc1] animate-bounce motion-reduce:animate-none" aria-hidden="true" />
+                      <span
+                        className="w-1.5 h-1.5 rounded-full bg-[#6a5fc1] animate-bounce motion-reduce:animate-none"
+                        style={{ animationDelay: '150ms' }}
+                        aria-hidden="true"
+                      />
+                      <span
+                        className="w-1.5 h-1.5 rounded-full bg-[#6a5fc1] animate-bounce motion-reduce:animate-none"
+                        style={{ animationDelay: '300ms' }}
+                        aria-hidden="true"
+                      />
+                    </div>
+                  </div>
+                )}
+              </>
             )}
           </div>
 
-          {/* Quick Action Prompt Chips */}
-          <div className="px-3 py-2 bg-slate-100/90 border-t border-slate-200 flex items-center gap-1.5 overflow-x-auto text-[11px] whitespace-nowrap">
-            {currentQuickChips.map((chip) => {
-              const Icon = chip.icon
-              return (
-                <button
-                  key={chip.label}
-                  type="button"
-                  onClick={() => handleSend(chip.label)}
-                  disabled={isLoading}
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 border border-slate-200 text-[11px] font-medium transition-colors cursor-pointer disabled:opacity-50 shadow-xs focus:ring-2 focus:ring-[#6a5fc1]/20 focus:outline-none shrink-0"
-                >
-                  <Icon className="w-3 h-3 text-[#6a5fc1] shrink-0" aria-hidden="true" />
-                  <span>{chip.label}</span>
-                </button>
-              )
-            })}
-          </div>
+          {/* Quick Action Prompt Chips (chat view) */}
+          {view === 'chat' && (
+            <div className="px-3 py-2 bg-slate-100/90 border-t border-slate-200 flex items-center gap-1.5 overflow-x-auto text-[11px] whitespace-nowrap">
+              {currentQuickChips.map((chip) => {
+                const Icon = chip.icon
+                return (
+                  <button
+                    key={chip.label}
+                    type="button"
+                    onClick={() => handleSend(chip.label)}
+                    disabled={isLoading}
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 border border-slate-200 text-[11px] font-medium transition-colors cursor-pointer disabled:opacity-50 shadow-xs focus:ring-2 focus:ring-[#6a5fc1]/20 focus:outline-none shrink-0"
+                  >
+                    <Icon className="w-3 h-3 text-[#6a5fc1] shrink-0" aria-hidden="true" />
+                    <span>{chip.label}</span>
+                  </button>
+                )
+              })}
+            </div>
+          )}
 
           {/* Input Bar with Auto-growing Textarea */}
           <div className="p-3 bg-white border-t border-slate-200 flex items-end gap-2 shrink-0">
@@ -610,12 +642,12 @@ export default function AIAssistantWidget() {
               onKeyDown={handleTextareaKeyDown}
               placeholder={
                 isStudent
-                  ? 'Tanya nilai, jadwal, atau materi...'
-                  : 'Tanyakan sesuatu ke Asisten AI...'
+                  ? 'Tanya nilai atau jadwal ujianmu…'
+                  : 'Tulis pertanyaanmu untuk EXA…'
               }
               disabled={isLoading}
-              aria-label="Tulis pertanyaan ke Asisten AI"
-              className="flex-1 px-3.5 py-2 rounded-lg bg-slate-50 border border-slate-300 focus:bg-white focus:border-[#6a5fc1] focus:ring-2 focus:ring-[#6a5fc1]/20 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none transition-all resize-none max-h-28 overflow-y-auto leading-relaxed"
+              aria-label="Tulis pesan untuk EXA"
+              className="flex-1 px-3.5 py-2.5 min-h-[44px] rounded-lg bg-slate-50 border border-slate-300 focus:bg-white focus:border-[#6a5fc1] focus:ring-2 focus:ring-[#6a5fc1]/20 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none transition-all resize-none max-h-28 overflow-y-auto leading-relaxed"
             />
             <button
               type="button"
@@ -623,7 +655,7 @@ export default function AIAssistantWidget() {
               disabled={!inputQuery.trim() || isLoading}
               title="Kirim pesan"
               aria-label="Kirim pesan"
-              className="p-2.5 min-w-[40px] min-h-[40px] flex items-center justify-center rounded-lg bg-[#150f23] hover:bg-[#1f1633] disabled:opacity-40 text-white font-bold transition-colors cursor-pointer shadow-xs shrink-0 focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
+              className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg bg-[#150f23] hover:bg-[#1f1633] disabled:opacity-40 text-white font-bold transition-colors cursor-pointer shadow-xs shrink-0 focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
             >
               <Send className="w-4 h-4" aria-hidden="true" />
             </button>

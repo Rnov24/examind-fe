@@ -28,10 +28,12 @@ import {
 } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useExamStore } from '@/stores/examStore'
+import api from '@/lib/api'
 import { useProctoringStore } from '@/stores/proctoringStore'
 import { ProctoringEdgeEngine } from '@/utils/proctoringEdge'
 import QuestionCard from '@/components/student/QuestionCard'
 import CompanionQrModal from '@/components/student/CompanionQrModal'
+import CameraSetupWizard from '@/components/student/CameraSetupWizard'
 import ExamSubmitModal from '@/components/student/ExamSubmitModal'
 import SecurityWarningModal from '@/components/student/SecurityWarningModal'
 import { ExamindLogo } from '@/components/brand/ExamindLogo'
@@ -64,6 +66,10 @@ export default function ExamWorkspacePage() {
   // Human-in-the-Loop Security State
   const [isExamStarted, setIsExamStarted] = useState(false)
   const isExamStartedRef = useRef(false)
+
+  // Pre-exam setup phase: 'loading' while loadExam fetches, 'wizard' while the
+  // student completes the camera setup (proctored exams only), then 'done'.
+  const [setupPhase, setSetupPhase] = useState<'loading' | 'wizard' | 'done'>('loading')
   const [isSecurityModalOpen, setIsSecurityModalOpen] = useState(false)
   const isSecurityModalOpenRef = useRef(false)
   const [securityInfractionDetails, setSecurityInfractionDetails] = useState('')
@@ -346,48 +352,107 @@ export default function ExamWorkspacePage() {
     }
   }
 
+  // Starts the edge proctoring engine (camera + detection loops). Deferred
+  // until the setup wizard completes so the camera is never grabbed twice:
+  // the wizard stops its own preview stream before this runs.
+  async function startProctoringEngine() {
+    try {
+      edgeEngineRef.current = new ProctoringEdgeEngine({
+        onViolation: (eventType) => {
+          if (eventType === 'face_absent' && isExamStartedRef.current) {
+            triggerSecurityWarning('face_absent', 'Wajah tidak terdeteksi di kamera depan')
+          }
+        },
+        onCameraReady: () => {
+          proctoringStore.setPrimaryCamActive(true)
+        },
+        onStatusChange: (status) => {
+          setFaceDetected(status.faceDetected)
+          if (!status.faceDetected && isExamStartedRef.current) {
+            triggerSecurityWarning('face_absent', 'Wajah tidak terdeteksi di kamera depan')
+          }
+        },
+      })
+
+      if (videoPreviewRef.current) {
+        await edgeEngineRef.current.start(videoPreviewRef.current)
+      } else {
+        await edgeEngineRef.current.start()
+      }
+    } catch (err) {
+      console.warn('Webcam permission denied or unavailable:', err)
+    }
+  }
+
+  // Called by CameraSetupWizard's "Mulai Ujian" button. The wizard has
+  // already stopped its preview stream; camera permission is granted, so the
+  // engine's getUserMedia resolves instantly. Runs synchronously from the
+  // click so the fullscreen request keeps its user-gesture context.
+  async function handleSetupComplete() {
+    // Start the server-side exam clock only now (after setup), so wizard
+    // time never eats into the exam duration. Idempotent on the server.
+    try {
+      const res = await api.post(`/student/exam/${examId}/begin`)
+      const remaining = res.data?.data?.duration_remaining_seconds
+      if (typeof remaining === 'number') {
+        useExamStore.setState({ timeRemainingSeconds: remaining })
+      }
+    } catch (err) {
+      console.warn('Failed to mark exam begin; continuing with local timer:', err)
+    }
+    void startProctoringEngine()
+    examStore.startTimer()
+    examStore.startAutosaveLoop(examId)
+    setSetupPhase('done')
+    enterFullscreenAndStart()
+  }
+
   useEffect(() => {
     async function initWorkspace() {
       if (!examId) return
       const examData = await examStore.loadExam(examId)
-      examStore.startTimer()
 
       const pLevel =
         examData?.exam?.proctoring_level || examStore.examMeta?.proctoring_level || 'dual_camera'
       const pEnabled = pLevel !== 'disabled'
 
-      // Only initialize Proctoring WS & Edge Camera if proctoring is active
       if (pEnabled) {
+        // The student WebSocket connects now (not deferred): companion
+        // pairing for dual-camera is signalled over this socket, and the
+        // wizard's "Kamera Kedua" step watches proctoringStore.companionPaired.
         if (examStore.sessionId) {
           proctoringStore.connectStudentWs(examStore.sessionId)
         }
 
-        try {
-          edgeEngineRef.current = new ProctoringEdgeEngine({
-            onViolation: (eventType) => {
-              if (eventType === 'face_absent' && isExamStartedRef.current) {
-                triggerSecurityWarning('face_absent', 'Wajah tidak terdeteksi di kamera depan')
-              }
-            },
-            onCameraReady: () => {
-              proctoringStore.setPrimaryCamActive(true)
-            },
-            onStatusChange: (status) => {
-              setFaceDetected(status.faceDetected)
-              if (!status.faceDetected && isExamStartedRef.current) {
-                triggerSecurityWarning('face_absent', 'Wajah tidak terdeteksi di kamera depan')
-              }
-            },
-          })
+        if (examData?.begun_at) {
+          // Mid-exam resume (e.g. browser crash): the student already
+          // finished setup once — go straight back into the exam.
+          void startProctoringEngine()
+          examStore.startTimer()
+          examStore.startAutosaveLoop(examId)
+          setSetupPhase('done')
+          return
+        }
 
-          if (videoPreviewRef.current) {
-            await edgeEngineRef.current.start(videoPreviewRef.current)
-          } else {
-            await edgeEngineRef.current.start()
+        // loadExam() auto-starts the countdown + autosave inside the store.
+        // Pause both while the student is in the setup wizard — the exam
+        // (timer, autosave, edge camera engine) only begins at "Mulai Ujian".
+        examStore.cleanup()
+        setSetupPhase('wizard')
+      } else {
+        // No wizard for unproctored exams: the clock starts now, as before.
+        // /begin is idempotent, so a resume keeps the original start.
+        try {
+          const res = await api.post(`/student/exam/${examId}/begin`)
+          const remaining = res.data?.data?.duration_remaining_seconds
+          if (typeof remaining === 'number') {
+            useExamStore.setState({ timeRemainingSeconds: remaining })
           }
         } catch (err) {
-          console.warn('Webcam permission denied or unavailable:', err)
+          console.warn('Failed to mark exam begin; continuing with local timer:', err)
         }
+        examStore.startTimer()
+        setSetupPhase('done')
       }
     }
 
@@ -1249,8 +1314,28 @@ export default function ExamWorkspacePage() {
         </div>
       )}
 
+      {/* Pre-Exam Loading Overlay (exam data still fetching) */}
+      {setupPhase === 'loading' && (
+        <div className="fixed inset-0 bg-slate-50 z-50 flex flex-col items-center justify-center gap-3 p-4">
+          <ExamindLogo variant="symbol" theme="color" className="h-12 w-auto" priority />
+          <p className="text-sm font-semibold text-slate-700 font-display">Menyiapkan ujian…</p>
+          <p className="text-xs text-slate-400">Memuat soal dan memeriksa sesi Anda.</p>
+        </div>
+      )}
+
+      {/* Pre-Exam Camera Setup Wizard (proctored exams only) */}
+      {setupPhase === 'wizard' && (
+        <CameraSetupWizard
+          proctoringLevel={proctoringLevel}
+          examTitle={examStore.examMeta?.title}
+          companionUrl={companionUrl}
+          sessionId={examStore.sessionId || undefined}
+          onComplete={handleSetupComplete}
+        />
+      )}
+
       {/* Initial Fullscreen Gate Modal (Mulai Ujian) */}
-      {!isExamStarted && !isSecurityModalOpen && (
+      {!isExamStarted && !isSecurityModalOpen && setupPhase === 'done' && (
         <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 flex items-center justify-center p-4">
           <div className="bg-white border border-slate-200/90 rounded-2xl p-6 sm:p-8 max-w-lg w-full text-center space-y-6 shadow-subtle-elevated relative overflow-hidden">
             <div className="pointer-events-none absolute -top-12 -right-12 w-48 h-48 bg-indigo-50/70 rounded-full blur-2xl" />

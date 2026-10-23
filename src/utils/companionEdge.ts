@@ -1,9 +1,17 @@
 /**
  * EXAMIND - Secondary Mobile Companion Edge CV & Sensor Engine
  * Runs 100% on the client-side (mobile browser) using Canvas, ImageData,
- * and DeviceOrientation / DeviceMotion APIs.
+ * DeviceOrientation / DeviceMotion APIs, plus MediaPipe Tasks Vision
+ * object detection (EfficientDet-Lite0) for person / phone / extra-screen
+ * signals from the side/desk view.
  * Zero server-side video streaming required.
+ *
+ * MediaPipe is a strictly additive layer: when it cannot load on the
+ * device, the heuristic engine (motion / glare / orientation / occlusion)
+ * keeps running on its own so the exam is never left unmonitored.
  */
+
+import { detectObjects, ensureMediaPipeLoaded } from './mediapipeDetect'
 
 export interface CompanionTelemetry {
   motionLevel: number       // 0 - 100%
@@ -12,6 +20,14 @@ export interface CompanionTelemetry {
   deskDetected: boolean     // Camera positioned towards desk
   phonePickedUp: boolean    // Gyroscope/Accelerometer flag
   fps: number
+  /** True when the MediaPipe detection layer is live on this device. */
+  detectionActive?: boolean
+  /** Latest MediaPipe result: a person is visible from the side view. */
+  personDetected?: boolean
+  /** Latest MediaPipe result: number of visible persons (score >= 0.5). */
+  personCount?: number
+  /** Latest MediaPipe result: a cell phone is visible in the desk area. */
+  phoneDetected?: boolean
 }
 
 export interface CompanionCallbacks {
@@ -38,6 +54,25 @@ export class CompanionEdgeEngine {
   private occlusionCounter: number = 0
   private secondaryDeviceCounter: number = 0
   private excessiveMotionCounter: number = 0
+
+  // MediaPipe object-detection layer (additive; heuristics keep running
+  // regardless of whether this layer is active)
+  private detectionInterval: any = null
+  private detectionActive: boolean = false
+  private detectionBusy: boolean = false
+  private lastPersonCount: number = 0
+  private lastPhoneDetected: boolean = false
+  private absentSince: number | null = null
+  private absentFired: boolean = false
+  private multiPersonStreak: number = 0
+  private multiPersonFired: boolean = false
+  private phoneStreak: number = 0
+  private phoneFired: boolean = false
+  private extraScreenStreak: number = 0
+  private extraScreenFired: boolean = false
+
+  private readonly DETECTION_INTERVAL_MS = 1500
+  private readonly ABSENT_THRESHOLD_MS = 10000
 
   private readonly ANALYSIS_WIDTH = 120
   private readonly ANALYSIS_HEIGHT = 90
@@ -84,6 +119,7 @@ export class CompanionEdgeEngine {
       this.initSensors()
       this.startEdgeProcessingLoop()
       this.isRunning = true
+      void this.startDetectionLoop()
 
       return this.stream
     } catch (err) {
@@ -143,6 +179,128 @@ export class CompanionEdgeEngine {
       tickCount++
       this.processFrame(tickCount)
     }, 400)
+  }
+
+  /**
+   * MediaPipe object-detection loop (~1 detection / 1.5s). Loads lazily;
+   * when MediaPipe is unavailable on this device the loop simply never
+   * starts and the heuristic engine below remains the only monitor.
+   */
+  private async startDetectionLoop(): Promise<void> {
+    const ready = await ensureMediaPipeLoaded()
+    if (!ready || !this.isRunning) {
+      this.detectionActive = false
+      return
+    }
+    this.detectionActive = true
+    void this.runDetection()
+    this.detectionInterval = setInterval(() => {
+      void this.runDetection()
+    }, this.DETECTION_INTERVAL_MS)
+  }
+
+  private async runDetection(): Promise<void> {
+    if (!this.isRunning || this.detectionBusy) return
+    if (!this.videoElement || this.videoElement.readyState < 2 || !this.videoElement.videoWidth) return
+
+    this.detectionBusy = true
+    try {
+      const result = await detectObjects(this.videoElement, performance.now())
+      if (!result || !this.isRunning) return
+
+      this.lastPersonCount = result.personCount
+      this.lastPhoneDetected = result.phoneDetected
+      this.evaluateDetectionAnomalies(result)
+    } finally {
+      this.detectionBusy = false
+    }
+  }
+
+  private evaluateDetectionAnomalies(result: {
+    personCount: number
+    phoneDetected: boolean
+    objects: { label: string; score: number }[]
+  }): void {
+    const now = Date.now()
+
+    // 1. Student absent from the desk (side view) for > 10s sustained.
+    // One violation per absence episode; re-arms when a person returns.
+    if (result.personCount === 0) {
+      if (this.absentSince === null) {
+        this.absentSince = now
+      } else if (now - this.absentSince > this.ABSENT_THRESHOLD_MS && !this.absentFired) {
+        this.absentFired = true
+        const snap = this.captureSnapshot()
+        this.callbacks.onViolation(
+          'face_absent',
+          'high',
+          snap,
+          'Siswa tidak terlihat dari kamera samping selama lebih dari 10 detik'
+        )
+      }
+    } else {
+      this.absentSince = null
+      this.absentFired = false
+    }
+
+    // 2. A second person in the desk area (2 consecutive detections).
+    if (result.personCount >= 2) {
+      this.multiPersonStreak++
+      if (this.multiPersonStreak >= 2 && !this.multiPersonFired) {
+        this.multiPersonFired = true
+        const snap = this.captureSnapshot()
+        this.callbacks.onViolation(
+          'multiple_faces',
+          'high',
+          snap,
+          'Terdeteksi lebih dari satu orang di area meja dari kamera samping'
+        )
+      }
+    } else {
+      this.multiPersonStreak = 0
+      this.multiPersonFired = false
+    }
+
+    // 3. A cell phone visible in hand / on the desk from the side view
+    // (2 consecutive detections to suppress single-frame flicker).
+    if (result.phoneDetected) {
+      this.phoneStreak++
+      if (this.phoneStreak >= 2 && !this.phoneFired) {
+        this.phoneFired = true
+        const snap = this.captureSnapshot()
+        this.callbacks.onViolation(
+          'phone_detected',
+          'high',
+          snap,
+          'HP terdeteksi di area meja dari kamera samping'
+        )
+      }
+    } else {
+      this.phoneStreak = 0
+      this.phoneFired = false
+    }
+
+    // 4. An extra screen / monitor: one laptop in frame is the student's
+    // own exam device and is expected; two or more screens are not.
+    const screenCount = result.objects.filter(
+      (o) => (o.label === 'laptop' || o.label === 'tv') && o.score >= 0.5
+    ).length
+    if (screenCount >= 2) {
+      this.extraScreenStreak++
+      if (this.extraScreenStreak >= 2 && !this.extraScreenFired) {
+        this.extraScreenFired = true
+        const snap = this.captureSnapshot()
+        this.callbacks.onViolation(
+          'suspicious_object',
+          'medium',
+          snap,
+          'Terdeteksi layar atau monitor tambahan di area meja kerja'
+        )
+      }
+    } else {
+      this.extraScreenStreak = 0
+      this.extraScreenFired = false
+    }
   }
 
   private processFrame(tickCount: number): void {
@@ -237,6 +395,14 @@ export class CompanionEdgeEngine {
       deskDetected: !isOccluded && avgLuma > 25,
       phonePickedUp: isPhoneMoved,
       fps: this.currentFps || 3,
+      detectionActive: this.detectionActive,
+      ...(this.detectionActive
+        ? {
+            personDetected: this.lastPersonCount > 0,
+            personCount: this.lastPersonCount,
+            phoneDetected: this.lastPhoneDetected,
+          }
+        : {}),
     }
 
     this.callbacks.onTelemetry(telemetry)
@@ -343,6 +509,14 @@ export class CompanionEdgeEngine {
       clearInterval(this.processInterval)
       this.processInterval = null
     }
+
+    if (this.detectionInterval) {
+      clearInterval(this.detectionInterval)
+      this.detectionInterval = null
+    }
+    this.detectionActive = false
+    this.absentSince = null
+    this.absentFired = false
 
     if (typeof window !== 'undefined') {
       window.removeEventListener('deviceorientation', this.handleOrientation, true)

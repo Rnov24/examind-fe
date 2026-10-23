@@ -16,13 +16,14 @@ import {
 } from 'lucide-react'
 import api from '@/lib/api'
 import { wsBaseUrl } from '@/lib/ws'
+import { proctoringEventLabel, cameraSourceLabel } from '@/utils/proctoringLabels'
 
 interface StudentSession {
   session_id: number
   student_name: string
   student_identifier: string
   status: string
-  integrity_score: number
+  integrity_score: number | null
   last_snapshot_url: string | null
   companion_snapshot_url?: string | null
   companion_paired?: boolean
@@ -61,12 +62,12 @@ export default function LiveMonitoringPage() {
   const wsRef = useRef<WebSocket | null>(null)
 
   const flaggedCount = useMemo(() => {
-    return studentsList.filter((s) => s.integrity_score < 90 || s.status === 'aborted').length
+    return studentsList.filter((s) => (s.integrity_score !== null && s.integrity_score < 90) || s.status === 'aborted').length
   }, [studentsList])
 
   const filteredStudents = useMemo(() => {
     if (filterMode === 'flagged') {
-      return studentsList.filter((s) => s.integrity_score < 90 || s.status === 'aborted')
+      return studentsList.filter((s) => (s.integrity_score !== null && s.integrity_score < 90) || s.status === 'aborted')
     }
     return studentsList
   }, [studentsList, filterMode])
@@ -136,12 +137,12 @@ export default function LiveMonitoringPage() {
         session_id: student.session_id,
         notes: 'Toleransi wajar oleh pengawas (false positive / pergerakan wajar)',
       })
-      const newScore = res.data.data?.new_integrity_score ?? 100
+      const newScore = res.data.data?.new_integrity_score
 
       setStudentsList((prev) =>
         prev.map((s) =>
           s.session_id === student.session_id
-            ? { ...s, integrity_score: newScore, last_event: 'Ditoleransi Pengawas' }
+            ? { ...s, integrity_score: typeof newScore === 'number' ? newScore : s.integrity_score, last_event: 'Ditoleransi Pengawas' }
             : s
         )
       )
@@ -211,7 +212,7 @@ export default function LiveMonitoringPage() {
           student_name: s.student_name,
           student_identifier: s.student_identifier,
           status: s.status,
-          integrity_score: s.status === 'aborted' ? 0 : (s.integrity_score ?? 100),
+          integrity_score: s.status === 'aborted' ? 0 : (typeof s.integrity_score === 'number' ? s.integrity_score : null),
           last_snapshot_url: null,
           last_event: s.status === 'aborted' ? 'Didiskualifikasi Pengawas' : null,
           last_event_time: null,
@@ -365,9 +366,9 @@ export default function LiveMonitoringPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {filteredStudents.map((student) => {
           const borderClass =
-            student.status === 'aborted' || student.integrity_score < 70
+            student.status === 'aborted' || (student.integrity_score !== null && student.integrity_score < 70)
               ? 'border-rose-400 ring-2 ring-rose-200/80'
-              : student.integrity_score < 90
+              : student.integrity_score !== null && student.integrity_score < 90
               ? 'border-amber-400 ring-2 ring-amber-200/80'
               : 'border-slate-200/80'
 
@@ -408,6 +409,8 @@ export default function LiveMonitoringPage() {
                   className={`px-2.5 py-1 rounded-xl text-xs font-black font-mono shrink-0 shadow-xs tabular-nums ${
                     student.status === 'aborted'
                       ? 'bg-rose-50 text-rose-700 border border-rose-200'
+                      : student.integrity_score === null
+                      ? 'bg-slate-50 text-slate-500 border border-slate-200'
                       : student.integrity_score >= 90
                       ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
                       : student.integrity_score >= 70
@@ -415,7 +418,7 @@ export default function LiveMonitoringPage() {
                       : 'bg-rose-50 text-rose-700 border border-rose-200'
                   }`}
                 >
-                  {student.status === 'aborted' ? '0%' : `${student.integrity_score}%`}
+                  {student.status === 'aborted' ? '0%' : student.integrity_score === null ? 'Belum dinilai' : `${student.integrity_score}%`}
                 </div>
               </div>
 
@@ -659,11 +662,11 @@ export default function LiveMonitoringPage() {
                       />
                     )}
                     <div className="space-y-0.5">
-                      <span className="text-xs font-bold text-slate-900 capitalize">
-                        {log.event_type.replace('_', ' ')}
+                      <span className="text-xs font-bold text-slate-900">
+                        {proctoringEventLabel(log.event_type)}
                       </span>
                       <p className="text-[11px] text-slate-500 font-mono">
-                        {formatTimestamp(log.event_timestamp)} • Kamera: {log.camera_source}
+                        {formatTimestamp(log.event_timestamp)} • {cameraSourceLabel(log.camera_source)}
                       </p>
                       <span
                         className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase font-mono ${

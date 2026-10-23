@@ -1,0 +1,652 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>EXAMIND — Launch Video</title>
+    <script src="assets/vendor/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: 'Plus Jakarta Sans';
+        src: url('assets/fonts/PlusJakartaSans.ttf') format('truetype');
+        font-weight: 400 800;
+        font-style: normal;
+        font-display: block;
+      }
+      @font-face {
+        font-family: 'JetBrains Mono';
+        src: url('assets/fonts/JetBrainsMono.ttf') format('truetype');
+        font-weight: 400 700;
+        font-style: normal;
+        font-display: block;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --midnight: #150F23;
+        --surface: #1F1633;
+        --surface-subtle: #291F44;
+        --hairline: #362D59;
+        --lime: #C2EF4E;
+        --violet: #6A5FC1;
+        --indigo: #6366F1;
+        --rose: #E11D48;
+        --emerald: #10B981;
+        --text-white: #FFFFFF;
+        --text-muted: #94A3B8;
+        --text-faint: #64748B;
+      }
+
+      html, body {
+        margin: 0;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: var(--midnight);
+        color: var(--text-white);
+        font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      }
+
+      #root {
+        position: relative;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: var(--midnight);
+      }
+
+      /* Retro 90s CRT & Scanline elements */
+      .scanlines {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          to bottom,
+          rgba(255, 255, 255, 0),
+          rgba(255, 255, 255, 0) 50%,
+          rgba(0, 0, 0, 0.28) 50%,
+          rgba(0, 0, 0, 0.28)
+        );
+        background-size: 100% 4px;
+        pointer-events: none;
+        z-index: 50;
+        opacity: 0.7;
+      }
+
+      .vhs-header {
+        position: absolute;
+        top: 48px;
+        left: 80px;
+        right: 80px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 20px;
+        color: #C2EF4E;
+        letter-spacing: 0.1em;
+        z-index: 40;
+      }
+
+      .rec-badge {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .rec-dot {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background-color: var(--rose);
+        box-shadow: 0 0 10px var(--rose);
+      }
+
+      /* Common Scene Wrappers */
+      .scene {
+        position: absolute;
+        inset: 0;
+        width: 1920px;
+        height: 1080px;
+        padding: 120px 100px 80px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        pointer-events: none;
+        z-index: 10;
+      }
+      .scene.active {
+        pointer-events: auto;
+      }
+
+      /* Typography Styles */
+      .badge-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 18px;
+        border-radius: 9999px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 14px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        margin-bottom: 24px;
+        border: 1px solid var(--hairline);
+        background: var(--surface);
+      }
+      .badge-tag.lime {
+        color: var(--lime);
+        border-color: rgba(194, 239, 78, 0.4);
+        background: rgba(194, 239, 78, 0.08);
+      }
+      .badge-tag.rose {
+        color: #fca5a5;
+        border-color: rgba(225, 29, 72, 0.4);
+        background: rgba(225, 29, 72, 0.12);
+      }
+      .badge-tag.violet {
+        color: #c4b5fd;
+        border-color: rgba(106, 95, 193, 0.4);
+        background: rgba(106, 95, 193, 0.12);
+      }
+
+      .act-title {
+        font-size: 58px;
+        font-weight: 800;
+        line-height: 1.15;
+        letter-spacing: -0.02em;
+        text-align: center;
+        max-width: 1400px;
+        margin-bottom: 20px;
+      }
+      .act-subtitle {
+        font-size: 24px;
+        font-weight: 400;
+        color: var(--text-muted);
+        text-align: center;
+        max-width: 1100px;
+        line-height: 1.5;
+        margin-bottom: 48px;
+      }
+
+      /* Card Grids */
+      .card-grid-3 {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 32px;
+        width: 100%;
+        max-width: 1600px;
+      }
+      .feature-card {
+        background: var(--surface);
+        border: 1px solid var(--hairline);
+        border-radius: 20px;
+        padding: 40px 36px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        position: relative;
+        overflow: hidden;
+      }
+      .feature-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: var(--hairline);
+      }
+      .feature-card.highlight-lime::before {
+        background: var(--lime);
+      }
+      .feature-card.highlight-rose::before {
+        background: var(--rose);
+      }
+      .feature-card.highlight-violet::before {
+        background: var(--violet);
+      }
+
+      .card-icon-box {
+        width: 56px;
+        height: 56px;
+        border-radius: 14px;
+        background: var(--surface-subtle);
+        border: 1px solid var(--hairline);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        margin-bottom: 24px;
+      }
+      .card-heading {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 14px;
+        line-height: 1.3;
+        color: var(--text-white);
+      }
+      .card-desc {
+        font-size: 16px;
+        line-height: 1.6;
+        color: var(--text-muted);
+      }
+
+      /* UI Mockup Elements */
+      .mockup-window {
+        width: 100%;
+        max-width: 1600px;
+        background: var(--surface);
+        border: 1px solid var(--hairline);
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7);
+      }
+      .mockup-header {
+        background: #19122B;
+        border-bottom: 1px solid var(--hairline);
+        padding: 16px 28px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .mockup-header-dots {
+        display: flex;
+        gap: 8px;
+      }
+      .mockup-header-dots span {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: var(--hairline);
+      }
+      .mockup-header-title {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 14px;
+        color: var(--text-muted);
+        letter-spacing: 0.05em;
+      }
+      .mockup-body {
+        padding: 36px 40px;
+      }
+
+      /* CTA Button */
+      .cta-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        background: var(--surface);
+        border: 2px solid var(--lime);
+        color: var(--text-white);
+        font-size: 24px;
+        font-weight: 700;
+        padding: 22px 56px;
+        border-radius: 9999px;
+        letter-spacing: 0.04em;
+        box-shadow: 0 0 35px -5px rgba(194, 239, 78, 0.35);
+      }
+      .cta-btn span.domain {
+        color: var(--lime);
+        font-family: 'JetBrains Mono', monospace;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="90"
+      data-width="1920"
+      data-height="1080"
+    >
+      <!-- Background Audio Track -->
+      <audio
+        id="bg-music"
+        src="assets/music/track.mp3"
+        data-start="0"
+        data-duration="90"
+        data-track-index="1"
+        data-volume="0.8"
+      ></audio>
+
+      <!-- 90s CRT Scanline Layer -->
+      <div id="vhs-scanlines" class="scanlines"></div>
+
+      <!-- Retro VHS Header Info -->
+      <div id="vhs-bar" class="vhs-header">
+        <div class="rec-badge">
+          <div class="rec-dot"></div>
+          <span>REC</span>
+          <span style="color: var(--text-white); margin-left: 8px;">00:01:30</span>
+        </div>
+        <div>SP AUTO • NTSC</div>
+        <div style="color: #c4b5fd;">EXAMIND // SISTEM EVALUASI AKADEMIK</div>
+      </div>
+
+      <!-- ACT 1: MASALAH UJIAN SEKOLAH KONVENSIONAL (0.0s - 22.0s) -->
+      <section id="act-1" class="scene">
+        <div class="badge-tag rose" id="badge-act-1">
+          <span>● MASALAH PENDIDIKAN</span>
+        </div>
+        <h1 class="act-title" id="title-act-1">
+          Koreksi Esai Menumpuk,<br />
+          Ujian Online Rawan Kecurangan?
+        </h1>
+        <p class="act-subtitle" id="sub-act-1">
+          Dilema nyata sekolah dan pendidik di era digital: beban administratif yang melelahkan dan integritas ujian yang sulit diawasi secara adil.
+        </p>
+
+        <div class="card-grid-3" id="cards-act-1">
+          <div class="feature-card highlight-rose card-act1-1">
+            <div class="card-icon-box" style="color: var(--rose);">✍️</div>
+            <div>
+              <h3 class="card-heading">Beban Koreksi Manual</h3>
+              <p class="card-desc">
+                Guru menghabiskan waktu berhari-hari membaca esai panjang secara manual satu per satu tanpa standardisasi rubrik yang seragam.
+              </p>
+            </div>
+          </div>
+
+          <div class="feature-card highlight-rose card-act1-2">
+            <div class="card-icon-box" style="color: var(--rose);">👀</div>
+            <div>
+              <h3 class="card-heading">Celah Kecurangan Digital</h3>
+              <p class="card-desc">
+                Ujian online biasa rentan perpindahan tab, joki, dan area meja atau perangkat kedua yang luput dari pandangan webcam standar.
+              </p>
+            </div>
+          </div>
+
+          <div class="feature-card highlight-rose card-act1-3">
+            <div class="card-icon-box" style="color: var(--rose);">⚠️</div>
+            <div>
+              <h3 class="card-heading">Proctoring Kaku & Kejam</h3>
+              <p class="card-desc">
+                Sistem proctoring otomatis sering mendiskualifikasi siswa secara sewenang-wenang lewat algoritma hitam tanpa hak verifikasi bagi guru.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ACT 2: APA YANG DISELESAIKAN EXAMIND (22.0s - 48.0s) -->
+      <section id="act-2" class="scene">
+        <div class="badge-tag lime" id="badge-act-2">
+          <span>SOLUSI KECERDASAN BUATAN BERETIKA</span>
+        </div>
+        
+        <div id="logo-act-2" style="margin-bottom: 24px;">
+          <img src="assets/brand/examind-lockup-horizontal-white.svg" alt="EXAMIND" style="height: 64px;" />
+        </div>
+
+        <h2 class="act-title" id="title-act-2" style="font-size: 48px; max-width: 1300px;">
+          Platform Ujian Cerdas dengan Prinsip Human-in-the-Loop
+        </h2>
+        <p class="act-subtitle" id="sub-act-2" style="margin-bottom: 36px;">
+          Menghubungkan kecerdasan generator AI dengan kedaulatan mutlak guru dalam menguji dan menilai.
+        </p>
+
+        <div class="card-grid-3" id="cards-act-2">
+          <div class="feature-card highlight-lime card-act2-1">
+            <div class="card-icon-box" style="color: var(--lime);">⚡</div>
+            <div>
+              <h3 class="card-heading">AI Question Generator</h3>
+              <p class="card-desc">
+                Menyusun paket soal pilihan ganda lengkap dengan distractor analysis dan butir esai berbobot langsung dari materi ajar atau silabus guru.
+              </p>
+            </div>
+          </div>
+
+          <div class="feature-card highlight-lime card-act2-2">
+            <div class="card-icon-box" style="color: var(--lime);">📹</div>
+            <div>
+              <h3 class="card-heading">Dual-Camera Proctoring</h3>
+              <p class="card-desc">
+                Pengawasan komprehensif memadukan webcam laptop untuk presensi wajah dan kamera smartphone sekunder untuk sudut meja dan lingkungan sekitar.
+              </p>
+            </div>
+          </div>
+
+          <div class="feature-card highlight-lime card-act2-3">
+            <div class="card-icon-box" style="color: var(--lime);">🛡️</div>
+            <div>
+              <h3 class="card-heading">Evaluasi Esai 4 Dimensi</h3>
+              <p class="card-desc">
+                Koreksi esai terstruktur berdasarkan rubrik pedagogis (Konsep, Argumen, Terminologi, Kejelasan). AI memberi saran skor, keputusan tetap di tangan guru.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- ACT 3: MENGAPA SEKOLAH & GURU HARUS MEMILIH EXAMIND (48.0s - 72.0s) -->
+      <section id="act-3" class="scene">
+        <div class="badge-tag violet" id="badge-act-3">
+          <span>NILAI NYATA UNTUK INSTITUSI PENDIDIKAN</span>
+        </div>
+        <h2 class="act-title" id="title-act-3">
+          Mengapa Sekolah & Pendidik Beralih ke EXAMIND?
+        </h2>
+        <p class="act-subtitle" id="sub-act-3">
+          Memberikan efisiensi kerja tanpa mengorbankan martabat siswa maupun wewenang guru.
+        </p>
+
+        <div class="card-grid-3" id="cards-act-3">
+          <div class="feature-card highlight-violet card-act3-1">
+            <div class="card-icon-box" style="color: #c4b5fd;">🕒</div>
+            <div>
+              <h3 class="card-heading">Meringankan Beban Guru</h3>
+              <p class="card-desc">
+                Guru terbebas dari rutinitas koreksi manual yang melelahkan. Waktu berharga guru dapat dialihkan kembali sepenuhnya untuk mendidik dan membimbing siswa.
+              </p>
+            </div>
+          </div>
+
+          <div class="feature-card highlight-violet card-act3-2">
+            <div class="card-icon-box" style="color: #c4b5fd;">🔍</div>
+            <div>
+              <h3 class="card-heading">Integritas & Resiliensi</h3>
+              <p class="card-desc">
+                Bukti visual snapshot digital terverifikasi untuk setiap potensi pelanggaran. Didukung Autosave lokal IndexedDB dan sinkronisasi berkala 30 detik agar jawaban tetap aman dari putus koneksi.
+              </p>
+            </div>
+          </div>
+
+          <div class="feature-card highlight-violet card-act3-3">
+            <div class="card-icon-box" style="color: #c4b5fd;">📋</div>
+            <div>
+              <h3 class="card-heading">Kepatuhan UU PDP & PDF Resmi</h3>
+              <p class="card-desc">
+                Mematuhi UU Pelindungan Data Pribadi dengan pembersihan otomatis snapshot setelah 60 hari. Ekspor Berita Acara Ujian resmi dan Transkrip Nilai instan format PDF.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ACT 4: REAL MOCKUP DASHBOARD GURU & CALL TO ACTION (72.0s - 90.0s) -->
+      <section id="act-4" class="scene">
+        <!-- Sub-scene 4A: Real Mockup Dashboard Guru (72s - 81s) -->
+        <div id="mockup-container" class="mockup-window" style="position: absolute; width: 1540px; margin-bottom: 20px;">
+          <div class="mockup-header">
+            <div class="mockup-header-dots">
+              <span></span><span></span><span></span>
+            </div>
+            <div class="mockup-header-title">
+              EXAMIND MONITORING RUANG UJIAN • KELAS XII IPA 1 • BIOLOGI SEL
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #10B981;"></span>
+              <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #10B981;">SERVER SINKRONISASI AKTIF</span>
+            </div>
+          </div>
+
+          <div class="mockup-body">
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 28px;">
+              <!-- Left: Student Proctoring Feed Grid -->
+              <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+                <!-- Student 1 -->
+                <div style="background: #150F23; border: 1px solid var(--hairline); border-radius: 12px; padding: 16px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <div style="font-weight: 700; font-size: 15px;">Ahmad Pratama</div>
+                    <span style="font-size: 11px; font-family: 'JetBrains Mono', monospace; color: #10B981; background: rgba(16, 185, 129, 0.1); padding: 2px 8px; border-radius: 4px;">AMAN • DUAL CAM AKTIF</span>
+                  </div>
+                  <div style="display: flex; gap: 8px; height: 110px;">
+                    <div style="flex: 1; background: #231A38; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #94A3B8;">Webcam Wajah</div>
+                    <div style="flex: 1; background: #231A38; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #94A3B8;">Kamera Meja HP</div>
+                  </div>
+                </div>
+
+                <!-- Student 2 -->
+                <div style="background: #150F23; border: 1px solid rgba(225, 29, 72, 0.5); border-radius: 12px; padding: 16px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <div style="font-weight: 700; font-size: 15px;">Bunga Lestari</div>
+                    <span style="font-size: 11px; font-family: 'JetBrains Mono', monospace; color: #E11D48; background: rgba(225, 29, 72, 0.1); padding: 2px 8px; border-radius: 4px;">FLAGGED: TENGOK KANAN</span>
+                  </div>
+                  <div style="display: flex; gap: 8px; height: 110px;">
+                    <div style="flex: 1; background: #2D1426; border-radius: 8px; border: 1px dashed #E11D48; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 11px; color: #FCA5A5; text-align: center; padding: 4px;">
+                      <span>Bukti Snapshot</span>
+                      <span style="font-family: 'JetBrains Mono', monospace; font-size: 9px; margin-top: 4px;">14:32:05 WIB</span>
+                    </div>
+                    <div style="flex: 1; background: #231A38; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #94A3B8;">Kamera Meja HP</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right: AI 4D Rubric Evaluation Card -->
+              <div style="background: #150F23; border: 1px solid var(--hairline); border-radius: 12px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between;">
+                <div>
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <div style="font-weight: 700; font-size: 14px; color: #C2EF4E;">EVALUASI ESAI 4D AI</div>
+                    <span style="font-size: 11px; color: #94A3B8;">Teacher Override Aktif</span>
+                  </div>
+                  <div style="display: flex; flex-direction: column; gap: 8px; font-size: 12px;">
+                    <div style="display: flex; justify-content: space-between; padding: 4px 8px; background: #1F1633; border-radius: 6px;">
+                      <span style="color: #94A3B8;">Pemahaman Konsep</span>
+                      <span style="font-weight: 700; color: #10B981;">Lengkap & Relevan</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 4px 8px; background: #1F1633; border-radius: 6px;">
+                      <span style="color: #94A3B8;">Kekuatan Argumen</span>
+                      <span style="font-weight: 700; color: #C2EF4E;">Terstruktur Baik</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 4px 8px; background: #1F1633; border-radius: 6px;">
+                      <span style="color: #94A3B8;">Terminologi Ilmiah</span>
+                      <span style="font-weight: 700; color: #6A5FC1;">Tepat Konteks</span>
+                    </div>
+                  </div>
+                </div>
+                <div style="margin-top: 10px; font-size: 11px; color: #94A3B8; text-align: right;">
+                  *Nilai final dapat disesuaikan wewenang guru
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sub-scene 4B: Final CTA & Brand Outro (81s - 90s) -->
+        <div id="final-cta-container" style="display: flex; flex-direction: column; align-items: center; text-align: center; z-index: 20;">
+          <div style="margin-bottom: 24px;">
+            <img src="assets/brand/examind-lockup-stacked-color.svg" alt="EXAMIND Logo" style="height: 120px;" />
+          </div>
+          <h2 style="font-size: 46px; font-weight: 800; max-width: 1200px; line-height: 1.25; margin-bottom: 16px;">
+            Integritas Terjaga. Waktu Guru Kembali Berharga.<br />
+            Wewenang Pendidik Tetap yang Utama.
+          </h2>
+          <p style="font-size: 20px; color: var(--text-muted); margin-bottom: 36px; max-width: 900px;">
+            Tinggalkan cara lama. Beralih ke platform ujian cerdas berbasis AI dengan prinsip Human-in-the-Loop.
+          </p>
+          <div class="cta-btn" id="cta-button">
+            <span>JADWALKAN UJI COBA SEKOLAH ANDA</span>
+            <span>•</span>
+            <span class="domain">examind.id</span>
+          </div>
+        </div>
+      </section>
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+
+      // Initialize all scenes hidden
+      gsap.set('.scene', { opacity: 0 });
+      gsap.set('#mockup-container', { opacity: 0, y: 30 });
+      gsap.set('#final-cta-container', { opacity: 0, y: 20 });
+
+      /* ==============================================
+         ACT 1: MASALAH UJIAN SEKOLAH (0.0s - 22.0s)
+         ============================================== */
+      tl.to('#act-1', { opacity: 1, duration: 0.8, ease: 'power2.out' }, 0.2);
+      tl.fromTo('#badge-act-1', { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.6, ease: 'back.out(1.4)' }, 0.5);
+      tl.fromTo('#title-act-1', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, 1.0);
+      tl.fromTo('#sub-act-1', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, 2.0);
+
+      // Card reveals in Act 1
+      tl.fromTo('.card-act1-1', { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' }, 4.0);
+      tl.fromTo('.card-act1-2', { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' }, 9.5);
+      tl.fromTo('.card-act1-3', { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' }, 15.0);
+
+      // Act 1 exit
+      tl.to('#act-1', { opacity: 0, duration: 0.6, ease: 'power2.in' }, 21.4);
+
+      /* ==============================================
+         ACT 2: SOLUSI EXAMIND (22.0s - 48.0s)
+         ============================================== */
+      tl.to('#act-2', { opacity: 1, duration: 0.8, ease: 'power2.out' }, 22.0);
+      tl.fromTo('#logo-act-2', { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.8, ease: 'back.out(1.5)' }, 22.5);
+      tl.fromTo('#badge-act-2', { opacity: 0, y: -15 }, { opacity: 1, y: 0, duration: 0.6 }, 23.5);
+      tl.fromTo('#title-act-2', { opacity: 0, y: 25 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, 24.2);
+      tl.fromTo('#sub-act-2', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8 }, 25.0);
+
+      // Card reveals in Act 2
+      tl.fromTo('.card-act2-1', { opacity: 0, y: 35 }, { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' }, 27.0);
+      tl.fromTo('.card-act2-2', { opacity: 0, y: 35 }, { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' }, 33.5);
+      tl.fromTo('.card-act2-3', { opacity: 0, y: 35 }, { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' }, 40.5);
+
+      // Act 2 exit
+      tl.to('#act-2', { opacity: 0, duration: 0.6, ease: 'power2.in' }, 47.4);
+
+      /* ==============================================
+         ACT 3: MENGAPA SEKOLAH & GURU (48.0s - 72.0s)
+         ============================================== */
+      tl.to('#act-3', { opacity: 1, duration: 0.8, ease: 'power2.out' }, 48.0);
+      tl.fromTo('#badge-act-3', { opacity: 0, y: -15 }, { opacity: 1, y: 0, duration: 0.6 }, 48.5);
+      tl.fromTo('#title-act-3', { opacity: 0, y: 25 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, 49.2);
+      tl.fromTo('#sub-act-3', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8 }, 50.0);
+
+      // Card reveals in Act 3
+      tl.fromTo('.card-act3-1', { opacity: 0, y: 35 }, { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' }, 52.0);
+      tl.fromTo('.card-act3-2', { opacity: 0, y: 35 }, { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' }, 59.0);
+      tl.fromTo('.card-act3-3', { opacity: 0, y: 35 }, { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' }, 65.5);
+
+      // Act 3 exit
+      tl.to('#act-3', { opacity: 0, duration: 0.6, ease: 'power2.in' }, 71.4);
+
+      /* ==============================================
+         ACT 4: REAL MOCKUP & CTA (72.0s - 90.0s)
+         ============================================== */
+      tl.to('#act-4', { opacity: 1, duration: 0.6, ease: 'power2.out' }, 72.0);
+
+      // Sub-scene 4A: Real Mockup UI
+      tl.to('#mockup-container', { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, 72.4);
+      tl.to('#mockup-container', { opacity: 0, scale: 0.95, duration: 0.6, ease: 'power2.in' }, 80.4);
+
+      // Sub-scene 4B: Grand Outro & Call to Action
+      tl.to('#final-cta-container', { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, 81.2);
+      tl.fromTo('#cta-button', { scale: 0.95 }, { scale: 1.05, repeat: 6, yoyo: true, duration: 1.2, ease: 'sine.inOut' }, 82.0);
+
+      // Final smooth fade
+      tl.to('#final-cta-container', { opacity: 0.95, duration: 1.0 }, 89.0);
+
+      window.__timelines['main'] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

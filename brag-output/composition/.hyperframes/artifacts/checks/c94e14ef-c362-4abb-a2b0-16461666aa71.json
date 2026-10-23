@@ -1,0 +1,289 @@
+{
+  "ok": false,
+  "strict": false,
+  "browserSkipped": false,
+  "lint": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 8,
+    "infoCount": 0,
+    "findings": [
+      {
+        "code": "gsap_infinite_repeat",
+        "severity": "warning",
+        "message": "GSAP tween uses `repeat: -1` (infinite), but the composition declares a finite 90s window. HyperFrames clips deterministic seeking and export to that explicit duration.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {},
+        "sourceFile": "/home/hatch/workspace/examind-fe/brag-output/composition/index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0,
+        "fixHint": "Keep the explicit finite composition `data-duration`. Use a finite repeat count only when the loop itself must end before the composition does."
+      },
+      {
+        "code": "composition_file_too_large",
+        "severity": "warning",
+        "message": "This HTML composition file has 360 lines. Smaller sub-compositions are easier to read, iterate on, and diff.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {},
+        "sourceFile": "/home/hatch/workspace/examind-fe/brag-output/composition/index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0,
+        "fixHint": "Split coherent scenes or layers into separate .html files under compositions/, then mount them from the parent with data-composition-src so each file stays small enough to inspect, revise, and validate independently."
+      },
+      {
+        "code": "timeline_track_too_dense",
+        "severity": "warning",
+        "message": "Track 0 has 4 timed elements in this HTML file. Smaller sub-compositions keep timelines easier to read, iterate on, and diff.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {},
+        "sourceFile": "/home/hatch/workspace/examind-fe/brag-output/composition/index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0,
+        "fixHint": "Move coherent scene groups into separate .html files under compositions/ and mount them from the parent with data-composition-src so the timeline stays easier to inspect, revise, and validate."
+      },
+      {
+        "code": "nested_structure_needs_subcomposition",
+        "severity": "warning",
+        "message": "<div id=\"vhs-bar\"> is a timeline element that contains nested <div>. The timeline shows one row per top-level element, and the root composition is built only from sub-compositions.",
+        "selector": "#vhs-bar",
+        "dataAttributes": {},
+        "sourceFile": "/home/hatch/workspace/examind-fe/brag-output/composition/index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0,
+        "fixHint": "Move <div id=\"vhs-bar\"> and its contents into a sub-composition file and mount it with data-composition-src."
+      },
+      {
+        "code": "nested_structure_needs_subcomposition",
+        "severity": "warning",
+        "message": "<section id=\"act-1\"> is a timeline element that contains nested <div id=\"badge-act-1\">. The timeline shows one row per top-level element, and the root composition is built only from sub-compositions.",
+        "selector": "#act-1",
+        "dataAttributes": {},
+        "sourceFile": "/home/hatch/workspace/examind-fe/brag-output/composition/index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0,
+        "fixHint": "Move <section id=\"act-1\"> and its contents into a sub-composition file and mount it with data-composition-src."
+      },
+      {
+        "code": "nested_structure_needs_subcomposition",
+        "severity": "warning",
+        "message": "<section id=\"act-2\"> is a timeline element that contains nested <div id=\"badge-act-2\">. The timeline shows one row per top-level element, and the root composition is built only from sub-compositions.",
+        "selector": "#act-2",
+        "dataAttributes": {},
+        "sourceFile": "/home/hatch/workspace/examind-fe/brag-output/composition/index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0,
+        "fixHint": "Move <section id=\"act-2\"> and its contents into a sub-composition file and mount it with data-composition-src."
+      },
+      {
+        "code": "nested_structure_needs_subcomposition",
+        "severity": "warning",
+        "message": "<section id=\"act-3\"> is a timeline element that contains nested <div id=\"badge-act-3\">. The timeline shows one row per top-level element, and the root composition is built only from sub-compositions.",
+        "selector": "#act-3",
+        "dataAttributes": {},
+        "sourceFile": "/home/hatch/workspace/examind-fe/brag-output/composition/index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0,
+        "fixHint": "Move <section id=\"act-3\"> and its contents into a sub-composition file and mount it with data-composition-src."
+      },
+      {
+        "code": "nested_structure_needs_subcomposition",
+        "severity": "warning",
+        "message": "<section id=\"act-4\"> is a timeline element that contains nested <div id=\"mockup-container\">. The timeline shows one row per top-level element, and the root composition is built only from sub-compositions.",
+        "selector": "#act-4",
+        "dataAttributes": {},
+        "sourceFile": "/home/hatch/workspace/examind-fe/brag-output/composition/index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0,
+        "fixHint": "Move <section id=\"act-4\"> and its contents into a sub-composition file and mount it with data-composition-src."
+      }
+    ],
+    "filesScanned": 1
+  },
+  "runtime": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": []
+  },
+  "layout": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": [],
+    "duration": 90,
+    "samples": [
+      5,
+      15,
+      25,
+      35,
+      45,
+      55,
+      65,
+      75,
+      85
+    ],
+    "transitionSamples": [],
+    "transitionSamplesDropped": 0,
+    "tolerance": 2,
+    "totalIssueCount": 0,
+    "truncated": false
+  },
+  "motion": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": [],
+    "enabled": false,
+    "samples": 0
+  },
+  "contrast": {
+    "ok": false,
+    "errorCount": 1,
+    "warningCount": 2,
+    "infoCount": 0,
+    "findings": [
+      {
+        "code": "contrast_aa_failure",
+        "severity": "error",
+        "message": "Contrast is 3.57:1; WCAG AA requires 4.5:1.",
+        "text": "EXAMIND // SISTEM EVALUASI AKADEMIK",
+        "fg": "rgb(106,95,193)",
+        "bg": "rgb(21,15,35)",
+        "ratio": 3.57,
+        "requiredRatio": 4.5,
+        "suggestedColor": "rgb(124,114,200)",
+        "large": false,
+        "selector": "div > div:nth-of-type(2) > div:nth-of-type(3)",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 1350,
+          "y": 48,
+          "width": 490,
+          "height": 26
+        },
+        "time": 5,
+        "times": [
+          5,
+          25,
+          45,
+          65,
+          85
+        ]
+      },
+      {
+        "code": "contrast_aa_failure",
+        "severity": "warning",
+        "message": "Contrast is 2.93:1; WCAG AA requires 3:1.",
+        "text": "🕒",
+        "fg": "rgb(106,95,193)",
+        "bg": "rgb(41,31,68)",
+        "ratio": 2.93,
+        "requiredRatio": 3,
+        "suggestedColor": "rgb(108,97,194)",
+        "large": true,
+        "selector": "div > section:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1)",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 197,
+          "y": 559.5625,
+          "width": 56,
+          "height": 56
+        },
+        "time": 65,
+        "times": [
+          65
+        ]
+      },
+      {
+        "code": "contrast_aa_failure",
+        "severity": "warning",
+        "message": "Contrast is 2.93:1; WCAG AA requires 3:1.",
+        "text": "🔍",
+        "fg": "rgb(106,95,193)",
+        "bg": "rgb(41,31,68)",
+        "ratio": 2.93,
+        "requiredRatio": 3,
+        "suggestedColor": "rgb(108,97,194)",
+        "large": true,
+        "selector": "div > section:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(2) > div:nth-of-type(1)",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 741,
+          "y": 559.5625,
+          "width": 56,
+          "height": 56
+        },
+        "time": 65,
+        "times": [
+          65
+        ]
+      }
+    ],
+    "enabled": true,
+    "samples": [
+      5,
+      25,
+      45,
+      65,
+      85
+    ],
+    "checked": 54,
+    "passed": 47
+  },
+  "hdr": {
+    "autoPromotion": null,
+    "inspection": "available"
+  },
+  "snapshots": {
+    "enabled": false,
+    "files": [],
+    "times": [],
+    "findingFiles": []
+  }
+}

@@ -1,0 +1,7 @@
+Koreksi esai menumpuk dan ujian online rawan kecurangan? 
+
+Sambut EXAMIND: Platform ujian cerdas berstandar institusi pendidikan dengan Dual-Camera AI Proctoring, Evaluasi Esai Otomatis berbasis rubrik 4 dimensi, dan prinsip Human-in-the-Loop di mana keputusan diskualifikasi mutlak tetap di tangan guru.
+
+Dilengkapi Autosave lokal IndexedDB tahan gangguan jaringan dan kepatuhan penuh UU PDP.
+
+Tegakkan kejujuran akademik, mudahkan tugas guru. Mulai sekarang di https://examind.id

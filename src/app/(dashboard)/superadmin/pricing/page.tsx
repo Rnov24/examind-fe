@@ -13,6 +13,7 @@ import {
   Copy,
   Check,
   X,
+  Pencil,
 } from 'lucide-react'
 import api from '@/lib/api'
 import {
@@ -92,6 +93,32 @@ export default function SuperAdminPricingPage() {
     description: '',
   })
 
+  // Modal edit paket langganan
+  const [editingPlan, setEditingPlan] = useState<PricingPlan | null>(null)
+  const [isSubmittingPlan, setIsSubmittingPlan] = useState(false)
+  const [planError, setPlanError] = useState<string | null>(null)
+  const [planSuccess, setPlanSuccess] = useState<string | null>(null)
+
+  const [planForm, setPlanForm] = useState({
+    name: '',
+    description: '',
+    price_monthly: 0,
+    price_annually: 0,
+    max_students: 0,
+    max_teachers: 0,
+    max_storage_gb: 0,
+    ai_credits_monthly: 0,
+    proctoring_type: 'single_camera',
+    is_popular: false,
+    featuresText: '',
+  })
+
+  useEffect(() => {
+    if (!planSuccess) return
+    const timer = setTimeout(() => setPlanSuccess(null), 4000)
+    return () => clearTimeout(timer)
+  }, [planSuccess])
+
   const loadAllData = async () => {
     setLoading(true)
     try {
@@ -170,6 +197,104 @@ export default function SuperAdminPricingPage() {
     }
   }
 
+  const openEditPlan = (plan: PricingPlan) => {
+    setEditingPlan(plan)
+    setPlanError(null)
+    setPlanForm({
+      name: plan.name || '',
+      description: plan.description || '',
+      price_monthly: plan.price_monthly || 0,
+      price_annually: plan.price_annually || 0,
+      max_students: plan.max_students || 0,
+      max_teachers: plan.max_teachers || 0,
+      max_storage_gb: plan.max_storage_gb || 0,
+      ai_credits_monthly: plan.ai_credits_monthly || 0,
+      proctoring_type: plan.proctoring_type || 'single_camera',
+      is_popular: !!plan.is_popular,
+      featuresText: (plan.features || []).join('\n'),
+    })
+  }
+
+  const closeEditPlan = () => {
+    if (isSubmittingPlan) return
+    setEditingPlan(null)
+    setPlanError(null)
+  }
+
+  const extractErrorMessage = (err: any, fallback: string) => {
+    const data = err?.response?.data
+    if (!data) return fallback
+    if (typeof data.message === 'string' && data.message) return data.message
+    const detail = data.detail
+    if (typeof detail === 'string' && detail) return detail
+    if (Array.isArray(detail) && detail.length > 0) {
+      return detail
+        .map((d: any) => d?.msg || d?.message || '')
+        .filter(Boolean)
+        .join('; ') || fallback
+    }
+    return fallback
+  }
+
+  const handleUpdatePlan = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!editingPlan || isSubmittingPlan) return
+    if (!planForm.name.trim()) {
+      setPlanError('Nama paket wajib diisi.')
+      return
+    }
+    setIsSubmittingPlan(true)
+    setPlanError(null)
+    const toInt = (v: number) => {
+      const n = Math.trunc(Number(v))
+      return Number.isFinite(n) && n > 0 ? n : 0
+    }
+    const payload = {
+      name: planForm.name.trim(),
+      price_monthly: toInt(planForm.price_monthly),
+      price_annually: toInt(planForm.price_annually),
+      max_students: toInt(planForm.max_students),
+      max_teachers: toInt(planForm.max_teachers),
+      max_storage_gb: toInt(planForm.max_storage_gb),
+      ai_credits_monthly: toInt(planForm.ai_credits_monthly),
+      proctoring_type: planForm.proctoring_type,
+      description: planForm.description.trim(),
+      features: planForm.featuresText
+        .split('\n')
+        .map((f) => f.trim())
+        .filter(Boolean),
+      is_popular: planForm.is_popular,
+    }
+    try {
+      const res = await api.put(`/superadmin/pricing-plans/${editingPlan.id}`, payload)
+      const updated = res.data?.data
+      if (updated) {
+        setPricingPlans((prev) =>
+          prev.map((p) => {
+            if (p.id === updated.id) return updated
+            if (updated.is_popular) return { ...p, is_popular: false }
+            return p
+          })
+        )
+      }
+      // Sinkronkan ulang dari server agar status populer antar paket konsisten
+      try {
+        const plansRes = await api.get('/superadmin/pricing-plans')
+        if (plansRes.data?.data) {
+          setPricingPlans(plansRes.data.data || [])
+        }
+      } catch {
+        // Abaikan: state lokal sudah diperbarui dari respons PUT
+      }
+      setEditingPlan(null)
+      setPlanSuccess(`Paket ${payload.name} berhasil diperbarui.`)
+    } catch (err: any) {
+      setPlanError(extractErrorMessage(err, 'Gagal menyimpan perubahan paket. Silakan coba lagi.'))
+    } finally {
+      setIsSubmittingPlan(false)
+    }
+  }
+
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text)
     setCopiedCode(text)
@@ -209,6 +334,16 @@ export default function SuperAdminPricingPage() {
       }
     >
       <div className="space-y-6">
+        {planSuccess && (
+          <div
+            role="status"
+            className="flex items-center gap-2.5 px-4 py-3 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold shadow-xs animate-in fade-in duration-150"
+          >
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" aria-hidden="true" />
+            <span>{planSuccess}</span>
+          </div>
+        )}
+
         {/* Navigation Sub-Tabs */}
         <div className="bg-white rounded-full p-1.5 border border-slate-200/80 shadow-xs inline-flex items-center gap-1 max-w-full overflow-x-auto touch-pan-x scrollbar-none">
           <button
@@ -487,14 +622,15 @@ export default function SuperAdminPricingPage() {
                     <div className="pt-6">
                       <button
                         type="button"
-                        onClick={() => alert(`Pengaturan harga untuk ${plan.name} disimpan secara global.`)}
-                        className={`w-full py-2.5 rounded-full text-xs font-bold transition-all cursor-pointer font-display ${
+                        onClick={() => openEditPlan(plan)}
+                        className={`w-full py-2.5 rounded-full text-xs font-bold transition-all cursor-pointer font-display flex items-center justify-center gap-2 ${
                           isPopular
                             ? 'bg-[#150f23] hover:bg-slate-800 text-white shadow-card'
                             : 'bg-white border border-slate-200 text-slate-800 hover:bg-slate-50'
                         }`}
                       >
-                        Atur Batas Paket
+                        <Pencil className="w-3.5 h-3.5" aria-hidden="true" />
+                        <span>Edit Paket</span>
                       </button>
                     </div>
                   </div>
@@ -707,6 +843,215 @@ export default function SuperAdminPricingPage() {
           </div>
         )}
       </div>
+
+      {/* Modal Edit Paket Langganan */}
+      {editingPlan && (
+        <div
+          className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4"
+          onClick={closeEditPlan}
+        >
+          <div
+            className="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl border border-slate-200 space-y-5 animate-in fade-in zoom-in-95 duration-150"
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="edit-plan-title"
+          >
+            <div className="flex items-start justify-between border-b border-slate-100 pb-3">
+              <div>
+                <span className="text-[10px] font-mono uppercase tracking-wider text-slate-950 bg-[#c2ef4e] px-2 py-0.5 rounded-md font-bold">
+                  Paket Langganan
+                </span>
+                <h3 id="edit-plan-title" className="font-display text-lg font-extrabold text-slate-900 mt-1">
+                  Edit Paket: {editingPlan.name}
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={closeEditPlan}
+                className="p-2 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-lg hover:bg-slate-100 text-slate-500 hover:text-slate-800 cursor-pointer focus:outline-none focus:ring-2 focus:ring-slate-900/10"
+                title="Tutup modal edit paket"
+                aria-label="Tutup modal edit paket"
+              >
+                <X className="w-4 h-4" aria-hidden="true" />
+              </button>
+            </div>
+
+            {planError && (
+              <div
+                role="alert"
+                className="px-4 py-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-semibold leading-relaxed"
+              >
+                {planError}
+              </div>
+            )}
+
+            <form onSubmit={handleUpdatePlan} className="space-y-4 text-xs">
+              <div>
+                <label htmlFor="plan-name" className="font-bold text-slate-700 block mb-1">Nama Paket</label>
+                <input
+                  id="plan-name"
+                  type="text"
+                  required
+                  placeholder="Contoh: Starter School"
+                  value={planForm.name}
+                  onChange={(e) => setPlanForm({ ...planForm, name: e.target.value })}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="plan-description" className="font-bold text-slate-700 block mb-1">Deskripsi</label>
+                <textarea
+                  id="plan-description"
+                  rows={2}
+                  placeholder="Deskripsi singkat paket untuk calon sekolah..."
+                  value={planForm.description}
+                  onChange={(e) => setPlanForm({ ...planForm, description: e.target.value })}
+                  className="w-full px-3.5 py-2 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label htmlFor="plan-price-monthly" className="font-bold text-slate-700 block mb-1">Harga Bulanan (Rp)</label>
+                  <input
+                    id="plan-price-monthly"
+                    type="number"
+                    min="0"
+                    value={planForm.price_monthly}
+                    onChange={(e) => setPlanForm({ ...planForm, price_monthly: Number(e.target.value) })}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 font-mono focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="plan-price-annually" className="font-bold text-slate-700 block mb-1">Harga Tahunan (Rp)</label>
+                  <input
+                    id="plan-price-annually"
+                    type="number"
+                    min="0"
+                    value={planForm.price_annually}
+                    onChange={(e) => setPlanForm({ ...planForm, price_annually: Number(e.target.value) })}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 font-mono focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label htmlFor="plan-max-students" className="font-bold text-slate-700 block mb-1">Maks. Siswa</label>
+                  <input
+                    id="plan-max-students"
+                    type="number"
+                    min="0"
+                    value={planForm.max_students}
+                    onChange={(e) => setPlanForm({ ...planForm, max_students: Number(e.target.value) })}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 font-mono focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="plan-max-teachers" className="font-bold text-slate-700 block mb-1">Maks. Guru</label>
+                  <input
+                    id="plan-max-teachers"
+                    type="number"
+                    min="0"
+                    value={planForm.max_teachers}
+                    onChange={(e) => setPlanForm({ ...planForm, max_teachers: Number(e.target.value) })}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 font-mono focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label htmlFor="plan-max-storage" className="font-bold text-slate-700 block mb-1">Storage (GB)</label>
+                  <input
+                    id="plan-max-storage"
+                    type="number"
+                    min="0"
+                    value={planForm.max_storage_gb}
+                    onChange={(e) => setPlanForm({ ...planForm, max_storage_gb: Number(e.target.value) })}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 font-mono focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="plan-ai-credits" className="font-bold text-slate-700 block mb-1">Kredit AI / Bulan</label>
+                  <input
+                    id="plan-ai-credits"
+                    type="number"
+                    min="0"
+                    value={planForm.ai_credits_monthly}
+                    onChange={(e) => setPlanForm({ ...planForm, ai_credits_monthly: Number(e.target.value) })}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 font-mono focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="plan-proctoring" className="font-bold text-slate-700 block mb-1">Mode Proctoring</label>
+                <select
+                  id="plan-proctoring"
+                  value={planForm.proctoring_type}
+                  onChange={(e) => setPlanForm({ ...planForm, proctoring_type: e.target.value })}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900 cursor-pointer"
+                >
+                  <option value="single_camera">Satu Kamera (Webcam)</option>
+                  <option value="dual_camera">Dua Kamera (HP + Laptop)</option>
+                </select>
+              </div>
+
+              <div className="flex items-start gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-100">
+                <input
+                  id="plan-popular"
+                  type="checkbox"
+                  checked={planForm.is_popular}
+                  onChange={(e) => setPlanForm({ ...planForm, is_popular: e.target.checked })}
+                  className="mt-0.5 w-4 h-4 rounded accent-indigo-600 cursor-pointer shrink-0"
+                />
+                <div>
+                  <label htmlFor="plan-popular" className="font-bold text-slate-700 block cursor-pointer">
+                    Tandai sebagai Paket Populer
+                  </label>
+                  <p className="text-[11px] text-slate-500 leading-relaxed mt-0.5">
+                    Hanya satu paket yang bisa ditandai populer. Menandai paket ini akan menghapus tanda populer dari paket lain.
+                  </p>
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="plan-features" className="font-bold text-slate-700 block mb-1">Fitur</label>
+                <textarea
+                  id="plan-features"
+                  rows={5}
+                  placeholder={'Satu fitur per baris, contoh:\nUjian CBT tanpa batas\nKoreksi esai AI'}
+                  value={planForm.featuresText}
+                  onChange={(e) => setPlanForm({ ...planForm, featuresText: e.target.value })}
+                  className="w-full px-3.5 py-2 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900"
+                />
+                <p className="text-[11px] text-slate-400 mt-1">Tulis satu fitur per baris. Baris kosong akan diabaikan.</p>
+              </div>
+
+              <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 pt-3 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={closeEditPlan}
+                  disabled={isSubmittingPlan}
+                  className="min-h-[44px] px-4 py-2.5 rounded-full border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold cursor-pointer flex items-center justify-center disabled:opacity-50"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmittingPlan}
+                  className="min-h-[44px] px-5 py-2.5 rounded-full bg-[#150f23] hover:bg-slate-800 text-white font-bold shadow-card flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
+                >
+                  {isSubmittingPlan ? 'Menyimpan...' : 'Simpan Perubahan'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* Modal Buat Promo Baru */}
       {showPromoModal && (

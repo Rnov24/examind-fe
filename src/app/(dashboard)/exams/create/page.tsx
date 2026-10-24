@@ -17,6 +17,8 @@ import {
   Settings,
   HelpCircle,
   FileQuestion,
+  Users,
+  UserRound,
 } from 'lucide-react'
 import api from '@/lib/api'
 
@@ -39,6 +41,9 @@ export default function ExamCreatePage() {
   const [durationMinutes, setDurationMinutes] = useState(90)
   const [startTime, setStartTime] = useState('')
   const [endTime, setEndTime] = useState('')
+  // 'live': semua siswa mulai serentak pada startTime. 'non_live': siswa
+  // mulai sendiri kapan saja dalam jendela [startTime, endTime].
+  const [examMode, setExamMode] = useState<'live' | 'non_live'>('live')
   const [isProctoringEnabled, setIsProctoringEnabled] = useState(true)
   const [cameraMode, setCameraMode] = useState<'dual_camera' | 'single_camera'>('dual_camera')
   const [explanationPolicy, setExplanationPolicy] = useState('after_exam_closed')
@@ -99,6 +104,15 @@ export default function ExamCreatePage() {
       setFormError('Durasi ujian harus antara 5 hingga 300 menit.')
       return false
     }
+    if (examMode === 'non_live') {
+      const windowMinutes = (new Date(endTime).getTime() - new Date(startTime).getTime()) / 60000
+      if (durationMinutes > windowMinutes) {
+        setFormError(
+          `Durasi ujian mandiri (${durationMinutes} menit) tidak boleh melebihi panjang jendela pengerjaan (${Math.floor(windowMinutes)} menit). Perpanjang jendela atau pendekkan durasi.`
+        )
+        return false
+      }
+    }
     return true
   }
 
@@ -126,6 +140,7 @@ export default function ExamCreatePage() {
         duration_minutes: durationMinutes,
         start_time: new Date(startTime).toISOString(),
         end_time: new Date(endTime).toISOString(),
+        exam_mode: examMode,
         proctoring_level: isProctoringEnabled ? cameraMode : 'disabled',
         explanation_policy: explanationPolicy,
         randomize_questions: randomizeQuestions,
@@ -352,10 +367,61 @@ export default function ExamCreatePage() {
                 </div>
               </div>
 
+              {/* Mode Ujian: Live (serentak) vs Mandiri (jendela waktu) */}
+              <div>
+                <label className="block text-xs font-bold text-slate-800 uppercase mb-1.5 font-mono">
+                  Mode Ujian
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3" role="radiogroup" aria-label="Mode ujian">
+                  <button
+                    type="button"
+                    role="radio"
+                    aria-checked={examMode === 'live'}
+                    onClick={() => setExamMode('live')}
+                    className={`flex items-start gap-3 p-4 rounded-xl border text-left cursor-pointer transition-all select-none ${
+                      examMode === 'live'
+                        ? 'bg-white border-[#150f23] shadow-sm ring-1 ring-[#150f23]'
+                        : 'bg-white/70 border-slate-200 hover:border-slate-300 text-slate-700'
+                    }`}
+                  >
+                    <span className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${examMode === 'live' ? 'bg-[#150f23] text-[#c2ef4e]' : 'bg-slate-100 text-slate-500'}`}>
+                      <Users className="w-5 h-5" aria-hidden="true" />
+                    </span>
+                    <span>
+                      <span className="block text-sm font-bold text-slate-900">Ujian Live</span>
+                      <span className="block text-xs text-slate-500 mt-0.5 leading-relaxed">
+                        Semua siswa mulai serentak pada waktu yang ditentukan.
+                      </span>
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    role="radio"
+                    aria-checked={examMode === 'non_live'}
+                    onClick={() => setExamMode('non_live')}
+                    className={`flex items-start gap-3 p-4 rounded-xl border text-left cursor-pointer transition-all select-none ${
+                      examMode === 'non_live'
+                        ? 'bg-white border-[#150f23] shadow-sm ring-1 ring-[#150f23]'
+                        : 'bg-white/70 border-slate-200 hover:border-slate-300 text-slate-700'
+                    }`}
+                  >
+                    <span className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${examMode === 'non_live' ? 'bg-[#150f23] text-[#c2ef4e]' : 'bg-slate-100 text-slate-500'}`}>
+                      <UserRound className="w-5 h-5" aria-hidden="true" />
+                    </span>
+                    <span>
+                      <span className="block text-sm font-bold text-slate-900">Ujian Mandiri</span>
+                      <span className="block text-xs text-slate-500 mt-0.5 leading-relaxed">
+                        Siswa mulai sendiri kapan saja dalam jendela waktu, tetap diawasi AI.
+                      </span>
+                    </span>
+                  </button>
+                </div>
+              </div>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-slate-800 uppercase mb-1.5 font-mono">
-                    Waktu Mulai Buka Ujian
+                    {examMode === 'live' ? 'Waktu Mulai Buka Ujian' : 'Jendela Pengerjaan Dibuka'}
                   </label>
                   <input
                     value={startTime}
@@ -365,13 +431,15 @@ export default function ExamCreatePage() {
                     className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-xs font-semibold focus:bg-white focus:ring-2 focus:ring-[#6a5fc1]/40 focus:border-slate-900 outline-none font-mono"
                   />
                   <p className="text-[11px] text-slate-500 mt-1 font-mono">
-                    Siswa mulai diizinkan membuka lembar soal.
+                    {examMode === 'live'
+                      ? 'Siswa mulai diizinkan membuka lembar soal.'
+                      : 'Siswa boleh mulai kapan saja mulai waktu ini.'}
                   </p>
                 </div>
 
                 <div>
                   <label className="block text-xs font-bold text-slate-800 uppercase mb-1.5 font-mono">
-                    Waktu Batas Akhir Penutupan
+                    {examMode === 'live' ? 'Waktu Batas Akhir Penutupan' : 'Jendela Pengerjaan Ditutup'}
                   </label>
                   <input
                     value={endTime}
@@ -381,7 +449,9 @@ export default function ExamCreatePage() {
                     className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-xs font-semibold focus:bg-white focus:ring-2 focus:ring-[#6a5fc1]/40 focus:border-slate-900 outline-none font-mono"
                   />
                   <p className="text-[11px] text-slate-500 mt-1 font-mono">
-                    Seluruh sesi otomatis terkumpul setelah batas ini.
+                    {examMode === 'live'
+                      ? 'Seluruh sesi otomatis terkumpul setelah batas ini.'
+                      : 'Siswa tidak bisa mulai setelah waktu ini; sesi yang berjalan terkumpul otomatis.'}
                   </p>
                 </div>
               </div>

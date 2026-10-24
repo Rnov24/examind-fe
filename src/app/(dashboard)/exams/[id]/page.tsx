@@ -21,8 +21,11 @@ import {
   Square,
   AlertCircle,
   FileQuestion,
+  Users,
+  UserRound,
 } from 'lucide-react'
 import api from '@/lib/api'
+import { examModeLabel, formatExamWindow } from '@/utils/examMode'
 
 interface Option {
   id: string
@@ -54,6 +57,9 @@ interface ExamDetail {
   total_points: number
   status: string
   proctoring_level?: string
+  exam_mode?: 'live' | 'non_live' | string
+  start_time?: string
+  end_time?: string
   exam_questions?: ExamQuestionItem[]
 }
 
@@ -335,8 +341,21 @@ export default function ExamDetailPage() {
               >
                 Status: {examDetail?.status === 'published' ? 'Terjadwal' : examDetail?.status === 'in_progress' ? 'Berlangsung' : examDetail?.status || 'Draft'}
               </span>
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider font-mono bg-violet-50 text-violet-700 border border-violet-200 shadow-2xs">
+                {examDetail?.exam_mode === 'non_live' ? (
+                  <UserRound className="w-3 h-3" aria-hidden="true" />
+                ) : (
+                  <Users className="w-3 h-3" aria-hidden="true" />
+                )}
+                {examModeLabel(examDetail?.exam_mode)}
+              </span>
               <span className="text-xs text-slate-500 font-mono">
                 Kelas: {examDetail?.class_name || 'Umum'} • Durasi: {examDetail?.duration_minutes} Menit
+              </span>
+              <span className="text-xs text-slate-500 font-mono">
+                {examDetail?.exam_mode === 'non_live'
+                  ? `Jendela: ${formatExamWindow(examDetail?.start_time, examDetail?.end_time)}`
+                  : 'Serentak'}
               </span>
             </div>
             <h1 className="font-display text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight truncate">

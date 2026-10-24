@@ -13,9 +13,12 @@ import {
   Loader2,
   ChevronDown,
   ShieldCheck,
+  Users,
+  UserRound,
 } from 'lucide-react'
 import api from '@/lib/api'
 import { useAuthStore } from '@/stores/authStore'
+import { examModeLabel, formatExamDateTime, formatExamWindow, isLiveNotStarted } from '@/utils/examMode'
 import { Stagger, StaggerItem } from '@/components/system/PageTransition'
 import { Badge, Button, EmptyState } from '@/components/ui'
 import {
@@ -30,7 +33,9 @@ interface ActiveExam {
   duration_minutes: number
   teacher_name?: string
   proctoring_level: string
+  exam_mode?: 'live' | 'non_live' | string
   start_time?: string
+  end_time?: string
 }
 
 export default function StudentDashboardPage() {
@@ -69,7 +74,7 @@ export default function StudentDashboardPage() {
       greetingName={user?.full_name || 'Siswa'}
       greetingSubtitle="Periksa paket ujian terjadwal Anda dan pastikan perangkat kamera telah siap sebelum memulai."
       greetingAction={
-        heroExam ? (
+        heroExam && !isLiveNotStarted(heroExam.exam_mode, heroExam.start_time) ? (
           <Link
             href={`/student/exam/${heroExam.id}`}
             className="px-5 py-2.5 rounded-full bg-white hover:bg-[#f1effa] text-[#150f23] font-bold text-xs shadow-card hover:shadow-card-hover flex items-center justify-center gap-2 transition-all cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-[#6a5fc1] focus:outline-none"
@@ -142,6 +147,14 @@ export default function StudentDashboardPage() {
                     ? 'Kamera Utama'
                     : 'Pengawasan Standar'}
                 </span>
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-bold bg-white/10 text-white border border-white/10 font-mono">
+                  {heroExam.exam_mode === 'non_live' ? (
+                    <UserRound className="w-3.5 h-3.5 text-[#c2ef4e]" aria-hidden="true" />
+                  ) : (
+                    <Users className="w-3.5 h-3.5 text-[#c2ef4e]" aria-hidden="true" />
+                  )}
+                  {examModeLabel(heroExam.exam_mode)}
+                </span>
               </div>
 
               <div className="space-y-2 max-w-2xl min-w-0">
@@ -159,18 +172,34 @@ export default function StudentDashboardPage() {
                       <span>Pengampu: {heroExam.teacher_name}</span>
                     </span>
                   )}
+                  <span className="flex items-center gap-1.5 font-mono">
+                    {heroExam.exam_mode === 'non_live'
+                      ? `Bisa dikerjakan kapan saja ${formatExamWindow(heroExam.start_time, heroExam.end_time)}`
+                      : `Mulai serentak ${formatExamDateTime(heroExam.start_time)}`}
+                  </span>
                 </div>
               </div>
 
               {/* ONE Clear Primary Action with Secondary Link */}
               <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                <Link
-                  href={`/student/exam/${heroExam.id}`}
-                  className="px-6 py-3.5 rounded-xl bg-[#c2ef4e] hover:bg-[#b0df3f] text-slate-950 font-extrabold text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2.5 cursor-pointer font-display tracking-wide group focus:ring-2 focus:ring-white/40 focus:outline-none"
-                >
-                  <span>Mulai Ujian Sekarang</span>
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
-                </Link>
+                {isLiveNotStarted(heroExam.exam_mode, heroExam.start_time) ? (
+                  <span
+                    aria-disabled="true"
+                    title={`Ujian live dimulai ${formatExamDateTime(heroExam.start_time)}`}
+                    className="px-6 py-3.5 rounded-xl bg-white/10 text-slate-300 font-extrabold text-sm flex items-center justify-center gap-2.5 cursor-not-allowed font-display tracking-wide border border-white/10"
+                  >
+                    <Clock className="w-4 h-4" aria-hidden="true" />
+                    <span>Ujian dimulai {formatExamDateTime(heroExam.start_time)}</span>
+                  </span>
+                ) : (
+                  <Link
+                    href={`/student/exam/${heroExam.id}`}
+                    className="px-6 py-3.5 rounded-xl bg-[#c2ef4e] hover:bg-[#b0df3f] text-slate-950 font-extrabold text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2.5 cursor-pointer font-display tracking-wide group focus:ring-2 focus:ring-white/40 focus:outline-none"
+                  >
+                    <span>Mulai Ujian Sekarang</span>
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
+                  </Link>
+                )}
                 <Link
                   href={`/student/exam/${heroExam.id}/result`}
                   className="px-4 py-3.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-200 font-semibold text-xs border border-white/10 transition-colors flex items-center justify-center cursor-pointer focus:ring-2 focus:ring-white/20 focus:outline-none"
@@ -208,8 +237,21 @@ export default function StudentDashboardPage() {
                         <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#f1effa] text-[#584dae] font-mono">
                           {exam.class_name}
                         </span>
+                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-white text-slate-700 border border-slate-200 font-mono inline-flex items-center gap-1">
+                          {exam.exam_mode === 'non_live' ? (
+                            <UserRound className="w-3 h-3" aria-hidden="true" />
+                          ) : (
+                            <Users className="w-3 h-3" aria-hidden="true" />
+                          )}
+                          {examModeLabel(exam.exam_mode)}
+                        </span>
                         <span className="text-xs text-slate-500 font-mono">
                           Durasi: {exam.duration_minutes} Menit
+                        </span>
+                        <span className="text-xs text-slate-500 font-mono">
+                          {exam.exam_mode === 'non_live'
+                            ? `Bisa dikerjakan kapan saja ${formatExamWindow(exam.start_time, exam.end_time)}`
+                            : `Mulai serentak ${formatExamDateTime(exam.start_time)}`}
                         </span>
                       </div>
                       <h4 className="font-display text-sm font-bold text-slate-900 truncate">
@@ -221,13 +263,24 @@ export default function StudentDashboardPage() {
                     </div>
 
                     <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto">
-                      <Link
-                        href={`/student/exam/${exam.id}`}
-                        className="px-4 py-2 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-xs transition-all flex items-center justify-center gap-1.5 w-full sm:w-auto cursor-pointer focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
-                      >
-                        <span>Mulai Ujian</span>
-                        <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
-                      </Link>
+                      {isLiveNotStarted(exam.exam_mode, exam.start_time) ? (
+                        <span
+                          aria-disabled="true"
+                          title={`Ujian live dimulai ${formatExamDateTime(exam.start_time)}`}
+                          className="px-4 py-2 rounded-xl bg-slate-100 text-slate-400 font-bold text-xs flex items-center justify-center gap-1.5 w-full sm:w-auto cursor-not-allowed border border-slate-200"
+                        >
+                          <Clock className="w-3.5 h-3.5" aria-hidden="true" />
+                          <span>Dimulai {formatExamDateTime(exam.start_time)}</span>
+                        </span>
+                      ) : (
+                        <Link
+                          href={`/student/exam/${exam.id}`}
+                          className="px-4 py-2 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-xs transition-all flex items-center justify-center gap-1.5 w-full sm:w-auto cursor-pointer focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
+                        >
+                          <span>Mulai Ujian</span>
+                          <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
+                        </Link>
+                      )}
                     </div>
                   </div>
                 )

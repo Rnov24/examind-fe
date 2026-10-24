@@ -13,6 +13,7 @@ interface ExamItem {
   start_time: string
   duration_minutes: number
   proctoring_level: string
+  exam_mode?: 'live' | 'non_live' | string
   questions_count: number
   total_points: number
   status: string
@@ -120,7 +121,9 @@ export default function ExamListPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <p className="text-xs font-semibold text-slate-800">{formatDate(e.start_time)}</p>
-                      <p className="text-[11px] text-slate-500 font-mono">{e.duration_minutes} Menit</p>
+                      <p className="text-[11px] text-slate-500 font-mono">
+                        {e.duration_minutes} Menit • {e.exam_mode === 'non_live' ? 'Mandiri' : 'Live'}
+                      </p>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold capitalize font-mono bg-violet-50 text-violet-700 border border-violet-200/80 shadow-xs">

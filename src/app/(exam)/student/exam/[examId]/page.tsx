@@ -37,6 +37,7 @@ import CameraSetupWizard from '@/components/student/CameraSetupWizard'
 import ExamSubmitModal from '@/components/student/ExamSubmitModal'
 import SecurityWarningModal from '@/components/student/SecurityWarningModal'
 import { ExamindLogo } from '@/components/brand/ExamindLogo'
+import { examModeLabel, formatExamWindow } from '@/utils/examMode'
 
 export default function ExamWorkspacePage() {
   const params = useParams()
@@ -70,6 +71,10 @@ export default function ExamWorkspacePage() {
   // Pre-exam setup phase: 'loading' while loadExam fetches, 'wizard' while the
   // student completes the camera setup (proctored exams only), then 'done'.
   const [setupPhase, setSetupPhase] = useState<'loading' | 'wizard' | 'done'>('loading')
+  // Set when POST /student/exam/{id}/start is rejected (e.g. a live exam
+  // that has not reached its fixed start_time, or a closed window).
+  // Shown instead of the loading overlay, with the server's message.
+  const [loadError, setLoadError] = useState<string | null>(null)
   const [isSecurityModalOpen, setIsSecurityModalOpen] = useState(false)
   const isSecurityModalOpenRef = useRef(false)
   const [securityInfractionDetails, setSecurityInfractionDetails] = useState('')
@@ -410,7 +415,18 @@ export default function ExamWorkspacePage() {
   useEffect(() => {
     async function initWorkspace() {
       if (!examId) return
-      const examData = await examStore.loadExam(examId)
+      let examData: any
+      try {
+        examData = await examStore.loadExam(examId)
+      } catch (err: any) {
+        // Start rejected by the server (live exam not started yet, window
+        // closed, …) — show the honest reason instead of spinning forever.
+        setLoadError(
+          err?.response?.data?.message ||
+            'Ujian belum bisa dimulai. Silakan kembali ke dashboard dan coba lagi nanti.'
+        )
+        return
+      }
 
       const pLevel =
         examData?.exam?.proctoring_level || examStore.examMeta?.proctoring_level || 'dual_camera'
@@ -536,6 +552,12 @@ export default function ExamWorkspacePage() {
             <p className="text-[10px] sm:text-[11px] text-slate-500 font-mono truncate">
               {authStore.user?.full_name ? authStore.user.full_name : 'Peserta Ujian'}
               {authStore.user?.identifier ? ` • ${authStore.user.identifier}` : ''}
+              {examStore.examMeta?.exam_mode
+                ? ` • ${examModeLabel(examStore.examMeta.exam_mode)}`
+                : ''}
+              {examStore.examMeta?.exam_mode === 'non_live'
+                ? ` • Jendela ${formatExamWindow(examStore.examMeta?.start_time, examStore.examMeta?.end_time)}`
+                : ''}
             </p>
           </div>
         </div>
@@ -1318,8 +1340,26 @@ export default function ExamWorkspacePage() {
       {setupPhase === 'loading' && (
         <div className="fixed inset-0 bg-slate-50 z-50 flex flex-col items-center justify-center gap-3 p-4">
           <ExamindLogo variant="symbol" theme="color" className="h-12 w-auto" priority />
-          <p className="text-sm font-semibold text-slate-700 font-display">Menyiapkan ujian…</p>
-          <p className="text-xs text-slate-400">Memuat soal dan memeriksa sesi Anda.</p>
+          {loadError ? (
+            <div className="max-w-md w-full text-center space-y-4">
+              <div className="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-200 text-amber-600 flex items-center justify-center mx-auto">
+                <Clock className="w-6 h-6" aria-hidden="true" />
+              </div>
+              <p className="text-sm font-semibold text-slate-900 font-display leading-relaxed">{loadError}</p>
+              <button
+                type="button"
+                onClick={() => router.push('/student/dashboard')}
+                className="px-5 py-2.5 rounded-xl bg-[#150f23] text-white font-bold text-xs shadow-xs hover:bg-slate-800 transition-colors cursor-pointer font-display"
+              >
+                Kembali ke Dashboard
+              </button>
+            </div>
+          ) : (
+            <>
+              <p className="text-sm font-semibold text-slate-700 font-display">Menyiapkan ujian…</p>
+              <p className="text-xs text-slate-400">Memuat soal dan memeriksa sesi Anda.</p>
+            </>
+          )}
         </div>
       )}
 

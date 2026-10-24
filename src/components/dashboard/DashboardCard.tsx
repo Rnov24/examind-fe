@@ -40,7 +40,7 @@ export function DashboardCard({
     >
       {/* Optional Card Header */}
       {hasHeader && (
-        <div className={cn(tokens.spacing.headerPadding, 'border-b border-[#e9e5f6] flex items-center justify-between gap-3')}>
+        <div className={cn(tokens.spacing.headerPadding, 'border-b border-[#e9e5f6] flex items-center justify-between gap-3 flex-wrap')}>
           <div className="flex items-center gap-2.5 min-w-0">
             {icon && (
               <div className={cn('w-8 h-8 bg-[#f1effa] text-[#6a5fc1] border border-[#ddd9ef] flex items-center justify-center shrink-0', tokens.radius.lg)}>

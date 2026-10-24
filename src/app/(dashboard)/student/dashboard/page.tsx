@@ -18,6 +18,10 @@ import api from '@/lib/api'
 import { useAuthStore } from '@/stores/authStore'
 import { Stagger, StaggerItem } from '@/components/system/PageTransition'
 import { Badge, Button, EmptyState } from '@/components/ui'
+import {
+  DashboardShell,
+  DashboardCard,
+} from '@/components/dashboard'
 
 interface ActiveExam {
   id: number
@@ -60,39 +64,23 @@ export default function StudentDashboardPage() {
   const otherExams = activeExams.length > 1 ? activeExams.slice(1) : []
 
   return (
-    <Stagger className="space-y-6 max-w-5xl mx-auto font-sans">
-      {/* Institutional Daylight Header */}
-      <StaggerItem>
-      <div className="relative overflow-hidden bg-[#150f23] bg-grid-dots-dark rounded-2xl border border-[#362d59] p-5 sm:p-6 shadow-midnight-elevated flex flex-col sm:flex-row sm:items-center justify-between gap-5">
-        <div className="pointer-events-none absolute -top-16 -right-16 w-72 h-72 bg-[#6a5fc1]/20 rounded-full blur-3xl"></div>
-
-        <div className="relative space-y-2 max-w-xl min-w-0">
-          <div className="flex items-center gap-2.5 flex-wrap">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-white bg-white/10 border border-white/15 px-2 py-0.5 rounded-md font-mono">
-              Portal Asesmen Siswa
-            </span>
-            <span className="text-xs font-semibold text-[#bdb8c0] font-mono bg-white/10 px-2 py-0.5 rounded-md border border-white/15 truncate">
-              NISN: {user?.identifier || '-'}
-            </span>
-          </div>
-          <h1 className="font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-white truncate">
-            Selamat Datang, {user?.full_name || 'Siswa'}
-          </h1>
-          <p className="text-xs sm:text-sm text-[#bdb8c0] leading-relaxed">
-            Periksa paket ujian terjadwal Anda dan pastikan perangkat kamera telah siap sebelum memulai.
-          </p>
-        </div>
-
-        <div className="relative flex items-center sm:flex-col sm:items-end justify-between sm:justify-center gap-2 pt-4 sm:pt-0 border-t sm:border-t-0 border-white/10 shrink-0">
-          <span className="text-[10px] uppercase font-bold text-[#bdb8c0] tracking-wider font-mono">
-            Status Perangkat
-          </span>
-          <Badge variant="emerald" size="lg" dot dotPulse>
-            Siap Ujian (Ready)
-          </Badge>
-        </div>
-      </div>
-      </StaggerItem>
+    <DashboardShell
+      greetingVariant="band"
+      greetingName={user?.full_name || 'Siswa'}
+      greetingSubtitle="Periksa paket ujian terjadwal Anda dan pastikan perangkat kamera telah siap sebelum memulai."
+      greetingAction={
+        heroExam ? (
+          <Link
+            href={`/student/exam/${heroExam.id}`}
+            className="px-5 py-2.5 rounded-full bg-white hover:bg-[#f1effa] text-[#150f23] font-bold text-xs shadow-card hover:shadow-card-hover flex items-center justify-center gap-2 transition-all cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-[#6a5fc1] focus:outline-none"
+          >
+            <Eye className="w-4 h-4 text-[#150f23]" aria-hidden="true" />
+            <span>Siapkan Kamera &amp; Mulai</span>
+          </Link>
+        ) : undefined
+      }
+    >
+    <Stagger className="space-y-6">
 
       {/* Loading State */}
       {isLoading && (
@@ -130,7 +118,7 @@ export default function StudentDashboardPage() {
       {!isLoading && !errorMessage && heroExam && (
         <>
           {/* PRIMARY HERO: The Next Exam to Take (Focal Moment: authored rise + subtle lime edge glow pulse on mount) */}
-          <div className="relative overflow-hidden bg-gradient-to-br from-[#150f23] via-[#1f1633] to-[#2a1e47] text-white rounded-2xl p-6 sm:p-8 shadow-midnight-elevated border border-[#362d59] hero-exam-card">
+          <div className="relative overflow-hidden bg-[#150f23] bg-grid-dots-dark text-white rounded-2xl p-6 sm:p-8 shadow-midnight-elevated border border-[#362d59] hero-exam-card">
             {/* Subtle Lime Edge Glow Pulse on Mount (Transform + Opacity only) */}
             <div className="pointer-events-none absolute inset-0 rounded-2xl border-2 border-[#c2ef4e]/60 hero-lime-glow" aria-hidden="true" />
             <div className="pointer-events-none absolute top-0 right-0 w-80 h-80 bg-violet-500/10 rounded-full blur-3xl"></div>
@@ -195,19 +183,18 @@ export default function StudentDashboardPage() {
 
           {/* Secondary Scheduled Exams (if more than 1) */}
           {otherExams.length > 0 && (
-            <StaggerItem className="bg-white rounded-2xl border border-[#ddd9ef] shadow-card overflow-hidden">
-              <div className="p-4 sm:px-6 border-b border-[#e9e5f6] flex items-center justify-between">
-                <div>
-                  <h3 className="font-display text-sm sm:text-base font-bold text-slate-900">
-                    Paket Ujian Terjadwal Lainnya
-                  </h3>
-                  <p className="text-xs text-slate-500">Daftar ujian yang juga ditugaskan untuk kelas Anda</p>
-                </div>
+            <StaggerItem>
+            <DashboardCard
+              title="Paket Ujian Terjadwal Lainnya"
+              subtitle="Daftar ujian yang juga ditugaskan untuk kelas Anda"
+              icon={<FileText className="w-4 h-4 text-violet-600" aria-hidden="true" />}
+              noPadding
+              action={
                 <span className="text-xs font-mono font-bold text-[#584dae] bg-[#f1effa] px-2.5 py-1 rounded-lg border border-[#ddd9ef] tabular-nums">
                   {otherExams.length} Paket
                 </span>
-              </div>
-
+              }
+            >
               <div className="divide-y divide-[#e9e5f6]">
                 {otherExams.map((exam, idx) => {
                   const staggerClass = idx === 0 ? 'reveal-stagger-1' : idx === 1 ? 'reveal-stagger-2' : 'reveal-stagger-3'
@@ -246,6 +233,7 @@ export default function StudentDashboardPage() {
                 )
               })}
               </div>
+            </DashboardCard>
             </StaggerItem>
           )}
         </>
@@ -253,22 +241,23 @@ export default function StudentDashboardPage() {
 
       {/* Empty State: No Scheduled Exams */}
       {!isLoading && !errorMessage && activeExams.length === 0 && (
-        <StaggerItem className="bg-white rounded-2xl border border-[#ddd9ef] p-12 text-center shadow-card flex flex-col items-center justify-center">
-          <div className="w-12 h-12 rounded-xl bg-[#f1effa] border border-[#ddd9ef] text-[#6a5fc1] flex items-center justify-center mb-3">
-            <FileText className="w-6 h-6" aria-hidden="true" />
-          </div>
-          <h3 className="font-bold text-slate-900 text-base">Belum Ada Paket Ujian Aktif</h3>
-          <p className="text-xs text-slate-500 max-w-sm mx-auto mt-1 mb-4">
-            Saat ini belum ada paket ujian terjadwal yang ditugaskan untuk kelas Anda. Silakan hubungi guru pengampu atau periksa jadwal terbaru.
-          </p>
-          <button
-            type="button"
-            onClick={loadActiveExams}
-            className="px-4 py-2.5 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-xs transition-all cursor-pointer flex items-center gap-2 focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
-          >
-            <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" />
-            <span>Periksa Jadwal Terbaru</span>
-          </button>
+        <StaggerItem>
+          <EmptyState
+            card
+            icon={<FileText className="w-6 h-6 text-[#6a5fc1]" aria-hidden="true" />}
+            title="Belum Ada Paket Ujian Aktif"
+            description="Saat ini belum ada paket ujian terjadwal yang ditugaskan untuk kelas Anda. Silakan hubungi guru pengampu atau periksa jadwal terbaru."
+            action={
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={loadActiveExams}
+                leftIcon={<RefreshCw className="w-3.5 h-3.5" aria-hidden="true" />}
+              >
+                Periksa Jadwal Terbaru
+              </Button>
+            }
+          />
         </StaggerItem>
       )}
 
@@ -304,6 +293,7 @@ export default function StudentDashboardPage() {
       </details>
       </StaggerItem>
     </Stagger>
+    </DashboardShell>
   )
 }
 

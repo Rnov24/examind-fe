@@ -36,12 +36,17 @@ export function GreetingHeader({
     return (
       <div
         className={cn(
-          'relative overflow-hidden bg-[#150f23] bg-grid-dots-dark border border-[#362d59] shadow-midnight-elevated',
+          // NOTE: bg-[#150f23] and bg-grid-dots-dark must NOT share one cn()
+          // call — tailwind-merge treats them as conflicting background
+          // utilities and drops the color, leaving a white band. The dots
+          // live on their own overlay element instead.
+          'relative overflow-hidden bg-[#150f23] border border-[#362d59] shadow-midnight-elevated',
           tokens.radius.xl,
           'px-5 sm:px-6 py-5 sm:py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4',
           className
         )}
       >
+        <div className="pointer-events-none absolute inset-0 bg-grid-dots-dark" aria-hidden="true" />
         <div className="min-w-0 relative">
           <h1 className={cn(tokens.typography.hero, 'text-white')}>
             {greeting}, <span className="text-white">{name}</span>

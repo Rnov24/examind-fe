@@ -26,6 +26,11 @@ import { Stagger, StaggerItem } from '@/components/system/PageTransition'
 import { fetchCachedExamsList } from '@/lib/bentoCache'
 import { useAuthStore } from '@/stores/authStore'
 import {
+  DashboardShell,
+  StatCard,
+  DashboardCard,
+} from '@/components/dashboard'
+import {
   Table,
   TableContainer,
   TableHeader,
@@ -139,49 +144,30 @@ export default function TeacherDashboardPage() {
   }, [recentExams, examSearch, examStatusFilter])
 
   return (
-    <Stagger className="space-y-6 max-w-6xl mx-auto font-sans">
-      {/* Midnight-Violet Header Band */}
-      <StaggerItem>
-      <div className="bg-[#150f23] bg-grid-dots-dark rounded-2xl border border-[#362d59] p-5 sm:p-6 shadow-midnight-elevated relative overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-5">
-        <div className="absolute -right-16 -top-16 w-64 h-64 bg-[#6a5fc1]/20 rounded-full blur-3xl pointer-events-none"></div>
-
-        <div className="space-y-1.5 relative z-10 min-w-0 max-w-xl">
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-[10px] font-black uppercase tracking-wider text-white bg-white/10 border border-white/15 px-2.5 py-0.5 rounded-md font-mono shadow-2xs">
-              Portal Guru & Pengawas
-            </span>
-            <span className="text-xs text-[#bdb8c0] font-mono truncate">
-              NIP / Identitas: {user?.identifier || '-'}
-            </span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-display font-extrabold tracking-tight text-white truncate">
-            Selamat Datang, {user?.full_name || 'Bapak/Ibu Guru'}
-          </h1>
-          <p className="text-xs sm:text-sm text-[#bdb8c0] leading-relaxed">
-            Pusat pemantauan ujian kelas real-time, validasi rubrik esai AI, dan penyusunan master bank butir soal.
-          </p>
-        </div>
-
-        {/* Action Header: One Primary CTA + Secondary Link */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 shrink-0 relative z-10 w-full sm:w-auto">
+    <DashboardShell
+      greetingVariant="band"
+      greetingName={user?.full_name || 'Bapak/Ibu Guru'}
+      greetingSubtitle="Pusat pemantauan ujian kelas real-time, validasi rubrik esai AI, dan penyusunan master bank butir soal."
+      greetingAction={
+        <>
           <Link
             href="/questions"
-            className="px-4 py-2.5 bg-white/10 hover:bg-white/15 text-white font-bold text-xs rounded-xl border border-white/15 transition-colors shadow-xs flex items-center justify-center gap-2 cursor-pointer w-full sm:w-auto focus:ring-2 focus:ring-[#6a5fc1] focus:outline-none"
+            className="px-4 py-2.5 bg-white/10 hover:bg-white/15 text-white font-bold text-xs rounded-xl border border-white/15 transition-colors shadow-xs flex items-center justify-center gap-2 cursor-pointer focus:ring-2 focus:ring-[#6a5fc1] focus:outline-none"
           >
             <BookOpen className="w-4 h-4 text-white" aria-hidden="true" />
             <span>Master Bank Soal</span>
           </Link>
           <Link
             href="/exams/create"
-            className="px-5 py-2.5 bg-white hover:bg-[#f1effa] text-[#150f23] font-bold text-xs rounded-xl transition-all shadow-card hover:shadow-card-hover flex items-center justify-center gap-2 cursor-pointer w-full sm:w-auto focus:ring-2 focus:ring-[#6a5fc1] focus:outline-none font-display tracking-wide"
+            className="px-5 py-2.5 bg-white hover:bg-[#f1effa] text-[#150f23] font-bold text-xs rounded-xl transition-all shadow-card hover:shadow-card-hover flex items-center justify-center gap-2 cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-[#6a5fc1] focus:outline-none"
           >
             <Plus className="w-4 h-4 text-[#150f23]" aria-hidden="true" />
             <span>Buat Paket Ujian</span>
           </Link>
-        </div>
-      </div>
-      </StaggerItem>
-
+        </>
+      }
+    >
+    <Stagger className="space-y-6">
       {/* Loading Skeleton */}
       {isLoading && (
         <div className="bg-white rounded-2xl border border-[#ddd9ef] p-12 text-center shadow-card space-y-3">
@@ -218,32 +204,17 @@ export default function TeacherDashboardPage() {
         <>
           {/* PRIMARY FOCUS: "Perlu Perhatian & Tindakan Anda" Section */}
           <StaggerItem>
-          <div className="bg-white rounded-2xl border border-[#ddd9ef] shadow-card p-5 sm:p-6 space-y-4">
-            <div className="flex items-center justify-between gap-3 border-b border-[#e9e5f6] pb-3">
-              <div className="flex items-center gap-2.5">
-                <div
-                  className={`w-8 h-8 rounded-xl flex items-center justify-center font-bold text-xs shrink-0 ${
-                    attentionItemsCount > 0
-                      ? 'bg-amber-50 text-amber-700 border border-amber-200'
-                      : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                  }`}
-                >
-                  {attentionItemsCount > 0 ? (
-                    <AlertCircle className="w-4 h-4" aria-hidden="true" />
-                  ) : (
-                    <CheckCircle2 className="w-4 h-4" aria-hidden="true" />
-                  )}
-                </div>
-                <div>
-                  <h2 className="font-display text-base font-bold text-slate-900">
-                    Perlu Perhatian & Tindakan Anda
-                  </h2>
-                  <p className="text-xs text-slate-500">
-                    Sesi ujian yang sedang berlangsung atau lembar jawaban yang menunggu koreksi guru
-                  </p>
-                </div>
-              </div>
-
+          <DashboardCard
+            title="Perlu Perhatian & Tindakan Anda"
+            subtitle="Sesi ujian yang sedang berlangsung atau lembar jawaban yang menunggu koreksi guru"
+            icon={
+              attentionItemsCount > 0 ? (
+                <AlertCircle className="w-4 h-4 text-amber-600" aria-hidden="true" />
+              ) : (
+                <CheckCircle2 className="w-4 h-4 text-emerald-600" aria-hidden="true" />
+              )
+            }
+            action={
               <span
                 className={`text-xs font-mono font-bold px-2.5 py-1 rounded-lg border tabular-nums ${
                   attentionItemsCount > 0
@@ -255,8 +226,8 @@ export default function TeacherDashboardPage() {
                   ? `${attentionItemsCount} Item Perlu Respon`
                   : 'Semua Terkendali'}
               </span>
-            </div>
-
+            }
+          >
             {attentionItemsCount > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                 {/* Active live monitoring attention items */}
@@ -329,91 +300,55 @@ export default function TeacherDashboardPage() {
                 </span>
               </div>
             )}
-          </div>
+          </DashboardCard>
           </StaggerItem>
 
           {/* Genuine KPI Overview Grid */}
           <StaggerItem>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <Link
-              href="/questions"
-              className="bg-white p-5 rounded-2xl border border-[#ddd9ef] shadow-card hover:shadow-card-hover transition-all flex items-center gap-4 group"
-            >
-              <div className="w-12 h-12 rounded-xl bg-[#f1effa] group-hover:bg-violet-100 text-[#6a5fc1] group-hover:text-violet-700 border border-[#ddd9ef] flex items-center justify-center font-bold shrink-0 transition-colors">
-                <BookOpen className="w-5 h-5" aria-hidden="true" />
-              </div>
-              <div className="min-w-0">
-                <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block font-mono">
-                  Master Bank Soal
-                </span>
-                <span className="text-2xl font-black text-slate-900 font-display tabular-nums truncate block">
-                  {banksCount} Paket
-                </span>
-                <span className="text-[11px] text-slate-500 flex items-center gap-1 group-hover:text-violet-600 transition-colors">
-                  <span>Kelola butir soal</span>
-                  <ArrowRight className="w-3 h-3 text-slate-400 group-hover:text-violet-600 transition-colors" aria-hidden="true" />
-                </span>
-              </div>
+            <Link href="/questions" className="block h-full">
+              <StatCard
+                title="Master Bank Soal"
+                value={`${banksCount} Paket`}
+                icon={<BookOpen className="w-5 h-5 text-violet-600" aria-hidden="true" />}
+                tone="violet"
+                subtitle="Kelola butir soal"
+                className="h-full"
+              />
             </Link>
 
-            <Link
-              href="/exams"
-              className="bg-white p-5 rounded-2xl border border-[#ddd9ef] shadow-card hover:shadow-card-hover transition-all flex items-center gap-4 group"
-            >
-              <div className="w-12 h-12 rounded-xl bg-azure-50 group-hover:bg-azure-100 text-azure-700 group-hover:text-azure-800 border border-azure-200/80 flex items-center justify-center font-bold shrink-0 transition-colors">
-                <FileSpreadsheet className="w-5 h-5" aria-hidden="true" />
-              </div>
-              <div className="min-w-0">
-                <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block font-mono">
-                  Paket Ujian Terjadwal
-                </span>
-                <span className="text-2xl font-black text-slate-900 font-display tabular-nums truncate block">
-                  {examsCount} Jadwal
-                </span>
-                <span className="text-[11px] text-slate-500 flex items-center gap-1 group-hover:text-violet-600 transition-colors">
-                  <span>Lihat seluruh jadwal</span>
-                  <ArrowRight className="w-3 h-3 text-slate-400 group-hover:text-violet-600 transition-colors" aria-hidden="true" />
-                </span>
-              </div>
+            <Link href="/exams" className="block h-full">
+              <StatCard
+                title="Paket Ujian Terjadwal"
+                value={`${examsCount} Jadwal`}
+                icon={<FileSpreadsheet className="w-5 h-5 text-azure-700" aria-hidden="true" />}
+                tone="azure"
+                subtitle="Lihat seluruh jadwal"
+                className="h-full"
+              />
             </Link>
 
-            <Link
-              href="/classes"
-              className="bg-white p-5 rounded-2xl border border-[#ddd9ef] shadow-card hover:shadow-card-hover transition-all flex items-center gap-4 group"
-            >
-              <div className="w-12 h-12 rounded-xl bg-emerald-50 group-hover:bg-emerald-100 text-emerald-700 group-hover:text-emerald-800 border border-emerald-200/80 flex items-center justify-center font-bold shrink-0 transition-colors">
-                <Users className="w-5 h-5" aria-hidden="true" />
-              </div>
-              <div className="min-w-0">
-                <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block font-mono">
-                  Rombel Belajar
-                </span>
-                <span className="text-2xl font-black text-slate-900 font-display tabular-nums truncate block">
-                  {classesCount} Kelas
-                </span>
-                <span className="text-[11px] text-slate-500 flex items-center gap-1 group-hover:text-violet-600 transition-colors">
-                  <span>Daftar rombel akademik</span>
-                  <ArrowRight className="w-3 h-3 text-slate-400 group-hover:text-violet-600 transition-colors" aria-hidden="true" />
-                </span>
-              </div>
+            <Link href="/classes" className="block h-full">
+              <StatCard
+                title="Rombel Belajar"
+                value={`${classesCount} Kelas`}
+                icon={<Users className="w-5 h-5 text-emerald-700" aria-hidden="true" />}
+                tone="emerald"
+                subtitle="Daftar rombel akademik"
+                className="h-full"
+              />
             </Link>
           </div>
           </StaggerItem>
 
           {/* Recent Scheduled Exams Table Container */}
           <StaggerItem>
-          <div className="bg-white rounded-2xl border border-[#ddd9ef] shadow-card overflow-hidden">
-            <div className="p-4 sm:p-5 sm:px-6 border-b border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-              <div>
-                <h2 className="text-base font-display font-bold text-slate-900">
-                  Daftar Paket Ujian Terkini
-                </h2>
-                <p className="text-xs text-slate-500">
-                  Kelola paket ujian, akses pemantauan, dan buka lembar koreksi
-                </p>
-              </div>
-
-              {/* Status Tab Filter */}
+          <DashboardCard
+            title="Daftar Paket Ujian Terkini"
+            subtitle="Kelola paket ujian, akses pemantauan, dan buka lembar koreksi"
+            icon={<FileSpreadsheet className="w-4 h-4 text-violet-600" aria-hidden="true" />}
+            noPadding
+            action={
               <div className="flex items-center gap-2 flex-wrap">
                 <div className="flex items-center p-1 bg-[#f1effa] rounded-xl text-xs font-semibold">
                   <button
@@ -459,8 +394,8 @@ export default function TeacherDashboardPage() {
                   <ChevronRight className="w-3.5 h-3.5 text-slate-500" aria-hidden="true" />
                 </Link>
               </div>
-            </div>
-
+            }
+          >
             <TableContainer accent="none">
               <Table>
                 <TableHeader>
@@ -560,10 +495,11 @@ export default function TeacherDashboardPage() {
                 </TableBody>
               </Table>
             </TableContainer>
-          </div>
+          </DashboardCard>
           </StaggerItem>
         </>
       )}
     </Stagger>
+    </DashboardShell>
   )
 }

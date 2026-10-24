@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import api from '@/lib/api'
+import { withWsToken } from '@/lib/ws'
 
 export interface ProctoringAlert {
   id: string
@@ -89,7 +90,7 @@ export const useProctoringStore = create<ProctoringState>((set, get) => ({
 
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
     const host = window.location.host
-    const wsUrl = `${protocol}//${host}/ws/student/${sessionId}/alerts`
+    const wsUrl = withWsToken(`${protocol}//${host}/ws/student/${sessionId}/alerts`)
     studentWs = new WebSocket(wsUrl)
 
     studentWs.onmessage = (event) => {

@@ -15,7 +15,7 @@ import {
   Check,
 } from 'lucide-react'
 import api from '@/lib/api'
-import { wsBaseUrl } from '@/lib/ws'
+import { wsBaseUrl, withWsToken } from '@/lib/ws'
 import { proctoringEventLabel, cameraSourceLabel } from '@/utils/proctoringLabels'
 
 interface StudentSession {
@@ -241,7 +241,7 @@ export default function LiveMonitoringPage() {
     // Setup WebSocket
     let ws: WebSocket | null = null
     if (typeof window !== 'undefined') {
-      const wsUrl = `${wsBaseUrl()}/ws/exam/${examId}/live-monitor`
+      const wsUrl = withWsToken(`${wsBaseUrl()}/ws/exam/${examId}/live-monitor`)
       ws = new WebSocket(wsUrl)
       wsRef.current = ws
 

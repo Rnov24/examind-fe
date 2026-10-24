@@ -21,6 +21,11 @@ import api from '@/lib/api'
 import { useAuthStore } from '@/stores/authStore'
 import { Stagger, StaggerItem } from '@/components/system/PageTransition'
 import {
+  DashboardShell,
+  StatCard,
+  DashboardCard,
+} from '@/components/dashboard'
+import {
   Button,
   Badge,
   Input,
@@ -161,70 +166,40 @@ export default function AdminDashboardPage() {
   const isFilterActive = selectedRole !== 'all' || searchKeyword.trim().length > 0
 
   return (
-    <Stagger className="space-y-6 max-w-6xl mx-auto font-sans">
-      {/* Midnight-Violet Header Band */}
-      <StaggerItem>
-      <div className="relative overflow-hidden bg-[#150f23] bg-grid-dots-dark rounded-2xl border border-[#362d59] p-5 sm:p-6 shadow-midnight-elevated flex flex-col sm:flex-row sm:items-center justify-between gap-5">
-        <div className="pointer-events-none absolute -top-16 -right-16 w-72 h-72 bg-[#6a5fc1]/20 rounded-full blur-3xl"></div>
-
-        <div className="relative space-y-2 max-w-xl min-w-0">
-          <div className="flex items-center gap-2.5 flex-wrap">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-white bg-white/10 border border-white/15 px-2 py-0.5 rounded-md font-mono">
-              Administrator Institusi
-            </span>
-            <span className="text-xs font-semibold text-[#bdb8c0] font-mono bg-white/10 px-2 py-0.5 rounded-md border border-white/15 truncate">
-              {user?.identifier || 'Admin'}
-            </span>
-          </div>
-          <h1 className="font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-white truncate">
-            Panel Administrasi: {user?.full_name || 'Admin Sekolah'}
-          </h1>
-          <p className="text-xs sm:text-sm text-[#bdb8c0] leading-relaxed">
-            Pusat tata kelola akun pengguna, pengawasan infrastruktur CBT sekolah, dan integritas sesi ujian.
-          </p>
-        </div>
-
-        {/* ONE Primary Action ("Tambah Pengguna") + Secondary Action ("Kelola Kelas") */}
-        <div className="relative flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 shrink-0 pt-4 sm:pt-0 border-t sm:border-t-0 border-white/10 w-full sm:w-auto">
+    <DashboardShell
+      greetingVariant="band"
+      greetingName={user?.full_name || 'Admin Sekolah'}
+      greetingSubtitle="Pusat tata kelola akun pengguna, pengawasan infrastruktur CBT sekolah, dan integritas sesi ujian."
+      greetingAction={
+        <>
           <Link
             href="/classes"
-            className="px-4 py-2.5 bg-white/10 hover:bg-white/15 text-white font-semibold text-xs rounded-xl border border-white/15 transition-colors shadow-xs cursor-pointer flex items-center justify-center w-full sm:w-auto focus-visible:ring-2 focus-visible:ring-[#6a5fc1] focus-visible:outline-none"
+            className="px-4 py-2.5 bg-white/10 hover:bg-white/15 text-white font-semibold text-xs rounded-xl border border-white/15 transition-colors shadow-xs cursor-pointer flex items-center justify-center focus-visible:ring-2 focus-visible:ring-[#6a5fc1] focus-visible:outline-none"
           >
             Kelola Kelas
           </Link>
-          <Button
-            variant="inverted"
-            size="md"
+          <button
+            type="button"
             onClick={() => {
               setFormErrorMessage('')
               setShowAddUserModal(true)
             }}
-            leftIcon={<UserPlus className="w-3.5 h-3.5 text-[#150f23]" aria-hidden="true" />}
+            className="px-5 py-2.5 rounded-full bg-white hover:bg-[#f1effa] text-[#150f23] font-bold text-xs shadow-card hover:shadow-card-hover flex items-center justify-center gap-2 transition-all cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-[#6a5fc1] focus:outline-none"
           >
-            Tambah Pengguna
-          </Button>
-        </div>
-      </div>
-      </StaggerItem>
-
+            <UserPlus className="w-4 h-4 text-[#150f23]" aria-hidden="true" />
+            <span>Tambah Pengguna</span>
+          </button>
+        </>
+      }
+    >
+    <Stagger className="space-y-6">
       {/* PRIMARY GOAL ELEVATION: System Health & Infrastructure Overview First */}
       <StaggerItem>
-      <div className="bg-white rounded-2xl border border-[#ddd9ef] shadow-card p-5 sm:p-6 space-y-4">
-        <div className="flex items-center justify-between border-b border-[#e9e5f6] pb-3 flex-wrap gap-2">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-violet-50 text-violet-700 border border-violet-200 flex items-center justify-center font-bold text-xs">
-              <Activity className="w-4 h-4" aria-hidden="true" />
-            </div>
-            <div>
-              <h2 className="font-display text-base font-bold text-slate-900">
-                Status Kesehatan Sistem & Infrastruktur Institusi
-              </h2>
-              <p className="text-xs text-slate-500">
-                Pemantauan konektivitas basis data MySQL, Edge AI Proctoring, dan integritas sesi aktif
-              </p>
-            </div>
-          </div>
-
+      <DashboardCard
+        title="Status Kesehatan Sistem & Infrastruktur Institusi"
+        subtitle="Pemantauan konektivitas basis data, kamera pendamping, dan integritas sesi aktif"
+        icon={<Activity className="w-4 h-4 text-violet-600" aria-hidden="true" />}
+        action={
           <button
             type="button"
             onClick={fetchStats}
@@ -234,8 +209,8 @@ export default function AdminDashboardPage() {
             <RefreshCw className="w-3 h-3 text-slate-500" aria-hidden="true" />
             <span>Sinkronkan Status</span>
           </button>
-        </div>
-
+        }
+      >
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Database Health Pill */}
           <div className="p-4 rounded-xl border border-[#ddd9ef] bg-[#faf9fd] space-y-1.5">
@@ -256,7 +231,7 @@ export default function AdminDashboardPage() {
               ) : stats.database_status ? (
                 <>
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" aria-hidden="true" />
-                  <span className="text-sm font-bold text-slate-900 font-mono">
+                  <span className="text-sm font-bold text-slate-900 font-mono whitespace-nowrap">
                     {stats.database_status}
                   </span>
                   <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 font-mono">
@@ -275,14 +250,14 @@ export default function AdminDashboardPage() {
                 </>
               )}
             </div>
-            <p className="text-[11px] text-slate-500">SQLAlchemy 2.0 • Standalone Engine</p>
+            <p className="text-[11px] text-slate-500">Latensi terukur dari server</p>
           </div>
 
           {/* Edge CV Proctoring Health */}
           <div className="p-4 rounded-xl border border-[#ddd9ef] bg-[#faf9fd] space-y-1.5">
             <div className="flex items-center justify-between">
               <span className="text-[10px] font-mono uppercase font-bold text-slate-500">
-                Edge AI Proctoring
+                Kamera Pendamping
               </span>
               <CheckCircle2 className="w-4 h-4 text-emerald-600" aria-hidden="true" />
             </div>
@@ -305,12 +280,12 @@ export default function AdminDashboardPage() {
                 <>
                   <span className="w-2 h-2 rounded-full bg-slate-400" aria-hidden="true" />
                   <span className="text-sm font-medium text-slate-600 font-mono">
-                    Siaga (Standby)
+                    Belum ada data
                   </span>
                 </>
               )}
             </div>
-            <p className="text-[11px] text-slate-500">Face Detection & Dual-Cam Active</p>
+            <p className="text-[11px] text-slate-500">Kamera HP pendamping yang sedang terhubung</p>
           </div>
 
           {/* Active Sessions */}
@@ -346,78 +321,48 @@ export default function AdminDashboardPage() {
             <p className="text-[11px] text-slate-500">Human-in-the-Loop Override</p>
           </div>
         </div>
-      </div>
+      </DashboardCard>
       </StaggerItem>
 
       {/* KPI Overview Cards */}
       <StaggerItem>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-card flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-[#f1effa] text-[#6a5fc1] border border-[#ddd9ef] flex items-center justify-center font-bold shrink-0">
-            <Users className="w-6 h-6" aria-hidden="true" />
-          </div>
-          <div className="min-w-0">
-            <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block font-mono">
-              Total Akun Pengguna
-            </span>
-            <h3 className="text-2xl font-extrabold text-slate-900 font-display tabular-nums truncate">
-              {stats.total_users}
-            </h3>
-            <span className="text-[11px] text-slate-500 block truncate">
-              {stats.total_teachers} Guru &bull; {stats.total_students} Siswa
-            </span>
-          </div>
-        </div>
-
-        <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-card flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-azure-50 text-azure-700 border border-azure-200/80 flex items-center justify-center font-bold shrink-0">
-            <GraduationCap className="w-6 h-6" aria-hidden="true" />
-          </div>
-          <div className="min-w-0">
-            <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block font-mono">
-              Kelas & Rombel Belajar
-            </span>
-            <h3 className="text-2xl font-extrabold text-slate-900 font-display tabular-nums truncate">
-              {stats.total_classes} Rombel
-            </h3>
-            <span className="text-[11px] text-slate-500 block truncate">Struktur akademik sekolah</span>
-          </div>
-        </div>
-
-        <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-card flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200/80 flex items-center justify-center font-bold shrink-0">
-            <FileSpreadsheet className="w-6 h-6" aria-hidden="true" />
-          </div>
-
-          <div className="min-w-0">
-            <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block font-mono">
-              Paket Ujian Sekolah
-            </span>
-            <h3 className="text-2xl font-extrabold text-slate-900 font-display tabular-nums truncate">
-              {stats.total_exams} Paket
-            </h3>
-            <span className="text-[11px] text-slate-500 block truncate">
-              {stats.total_question_banks} Master Bank Soal
-            </span>
-          </div>
-        </div>
+        <StatCard
+          title="Total Akun Pengguna"
+          value={stats.total_users}
+          icon={<Users className="w-5 h-5 text-violet-600" aria-hidden="true" />}
+          tone="violet"
+          subtitle={`${stats.total_teachers} Guru • ${stats.total_students} Siswa`}
+          className="h-full"
+        />
+        <StatCard
+          title="Kelas & Rombel Belajar"
+          value={`${stats.total_classes} Rombel`}
+          icon={<GraduationCap className="w-5 h-5 text-azure-700" aria-hidden="true" />}
+          tone="azure"
+          subtitle="Struktur akademik sekolah"
+          className="h-full"
+        />
+        <StatCard
+          title="Paket Ujian Sekolah"
+          value={`${stats.total_exams} Paket`}
+          icon={<FileSpreadsheet className="w-5 h-5 text-emerald-700" aria-hidden="true" />}
+          tone="emerald"
+          subtitle={`${stats.total_question_banks} Master Bank Soal`}
+          className="h-full"
+        />
       </div>
       </StaggerItem>
 
       {/* User Management Section (Secondary) */}
       <StaggerItem>
-      <div className="bg-white rounded-2xl border border-[#ddd9ef] shadow-card overflow-hidden">
-        <div className="p-5 sm:px-6 border-b border-[#e9e5f6] flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <h3 className="font-display text-base font-bold text-slate-900">
-              Manajemen Akun Pengguna
-            </h3>
-            <p className="text-xs text-slate-500">
-              Kelola status aktivasi akun Administrator, Guru, dan Siswa
-            </p>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 w-full md:w-auto">
+      <DashboardCard
+        title="Manajemen Akun Pengguna"
+        subtitle="Kelola status aktivasi akun Administrator, Guru, dan Siswa"
+        icon={<Users className="w-4 h-4 text-violet-600" aria-hidden="true" />}
+        noPadding
+        action={
+          <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
             <div className="w-full sm:w-48">
               <Select
                 selectSize="sm"
@@ -449,7 +394,8 @@ export default function AdminDashboardPage() {
               />
             </div>
           </div>
-        </div>
+        }
+      >
 
         {/* Loading Users State */}
         {isLoadingUsers && (
@@ -591,7 +537,7 @@ export default function AdminDashboardPage() {
             </Table>
           </TableContainer>
         )}
-      </div>
+      </DashboardCard>
       </StaggerItem>
 
       {/* Add User Modal */}
@@ -606,6 +552,7 @@ export default function AdminDashboardPage() {
         onSubmit={submitAddUser}
       />
     </Stagger>
+    </DashboardShell>
   )
 }
 

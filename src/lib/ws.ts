@@ -16,3 +16,25 @@ export function wsBaseUrl(): string {
   }
   return ''
 }
+
+/**
+ * JWT for WebSocket auth, read from the same storage key the API client
+ * uses (`examind_token`). WS endpoints require `?token=<accessToken>`;
+ * returns '' when logged out (caller should skip connecting).
+ */
+export function wsAuthToken(): string {
+  if (typeof window === 'undefined') return ''
+  try {
+    return localStorage.getItem('examind_token') || ''
+  } catch {
+    return ''
+  }
+}
+
+/** Append ?token=<JWT> to a WS URL (no-op when no token is stored). */
+export function withWsToken(url: string): string {
+  const token = wsAuthToken()
+  if (!token) return url
+  const sep = url.includes('?') ? '&' : '?'
+  return `${url}${sep}token=${encodeURIComponent(token)}`
+}

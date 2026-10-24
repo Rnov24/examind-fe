@@ -11,11 +11,9 @@ import {
   FileSpreadsheet,
   CheckCircle2,
   BarChart3,
-  FileText,
   ShieldCheck,
   Key,
   Sparkles,
-  Video,
   Smartphone,
   Database,
   PlusCircle,
@@ -27,17 +25,20 @@ import {
   LogOut,
   X,
   PanelLeftClose,
+  ArrowRight,
 } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useUiStore } from '@/stores/uiStore'
 import { ExamindLogo } from '@/components/brand/ExamindLogo'
 import { usePlatformHealth } from '@/lib/usePlatformHealth'
+import { HelpModal } from '@/components/dashboard/HelpModal'
 
 export default function Sidebar() {
   const pathname = usePathname()
   const router = useRouter()
   const { user, logout } = useAuthStore()
   const { sidebarOpen, setSidebarOpen, toggleSidebar, initSidebar } = useUiStore()
+  const [showHelp, setShowHelp] = useState(false)
   // Real platform health (GET /health via the /api/health rewrite) — the
   // status card + footer below render ONLY what the server reports.
   const health = usePlatformHealth()
@@ -77,9 +78,6 @@ export default function Sidebar() {
       path !== '/teacher/dashboard' &&
       path !== '/student/dashboard'
     ) {
-      if (path === '/exams' && (pathname === '/exams/create' || pathname.includes('/monitor'))) {
-        return false
-      }
       if (path === '/student/dashboard' && pathname.includes('/student/exam')) {
         return false
       }
@@ -113,7 +111,7 @@ export default function Sidebar() {
         { href: '/superadmin/pricing', label: 'Harga Layanan', icon: Coins, section: 'Keuangan' },
         { href: '/superadmin/secrets', label: 'Kunci API', icon: Cpu, section: 'Sistem' },
         { href: '/analytics', label: 'Audit Nilai', icon: BarChart3, section: 'Sistem' },
-        { href: '/exams', label: 'Monitor Live', icon: Activity, section: 'Sistem' },
+        { href: '/exams', label: 'Jadwal Ujian', icon: Activity, section: 'Sistem' },
       ]
     }
     if (isAdmin) {
@@ -122,7 +120,6 @@ export default function Sidebar() {
         { href: '/classes', label: 'Kelas', icon: Users, section: 'Menu Utama' },
         { href: '/questions', label: 'Bank Soal', icon: BookOpen, section: 'Ujian' },
         { href: '/exams', label: 'Jadwal Ujian', icon: FileSpreadsheet, section: 'Ujian' },
-        { href: '/exams', label: 'Proctoring Live', icon: Video, section: 'Ujian' },
         { href: '/analytics', label: 'Rekap Nilai', icon: BarChart3, section: 'Lainnya' },
         { href: '/superadmin/secrets', label: 'Pengaturan', icon: Key, section: 'Lainnya' },
       ]
@@ -134,15 +131,12 @@ export default function Sidebar() {
         { href: '/questions', label: 'Bank Soal', icon: BookOpen, section: 'Menu Utama' },
         { href: '/exams', label: 'Jadwal Ujian', icon: FileSpreadsheet, section: 'Ujian' },
         { href: '/exams/create', label: 'Buat Ujian', icon: PlusCircle, section: 'Ujian' },
-        { href: '/exams', label: 'Proctoring Live', icon: Video, section: 'Ujian' },
         { href: '/grading', label: 'Koreksi Esai', icon: CheckCircle2, section: 'Penilaian' },
         { href: '/analytics', label: 'Analisis Soal', icon: BarChart3, section: 'Penilaian' },
       ]
     }
     return [
       { href: '/student/dashboard', label: 'Dashboard', icon: LayoutDashboard, section: 'Menu Utama' },
-      { href: '/student/dashboard', label: 'Mulai Ujian', icon: FileText, section: 'Menu Utama' },
-      { href: '/student/dashboard', label: 'Pembahasan', icon: Sparkles, section: 'Hasil' },
       { href: '/companion', label: 'Kamera HP', icon: Smartphone, section: 'Perangkat' },
     ]
   }
@@ -190,7 +184,7 @@ export default function Sidebar() {
               const Icon = item.icon
 
               return (
-                <div key={item.href} className="relative group flex items-center justify-center">
+                <div key={`${item.href}::${item.label}`} className="relative group flex items-center justify-center">
                   <Link
                     href={item.href}
                     aria-label={item.label}
@@ -230,7 +224,7 @@ export default function Sidebar() {
             <div className="relative group flex items-center justify-center">
               <button
                 type="button"
-                onClick={() => alert('Pusat Bantuan CBT EXAMIND v1.0')}
+                onClick={() => setShowHelp(true)}
                 title="Bantuan & Dokumentasi"
                 aria-label="Bantuan & Dokumentasi"
                 className="w-10 h-10 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer"
@@ -320,7 +314,7 @@ export default function Sidebar() {
                     if (showSection) lastSection = item.section
 
                     return (
-                      <React.Fragment key={item.href}>
+                      <React.Fragment key={`${item.href}::${item.label}`}>
                         {showSection && (
                           <div className="pt-3 pb-1 px-3 text-[10px] font-bold uppercase tracking-wider text-slate-500 font-mono">
                             {item.section}
@@ -392,13 +386,16 @@ export default function Sidebar() {
                 {isAdmin && (
                   <div className="mt-4 p-3 rounded-xl bg-[#faf9fd] border border-[#ddd9ef] text-[11px] space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="font-bold text-slate-800 text-[10px] uppercase font-mono tracking-wider">Lisensi Institusi</span>
+                      <span className="font-bold text-slate-800 text-[10px] uppercase font-mono tracking-wider">Sekolah Anda</span>
                       <span className="text-[10px] font-bold text-violet-700 bg-violet-50 px-1.5 py-0.5 rounded border border-violet-200">
-                        Aktif
+                        Admin
                       </span>
                     </div>
+                    <p className="text-[11px] font-bold text-slate-900 leading-snug">
+                      {user?.tenant_name || '—'}
+                    </p>
                     <p className="text-[10px] text-slate-600 leading-relaxed">
-                      Akses penuh manajemen kelas, bank soal, jadwal ujian, dan telemetri proctoring terpusat.
+                      Kelola kelas, bank soal, jadwal ujian, dan akun pengguna sekolah ini.
                     </p>
                   </div>
                 )}
@@ -410,13 +407,18 @@ export default function Sidebar() {
                         <Sparkles className="w-3.5 h-3.5 text-violet-600" />
                         AI Studio
                       </span>
-                      <span className="text-[10px] font-mono font-bold text-violet-700 bg-white px-1.5 py-0.5 rounded shadow-2xs border border-violet-200">
-                        Tersedia
-                      </span>
                     </div>
                     <p className="text-[10px] text-slate-600 leading-relaxed">
-                      Generate draft soal PG & esai dengan rubrik otomatis melalui Bank Soal.
+                      Buat draf soal PG &amp; esai beserta rubrik otomatis dari Bank Soal.
                     </p>
+                    <Link
+                      href="/questions"
+                      onClick={handleNavClick}
+                      className="inline-flex items-center gap-1 text-[11px] font-bold text-violet-700 hover:text-violet-900"
+                    >
+                      Buka Bank Soal
+                      <ArrowRight className="w-3 h-3" aria-hidden="true" />
+                    </Link>
                   </div>
                 )}
 
@@ -425,14 +427,11 @@ export default function Sidebar() {
                     <div className="flex items-center justify-between">
                       <span className="font-bold text-emerald-950 flex items-center gap-1.5 text-xs">
                         <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                        Integritas CBT
-                      </span>
-                      <span className="font-mono font-bold text-emerald-800 text-[10px] bg-emerald-100/80 px-1.5 py-0.5 rounded border border-emerald-200">
-                        Sistem Siap
+                        Pengawasan &amp; Integritas
                       </span>
                     </div>
                     <p className="text-[10px] text-emerald-800/80 leading-relaxed">
-                      Pengawasan kamera ganda dan proteksi layar penuh aktif.
+                      Ujian diawasi kamera dan layar penuh. Perangkat Anda dicek saat ujian dimulai.
                     </p>
                   </div>
                 )}
@@ -476,6 +475,9 @@ export default function Sidebar() {
           </aside>
         </>
       )}
+
+      {/* Help modal (shared with TopRightCluster) — real guidance, no alert() */}
+      <HelpModal open={showHelp} onClose={() => setShowHelp(false)} />
     </>
   )
 }

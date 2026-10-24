@@ -130,16 +130,12 @@ function LoginForm() {
 
   return (
     <AuthShell>
-      <div className="space-y-6">
+      <div className="space-y-5">
         {/* Card Header */}
-        <div className="space-y-2">
-          <h1 className="font-display text-2xl font-bold tracking-tight text-[#150f23]">
+        <div>
+          <h1 className="font-display text-[22px] font-bold tracking-tight text-[#150f23]">
             Masuk ke Portal Ujian
           </h1>
-          <p className="text-[13px] leading-relaxed text-slate-500">
-            Gunakan akun resmi sekolah Anda — NISN untuk siswa, NIP untuk guru dan
-            admin, atau alamat email terdaftar.
-          </p>
         </div>
 
         {/* Session Expired Alert */}
@@ -158,7 +154,7 @@ function LoginForm() {
               <span className="font-bold text-[#150f23]">Email belum diverifikasi.</span>
             </div>
             <p className="text-[13px] leading-relaxed text-slate-600">
-              Akun terdaftar, namun alamat email Anda ({unverifiedEmail}) belum diverifikasi. Klik tombol di bawah untuk menerima kode OTP verifikasi.
+              Email {unverifiedEmail} belum diverifikasi.
             </p>
             {otpSendError && (
               <div className="flex items-center gap-1.5 rounded-lg border border-rose-200 bg-rose-50 p-2 text-xs text-rose-800">

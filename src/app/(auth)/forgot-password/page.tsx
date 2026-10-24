@@ -104,15 +104,12 @@ export default function ForgotPasswordPage() {
       }
     >
       {!isSuccess ? (
-        <div className="space-y-6">
+        <div className="space-y-5">
           {/* Form Header */}
-          <div className="space-y-2">
-            <h1 className="font-display text-2xl font-bold tracking-tight text-[#150f23]">
+          <div>
+            <h1 className="font-display text-[22px] font-bold tracking-tight text-[#150f23]">
               Lupa Kata Sandi?
             </h1>
-            <p className="text-[13px] leading-relaxed text-slate-500">
-              Masukkan email terdaftar, NISN, atau NIP akun Anda untuk menerima tautan dan kode reset melalui email.
-            </p>
           </div>
 
           {/* Error Alert */}
@@ -187,7 +184,7 @@ export default function ForgotPasswordPage() {
                 Email Reset Terkirim!
               </h1>
               <p className="mx-auto max-w-xs text-[13px] leading-relaxed text-slate-500">
-                Kami telah mengirimkan tautan dan kode verifikasi 6-digit ke alamat:
+                Tautan &amp; kode reset dikirim ke:
               </p>
               <div className="mt-1 inline-block rounded-lg border border-[#e5e7eb] bg-[#f8fafc] px-3 py-1.5 font-mono text-[13px] font-bold text-[#1f1633]">
                 {maskedEmail}
@@ -283,7 +280,7 @@ export default function ForgotPasswordPage() {
           )}
 
           <p className="pt-2 text-center text-xs text-slate-500">
-            Tidak menerima email? Periksa folder Spam atau gunakan tombol Kirim Ulang di atas.
+            Tidak menerima email? Cek folder Spam.
           </p>
 
           {/* Footer Back to Login Link */}

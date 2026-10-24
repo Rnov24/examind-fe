@@ -45,6 +45,43 @@ interface CodeVerificationResult {
   description?: string
 }
 
+const REGISTER_STEPS = ['Peran & Sekolah', 'Data Diri & Akun', 'Verifikasi']
+
+function StepIndicator({ current }: { current: 1 | 2 | 3 }) {
+  return (
+    <ol className="flex items-center gap-2" aria-label="Langkah pendaftaran">
+      {REGISTER_STEPS.map((label, i) => {
+        const n = (i + 1) as 1 | 2 | 3
+        const active = n === current
+        const done = n < current
+        return (
+          <li key={label} className="flex items-center gap-2">
+            <span
+              className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-bold ${
+                done
+                  ? 'bg-[#6a5fc1] text-white'
+                  : active
+                    ? 'bg-[#150f23] text-white'
+                    : 'bg-slate-100 text-slate-400'
+              }`}
+            >
+              {done ? <Check className="h-3.5 w-3.5" aria-hidden="true" /> : n}
+            </span>
+            <span
+              className={`whitespace-nowrap text-xs font-semibold ${
+                active ? 'text-[#150f23]' : 'text-slate-400'
+              } ${active ? '' : 'hidden sm:inline'}`}
+            >
+              {label}
+            </span>
+            {n < 3 && <span className="h-px w-5 bg-[#e5e7eb] sm:w-8" aria-hidden="true" />}
+          </li>
+        )
+      })}
+    </ol>
+  )
+}
+
 function RegisterContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -53,6 +90,11 @@ function RegisterContent() {
 
   // Step State (1: Registration Form, 2: OTP Verification Panel)
   const [step, setStep] = useState<1 | 2>(1)
+  // Sub-step inside the registration form (1: Peran & Sekolah, 2: Data Diri
+  // & Akun) so the form fits one desktop viewport without scrolling. The OTP
+  // panel above is presented as step 3. All fields keep living in the single
+  // state block below — navigation never touches values.
+  const [formStep, setFormStep] = useState<1 | 2>(1)
 
   // Form State
   const [role, setRole] = useState<'student' | 'teacher' | 'admin'>('student')
@@ -210,6 +252,25 @@ function RegisterContent() {
     } finally {
       setVerifyingCode(false)
     }
+  }
+
+  // Advance from form step 1 (Peran & Sekolah) to step 2 (Data Diri & Akun).
+  // Runs the same checks handleSubmit applies to this field group: a school
+  // must be picked and the registration code must be present. Code validity
+  // itself is NOT gated here — exactly like submit, which lets the backend
+  // verdict decide (the live verifyCode feedback stays advisory).
+  const handleNextStep = (e: React.FormEvent) => {
+    e.preventDefault()
+    setErrorMessage('')
+    if (!selectedTenantId) {
+      setErrorMessage('Pilih sekolah / institusi Anda terlebih dahulu.')
+      return
+    }
+    if (!registrationCode.trim()) {
+      setErrorMessage('Kode pendaftaran khusus sekolah wajib dimasukkan.')
+      return
+    }
+    setFormStep(2)
   }
 
   // Handle registration submission
@@ -391,19 +452,16 @@ function RegisterContent() {
       value: 'student' as const,
       icon: GraduationCap,
       title: 'Siswa / Murid',
-      desc: 'Peserta ujian',
     },
     {
       value: 'teacher' as const,
       icon: BookOpen,
       title: 'Guru / Pengajar',
-      desc: 'Pembuat soal',
     },
     {
       value: 'admin' as const,
       icon: Building2,
       title: 'Admin Sekolah',
-      desc: 'Pengelola',
     },
   ]
 
@@ -420,25 +478,23 @@ function RegisterContent() {
         </Link>
       }
     >
-      <AnimatePresence mode="wait" initial={false}>
+      <div className="space-y-5">
+        <StepIndicator current={step === 2 ? 3 : formStep} />
+        <AnimatePresence mode="wait" initial={false}>
       {step === 1 ? (
         <motion.div
           key="register-form"
-          className="space-y-6"
+          className="space-y-5"
           initial={{ opacity: 0, x: 16 }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -16 }}
           transition={{ duration: 0.2, ease: EMIL_EASE }}
         >
           {/* Header */}
-          <div className="space-y-2">
-            <h1 className="font-display text-2xl font-bold tracking-tight text-[#150f23]">
+          <div>
+            <h1 className="font-display text-[22px] font-bold tracking-tight text-[#150f23]">
               Registrasi Akun
             </h1>
-            <p className="text-[13px] leading-relaxed text-slate-500">
-              Pendaftaran memerlukan <strong className="font-semibold text-[#1f1633]">kode pendaftaran</strong> yang
-              diberikan oleh sekolah atau provider untuk setiap peran.
-            </p>
           </div>
 
           {/* Success Banner */}
@@ -457,13 +513,23 @@ function RegisterContent() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-5">
-            {/* 1. Role Selection Grid */}
+          <form onSubmit={formStep === 1 ? handleNextStep : handleSubmit} className="space-y-4">
+            <AnimatePresence mode="wait" initial={false}>
+            {formStep === 1 ? (
+              <motion.div
+                key="form-step-1"
+                className="space-y-4"
+                initial={{ opacity: 0, x: 14 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -14 }}
+                transition={{ duration: 0.18, ease: EMIL_EASE }}
+              >
+            {/* 1. Role Selection — compact horizontal */}
             <div>
               <span className={authLabelClass} id="register-role-label">
                 Pilih Peran Akun
               </span>
-              <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3" role="radiogroup" aria-labelledby="register-role-label">
+              <div className="grid grid-cols-3 gap-2" role="radiogroup" aria-labelledby="register-role-label">
                 {roleOptions.map((option) => {
                   const selected = role === option.value
                   return (
@@ -476,24 +542,23 @@ function RegisterContent() {
                         setRole(option.value)
                         if (registrationCode) verifyCode(registrationCode, option.value, selectedTenantId)
                       }}
-                      className={`min-h-[76px] cursor-pointer rounded-xl border p-3.5 text-left transition-colors ${
+                      className={`relative flex cursor-pointer flex-col items-center gap-1.5 rounded-xl border px-2 py-3 text-center transition-colors ${
                         selected
                           ? 'border-[#6a5fc1] bg-[#6a5fc1]/5 ring-1 ring-[#6a5fc1]/40'
                           : 'border-[#e5e7eb] bg-white hover:border-[#cfcfdb]'
                       }`}
                     >
-                      <div className="mb-2 flex items-center justify-between">
-                        <span
-                          className={`flex h-8 w-8 items-center justify-center rounded-lg ${
-                            selected ? 'bg-[#6a5fc1] text-white' : 'bg-slate-100 text-slate-600'
-                          }`}
-                        >
-                          <option.icon className="h-4 w-4" aria-hidden="true" />
-                        </span>
-                        {selected && <Check className="h-4 w-4 text-[#6a5fc1]" aria-hidden="true" />}
-                      </div>
-                      <span className="block text-[13px] font-bold text-[#1f1633]">{option.title}</span>
-                      <span className="mt-0.5 block text-xs text-slate-500">{option.desc}</span>
+                      <span
+                        className={`flex h-8 w-8 items-center justify-center rounded-lg ${
+                          selected ? 'bg-[#6a5fc1] text-white' : 'bg-slate-100 text-slate-600'
+                        }`}
+                      >
+                        <option.icon className="h-4 w-4" aria-hidden="true" />
+                      </span>
+                      <span className="text-xs font-bold leading-tight text-[#1f1633]">{option.title}</span>
+                      {selected && (
+                        <Check className="absolute right-2 top-2 h-3.5 w-3.5 text-[#6a5fc1]" aria-hidden="true" />
+                      )}
                     </button>
                   )
                 })}
@@ -501,12 +566,13 @@ function RegisterContent() {
             </div>
 
             {/* 2. School Selection & Registration Code */}
-            <div className="space-y-4 rounded-xl border border-[#e5e7eb] bg-[#f8fafc] p-4">
+            <div className="space-y-3 rounded-xl border border-[#e5e7eb] bg-[#f8fafc] p-3.5">
               <span className="flex items-center gap-1.5 text-[13px] font-bold text-[#1f1633]">
                 <KeyRound className="h-4 w-4 text-[#6a5fc1]" aria-hidden="true" />
                 Kode Pendaftaran &amp; Sekolah
               </span>
 
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {/* School Dropdown */}
               <div>
                 <label htmlFor="register-school-select" className={authLabelClass}>
@@ -535,7 +601,7 @@ function RegisterContent() {
               {/* Registration Code Input */}
               <div>
                 <label htmlFor="register-code" className={authLabelClass}>
-                  Kode Pendaftaran (dari sekolah / provider)
+                  Kode Pendaftaran
                 </label>
                 <div className="relative">
                   <input
@@ -556,7 +622,7 @@ function RegisterContent() {
                     }}
                     type="text"
                     required
-                    placeholder="Format: XXXX-XXX-XXXXXX"
+                    placeholder="XXXX-XXX-XXXXXX"
                     className={`${authInputClass} pl-10 pr-24 font-mono text-sm font-bold uppercase tracking-wide`}
                   />
                   <KeyRound className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" aria-hidden="true" />
@@ -569,27 +635,43 @@ function RegisterContent() {
                     {verifyingCode ? <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" /> : 'Verifikasi'}
                   </button>
                 </div>
-
-                {/* Real-time Code Verification Feedback */}
-                {codeVerified && (
-                  <div className="mt-2 flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 p-2.5 text-xs text-emerald-800">
-                    <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" aria-hidden="true" />
-                    <span>
-                      <strong>Kode Terverifikasi:</strong> {codeVerified.tenant_name} • Peran:{' '}
-                      <span className="font-bold capitalize text-emerald-900">{codeVerified.role}</span>
-                    </span>
-                  </div>
-                )}
-
-                {codeError && (
-                  <div className="mt-2 flex items-center gap-2 rounded-lg border border-rose-200 bg-rose-50 p-2.5 text-xs text-rose-800" role="alert">
-                    <AlertCircle className="h-4 w-4 shrink-0 text-rose-600" aria-hidden="true" />
-                    <span>{codeError}</span>
-                  </div>
-                )}
               </div>
+              </div>
+
+              {/* Real-time Code Verification Feedback */}
+              {codeVerified && (
+                <div className="flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 p-2.5 text-xs text-emerald-800">
+                  <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" aria-hidden="true" />
+                  <span>
+                    <strong>Kode Terverifikasi:</strong> {codeVerified.tenant_name} • Peran:{' '}
+                    <span className="font-bold capitalize text-emerald-900">{codeVerified.role}</span>
+                  </span>
+                </div>
+              )}
+
+              {codeError && (
+                <div className="flex items-center gap-2 rounded-lg border border-rose-200 bg-rose-50 p-2.5 text-xs text-rose-800" role="alert">
+                  <AlertCircle className="h-4 w-4 shrink-0 text-rose-600" aria-hidden="true" />
+                  <span>{codeError}</span>
+                </div>
+              )}
             </div>
 
+            {/* Next Step Button */}
+            <button type="submit" className={authPrimaryButtonClass}>
+              <span>Lanjut</span>
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </button>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="form-step-2"
+                className="space-y-4"
+                initial={{ opacity: 0, x: 14 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -14 }}
+                transition={{ duration: 0.18, ease: EMIL_EASE }}
+              >
             {/* 3. Personal & Identity Fields */}
             <div className="space-y-4">
               <div>
@@ -712,23 +794,36 @@ function RegisterContent() {
               </div>
             </div>
 
-            {/* Submit Button */}
-            <button type="submit" disabled={loading} className={authPrimaryButtonClass}>
-              {loading ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-                  <span>Mendaftarkan Akun...</span>
-                </>
-              ) : (
-                <>
-                  <ShieldCheck className="h-4 w-4" aria-hidden="true" />
-                  <span>
-                    Daftar sebagai{' '}
-                    {role === 'student' ? 'Siswa' : role === 'teacher' ? 'Guru' : 'Admin Sekolah'}
-                  </span>
-                </>
-              )}
-            </button>
+            {/* Back + Submit Buttons */}
+            <div className="flex gap-2.5">
+              <button
+                type="button"
+                onClick={() => setFormStep(1)}
+                className="flex h-12 shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-[#cfcfdb] bg-white px-4 text-sm font-bold text-[#1f1633] transition-colors hover:border-[#6a5fc1] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6a5fc1]/40"
+              >
+                <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+                <span>Kembali</span>
+              </button>
+              <button type="submit" disabled={loading} className={`${authPrimaryButtonClass} flex-1`}>
+                {loading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                    <span>Mendaftarkan Akun...</span>
+                  </>
+                ) : (
+                  <>
+                    <ShieldCheck className="h-4 w-4" aria-hidden="true" />
+                    <span>
+                      Daftar sebagai{' '}
+                      {role === 'student' ? 'Siswa' : role === 'teacher' ? 'Guru' : 'Admin Sekolah'}
+                    </span>
+                  </>
+                )}
+              </button>
+            </div>
+              </motion.div>
+            )}
+            </AnimatePresence>
           </form>
 
           {/* Footer Back to Login */}
@@ -748,19 +843,19 @@ function RegisterContent() {
       ) : (
         <motion.div
           key="otp-form"
-          className="space-y-6"
+          className="space-y-5"
           initial={{ opacity: 0, x: 16 }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -16 }}
           transition={{ duration: 0.2, ease: EMIL_EASE }}
         >
           {/* Header */}
-          <div className="space-y-2">
-            <h1 className="font-display text-2xl font-bold tracking-tight text-[#150f23]">
+          <div>
+            <h1 className="font-display text-[22px] font-bold tracking-tight text-[#150f23]">
               Verifikasi Alamat Email
             </h1>
-            <p className="text-[13px] leading-relaxed text-slate-500">
-              Kode verifikasi dikirim ke <strong className="font-semibold text-[#150f23]">{email}</strong>. Masukkan 6 digit kode OTP di bawah ini untuk mengaktifkan akun Anda.
+            <p className="mt-1 text-[13px] text-slate-500">
+              Kode 6 digit dikirim ke <strong className="font-semibold text-[#150f23]">{email}</strong>.
             </p>
           </div>
 
@@ -891,6 +986,7 @@ function RegisterContent() {
               type="button"
               onClick={() => {
                 setStep(1)
+                setFormStep(2)
                 setOtpError('')
                 setOtpSuccess('')
                 setResendSuccessMessage('')
@@ -903,7 +999,8 @@ function RegisterContent() {
           </div>
         </motion.div>
       )}
-      </AnimatePresence>
+        </AnimatePresence>
+      </div>
     </AuthShell>
   )
 }

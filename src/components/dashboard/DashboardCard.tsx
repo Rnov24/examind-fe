@@ -49,14 +49,14 @@ export function DashboardCard({
             )}
             <div className="min-w-0">
               {typeof title === 'string' ? (
-                <h2 className={cn(tokens.typography.subheading, 'truncate')}>
+                <h2 className={cn(tokens.typography.subheading, 'leading-snug')}>
                   {title}
                 </h2>
               ) : (
                 title
               )}
               {subtitle && (
-                <p className={cn(tokens.typography.caption, 'truncate mt-0.5')}>
+                <p className={cn(tokens.typography.caption, 'leading-snug mt-0.5')}>
                   {subtitle}
                 </p>
               )}

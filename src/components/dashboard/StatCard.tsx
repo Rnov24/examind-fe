@@ -105,11 +105,11 @@ export function StatCard({
       </div>
 
       {/* Bottom: Trend Badge or Subtitle */}
-      <div className="mt-4 pt-2 border-t border-[#e9e5f6] flex items-center justify-between text-xs">
+      <div className="mt-4 pt-2 border-t border-[#e9e5f6] flex items-center justify-between gap-2 text-xs">
         {trend && (
           <div
             className={cn(
-              'inline-flex items-center gap-1 px-2.5 py-0.5 text-[11px] font-bold font-mono tracking-tight',
+              'inline-flex items-center gap-1 px-2.5 py-0.5 text-[11px] font-bold font-mono tracking-tight whitespace-nowrap shrink-0',
               tokens.radius.full,
               tokens.shadow.micro,
               trend.positive !== false
@@ -130,7 +130,7 @@ export function StatCard({
         )}
 
         {subtitle && (
-          <span className={cn(tokens.typography.caption, 'truncate')}>
+          <span className={cn(tokens.typography.caption, 'leading-snug min-w-0')}>
             {subtitle}
           </span>
         )}

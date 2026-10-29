@@ -15,7 +15,7 @@ import {
   KeyRound,
 } from 'lucide-react'
 import api from '@/lib/api'
-import { ExamindLogo } from '@/components/brand/ExamindLogo'
+import { AuthShell } from '@/components/auth/AuthShell'
 
 function ResetPasswordContent() {
   const router = useRouter()
@@ -155,24 +155,8 @@ function ResetPasswordContent() {
       : 'bg-emerald-500'
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] text-slate-900 flex flex-col justify-between p-4 sm:p-6 font-sans selection:bg-[#c2ef4e] selection:text-slate-950 relative overflow-hidden">
-      {/* Ambient Background Gradient */}
-      <div className="pointer-events-none fixed inset-0 overflow-hidden z-0">
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-gradient-to-tr from-violet-100/60 via-[#c2ef4e]/10 to-transparent rounded-full blur-3xl opacity-70"></div>
-        <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-violet-100/40 rounded-full blur-3xl"></div>
-      </div>
-
-      {/* Top Header Bar */}
-      <header className="relative z-10 max-w-5xl w-full mx-auto flex items-center justify-between py-2">
-        <Link href="/" className="flex items-center gap-3 group" aria-label="EXAMIND Beranda">
-          <ExamindLogo variant="lockup" theme="color" className="h-8 w-auto shrink-0" priority />
-          <div className="border-l border-slate-200/80 pl-3 hidden sm:block">
-            <span className="text-[11px] text-slate-500 font-medium block leading-none">
-              Platform Ujian AI Sekolah
-            </span>
-          </div>
-        </Link>
-
+    <AuthShell
+      topRight={
         <Link
           href="/login"
           className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700 bg-white/90 hover:bg-white border border-slate-200 px-3.5 py-1.5 rounded-full shadow-xs transition-colors"
@@ -180,11 +164,9 @@ function ResetPasswordContent() {
           <ArrowLeft className="w-3.5 h-3.5" />
           <span>Kembali ke Masuk</span>
         </Link>
-      </header>
-
-      {/* Main Form Area */}
-      <main className="relative z-10 max-w-md w-full mx-auto my-auto py-8">
-        <div className="bg-white/95 backdrop-blur-xl rounded-2xl border border-slate-200/90 shadow-subtle-elevated p-6 sm:p-8 space-y-6 text-slate-900">
+      }
+    >
+      <div className="space-y-6">
           {/* Success State */}
           {isSuccess ? (
             <div className="space-y-5 text-center">
@@ -411,14 +393,8 @@ function ResetPasswordContent() {
               <span>Kembali ke Halaman Masuk</span>
             </Link>
           </div>
-        </div>
-      </main>
-
-      {/* Footer System Info */}
-      <footer className="relative z-10 text-center py-4 text-xs text-slate-500">
-        &copy; 2026 EXAMIND Academic Assessment System. Dilengkapi Keamanan Resend Transactional Email.
-      </footer>
-    </div>
+      </div>
+    </AuthShell>
   )
 }
 

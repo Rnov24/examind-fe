@@ -12,7 +12,6 @@ import {
   CheckCircle2,
   BarChart3,
   ShieldCheck,
-  Key,
   Sparkles,
   Smartphone,
   Database,
@@ -66,6 +65,24 @@ export default function Sidebar() {
   const isAdmin = user?.role === 'admin'
   const isTeacher = user?.role === 'teacher'
   const isStudent = user?.role === 'student' || (!isSuperAdmin && !isAdmin && !isTeacher)
+
+  // The dashboard layout renders the 64px Navbar on every route except the
+  // dashboard routes below. The floating rail/panel are sized against the
+  // viewport, so on Navbar routes they must leave room for it — otherwise
+  // the row is exactly one Navbar taller than the viewport and every short
+  // page scrolls ~64px past the fold with nothing to show for it.
+  const hasTopNavbar =
+    !(
+      pathname.startsWith('/superadmin/') ||
+      pathname === '/analytics' ||
+      pathname.startsWith('/analytics/') ||
+      pathname.includes('/analytics')
+    )
+  const sidebarHeightClass = hasTopNavbar ? 'h-[calc(100vh-6rem)]' : 'h-[calc(100vh-2rem)]'
+  // Full literal tokens (no template interpolation) so Tailwind generates the md: variants.
+  const panelHeightClass = hasTopNavbar
+    ? 'md:h-[calc(100vh-6rem)]'
+    : 'md:h-[calc(100vh-2rem)]'
 
   // Strict, non-overlapping active detection to avoid multiple items being lit up
   const isActive = (path: string): boolean => {
@@ -121,7 +138,6 @@ export default function Sidebar() {
         { href: '/questions', label: 'Bank Soal', icon: BookOpen, section: 'Ujian' },
         { href: '/exams', label: 'Jadwal Ujian', icon: FileSpreadsheet, section: 'Ujian' },
         { href: '/analytics', label: 'Rekap Nilai', icon: BarChart3, section: 'Lainnya' },
-        { href: '/superadmin/secrets', label: 'Pengaturan', icon: Key, section: 'Lainnya' },
       ]
     }
     if (isTeacher) {
@@ -153,7 +169,7 @@ export default function Sidebar() {
         <aside
           id="sidebar-ribbon"
           aria-label="Navigasi Ribbon Rail"
-          className="hidden md:flex flex-col items-center justify-between sticky top-4 my-4 ml-4 h-[calc(100vh-2rem)] w-16 md:w-[68px] bg-white rounded-full border border-[#ddd9ef] shadow-card py-4 px-2 select-none shrink-0 z-30"
+          className={`hidden md:flex flex-col items-center justify-between sticky top-4 my-4 ml-4 ${sidebarHeightClass} w-16 md:w-[68px] bg-white rounded-full border border-[#ddd9ef] shadow-card py-4 px-2 select-none shrink-0 z-30`}
         >
           {/* Top: Logo Mark & Theme Switcher */}
           <div className="flex flex-col items-center gap-3 w-full">
@@ -279,7 +295,7 @@ export default function Sidebar() {
           <aside
             id="sidebar-nav"
             aria-label="Menu Navigasi Lengkap"
-            className="fixed md:sticky top-0 md:top-4 inset-y-0 md:inset-y-auto left-0 md:left-auto z-50 md:z-20 shrink-0 md:my-4 md:ml-4 w-72 h-full md:h-[calc(100vh-2rem)] bg-white md:rounded-3xl border-r md:border border-[#ddd9ef] shadow-2xl md:shadow-card flex flex-col justify-between p-4 overflow-y-auto text-slate-800 select-none transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]"
+            className={`fixed md:sticky top-0 md:top-4 inset-y-0 md:inset-y-auto left-0 md:left-auto z-50 md:z-20 shrink-0 md:my-4 md:ml-4 w-72 h-full ${panelHeightClass} bg-white md:rounded-3xl border-r md:border border-[#ddd9ef] shadow-2xl md:shadow-card flex flex-col justify-between p-4 overflow-y-auto text-slate-800 select-none transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]`}
           >
             <div className="space-y-4">
               {/* Header with Brand & Close Button */}

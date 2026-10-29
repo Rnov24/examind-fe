@@ -52,6 +52,7 @@ export default function ExamResultPage() {
   const [resultData, setResultData] = useState<ExamResultData | null>(null)
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+  const [loadError, setLoadError] = useState('')
 
   function formatTime(isoStr?: string) {
     if (!isoStr) return '-'
@@ -88,22 +89,79 @@ export default function ExamResultPage() {
     }
   }
 
-  useEffect(() => {
-    async function loadResult() {
-      if (!examId) return
-      setIsLoading(true)
-      try {
-        const res = await api.get(`/grading/exam/${examId}/result`)
-        setResultData(res.data.data)
-      } catch (err) {
-        console.error('Failed to load exam result:', err)
-      } finally {
-        setIsLoading(false)
-      }
+  async function loadResult() {
+    if (!examId) {
+      setIsLoading(false)
+      setLoadError('ID ujian tidak valid.')
+      return
     }
+    setIsLoading(true)
+    setLoadError('')
+    try {
+      const res = await api.get(`/student/exam/${examId}/result`)
+      setResultData(res.data.data)
+    } catch (err: any) {
+      console.error('Failed to load exam result:', err)
+      setResultData(null)
+      setLoadError(
+        err.response?.data?.message ||
+          'Hasil ujian belum tersedia. Sesi ujian mungkin belum selesai dinilai atau belum dibuat.'
+      )
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
+  useEffect(() => {
     loadResult()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [examId])
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6 max-w-4xl mx-auto py-6 px-4 font-sans text-slate-900">
+        <Link
+          href="/student/dashboard"
+          className="inline-flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-slate-900 transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          <span>Kembali ke Beranda Siswa</span>
+        </Link>
+        <div className="bg-white rounded-xl border border-slate-200 p-8 text-center shadow-xs">
+          <p className="text-sm font-bold text-slate-700">Memuat hasil ujian...</p>
+          <p className="text-xs text-slate-500 mt-1">Mengambil lembar nilai dari server.</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (!resultData) {
+    return (
+      <div className="space-y-6 max-w-4xl mx-auto py-6 px-4 font-sans text-slate-900">
+        <Link
+          href="/student/dashboard"
+          className="inline-flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-slate-900 transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          <span>Kembali ke Beranda Siswa</span>
+        </Link>
+        <div className="bg-white rounded-xl border border-slate-200 p-8 text-center shadow-xs space-y-3">
+          <div className="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 border border-amber-200 mx-auto flex items-center justify-center shadow-xs">
+            <AlertTriangle className="w-7 h-7" />
+          </div>
+          <h2 className="font-display text-xl font-bold text-slate-900">Hasil Ujian Belum Tersedia</h2>
+          <p className="text-xs text-slate-500 max-w-sm mx-auto leading-relaxed">{loadError}</p>
+          <button
+            type="button"
+            onClick={loadResult}
+            className="px-4 py-2 rounded-lg bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-xs transition-colors cursor-pointer"
+          >
+            Coba Lagi
+          </button>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto py-6 px-4 font-sans text-slate-900">

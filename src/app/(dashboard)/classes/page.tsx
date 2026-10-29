@@ -29,19 +29,14 @@ export default function ClassListPage() {
     setIsLoading(true)
     setErrorMessage(null)
     try {
-      const res = await api.get('/academic/classes')
+      const res = await api.get('/classes')
       setClasses(res.data.data || [])
-    } catch {
-      try {
-        const res = await api.get('/classes')
-        setClasses(res.data.data || [])
-      } catch (e: any) {
-        console.error('Failed to load classes:', e)
-        setErrorMessage(
-          e.response?.data?.message ||
-            'Gagal memuat daftar kelas akademik. Periksa koneksi ke server database CBT.'
-        )
-      }
+    } catch (e: any) {
+      console.error('Failed to load classes:', e)
+      setErrorMessage(
+        e.response?.data?.message ||
+          'Gagal memuat daftar kelas akademik. Periksa koneksi ke server database CBT.'
+      )
     } finally {
       setIsLoading(false)
     }
@@ -53,19 +48,11 @@ export default function ClassListPage() {
     setIsSubmitting(true)
     setModalError(null)
     try {
-      try {
-        await api.post('/academic/classes', {
-          name: newClassName,
-          grade_level: newGradeLevel,
-          academic_year: newAcademicYear,
-        })
-      } catch {
-        await api.post('/classes', {
-          name: newClassName,
-          grade_level: newGradeLevel,
-          academic_year: newAcademicYear,
-        })
-      }
+      await api.post('/classes', {
+        name: newClassName,
+        grade_level: newGradeLevel,
+        academic_year: newAcademicYear,
+      })
       setNewClassName('')
       setShowCreateModal(false)
       await loadClasses()

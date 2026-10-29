@@ -261,6 +261,9 @@ export default function ExamDetailPage() {
   const totalPoints = examDetail?.total_points || 0
   const isTargetAchieved = totalPoints === 100
   const pointsRemaining = Math.max(0, 100 - totalPoints)
+  // An existing (non-draft) exam has finished the whole wizard flow; only a
+  // draft being edited still has an "active" step.
+  const isExistingExam = examDetail != null && examDetail.status !== 'draft'
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto font-sans">
@@ -300,16 +303,38 @@ export default function ExamDetailPage() {
             </div>
           </div>
 
-          {/* Step 3 Active */}
-          <div className="p-3 rounded-xl border border-slate-900 bg-slate-900 text-white flex items-center gap-3 shadow-md">
-            <div className="w-7 h-7 rounded-lg bg-[#c2ef4e] text-slate-950 font-mono font-bold text-xs flex items-center justify-center shrink-0">
-              3
+          {/* Step 3: active while editing a draft, done for an existing exam */}
+          <div
+            className={`p-3 rounded-xl border flex items-center gap-3 ${
+              isExistingExam
+                ? 'border-emerald-200 bg-emerald-50/60 text-slate-700'
+                : 'border-slate-900 bg-slate-900 text-white shadow-md'
+            }`}
+          >
+            <div
+              className={`w-7 h-7 rounded-lg font-mono font-bold text-xs flex items-center justify-center shrink-0 ${
+                isExistingExam ? 'bg-emerald-600 text-white' : 'bg-[#c2ef4e] text-slate-950'
+              }`}
+            >
+              {isExistingExam ? (
+                <CheckCircle2 className="w-4 h-4" aria-hidden="true" />
+              ) : (
+                '3'
+              )}
             </div>
             <div className="min-w-0">
-              <span className="text-[10px] uppercase font-mono font-bold tracking-wider block text-[#c2ef4e]">
-                Langkah 3 (Aktif)
+              <span
+                className={`text-[10px] uppercase font-mono font-bold tracking-wider block ${
+                  isExistingExam ? 'text-emerald-800' : 'text-[#c2ef4e]'
+                }`}
+              >
+                {isExistingExam ? 'Langkah 3 (Selesai)' : 'Langkah 3 (Aktif)'}
               </span>
-              <span className="text-xs font-bold truncate block">
+              <span
+                className={`text-xs font-bold truncate block ${
+                  isExistingExam ? 'text-slate-800' : ''
+                }`}
+              >
                 Alokasi Soal & Publikasi
               </span>
             </div>
@@ -339,7 +364,7 @@ export default function ExamDetailPage() {
                     : 'bg-slate-100 text-slate-700 border border-slate-200'
                 }`}
               >
-                Status: {examDetail?.status === 'published' ? 'Terjadwal' : examDetail?.status === 'in_progress' ? 'Berlangsung' : examDetail?.status || 'Draft'}
+                Status: {examDetail?.status === 'published' ? 'Terjadwal' : examDetail?.status === 'in_progress' ? 'Berlangsung' : examDetail?.status === 'completed' ? 'Selesai' : examDetail?.status || 'Draft'}
               </span>
               <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider font-mono bg-violet-50 text-violet-700 border border-violet-200 shadow-2xs">
                 {examDetail?.exam_mode === 'non_live' ? (
@@ -358,7 +383,7 @@ export default function ExamDetailPage() {
                   : 'Serentak'}
               </span>
             </div>
-            <h1 className="font-display text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight truncate">
+            <h1 className="font-display text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
               {examDetail?.title || 'Memuat Paket Ujian...'}
             </h1>
           </div>

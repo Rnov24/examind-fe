@@ -1502,7 +1502,7 @@ export default function LandingPage() {
           onClick={(e) => {
             if (e.target === e.currentTarget) closeInquiryModal()
           }}
-          className={`fixed inset-0 z-50 bg-[#150f23]/60 backdrop-blur-sm flex items-center justify-center p-4 ${
+          className={`fixed inset-0 z-50 bg-[#150f23]/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto ${
             isInquiryClosing ? 'anim-fade-out' : 'anim-fade'
           }`}
           style={{ '--anim-duration': '200ms' } as React.CSSProperties}
@@ -1513,7 +1513,7 @@ export default function LandingPage() {
           <div
             ref={inquiryModalRef}
             tabIndex={-1}
-            className={`bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-lg w-full max-h-[calc(100dvh-2rem)] flex flex-col overflow-hidden text-slate-900 outline-none ${
+            className={`bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-lg w-full max-h-[calc(100dvh-2rem)] my-auto flex flex-col overflow-hidden text-slate-900 outline-none ${
               isInquiryClosing ? 'anim-pop-out' : 'anim-pop'
             }`}
             style={{ '--anim-duration': '220ms' } as React.CSSProperties}
@@ -1541,7 +1541,7 @@ export default function LandingPage() {
             </div>
 
             {/* Modal Body */}
-            <div className="p-6 overflow-y-auto">
+            <div className="p-6 overflow-y-auto min-h-0">
               {!submissionStatus ? (
                 <div className="space-y-5">
                   {/* Step 1 — Plan summary (real data from the landing plans state) */}

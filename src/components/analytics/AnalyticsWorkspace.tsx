@@ -65,9 +65,10 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
   const router = useRouter()
   const { user } = useAuthStore()
   const [activeTab, setActiveTab] = useState('analytics')
-  const [examId, setExamId] = useState<number>(initialExamId || 1)
-  const [selectedExamId, setSelectedExamId] = useState<number>(initialExamId || 1)
+  const [examId, setExamId] = useState<number | null>(initialExamId ?? null)
+  const [selectedExamId, setSelectedExamId] = useState<number | null>(initialExamId ?? null)
   const [allExams, setAllExams] = useState<ExamOption[]>([])
+  const [examsListLoaded, setExamsListLoaded] = useState(false)
   const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null)
   const [isDownloadingExcel, setIsDownloadingExcel] = useState(false)
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false)
@@ -107,6 +108,7 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
   }
 
   async function downloadExcel() {
+    if (examId == null) return
     if (isDownloadingExcel) return
     setIsDownloadingExcel(true)
     try {
@@ -133,6 +135,7 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
   }
 
   async function downloadPdf() {
+    if (examId == null) return
     if (isDownloadingPdf) return
     setIsDownloadingPdf(true)
     try {
@@ -166,6 +169,8 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
       }
     } catch (err) {
       console.warn('Failed to load exams list:', err)
+    } finally {
+      setExamsListLoaded(true)
     }
   }
 
@@ -189,6 +194,7 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
   function handleExamChange(newId: number) {
     setSelectedExamId(newId)
     setExamId(newId)
+    setErrorMessage(null)
     router.push(`/exams/${newId}/analytics`)
     loadAnalytics(newId)
   }
@@ -203,7 +209,10 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
     }
   }, [examId])
 
-  const navTabs = useMemo(() => getSuperAdminNavTabs(), [])
+  const navTabs = useMemo(
+    () => (user?.role === 'superadmin' ? getSuperAdminNavTabs() : undefined),
+    [user?.role]
+  )
 
   return (
     <DashboardShell
@@ -269,13 +278,15 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
               <p className="font-bold">
                 Tanggal Cetak: {new Date().toLocaleDateString('id-ID', { dateStyle: 'long' })}
               </p>
-              <p className="text-[10px] font-mono text-slate-400">EXAM-ID: {examId}</p>
+              <p className="text-[10px] font-mono text-slate-400">EXAM-ID: {examId ?? '—'}</p>
             </div>
           </div>
           <div className="mt-3 pt-2 border-t border-slate-200 text-xs flex justify-between">
             <p>
               <span className="font-bold text-slate-500">Paket Ujian:</span>{' '}
-              {allExams.find((e) => e.id === examId)?.title || `Ujian #${examId}`}
+              {examId != null
+                ? allExams.find((e) => e.id === examId)?.title || `Ujian #${examId}`
+                : '—'}
             </p>
             <p>
               <span className="font-bold text-slate-500">Total Peserta:</span>{' '}
@@ -325,7 +336,7 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
             </div>
             <button
               type="button"
-              onClick={() => loadAnalytics(examId)}
+              onClick={() => examId != null && loadAnalytics(examId)}
               className="px-3.5 py-1.5 rounded-full bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer shrink-0"
             >
               <RotateCcw className="w-3.5 h-3.5" aria-hidden="true" />
@@ -335,11 +346,11 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
         )}
 
         {/* Exam Selector Banner */}
-        {allExams.length > 1 && (
+        {allExams.length > 0 && (
           <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-card flex items-center gap-3 text-slate-800 print:hidden">
             <span className="text-xs font-bold text-slate-600 uppercase font-mono">Pilih Paket Ujian:</span>
             <select
-              value={selectedExamId}
+              value={selectedExamId ?? ''}
               onChange={(e) => handleExamChange(Number(e.target.value))}
               aria-label="Pilih Paket Ujian"
               className="text-xs font-bold bg-slate-50 border border-slate-200 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#150f23] text-slate-900 font-sans shadow-xs cursor-pointer"
@@ -354,6 +365,8 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
         )}
 
         {/* KPI Metric Cards with rich semantic tones */}
+        {examId != null ? (
+          <>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Rata-Rata Kelas */}
           <StatCard
@@ -589,6 +602,20 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
             </div>
           )}
         </DashboardCard>
+          </>
+        ) : examsListLoaded ? (
+          <div className="bg-white rounded-2xl border border-slate-200/80 shadow-card p-8 text-center space-y-2">
+            <h3 className="text-sm font-bold text-slate-900">Belum Ada Paket Ujian</h3>
+            <p className="text-xs text-slate-500 leading-relaxed max-w-md mx-auto">
+              Tidak ada paket ujian yang tersedia untuk dianalisis. Buat paket ujian terlebih dahulu, atau
+              hubungi admin sekolah jika Anda merasa ini keliru.
+            </p>
+          </div>
+        ) : (
+          <div className="bg-white rounded-2xl border border-slate-200/80 shadow-card p-8 text-center">
+            <p className="text-xs font-semibold text-slate-500">Memuat daftar paket ujian...</p>
+          </div>
+        )}
 
         {/* Printable Official Signature Block */}
         <div className="hidden print:block mt-10 pt-6 border-t border-slate-300">

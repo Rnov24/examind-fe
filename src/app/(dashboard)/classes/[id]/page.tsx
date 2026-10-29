@@ -47,15 +47,10 @@ export default function ClassDetailPage() {
     if (!classId) return
     setIsLoading(true)
     try {
-      const res = await api.get(`/academic/classes/${classId}`)
+      const res = await api.get(`/classes/${classId}`)
       setClassDetail(res.data.data)
-    } catch {
-      try {
-        const res = await api.get(`/classes/${classId}`)
-        setClassDetail(res.data.data)
-      } catch (e) {
-        console.error('Failed to load class detail:', e)
-      }
+    } catch (e) {
+      console.error('Failed to load class detail:', e)
     } finally {
       setIsLoading(false)
     }
@@ -63,12 +58,7 @@ export default function ClassDetailPage() {
 
   async function openAddMemberModal() {
     try {
-      let res
-      try {
-        res = await api.get('/academic/classes/users/students')
-      } catch {
-        res = await api.get('/classes/users/students')
-      }
+      const res = await api.get('/classes/users/students')
       const currentMemberIds = new Set((classDetail?.members || []).map((m) => m.user_id))
       const available = (res.data.data || []).filter((s: any) => !currentMemberIds.has(s.id))
       setAvailableStudents(available)
@@ -83,17 +73,10 @@ export default function ClassDetailPage() {
     if (!selectedStudentId || isSubmitting) return
     setIsSubmitting(true)
     try {
-      try {
-        await api.post(`/academic/classes/${classId}/members`, {
-          user_id: selectedStudentId,
-          role: 'student',
-        })
-      } catch {
-        await api.post(`/classes/${classId}/members`, {
-          user_id: selectedStudentId,
-          role: 'student',
-        })
-      }
+      await api.post(`/classes/${classId}/members`, {
+        user_id: selectedStudentId,
+        role: 'student',
+      })
       setShowAddModal(false)
       await loadDetail()
     } catch (err) {
@@ -106,11 +89,7 @@ export default function ClassDetailPage() {
   async function handleRemoveMember(userId: number) {
     if (!confirm('Yakin ingin mengeluarkan siswa ini dari kelas?')) return
     try {
-      try {
-        await api.delete(`/academic/classes/${classId}/members/${userId}`)
-      } catch {
-        await api.delete(`/classes/${classId}/members/${userId}`)
-      }
+      await api.delete(`/classes/${classId}/members/${userId}`)
       await loadDetail()
     } catch (err) {
       console.error('Failed to remove member:', err)

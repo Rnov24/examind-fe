@@ -48,6 +48,7 @@ export default function LiveMonitoringPage() {
 
   const [filterMode, setFilterMode] = useState<'all' | 'flagged'>('all')
   const [studentsList, setStudentsList] = useState<StudentSession[]>([])
+  const [examStatus, setExamStatus] = useState<string | null>(null)
   const [activeWarningStudent, setActiveWarningStudent] = useState<StudentSession | null>(null)
   const [warningMessageText, setWarningMessageText] = useState('')
   const [selectedStudentLogs, setSelectedStudentLogs] = useState<StudentSession | null>(null)
@@ -236,6 +237,14 @@ export default function LiveMonitoringPage() {
   }, [activeDisqualifyStudent, activeWarningStudent, selectedStudentLogs])
 
   useEffect(() => {
+    // The badge must reflect the exam's real state, not assume a live exam.
+    api
+      .get(`/exams/${examId}`)
+      .then((res) => setExamStatus(res.data.data?.status ?? null))
+      .catch(() => setExamStatus(null))
+  }, [examId])
+
+  useEffect(() => {
     loadExamSessions()
 
     // Setup WebSocket
@@ -323,13 +332,30 @@ export default function LiveMonitoringPage() {
               <h2 className="font-display text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
                 Live Monitoring Pengawasan AI
               </h2>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200 font-mono shadow-xs">
-                <span className="relative flex h-2 w-2" aria-hidden="true">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
+              {examStatus === 'in_progress' && (
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200 font-mono shadow-xs">
+                  <span className="relative flex h-2 w-2" aria-hidden="true">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
+                  </span>
+                  LIVE PROCTOR
                 </span>
-                LIVE PROCTOR
-              </span>
+              )}
+              {examStatus === 'published' && (
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-violet-50 text-violet-700 border border-violet-200 font-mono shadow-xs">
+                  TERJADWAL
+                </span>
+              )}
+              {examStatus === 'completed' && (
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200 font-mono shadow-xs">
+                  SELESAI
+                </span>
+              )}
+              {examStatus === 'draft' && (
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200 font-mono shadow-xs">
+                  DRAFT
+                </span>
+              )}
             </div>
             <p className="text-xs text-slate-500 font-medium mt-0.5">
               Pemantauan real-time dual-camera & deteksi anomali integritas siswa

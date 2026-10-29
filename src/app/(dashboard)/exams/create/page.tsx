@@ -63,12 +63,7 @@ export default function ExamCreatePage() {
 
     async function fetchClasses() {
       try {
-        let res
-        try {
-          res = await api.get('/academic/classes')
-        } catch {
-          res = await api.get('/classes')
-        }
+        const res = await api.get('/classes')
         const data = res.data.data || []
         setClasses(data)
         if (data.length > 0) {

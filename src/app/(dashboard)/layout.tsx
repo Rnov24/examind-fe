@@ -32,8 +32,8 @@ export default function DashboardLayout({
           <main
             className={`flex-1 overflow-y-auto min-w-0 ${
               isDashboardRoute
-                ? 'p-3 sm:p-5 md:p-6 max-w-[1600px] w-full mx-auto'
-                : 'p-4 sm:p-6 md:p-8 max-w-7xl w-full mx-auto'
+                ? 'p-3 pb-20 sm:p-5 sm:pb-5 md:p-6 md:pb-6 max-w-[1600px] w-full mx-auto'
+                : 'p-4 pb-20 sm:p-6 sm:pb-6 md:p-8 md:pb-8 max-w-7xl w-full mx-auto'
             }`}
           >
             {children}

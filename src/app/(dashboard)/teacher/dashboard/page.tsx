@@ -74,7 +74,7 @@ export default function TeacherDashboardPage() {
         api.get('/questions/banks'),
         // Shared exams:list cache (90s TTL) — same shape as api.get('/exams')
         fetchCachedExamsList().then((exams) => ({ data: { data: exams } })),
-        api.get('/academic/classes'),
+        api.get('/classes'),
       ])
 
       let errorCount = 0

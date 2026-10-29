@@ -72,8 +72,9 @@ export default function GradeReviewWorkspace({
   initialExamId,
   initialSessionId,
 }: GradeReviewWorkspaceProps) {
-  const [examId, setExamId] = useState<number>(initialExamId || 1)
+  const [examId, setExamId] = useState<number | null>(initialExamId ?? null)
   const [allExams, setAllExams] = useState<any[]>([])
+  const [examsListLoaded, setExamsListLoaded] = useState(false)
   const [sessionsList, setSessionsList] = useState<SessionListItem[]>([])
   const [selectedSessionId, setSelectedSessionId] = useState<number | null>(
     initialSessionId || null
@@ -115,6 +116,8 @@ export default function GradeReviewWorkspace({
       }
     } catch (err) {
       console.warn('Failed to load exams list:', err)
+    } finally {
+      setExamsListLoaded(true)
     }
   }
 
@@ -199,7 +202,7 @@ export default function GradeReviewWorkspace({
         )
       } else {
         // Can't determine the new status locally — fall back to a full refetch
-        await loadSessions(examId)
+        if (examId != null) await loadSessions(examId)
       }
     } catch (err: any) {
       showNotification('error', err.response?.data?.message || 'Gagal menyimpan nilai guru. Coba lagi.')
@@ -212,7 +215,7 @@ export default function GradeReviewWorkspace({
     loadExams()
     if (initialSessionId) {
       openSessionReview(initialSessionId)
-    } else {
+    } else if (examId != null) {
       loadSessions(examId)
     }
   }, [examId, initialSessionId, loadSessions, openSessionReview])
@@ -335,11 +338,11 @@ export default function GradeReviewWorkspace({
           </div>
         </div>
 
-        {allExams.length > 1 && !selectedSessionId && (
+        {allExams.length > 0 && !selectedSessionId && (
           <div className="flex items-center gap-2 shrink-0">
             <span className="text-xs font-bold text-slate-500 font-mono">Pilih Ujian:</span>
             <select
-              value={examId}
+              value={examId ?? ''}
               onChange={(e) => {
                 const val = Number(e.target.value)
                 setExamId(val)
@@ -459,7 +462,7 @@ export default function GradeReviewWorkspace({
                 <p className="font-bold">
                   Tanggal Cetak: {new Date().toLocaleDateString('id-ID', { dateStyle: 'long' })}
                 </p>
-                <p className="text-[10px] font-mono text-slate-500">EXAM-ID: {examId}</p>
+                <p className="text-[10px] font-mono text-slate-500">EXAM-ID: {examId ?? '—'}</p>
               </div>
             </div>
             <div className="mt-3 pt-2 border-t border-slate-200 text-xs flex justify-between">
@@ -480,7 +483,7 @@ export default function GradeReviewWorkspace({
                 <span className="font-medium">{errorMessage}</span>
               </div>
               <button
-                onClick={() => loadSessions(examId)}
+                onClick={() => examId != null && loadSessions(examId)}
                 className="px-3.5 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer shrink-0"
               >
                 <RotateCcw className="w-3.5 h-3.5" aria-hidden="true" />
@@ -599,12 +602,17 @@ export default function GradeReviewWorkspace({
                     </div>
                     <div className="space-y-1">
                       <p className="font-bold text-slate-900 text-sm font-display">
-                        Belum Ada Lembar Jawaban Siswa
+                        {examId == null
+                          ? 'Belum Ada Paket Ujian'
+                          : 'Belum Ada Lembar Jawaban Siswa'}
                       </p>
                       <p className="text-xs text-slate-500 leading-relaxed">
-                        Siswa yang telah menyelesaikan pengerjaan ujian CBT akan otomatis muncul di sini.
+                        {examId == null
+                          ? 'Tidak ada paket ujian yang tersedia untuk dinilai saat ini.'
+                          : 'Siswa yang telah menyelesaikan pengerjaan ujian CBT akan otomatis muncul di sini.'}
                       </p>
                     </div>
+                    {examId != null && (
                     <div className="pt-2">
                       <Link
                         href={`/exams/${examId}/monitor`}
@@ -614,6 +622,7 @@ export default function GradeReviewWorkspace({
                         <span>Buka Live Monitoring Sesi</span>
                       </Link>
                     </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -728,12 +737,17 @@ export default function GradeReviewWorkspace({
                             </div>
                             <div className="space-y-1">
                               <p className="font-bold text-slate-900 text-base font-display">
-                                Belum Ada Lembar Jawaban Siswa
+                                {examId == null
+                                  ? 'Belum Ada Paket Ujian'
+                                  : 'Belum Ada Lembar Jawaban Siswa'}
                               </p>
                               <p className="text-xs text-slate-500 leading-relaxed">
-                                Siswa yang telah menyelesaikan pengerjaan ujian CBT akan otomatis muncul di tabel ini lengkap dengan pra-penilaian AI.
+                                {examId == null
+                                  ? 'Tidak ada paket ujian yang tersedia untuk dinilai saat ini.'
+                                  : 'Siswa yang telah menyelesaikan pengerjaan ujian CBT akan otomatis muncul di tabel ini lengkap dengan pra-penilaian AI.'}
                               </p>
                             </div>
+                            {examId != null && (
                             <div className="flex items-center gap-2.5 pt-2">
                               <Link
                                 href={`/exams/${examId}/monitor`}
@@ -743,6 +757,7 @@ export default function GradeReviewWorkspace({
                                 <span>Buka Live Monitoring Sesi</span>
                               </Link>
                             </div>
+                            )}
                           </div>
                         </td>
                       </tr>
@@ -819,7 +834,9 @@ export default function GradeReviewWorkspace({
                 </button>
 
                 <div className="px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 font-mono text-xs font-bold">
-                  Skor: {sessionDetail?.total_score} / {sessionDetail?.max_score}
+                  {sessionDetail?.max_score
+                    ? `Skor: ${sessionDetail?.total_score} / ${sessionDetail?.max_score}`
+                    : `Skor: ${sessionDetail?.total_score}`}
                 </div>
 
                 <button

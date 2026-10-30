@@ -31,37 +31,37 @@ colors:
 
 typography:
   display-hero:
-    fontFamily: "Plus Jakarta Sans, Rubik, system-ui, sans-serif"
+    fontFamily: "Outfit, Plus Jakarta Sans, Rubik, system-ui, sans-serif"
     fontSize: "72px"
     fontWeight: 800
     lineHeight: 1.15
     letterSpacing: "-0.02em"
   display-large:
-    fontFamily: "Plus Jakarta Sans, Rubik, system-ui, sans-serif"
+    fontFamily: "Outfit, Plus Jakarta Sans, Rubik, system-ui, sans-serif"
     fontSize: "48px"
     fontWeight: 700
     lineHeight: 1.2
     letterSpacing: "-0.02em"
   heading-xl:
-    fontFamily: "Plus Jakarta Sans, Rubik, system-ui, sans-serif"
+    fontFamily: "Outfit, Plus Jakarta Sans, Rubik, system-ui, sans-serif"
     fontSize: "32px"
     fontWeight: 700
     lineHeight: 1.25
     letterSpacing: "-0.01em"
   heading-lg:
-    fontFamily: "Plus Jakarta Sans, Rubik, system-ui, sans-serif"
+    fontFamily: "Outfit, Plus Jakarta Sans, Rubik, system-ui, sans-serif"
     fontSize: "24px"
     fontWeight: 700
     lineHeight: 1.3
     letterSpacing: "-0.01em"
   heading-md:
-    fontFamily: "Plus Jakarta Sans, Rubik, system-ui, sans-serif"
+    fontFamily: "Outfit, Plus Jakarta Sans, Rubik, system-ui, sans-serif"
     fontSize: "20px"
     fontWeight: 600
     lineHeight: 1.35
     letterSpacing: "0"
   heading-sm:
-    fontFamily: "Plus Jakarta Sans, Rubik, system-ui, sans-serif"
+    fontFamily: "Outfit, Plus Jakarta Sans, Rubik, system-ui, sans-serif"
     fontSize: "18px"
     fontWeight: 600
     lineHeight: 1.4
@@ -348,7 +348,7 @@ Hierarki aksi tunggal (*single primary CTA*) diterapkan konsisten: tombol hitam-
 ## Typography
 
 ### Font Family
-- **Display & Headline Tier**: `Plus Jakarta Sans` / `Rubik` (bobot 700–800, siluet tegas berkarakter modern dan berwibawa).
+- **Display & Headline Tier**: `Outfit` (fallback `Plus Jakarta Sans` / `Rubik`; bobot 700–800, siluet tegas berkarakter modern dan berwibawa). Diputuskan 2026-10-31: Outfit dipertahankan sebagai display face, dan tier ini di DESIGN.md diamendemen dari Plus Jakarta Sans/Rubik ke Outfit agar dokumen sesuai dengan yang dirender.
 - **UI & Reading Tier**: `Plus Jakarta Sans` / `Rubik` (keterbacaan jernih untuk lembar soal ujian, teks instruksi, dan opsi jawaban).
 - **Code & Telemetry Tier**: `JetBrains Mono` / `Monaco` / `Consolas` (digunakan untuk hitungan mundur timer ujian, NISN siswa, payload WebSocket proctoring, dan latency).
 

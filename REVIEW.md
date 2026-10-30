@@ -213,10 +213,11 @@ one). IMPLEMENTED (one toggle exists; the confirm field has none).
 
 [Required] design-drift-Outfit — `tailwind.config` font-display,
 `src/app/globals.css` h1–h3 rule, `src/app/layout.tsx` font load. The
-display face is Outfit; DESIGN.md's display tier is Plus Jakarta
-Sans/Rubik. → FLAGGED FOR THE HUMAN, NOT IMPLEMENTED: swapping the
-display face changes every heading's look and is a direction change,
-which this task forbids making unilaterally.
+display face is Outfit; DESIGN.md's display tier was Plus Jakarta
+Sans/Rubik. → RESOLVED BY HUMAN RULING 2026-10-31: Outfit kept as the
+display face; DESIGN.md amended (display + heading tier registry entries
+and the Font Family prose now name Outfit, with Plus Jakarta Sans/Rubik
+as fallback). No code change needed; the drift is closed by the amendment.
 
 [Required] design-drift-gradient — `src/app/(dashboard)/questions/page.tsx`
 AI spotlight card (line ~202). Dark gradient panel vs DESIGN.md solid
@@ -354,3 +355,5 @@ three pass on corrected re-check.) Build: clean `pnpm build` passes
 ## Verdict
 
 Verdict: improvement proceeds — implement the Critical stepper-contrast fix and all Required findings except the Outfit drift, which is flagged for the human and not changed; no route, IA, copy-intent, or visual-direction changes; superadmin pages and the live student-exam flow stay out of scope.
+
+Ruling 2026-10-31: the human kept Outfit as the display face. The drift is closed by amending DESIGN.md (display + heading tier now name Outfit, Plus Jakarta Sans/Rubik as fallback); no code change. The lime-CTA contradiction (Optional) remains open pending the human's ruling on which reading wins.

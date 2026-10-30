@@ -356,4 +356,4 @@ three pass on corrected re-check.) Build: clean `pnpm build` passes
 
 Verdict: improvement proceeds — implement the Critical stepper-contrast fix and all Required findings except the Outfit drift, which is flagged for the human and not changed; no route, IA, copy-intent, or visual-direction changes; superadmin pages and the live student-exam flow stay out of scope.
 
-Ruling 2026-10-31: the human kept Outfit as the display face. The drift is closed by amending DESIGN.md (display + heading tier now name Outfit, Plus Jakarta Sans/Rubik as fallback); no code change. The lime-CTA contradiction (Optional) remains open pending the human's ruling on which reading wins.
+Ruling 2026-10-31: the human kept Outfit as the display face. The drift is closed by amending DESIGN.md (display + heading tier now name Outfit, Plus Jakarta Sans/Rubik as fallback); no code change. The lime-CTA contradiction (Optional) remains open pending the human's ruling on which reading wins. Follow-up 2026-10-31: Jal answered "gpp sih" — no change requested, lime CTAs stay as built, contradiction left as-is rather than ruled.

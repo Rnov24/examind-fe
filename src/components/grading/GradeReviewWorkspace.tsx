@@ -329,9 +329,9 @@ export default function GradeReviewWorkspace({
                 Evaluasi Esai AI & Otoritas Guru
               </span>
             </div>
-            <h1 className="font-display text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight truncate">
+            <h2 className="font-display text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight truncate">
               Koreksi Esai & Validasi Nilai AI
-            </h1>
+            </h2>
             <p className="text-xs text-slate-500 font-medium">
               Tinjau draf penilaian kecerdasan buatan, terapkan saran skor, atau sesuaikan nilai sesuai rubrik pedagogis Anda.
             </p>
@@ -363,7 +363,7 @@ export default function GradeReviewWorkspace({
       {/* Notification Toast */}
       {notification && (
         <div
-          className={`p-4 rounded-xl border text-xs flex items-center justify-between gap-3 shadow-xs transition-all animate-in fade-in duration-150 ${
+          className={`p-4 rounded-xl border text-xs flex items-center justify-between gap-3 shadow-xs transition-colors animate-in fade-in duration-150 ${
             notification.type === 'success'
               ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
               : 'bg-rose-50 border-rose-200 text-rose-800'
@@ -403,7 +403,7 @@ export default function GradeReviewWorkspace({
             <div className="flex items-center gap-2.5 print:hidden">
               <button
                 onClick={handlePrint}
-                className="px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-[#f1effa] text-slate-700 font-bold text-xs shadow-xs flex items-center gap-2 transition-colors cursor-pointer focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
+                className="min-h-[44px] px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-[#f1effa] text-slate-700 font-bold text-xs shadow-xs flex items-center gap-2 transition-colors cursor-pointer focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
               >
                 <Printer className="w-4 h-4 text-slate-600" aria-hidden="true" />
                 <span>Cetak Rekap Nilai</span>
@@ -420,7 +420,7 @@ export default function GradeReviewWorkspace({
                 value={searchStudent}
                 onChange={(e) => setSearchStudent(e.target.value)}
                 placeholder="Cari nama siswa atau NISN..."
-                className="w-full pl-10 pr-9 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium placeholder:text-slate-400 focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-[#6a5fc1]/40 outline-none transition-all"
+                className="w-full pl-10 pr-9 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium placeholder:text-slate-500 focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-[#6a5fc1]/40 outline-none transition-colors"
               />
               {searchStudent && (
                 <button
@@ -567,7 +567,7 @@ export default function GradeReviewWorkspace({
 
                     <button
                       onClick={() => openSessionReview(s.session_id)}
-                      className="w-full min-h-[44px] px-4 py-2 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-card hover:shadow-card-hover cursor-pointer transition-all font-display tracking-wide flex items-center justify-center gap-2"
+                      className="w-full min-h-[44px] px-4 py-2 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-card hover:shadow-card-hover cursor-pointer transition-[color,background-color,border-color,box-shadow] font-display tracking-wide flex items-center justify-center gap-2"
                     >
                       <span>Review & Beri Nilai</span>
                     </button>
@@ -695,7 +695,7 @@ export default function GradeReviewWorkspace({
                         <td className="px-6 py-4 text-right print:hidden">
                           <button
                             onClick={() => openSessionReview(s.session_id)}
-                            className="px-4 py-2 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-card hover:shadow-card-hover cursor-pointer transition-all font-display tracking-wide focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
+                            className="min-h-[44px] px-4 py-2 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-card hover:shadow-card-hover cursor-pointer transition-colors font-display tracking-wide focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
                           >
                             Review & Beri Nilai
                           </button>
@@ -841,7 +841,7 @@ export default function GradeReviewWorkspace({
 
                 <button
                   onClick={() => setSelectedSessionId(null)}
-                  className="px-4 py-2 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-xs transition-colors cursor-pointer font-display"
+                  className="min-h-[44px] px-4 py-2 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-xs transition-colors cursor-pointer font-display"
                 >
                   Selesai Meninjau
                 </button>
@@ -901,7 +901,7 @@ export default function GradeReviewWorkspace({
                         setActiveQuestionIdx(qIdx)
                         questionRefs.current[qIdx]?.scrollIntoView({ behavior: 'smooth', block: 'center' })
                       }}
-                      className={`px-2.5 py-1 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer border ${
+                      className={`px-2.5 py-1 rounded-lg text-xs font-mono font-bold transition-colors cursor-pointer border ${
                         isActive
                           ? 'bg-slate-900 text-white border-slate-900 shadow-sm ring-2 ring-[#c2ef4e]/40'
                           : isVerified
@@ -936,7 +936,7 @@ export default function GradeReviewWorkspace({
                     questionRefs.current[idx] = el
                   }}
                   onClick={() => setActiveQuestionIdx(idx)}
-                  className={`bg-white rounded-2xl border p-6 sm:p-7 shadow-card space-y-5 text-slate-900 transition-all ${
+                  className={`bg-white rounded-2xl border p-6 sm:p-7 shadow-card space-y-5 text-slate-900 transition-colors ${
                     isActive
                       ? 'border-[#150f23] ring-2 ring-[#6a5fc1]/25 shadow-lg'
                       : 'border-slate-200/80 hover:border-slate-300'
@@ -1191,7 +1191,7 @@ export default function GradeReviewWorkspace({
                                 })
                               }
                               placeholder="Ketik feedback pedagogis untuk siswa..."
-                              className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-slate-900 focus:ring-2 focus:ring-[#6a5fc1]/40 shadow-xs"
+                              className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs bg-white text-slate-900 placeholder:text-slate-500 focus:outline-none focus:border-slate-900 focus:ring-2 focus:ring-[#6a5fc1]/40 shadow-xs"
                             />
                           </div>
 
@@ -1202,7 +1202,7 @@ export default function GradeReviewWorkspace({
                             <button
                               onClick={() => saveOverride(ans.id)}
                               disabled={savingOverrideMap[ans.id]}
-                              className="px-5 py-2.5 rounded-xl bg-[#150f23] hover:bg-[#1f1633] disabled:opacity-50 text-white font-bold text-xs shadow-card hover:shadow-card-hover transition-all flex items-center gap-1.5 cursor-pointer font-display tracking-wide"
+                              className="px-5 py-2.5 rounded-xl bg-[#150f23] hover:bg-[#1f1633] disabled:opacity-50 text-white font-bold text-xs shadow-card hover:shadow-card-hover transition-[color,background-color,border-color,box-shadow] flex items-center gap-1.5 cursor-pointer font-display tracking-wide"
                             >
                               {savingOverrideMap[ans.id] ? (
                                 <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" />

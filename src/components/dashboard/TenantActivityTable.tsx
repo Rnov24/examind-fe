@@ -78,7 +78,7 @@ export function TenantActivityTable({
               onChange={(e) => onSearchChange(e.target.value)}
               placeholder="Cari sekolah..."
               className={cn(
-                'pl-8 pr-3 py-1.5 bg-[#faf9fd] text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]/30 w-full sm:w-52 transition-all',
+                'pl-8 pr-3 py-1.5 bg-[#faf9fd] text-xs text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]/30 w-full sm:w-52 transition-colors',
                 tokens.radius.full,
                 tokens.border.default
               )}
@@ -93,7 +93,7 @@ export function TenantActivityTable({
             }
             aria-label="Filter status sekolah"
             className={cn(
-              'px-3 py-1.5 bg-[#faf9fd] text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]/30 cursor-pointer transition-all',
+              'px-3 py-1.5 bg-[#faf9fd] text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]/30 cursor-pointer transition-colors',
               tokens.radius.full,
               tokens.border.default
             )}

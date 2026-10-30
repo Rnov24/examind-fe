@@ -29,9 +29,9 @@ export function HeroCard({
     <div
       className={cn(
         tokens.radius.xl,
-        'bg-gradient-to-br from-[#f3f2fa] via-white to-white border border-[#ddd9ef] p-5',
+        'bg-white border border-[#ddd9ef] p-5',
         tokens.shadow.cardHover,
-        'transition-all relative overflow-hidden flex flex-col justify-between',
+        'transition-colors relative overflow-hidden flex flex-col justify-between',
         className
       )}
     >

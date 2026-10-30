@@ -250,7 +250,7 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
             type="button"
             onClick={downloadPdf}
             disabled={isDownloadingPdf}
-            className="min-h-[40px] sm:min-h-[44px] px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-[#150f23] hover:bg-slate-800 disabled:opacity-50 text-white font-bold text-xs shadow-card hover:shadow-card-hover flex items-center justify-center gap-2 transition-all cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-[#150f23] focus:outline-none"
+            className="min-h-[40px] sm:min-h-[44px] px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-[#150f23] hover:bg-slate-800 disabled:opacity-50 text-white font-bold text-xs shadow-card hover:shadow-card-hover flex items-center justify-center gap-2 transition-colors cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-[#150f23] focus:outline-none"
           >
             {isDownloadingPdf ? (
               <Loader2 className="w-4 h-4 animate-spin text-[#c2ef4e]" />
@@ -267,9 +267,9 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
         <div className="hidden print:block border-b-2 border-slate-900 pb-4 mb-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-xl font-black tracking-tight text-slate-900 uppercase">
+              <h2 className="text-xl font-black tracking-tight text-slate-900 uppercase">
                 LAPORAN REKAPITULASI EVALUASI & STATISTIK UJIAN
-              </h1>
+              </h2>
               <p className="text-xs text-slate-600 font-medium">
                 Sistem Evaluasi Akademik Terpadu — EXAMIND Platform
               </p>
@@ -425,7 +425,7 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
                   {bin.count} Siswa
                 </div>
                 <div
-                  className={`w-full rounded-t-xl transition-all duration-200 group-hover:scale-y-105 ${
+                  className={`w-full rounded-t-xl transition-[color,background-color,border-color,transform] duration-200 group-hover:scale-y-105 ${
                     bin.count === maxBinCount && bin.count > 0
                       ? 'bg-[#150f23] ring-2 ring-violet-400 shadow-md'
                       : 'bg-slate-800 group-hover:bg-[#150f23]'

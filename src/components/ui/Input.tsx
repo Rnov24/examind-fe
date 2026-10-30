@@ -80,7 +80,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             id={inputId}
             disabled={disabled}
             className={cn(
-              'w-full bg-slate-50/70 border border-slate-200 text-slate-900 placeholder:text-slate-400 font-sans tracking-tight',
+              'w-full bg-slate-50/70 border border-slate-200 text-slate-900 placeholder:text-slate-500 font-sans tracking-tight',
               tokens.transition.fast,
               'hover:border-slate-300 hover:bg-slate-50',
               'focus:bg-white focus:outline-none',
@@ -209,7 +209,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           rows={rows}
           disabled={disabled}
           className={cn(
-            'w-full p-3.5 bg-slate-50/70 border border-slate-200 text-slate-900 placeholder:text-slate-400 font-sans tracking-tight',
+            'w-full p-3.5 bg-slate-50/70 border border-slate-200 text-slate-900 placeholder:text-slate-500 font-sans tracking-tight',
             tokens.radius.lg,
             tokens.transition.fast,
             'resize-y',

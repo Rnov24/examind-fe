@@ -202,7 +202,7 @@ export function Ribbon({ items, className = '' }: RibbonProps) {
                 href={item.href}
                 aria-label={item.label}
                 aria-current={active ? 'page' : undefined}
-                className={`w-11 h-11 rounded-full flex items-center justify-center transition-all cursor-pointer ${
+                className={`w-11 h-11 rounded-full flex items-center justify-center transition-colors cursor-pointer ${
                   active
                     ? 'bg-[#150f23] text-[#c2ef4e] shadow-sm ring-1 ring-slate-800'
                     : 'text-slate-400 hover:text-slate-900 hover:bg-[#f1effa]'

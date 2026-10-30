@@ -273,7 +273,7 @@ export default function QuestionBankDetailPage() {
         <div className="flex items-center gap-2.5 w-full sm:w-auto shrink-0">
           <button
             onClick={() => setShowAIModal(true)}
-            className="flex-1 sm:flex-none min-h-[44px] px-4 py-2.5 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-card hover:shadow-card-hover flex items-center justify-center gap-2 cursor-pointer transition-all focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none font-display tracking-wide"
+            className="flex-1 sm:flex-none min-h-[44px] px-4 py-2.5 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-card hover:shadow-card-hover flex items-center justify-center gap-2 cursor-pointer transition-colors focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none font-display tracking-wide"
           >
             <Sparkles className="w-4 h-4 text-[#c2ef4e]" aria-hidden="true" />
             <span>Generate dengan AI</span>
@@ -298,7 +298,7 @@ export default function QuestionBankDetailPage() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Cari teks soal atau kata kunci..."
-            className="w-full pl-10 pr-9 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium placeholder:text-slate-400 focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-[#6a5fc1]/40 outline-none transition-all"
+            className="w-full pl-10 pr-9 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium placeholder:text-slate-500 focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-[#6a5fc1]/40 outline-none transition-colors"
           />
           {searchQuery && (
             <button
@@ -344,7 +344,7 @@ export default function QuestionBankDetailPage() {
             <button
               type="button"
               onClick={toggleSelectAll}
-              className="px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer"
+              className="min-h-[44px] px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer"
             >
               {selectedIds.size === filteredQuestions.length && filteredQuestions.length > 0 ? (
                 <>
@@ -414,7 +414,7 @@ export default function QuestionBankDetailPage() {
             return (
               <div
                 key={q.id}
-                className={`bg-white rounded-2xl p-5 sm:p-6 border transition-all text-slate-900 space-y-4 shadow-card ${
+                className={`bg-white rounded-2xl p-5 sm:p-6 border transition-colors text-slate-900 space-y-4 shadow-card ${
                   isSelected ? 'border-violet-600 ring-2 ring-violet-600/10 bg-violet-50/10' : 'border-slate-200/80 hover:border-slate-300'
                 }`}
               >
@@ -623,7 +623,7 @@ export default function QuestionBankDetailPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-xl w-full text-left pt-2">
                 <div
                   onClick={() => setShowAIModal(true)}
-                  className="p-5 rounded-2xl border-2 border-violet-500/30 hover:border-violet-600 bg-violet-50/30 hover:bg-violet-50/60 transition-all cursor-pointer space-y-2 group"
+                  className="p-5 rounded-2xl border-2 border-violet-500/30 hover:border-violet-600 bg-violet-50/30 hover:bg-violet-50/60 transition-colors cursor-pointer space-y-2 group"
                 >
                   <div className="flex items-center justify-between">
                     <span className="w-8 h-8 rounded-xl bg-[#150f23] text-white flex items-center justify-center shadow-xs">
@@ -643,7 +643,7 @@ export default function QuestionBankDetailPage() {
 
                 <div
                   onClick={() => setShowManualModal(true)}
-                  className="p-5 rounded-2xl border border-slate-200 hover:border-slate-300 bg-slate-50 hover:bg-slate-100/70 transition-all cursor-pointer space-y-2 group"
+                  className="p-5 rounded-2xl border border-slate-200 hover:border-slate-300 bg-slate-50 hover:bg-slate-100/70 transition-colors cursor-pointer space-y-2 group"
                 >
                   <div className="flex items-center justify-between">
                     <span className="w-8 h-8 rounded-xl bg-white border border-slate-200 text-slate-700 flex items-center justify-center shadow-xs">
@@ -793,7 +793,7 @@ export default function QuestionBankDetailPage() {
                           required
                           aria-label={`Teks pilihan ${opt.id}`}
                           placeholder={`Isi pilihan ${opt.id}...`}
-                          className="flex-1 px-2.5 py-1 text-xs border-0 bg-transparent focus:outline-none text-slate-900 placeholder:text-slate-400 font-medium"
+                          className="flex-1 px-2.5 py-1 text-xs border-0 bg-transparent focus:outline-none text-slate-900 placeholder:text-slate-500 font-medium"
                         />
                       </div>
                     ))}

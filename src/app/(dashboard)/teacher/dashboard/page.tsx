@@ -159,7 +159,7 @@ export default function TeacherDashboardPage() {
           </Link>
           <Link
             href="/exams/create"
-            className="px-5 py-2.5 bg-white hover:bg-[#f1effa] text-[#150f23] font-bold text-xs rounded-xl transition-all shadow-card hover:shadow-card-hover flex items-center justify-center gap-2 cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-[#6a5fc1] focus:outline-none"
+            className="px-5 py-2.5 bg-white hover:bg-[#f1effa] text-[#150f23] font-bold text-xs rounded-xl transition-colors shadow-card hover:shadow-card-hover flex items-center justify-center gap-2 cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-[#6a5fc1] focus:outline-none"
           >
             <Plus className="w-4 h-4 text-[#150f23]" aria-hidden="true" />
             <span>Buat Paket Ujian</span>
@@ -354,7 +354,7 @@ export default function TeacherDashboardPage() {
                   <button
                     type="button"
                     onClick={() => setExamStatusFilter('all')}
-                    className={`px-3 py-1 rounded-lg transition-colors cursor-pointer ${
+                    className={`min-h-[44px] px-3 py-1 rounded-lg transition-colors cursor-pointer ${
                       examStatusFilter === 'all'
                         ? 'bg-white text-slate-900 shadow-2xs font-bold'
                         : 'text-slate-600 hover:text-slate-900'
@@ -365,7 +365,7 @@ export default function TeacherDashboardPage() {
                   <button
                     type="button"
                     onClick={() => setExamStatusFilter('in_progress')}
-                    className={`px-3 py-1 rounded-lg transition-colors cursor-pointer ${
+                    className={`min-h-[44px] px-3 py-1 rounded-lg transition-colors cursor-pointer ${
                       examStatusFilter === 'in_progress'
                         ? 'bg-white text-emerald-800 shadow-2xs font-bold'
                         : 'text-slate-600 hover:text-slate-900'
@@ -376,7 +376,7 @@ export default function TeacherDashboardPage() {
                   <button
                     type="button"
                     onClick={() => setExamStatusFilter('completed')}
-                    className={`px-3 py-1 rounded-lg transition-colors cursor-pointer ${
+                    className={`min-h-[44px] px-3 py-1 rounded-lg transition-colors cursor-pointer ${
                       examStatusFilter === 'completed'
                         ? 'bg-white text-violet-800 shadow-2xs font-bold'
                         : 'text-slate-600 hover:text-slate-900'

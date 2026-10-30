@@ -142,7 +142,7 @@ export default function QuestionExplanationChat({
         <button
           onClick={() => setIsOpen(!isOpen)}
           type="button"
-          className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer shadow-xs ${
+          className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer shadow-xs ${
             isOpen
               ? 'bg-violet-600 text-white font-bold'
               : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200'
@@ -301,7 +301,7 @@ export default function QuestionExplanationChat({
                   : 'Tanyakan kenapa jawabanmu salah atau konsepnya...'
               }
               disabled={isLoading}
-              className="flex-1 px-3 py-2 rounded-lg bg-white border border-slate-300 focus:border-violet-600 focus:ring-2 focus:ring-violet-500/20 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none transition-all shadow-xs"
+              className="flex-1 px-3 py-2 rounded-lg bg-white border border-slate-300 focus:border-violet-600 focus:ring-2 focus:ring-violet-500/20 text-xs text-slate-900 placeholder:text-slate-500 focus:outline-none transition-colors shadow-xs"
             />
             <button
               type="button"

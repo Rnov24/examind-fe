@@ -11,6 +11,8 @@ import {
   AlertTriangle,
   Lightbulb,
   Sparkles,
+  Check,
+  X,
 } from 'lucide-react'
 import api from '@/lib/api'
 import QuestionExplanationChat from '@/components/student/QuestionExplanationChat'
@@ -149,12 +151,12 @@ export default function ExamResultPage() {
           <div className="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 border border-amber-200 mx-auto flex items-center justify-center shadow-xs">
             <AlertTriangle className="w-7 h-7" />
           </div>
-          <h2 className="font-display text-xl font-bold text-slate-900">Hasil Ujian Belum Tersedia</h2>
+          <h1 className="font-display text-xl font-bold text-slate-900">Hasil Ujian Belum Tersedia</h1>
           <p className="text-xs text-slate-500 max-w-sm mx-auto leading-relaxed">{loadError}</p>
           <button
             type="button"
             onClick={loadResult}
-            className="px-4 py-2 rounded-lg bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-xs transition-colors cursor-pointer"
+            className="min-h-[44px] px-4 py-2 rounded-lg bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-xs transition-colors cursor-pointer"
           >
             Coba Lagi
           </button>
@@ -471,8 +473,8 @@ export default function ExamResultPage() {
                                       : 'bg-rose-50/80 border-rose-200 text-rose-900'
                                   }`}
                                 >
-                                  <span className="font-bold shrink-0">
-                                    {isPass ? '✅' : '❌'}
+                                  <span className="font-bold shrink-0 flex items-center">
+                                    {isPass ? <Check className="w-4 h-4 text-emerald-600" aria-hidden="true" /> : <X className="w-4 h-4 text-rose-600" aria-hidden="true" />}
                                   </span>
                                   <div>
                                     <span className="font-semibold">{ev.statement}</span>

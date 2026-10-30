@@ -184,7 +184,7 @@ export default function AdminDashboardPage() {
               setFormErrorMessage('')
               setShowAddUserModal(true)
             }}
-            className="px-5 py-2.5 rounded-full bg-white hover:bg-[#f1effa] text-[#150f23] font-bold text-xs shadow-card hover:shadow-card-hover flex items-center justify-center gap-2 transition-all cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-[#6a5fc1] focus:outline-none"
+            className="min-h-[44px] px-5 py-2.5 rounded-full bg-white hover:bg-[#f1effa] text-[#150f23] font-bold text-xs shadow-card hover:shadow-card-hover flex items-center justify-center gap-2 transition-colors cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-[#6a5fc1] focus:outline-none"
           >
             <UserPlus className="w-4 h-4 text-[#150f23]" aria-hidden="true" />
             <span>Tambah Pengguna</span>
@@ -329,15 +329,15 @@ export default function AdminDashboardPage() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <StatCard
           title="Total Akun Pengguna"
-          value={stats.total_users}
+          value={isLoadingStats ? '—' : stats.total_users}
           icon={<Users className="w-5 h-5 text-violet-600" aria-hidden="true" />}
           tone="violet"
-          subtitle={`${stats.total_teachers} Guru • ${stats.total_students} Siswa`}
+          subtitle={isLoadingStats ? 'Memuat data…' : `${stats.total_teachers} Guru • ${stats.total_students} Siswa`}
           className="h-full"
         />
         <StatCard
           title="Kelas & Rombel Belajar"
-          value={`${stats.total_classes} Rombel`}
+          value={isLoadingStats ? '—' : `${stats.total_classes} Rombel`}
           icon={<GraduationCap className="w-5 h-5 text-azure-700" aria-hidden="true" />}
           tone="azure"
           subtitle="Struktur akademik sekolah"
@@ -345,10 +345,10 @@ export default function AdminDashboardPage() {
         />
         <StatCard
           title="Paket Ujian Sekolah"
-          value={`${stats.total_exams} Paket`}
+          value={isLoadingStats ? '—' : `${stats.total_exams} Paket`}
           icon={<FileSpreadsheet className="w-5 h-5 text-emerald-700" aria-hidden="true" />}
           tone="emerald"
-          subtitle={`${stats.total_question_banks} Master Bank Soal`}
+          subtitle={isLoadingStats ? 'Memuat data…' : `${stats.total_question_banks} Master Bank Soal`}
           className="h-full"
         />
       </div>
@@ -441,7 +441,7 @@ export default function AdminDashboardPage() {
                   <TableRow key={usr.id}>
                     <TableCell className="px-6 py-4">
                       <div className="flex items-center gap-3 min-w-0">
-                        <div className="w-9 h-9 rounded-xl bg-[#f1effa] text-[#584dae] border border-[#ddd9ef] flex items-center justify-center font-bold text-xs font-mono shadow-xs shrink-0">
+                        <div className="w-9 h-9 rounded-xl bg-[#f1effa] text-[#6a5fc1] border border-[#ddd9ef] flex items-center justify-center font-bold text-xs font-mono shadow-xs shrink-0">
                           {usr.full_name?.charAt(0) || 'U'}
                         </div>
                         <div className="min-w-0 max-w-xs">

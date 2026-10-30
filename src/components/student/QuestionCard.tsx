@@ -69,7 +69,7 @@ export default function QuestionCard({
   return (
     <article
       key={question.id}
-      className="bg-white rounded-2xl border border-slate-200/90 shadow-card flex flex-col justify-between overflow-hidden relative min-h-[580px] transition-all duration-150 animate-in fade-in duration-150"
+      className="bg-white rounded-2xl border border-slate-200/90 shadow-card flex flex-col justify-between overflow-hidden relative min-h-[580px] transition-colors duration-150 animate-in fade-in duration-150"
       aria-label={`Butir Soal Nomor ${currentIndex + 1} dari ${totalQuestions}`}
     >
       {/* Top state hairline indicator */}
@@ -143,7 +143,7 @@ export default function QuestionCard({
             onClick={onToggleDoubt}
             aria-pressed={isDoubt}
             title={isDoubt ? 'Batalkan tanda ragu-ragu (Shortcut: R)' : 'Tandai soal ini sebagai ragu-ragu (Shortcut: R)'}
-            className={`px-3.5 py-1.5 rounded-xl border text-xs font-semibold font-mono flex items-center gap-1.5 cursor-pointer transition-all shadow-2xs select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50 active:scale-95 ${
+            className={`px-3.5 py-1.5 rounded-xl border text-xs font-semibold font-mono flex items-center gap-1.5 cursor-pointer transition-[color,background-color,border-color,transform] shadow-2xs select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50 active:scale-95 ${
               isDoubt
                 ? 'bg-amber-500 hover:bg-amber-600 text-white border-amber-600 font-bold'
                 : 'bg-white hover:bg-amber-50/80 text-slate-700 hover:text-amber-900 border-slate-300 hover:border-amber-300'
@@ -213,7 +213,7 @@ export default function QuestionCard({
                         onSelectOption(opt.id)
                       }
                     }}
-                    className={`flex items-start justify-between gap-4 p-4 sm:p-4.5 rounded-2xl border transition-all duration-150 cursor-pointer select-none group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#150f23] focus-visible:ring-offset-2 active:scale-[0.99] ${
+                    className={`flex items-start justify-between gap-4 p-4 sm:p-4.5 rounded-2xl border transition-[color,background-color,border-color,transform] duration-150 cursor-pointer select-none group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#150f23] focus-visible:ring-offset-2 active:scale-[0.99] ${
                       isSelected
                         ? 'bg-[#150f23] border-[#150f23] text-white shadow-card-hover -translate-y-0.5'
                         : 'bg-white border-slate-200/90 hover:border-slate-300 hover:bg-slate-50/80 text-slate-800 shadow-xs'
@@ -221,7 +221,7 @@ export default function QuestionCard({
                   >
                     <div className="flex items-start gap-3.5">
                       <div
-                        className={`w-9 h-9 rounded-xl font-black text-sm flex items-center justify-center shrink-0 transition-all font-mono ${
+                        className={`w-9 h-9 rounded-xl font-black text-sm flex items-center justify-center shrink-0 transition-colors font-mono ${
                           isSelected
                             ? 'bg-[#c2ef4e] text-slate-950 shadow-xs'
                             : 'bg-slate-100 text-slate-700 border border-slate-200 group-hover:bg-slate-200 group-hover:text-slate-900'
@@ -282,7 +282,7 @@ export default function QuestionCard({
                 rows={9}
                 aria-label={`Lembar jawaban esai nomor ${currentIndex + 1}`}
                 placeholder="Tuliskan argumen, analisis, dan penjelasan konsep Anda secara runtut dan komprehensif..."
-                className="w-full bg-white border border-slate-300 rounded-2xl p-5 text-sm sm:text-base text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-[#150f23] focus:ring-2 focus:ring-[#150f23]/10 transition-all font-sans leading-relaxed resize-y shadow-xs"
+                className="w-full bg-white border border-slate-300 rounded-2xl p-5 text-sm sm:text-base text-slate-900 placeholder:text-slate-500 focus:outline-none focus:bg-white focus:border-[#150f23] focus:ring-2 focus:ring-[#150f23]/10 transition-colors font-sans leading-relaxed resize-y shadow-xs"
               />
               <div className="flex items-center justify-between text-[11px] text-slate-500 font-mono">
                 <span className="flex items-center gap-1.5">
@@ -303,7 +303,7 @@ export default function QuestionCard({
           onClick={onPrev}
           disabled={currentIndex === 0}
           title="Ke butir soal sebelumnya (Shortcut: ← atau P)"
-          className="px-5 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-white text-slate-700 font-bold text-xs transition-all flex items-center gap-2 cursor-pointer shadow-xs disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-[#150f23] font-mono active:scale-95"
+          className="px-5 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-white text-slate-700 font-bold text-xs transition-[color,background-color,border-color,transform] flex items-center gap-2 cursor-pointer shadow-xs disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-[#150f23] font-mono active:scale-95"
         >
           <ChevronLeft className="w-4 h-4" aria-hidden="true" />
           <span>Sebelumnya</span>
@@ -341,7 +341,7 @@ export default function QuestionCard({
           onClick={onNext}
           disabled={currentIndex === totalQuestions - 1}
           title="Ke butir soal selanjutnya (Shortcut: → atau N)"
-          className="px-6 py-2.5 rounded-xl bg-[#150f23] hover:bg-slate-800 disabled:opacity-40 text-white font-bold text-xs shadow-card hover:shadow-card-hover transition-all flex items-center gap-2 cursor-pointer font-mono disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6a5fc1] group active:scale-95"
+          className="px-6 py-2.5 rounded-xl bg-[#150f23] hover:bg-slate-800 disabled:opacity-40 text-white font-bold text-xs shadow-card hover:shadow-card-hover transition-[color,background-color,border-color,box-shadow,transform] flex items-center gap-2 cursor-pointer font-mono disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6a5fc1] group active:scale-95"
         >
           <span>Selanjutnya</span>
           <kbd className="hidden sm:inline-block text-[10px] text-slate-400 bg-slate-800 px-1 py-0.2 rounded border border-slate-700">

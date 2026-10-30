@@ -495,7 +495,7 @@ export default function ExamWorkspacePage() {
     isDoubt: boolean
   ) {
     let classes =
-      'relative h-11 rounded-xl text-xs font-mono transition-all duration-150 flex items-center justify-center border cursor-pointer select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#150f23] active:scale-95 '
+      'relative h-11 rounded-xl text-xs font-mono transition-[color,background-color,border-color,transform] duration-150 flex items-center justify-center border cursor-pointer select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#150f23] active:scale-95 '
 
     if (isCurrent) {
       classes += 'ring-2 ring-[#150f23] ring-offset-2 scale-105 z-10 shadow-md font-black '
@@ -671,7 +671,7 @@ export default function ExamWorkspacePage() {
                 <button
                   type="button"
                   onClick={() => setShowQrModal(true)}
-                  className={`px-2 py-1 rounded-lg text-xs font-bold flex items-center gap-1.5 border transition-all cursor-pointer shadow-xs ${
+                  className={`px-2 py-1 rounded-lg text-xs font-bold flex items-center gap-1.5 border transition-colors cursor-pointer shadow-xs ${
                     proctoringStore.companionPaired
                       ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
                       : 'bg-amber-50 border-amber-300 text-amber-800 hover:bg-amber-100'
@@ -691,7 +691,7 @@ export default function ExamWorkspacePage() {
           <button
             type="button"
             onClick={() => setShowSubmitModal(true)}
-            className="px-3.5 sm:px-4 py-2 rounded-xl bg-[#150f23] hover:bg-slate-800 text-white font-bold text-xs shadow-card hover:shadow-card-hover transition-all flex items-center gap-1.5 sm:gap-2 cursor-pointer font-display tracking-wide focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6a5fc1]"
+            className="px-3.5 sm:px-4 py-2 rounded-xl bg-[#150f23] hover:bg-slate-800 text-white font-bold text-xs shadow-card hover:shadow-card-hover transition-[color,background-color,border-color,box-shadow] flex items-center gap-1.5 sm:gap-2 cursor-pointer font-display tracking-wide focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6a5fc1]"
           >
             <CheckCircle2 className="w-4 h-4 text-[#c2ef4e]" aria-hidden="true" />
             <span>Kumpulkan</span>
@@ -772,7 +772,7 @@ export default function ExamWorkspacePage() {
                 </div>
               ) : (
                 /* Expanded Video Tile */
-                <div className="rounded-2xl overflow-hidden border border-slate-200/90 bg-slate-900 aspect-video relative shadow-card group transition-all">
+                <div className="rounded-2xl overflow-hidden border border-slate-200/90 bg-slate-900 aspect-video relative shadow-card group transition-colors">
                   <video
                     ref={videoPreviewRef}
                     className="w-full h-full object-cover"
@@ -815,7 +815,7 @@ export default function ExamWorkspacePage() {
                         <button
                           type="button"
                           onClick={() => setShowQrModal(true)}
-                          className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold flex items-center gap-1 transition-all cursor-pointer backdrop-blur-md border shadow-xs ${
+                          className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold flex items-center gap-1 transition-colors cursor-pointer backdrop-blur-md border shadow-xs ${
                             proctoringStore.companionPaired
                               ? 'bg-emerald-950/80 text-emerald-300 border-emerald-500/30'
                               : 'bg-amber-950/80 text-amber-300 border-amber-500/30 hover:bg-amber-900/90'
@@ -874,7 +874,7 @@ export default function ExamWorkspacePage() {
               <div className="space-y-1.5">
                 <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden border border-slate-200/60">
                   <div
-                    className="bg-emerald-500 h-2 rounded-full transition-all duration-300"
+                    className="bg-emerald-500 h-2 rounded-full transition-colors duration-300"
                     style={{
                       width: `${
                         examStore.totalQuestions > 0
@@ -891,7 +891,7 @@ export default function ExamWorkspacePage() {
                 <button
                   type="button"
                   onClick={() => setNavigatorFilter('all')}
-                  className={`flex-1 py-1 rounded-lg font-bold transition-all cursor-pointer ${
+                  className={`flex-1 py-1 rounded-lg font-bold transition-colors cursor-pointer ${
                     navigatorFilter === 'all'
                       ? 'bg-white text-slate-900 shadow-2xs'
                       : 'text-slate-600 hover:text-slate-900'
@@ -902,7 +902,7 @@ export default function ExamWorkspacePage() {
                 <button
                   type="button"
                   onClick={() => setNavigatorFilter('unanswered')}
-                  className={`flex-1 py-1 rounded-lg font-bold transition-all cursor-pointer ${
+                  className={`flex-1 py-1 rounded-lg font-bold transition-colors cursor-pointer ${
                     navigatorFilter === 'unanswered'
                       ? 'bg-white text-rose-700 shadow-2xs'
                       : 'text-slate-600 hover:text-slate-900'
@@ -913,7 +913,7 @@ export default function ExamWorkspacePage() {
                 <button
                   type="button"
                   onClick={() => setNavigatorFilter('doubt')}
-                  className={`flex-1 py-1 rounded-lg font-bold transition-all cursor-pointer ${
+                  className={`flex-1 py-1 rounded-lg font-bold transition-colors cursor-pointer ${
                     navigatorFilter === 'doubt'
                       ? 'bg-white text-amber-800 shadow-2xs'
                       : 'text-slate-600 hover:text-slate-900'
@@ -986,8 +986,8 @@ export default function ExamWorkspacePage() {
               {/* Comprehensive Legend: Unmistakable 4 states */}
               <div className="grid grid-cols-2 gap-2 pt-3 border-t border-slate-100 text-[11px] font-mono text-slate-600">
                 <div className="flex items-center gap-2">
-                  <span className="w-3.5 h-3.5 rounded-md bg-emerald-50 border border-emerald-300 text-emerald-800 shrink-0 flex items-center justify-center font-bold text-[9px]">
-                    ✓
+                  <span className="w-3.5 h-3.5 rounded-md bg-emerald-50 border border-emerald-300 text-emerald-800 shrink-0 flex items-center justify-center">
+                    <Check className="w-2.5 h-2.5" aria-hidden="true" />
                   </span>
                   <span>Terjawab</span>
                 </div>
@@ -1030,7 +1030,7 @@ export default function ExamWorkspacePage() {
           type="button"
           onClick={prevQuestion}
           disabled={examStore.currentIndex === 0}
-          className="min-h-[44px] px-3 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-30 text-slate-700 font-bold text-xs flex items-center justify-center gap-1 font-mono transition-all active:scale-95 cursor-pointer disabled:cursor-not-allowed"
+          className="min-h-[44px] px-3 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-30 text-slate-700 font-bold text-xs flex items-center justify-center gap-1 font-mono transition-[color,background-color,border-color,transform] active:scale-95 cursor-pointer disabled:cursor-not-allowed"
         >
           <ChevronLeft className="w-4 h-4" aria-hidden="true" />
           <span>Sebelumnya</span>
@@ -1039,7 +1039,7 @@ export default function ExamWorkspacePage() {
         <button
           type="button"
           onClick={() => setShowMobileNavigator(true)}
-          className="min-h-[44px] px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200/80 border border-slate-300 text-slate-900 font-mono font-bold text-xs flex items-center justify-center gap-1.5 shadow-2xs transition-all cursor-pointer active:scale-95"
+          className="min-h-[44px] px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200/80 border border-slate-300 text-slate-900 font-mono font-bold text-xs flex items-center justify-center gap-1.5 shadow-2xs transition-[color,background-color,border-color,transform] cursor-pointer active:scale-95"
         >
           <LayoutGrid className="w-3.5 h-3.5 text-slate-700" aria-hidden="true" />
           <span>Soal {examStore.currentIndex + 1} / {examStore.totalQuestions}</span>
@@ -1049,7 +1049,7 @@ export default function ExamWorkspacePage() {
           type="button"
           onClick={nextQuestion}
           disabled={examStore.currentIndex === examStore.totalQuestions - 1}
-          className="min-h-[44px] px-3.5 py-2 rounded-xl bg-[#150f23] hover:bg-slate-800 disabled:opacity-30 text-white font-bold text-xs flex items-center justify-center gap-1 font-mono transition-all active:scale-95 cursor-pointer disabled:cursor-not-allowed"
+          className="min-h-[44px] px-3.5 py-2 rounded-xl bg-[#150f23] hover:bg-slate-800 disabled:opacity-30 text-white font-bold text-xs flex items-center justify-center gap-1 font-mono transition-[color,background-color,border-color,transform] active:scale-95 cursor-pointer disabled:cursor-not-allowed"
         >
           <span>Selanjutnya</span>
           <ChevronRight className="w-4 h-4 text-[#c2ef4e]" aria-hidden="true" />
@@ -1160,8 +1160,8 @@ export default function ExamWorkspacePage() {
             {/* Legend on Mobile */}
             <div className="grid grid-cols-2 gap-2 pt-3 border-t border-slate-100 text-[11px] font-mono text-slate-600">
               <div className="flex items-center gap-2">
-                <span className="w-3.5 h-3.5 rounded-md bg-emerald-50 border border-emerald-300 text-emerald-800 flex items-center justify-center font-bold text-[9px]">
-                  ✓
+                <span className="w-3.5 h-3.5 rounded-md bg-emerald-50 border border-emerald-300 text-emerald-800 flex items-center justify-center">
+                  <Check className="w-2.5 h-2.5" aria-hidden="true" />
                 </span>
                 <span>Terjawab</span>
               </div>
@@ -1419,7 +1419,7 @@ export default function ExamWorkspacePage() {
             <button
               type="button"
               onClick={enterFullscreenAndStart}
-              className="w-full py-3.5 px-6 rounded-xl bg-[#150f23] hover:bg-slate-800 text-white font-bold text-xs sm:text-sm shadow-card hover:shadow-card-hover transition-all flex items-center justify-center gap-2 cursor-pointer font-display tracking-wide group"
+              className="w-full py-3.5 px-6 rounded-xl bg-[#150f23] hover:bg-slate-800 text-white font-bold text-xs sm:text-sm shadow-card hover:shadow-card-hover transition-[color,background-color,border-color,box-shadow] flex items-center justify-center gap-2 cursor-pointer font-display tracking-wide group"
             >
               <Maximize
                 className="w-4 h-4 text-[#c2ef4e] group-hover:scale-110 transition-transform"

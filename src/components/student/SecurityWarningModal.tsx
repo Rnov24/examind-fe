@@ -64,7 +64,7 @@ export default function SecurityWarningModal({
           <button
             type="button"
             onClick={onReEnterFullscreen}
-            className="flex-1 py-3 px-5 rounded-xl bg-[#150f23] hover:bg-slate-800 text-white font-bold text-xs shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 font-display focus:ring-2 focus:ring-[#6a5fc1]/30 focus:outline-none"
+            className="flex-1 py-3 px-5 rounded-xl bg-[#150f23] hover:bg-slate-800 text-white font-bold text-xs shadow-md transition-colors cursor-pointer flex items-center justify-center gap-2 font-display focus:ring-2 focus:ring-[#6a5fc1]/30 focus:outline-none"
           >
             <Maximize className="w-4 h-4 text-[#c2ef4e]" aria-hidden="true" />
             <span>Kembali ke Layar Penuh</span>

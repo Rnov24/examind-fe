@@ -75,7 +75,7 @@ export function StatCard({
         tokens.border.default,
         'p-5',
         tokens.shadow.cardHover,
-        'transition-all flex flex-col justify-between',
+        'transition-colors flex flex-col justify-between',
         toneBorderClass,
         className
       )}

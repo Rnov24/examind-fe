@@ -187,7 +187,7 @@ export default function ExamCreatePage() {
           <button
             type="button"
             onClick={() => setCurrentStep(1)}
-            className={`p-3 rounded-xl border text-left transition-all cursor-pointer flex items-center gap-3 ${
+            className={`p-3 rounded-xl border text-left transition-colors cursor-pointer flex items-center gap-3 ${
               currentStep === 1
                 ? 'bg-slate-900 text-white border-slate-900 shadow-md'
                 : 'bg-emerald-50/60 border-emerald-200 text-slate-700 hover:bg-emerald-50'
@@ -222,7 +222,7 @@ export default function ExamCreatePage() {
             onClick={() => {
               if (validateStep1()) setCurrentStep(2)
             }}
-            className={`p-3 rounded-xl border text-left transition-all cursor-pointer flex items-center gap-3 ${
+            className={`p-3 rounded-xl border text-left transition-colors cursor-pointer flex items-center gap-3 ${
               currentStep === 2
                 ? 'bg-slate-900 text-white border-slate-900 shadow-md'
                 : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
@@ -248,8 +248,8 @@ export default function ExamCreatePage() {
           </button>
 
           {/* Step 3 Pill (Future step on /exams/[id]) */}
-          <div className="p-3 rounded-xl border border-dashed border-slate-200 bg-slate-50/50 text-slate-400 flex items-center gap-3 select-none">
-            <div className="w-7 h-7 rounded-lg bg-slate-200 text-slate-400 font-mono font-bold text-xs flex items-center justify-center shrink-0">
+          <div className="p-3 rounded-xl border border-dashed border-slate-200 bg-slate-50/50 text-slate-600 flex items-center gap-3 select-none">
+            <div className="w-7 h-7 rounded-lg bg-slate-200 text-slate-600 font-mono font-bold text-xs flex items-center justify-center shrink-0">
               3
             </div>
             <div className="min-w-0">
@@ -306,7 +306,7 @@ export default function ExamCreatePage() {
                   type="text"
                   required
                   placeholder="Contoh: Penilaian Harian Bersama Fisika Kuantum XII MIPA"
-                  className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-sm font-semibold focus:bg-white focus:ring-2 focus:ring-[#6a5fc1]/40 focus:border-slate-900 outline-none placeholder:text-slate-400 transition-all"
+                  className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-sm font-semibold focus:bg-white focus:ring-2 focus:ring-[#6a5fc1]/40 focus:border-slate-900 outline-none placeholder:text-slate-500 transition-colors"
                 />
               </div>
 
@@ -319,7 +319,7 @@ export default function ExamCreatePage() {
                   onChange={(e) => setDescription(e.target.value)}
                   rows={3}
                   placeholder="Contoh: Bacalah setiap butir soal dengan teliti. Dilarang membuka tab lain selama ujian..."
-                  className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-xs font-normal focus:bg-white focus:ring-2 focus:ring-[#6a5fc1]/40 focus:border-slate-900 outline-none placeholder:text-slate-400 transition-all"
+                  className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-xs font-normal focus:bg-white focus:ring-2 focus:ring-[#6a5fc1]/40 focus:border-slate-900 outline-none placeholder:text-slate-500 transition-colors"
                 />
               </div>
 
@@ -373,7 +373,7 @@ export default function ExamCreatePage() {
                     role="radio"
                     aria-checked={examMode === 'live'}
                     onClick={() => setExamMode('live')}
-                    className={`flex items-start gap-3 p-4 rounded-xl border text-left cursor-pointer transition-all select-none ${
+                    className={`flex items-start gap-3 p-4 rounded-xl border text-left cursor-pointer transition-colors select-none ${
                       examMode === 'live'
                         ? 'bg-white border-[#150f23] shadow-sm ring-1 ring-[#150f23]'
                         : 'bg-white/70 border-slate-200 hover:border-slate-300 text-slate-700'
@@ -394,7 +394,7 @@ export default function ExamCreatePage() {
                     role="radio"
                     aria-checked={examMode === 'non_live'}
                     onClick={() => setExamMode('non_live')}
-                    className={`flex items-start gap-3 p-4 rounded-xl border text-left cursor-pointer transition-all select-none ${
+                    className={`flex items-start gap-3 p-4 rounded-xl border text-left cursor-pointer transition-colors select-none ${
                       examMode === 'non_live'
                         ? 'bg-white border-[#150f23] shadow-sm ring-1 ring-[#150f23]'
                         : 'bg-white/70 border-slate-200 hover:border-slate-300 text-slate-700'
@@ -456,7 +456,7 @@ export default function ExamCreatePage() {
                 <button
                   type="button"
                   onClick={handleGoToStep2}
-                  className="px-6 py-2.5 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-card hover:shadow-card-hover transition-all flex items-center gap-2 cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
+                  className="min-h-[44px] px-6 py-2.5 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-card hover:shadow-card-hover transition-colors flex items-center gap-2 cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
                 >
                   <span>Lanjut ke Pengawasan & Kebijakan</span>
                   <ArrowRight className="w-4 h-4 text-[#c2ef4e]" aria-hidden="true" />
@@ -538,7 +538,7 @@ export default function ExamCreatePage() {
                     </label>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <label
-                        className={`flex items-start gap-3 p-4 rounded-xl border cursor-pointer transition-all select-none ${
+                        className={`flex items-start gap-3 p-4 rounded-xl border cursor-pointer transition-colors select-none ${
                           cameraMode === 'dual_camera'
                             ? 'bg-white border-[#150f23] shadow-sm ring-1 ring-[#150f23]'
                             : 'bg-white/70 border-slate-200 hover:border-slate-300 text-slate-700'
@@ -567,7 +567,7 @@ export default function ExamCreatePage() {
                       </label>
 
                       <label
-                        className={`flex items-start gap-3 p-4 rounded-xl border cursor-pointer transition-all select-none ${
+                        className={`flex items-start gap-3 p-4 rounded-xl border cursor-pointer transition-colors select-none ${
                           cameraMode === 'single_camera'
                             ? 'bg-white border-[#150f23] shadow-sm ring-1 ring-[#150f23]'
                             : 'bg-white/70 border-slate-200 hover:border-slate-300 text-slate-700'
@@ -664,7 +664,7 @@ export default function ExamCreatePage() {
                 <button
                   type="submit"
                   disabled={loading || !classId}
-                  className="px-6 py-2.5 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white text-xs font-bold shadow-card hover:shadow-card-hover disabled:opacity-50 cursor-pointer transition-all flex items-center gap-2 focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none font-display tracking-wide"
+                  className="px-6 py-2.5 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white text-xs font-bold shadow-card hover:shadow-card-hover disabled:opacity-50 cursor-pointer transition-colors flex items-center gap-2 focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none font-display tracking-wide"
                 >
                   {loading ? (
                     <>

@@ -62,14 +62,14 @@ function StepIndicator({ current }: { current: 1 | 2 | 3 }) {
                   ? 'bg-[#6a5fc1] text-white'
                   : active
                     ? 'bg-[#150f23] text-white'
-                    : 'bg-slate-100 text-slate-400'
+                    : 'bg-slate-100 text-slate-600'
               }`}
             >
               {done ? <Check className="h-3.5 w-3.5" aria-hidden="true" /> : n}
             </span>
             <span
               className={`whitespace-nowrap text-xs font-semibold ${
-                active ? 'text-[#150f23]' : 'text-slate-400'
+                active ? 'text-[#150f23]' : 'text-slate-600'
               } ${active ? '' : 'hidden sm:inline'}`}
             >
               {label}
@@ -623,14 +623,14 @@ function RegisterContent() {
                     type="text"
                     required
                     placeholder="XXXX-XXX-XXXXXX"
-                    className={`${authInputClass} pl-10 pr-24 font-mono text-sm font-bold uppercase tracking-wide`}
+                    className={`${authInputClass} py-3.5 pl-10 pr-24 font-mono text-sm font-bold uppercase tracking-wide`}
                   />
                   <KeyRound className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" aria-hidden="true" />
                   <button
                     type="button"
                     onClick={() => verifyCode(registrationCode, role, selectedTenantId)}
                     disabled={verifyingCode || !registrationCode.trim()}
-                    className="absolute right-1.5 top-1/2 flex h-8 -translate-y-1/2 cursor-pointer items-center rounded-lg bg-[#150f23] px-3 text-xs font-bold text-white transition-colors hover:bg-[#1f1633] disabled:opacity-40"
+                    className="absolute right-1.5 top-1/2 flex h-11 -translate-y-1/2 cursor-pointer items-center rounded-lg bg-[#150f23] px-3 text-xs font-bold text-white transition-colors hover:bg-[#1f1633] disabled:opacity-40"
                   >
                     {verifyingCode ? <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" /> : 'Verifikasi'}
                   </button>

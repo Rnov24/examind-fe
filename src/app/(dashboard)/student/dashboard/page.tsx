@@ -77,7 +77,7 @@ export default function StudentDashboardPage() {
         heroExam && !isLiveNotStarted(heroExam.exam_mode, heroExam.start_time) ? (
           <Link
             href={`/student/exam/${heroExam.id}`}
-            className="px-5 py-2.5 rounded-full bg-white hover:bg-[#f1effa] text-[#150f23] font-bold text-xs shadow-card hover:shadow-card-hover flex items-center justify-center gap-2 transition-all cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-[#6a5fc1] focus:outline-none"
+            className="px-5 py-2.5 rounded-full bg-white hover:bg-[#f1effa] text-[#150f23] font-bold text-xs shadow-card hover:shadow-card-hover flex items-center justify-center gap-2 transition-colors cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-[#6a5fc1] focus:outline-none"
           >
             <Eye className="w-4 h-4 text-[#150f23]" aria-hidden="true" />
             <span>Siapkan Kamera &amp; Mulai</span>
@@ -194,7 +194,7 @@ export default function StudentDashboardPage() {
                 ) : (
                   <Link
                     href={`/student/exam/${heroExam.id}`}
-                    className="px-6 py-3.5 rounded-xl bg-[#c2ef4e] hover:bg-[#b0df3f] text-slate-950 font-extrabold text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2.5 cursor-pointer font-display tracking-wide group focus:ring-2 focus:ring-white/40 focus:outline-none"
+                    className="px-6 py-3.5 rounded-xl bg-[#c2ef4e] hover:bg-[#b0df3f] text-slate-950 font-extrabold text-sm shadow-md hover:shadow-lg transition-colors flex items-center justify-center gap-2.5 cursor-pointer font-display tracking-wide group focus:ring-2 focus:ring-white/40 focus:outline-none"
                   >
                     <span>Mulai Ujian Sekarang</span>
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
@@ -219,7 +219,7 @@ export default function StudentDashboardPage() {
               icon={<FileText className="w-4 h-4 text-violet-600" aria-hidden="true" />}
               noPadding
               action={
-                <span className="text-xs font-mono font-bold text-[#584dae] bg-[#f1effa] px-2.5 py-1 rounded-lg border border-[#ddd9ef] tabular-nums">
+                <span className="text-xs font-mono font-bold text-[#6a5fc1] bg-[#f1effa] px-2.5 py-1 rounded-lg border border-[#ddd9ef] tabular-nums">
                   {otherExams.length} Paket
                 </span>
               }
@@ -234,7 +234,7 @@ export default function StudentDashboardPage() {
                     >
                     <div className="space-y-1.5 min-w-0 flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#f1effa] text-[#584dae] font-mono">
+                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#f1effa] text-[#6a5fc1] font-mono">
                           {exam.class_name}
                         </span>
                         <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-white text-slate-700 border border-slate-200 font-mono inline-flex items-center gap-1">
@@ -275,7 +275,7 @@ export default function StudentDashboardPage() {
                       ) : (
                         <Link
                           href={`/student/exam/${exam.id}`}
-                          className="px-4 py-2 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-xs transition-all flex items-center justify-center gap-1.5 w-full sm:w-auto cursor-pointer focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
+                          className="px-4 py-2 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-xs transition-colors flex items-center justify-center gap-1.5 w-full sm:w-auto cursor-pointer focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
                         >
                           <span>Mulai Ujian</span>
                           <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
@@ -303,7 +303,7 @@ export default function StudentDashboardPage() {
             action={
               <Button
                 variant="primary"
-                size="sm"
+                size="md"
                 onClick={loadActiveExams}
                 leftIcon={<RefreshCw className="w-3.5 h-3.5" aria-hidden="true" />}
               >

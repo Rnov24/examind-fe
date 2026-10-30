@@ -100,13 +100,13 @@ const variantStyles: Record<ButtonVariant, string> = {
  * Height & Padding Scale:
  * xs: 28px height, 10px px, 11px font
  * sm: 34px height, 14px px, 12px font
- * md: 40px height, 16px px, 13/14px font
+ * md: 44px height, 16px px, 13/14px font
  * lg: 48px height, 20px px, 14/15px font
  */
 const sizeStyles: Record<ButtonSize, string> = {
   xs: cn('h-7 px-2.5 text-[11px] font-bold gap-1.5', tokens.radius.md),
   sm: cn('h-8.5 px-3.5 text-xs font-bold gap-2', tokens.radius.lg),
-  md: cn('h-10 px-4 text-xs sm:text-sm font-bold gap-2', tokens.radius.lg),
+  md: cn('h-11 px-4 text-xs sm:text-sm font-bold gap-2', tokens.radius.lg),
   lg: cn('h-12 px-5 text-sm sm:text-base font-extrabold gap-2.5', tokens.radius.lg),
   'icon-xs': cn('h-7 w-7 p-0 justify-center', tokens.radius.md),
   'icon-sm': cn('h-8.5 w-8.5 p-0 justify-center', tokens.radius.lg),
@@ -140,7 +140,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         type={type}
         disabled={disabled || isLoading}
         className={cn(
-          'inline-flex items-center justify-center font-sans tracking-tight transition-all duration-150 ease-out select-none cursor-pointer',
+          'inline-flex items-center justify-center font-sans tracking-tight transition-colors duration-150 ease-out select-none cursor-pointer',
           'focus-visible:outline-none',
           'disabled:opacity-45 disabled:cursor-not-allowed disabled:pointer-events-none disabled:transform-none disabled:shadow-none',
           variantStyles[variant],

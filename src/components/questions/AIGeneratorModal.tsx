@@ -239,7 +239,7 @@ export default function AIGeneratorModal({
                 onChange={(e) => setTopicContent(e.target.value)}
                 rows={4}
                 placeholder="Ketik topik materi secara spesifik, contoh: Teori Kuantum Planck, Efek Fotolistrik Einstein, dan spektrum garis atom hidrogen..."
-                className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-sm font-medium focus:bg-white focus:ring-2 focus:ring-[#6a5fc1]/40 focus:border-slate-900 outline-none placeholder:text-slate-400"
+                className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-sm font-medium focus:bg-white focus:ring-2 focus:ring-[#6a5fc1]/40 focus:border-slate-900 outline-none placeholder:text-slate-500"
               />
             </div>
 
@@ -309,7 +309,7 @@ export default function AIGeneratorModal({
                   onBlur={handleApiKeyBlur}
                   type="password"
                   placeholder="Masukkan Google Gemini API Key (AIzaSy...)"
-                  className="w-full px-3 py-2 rounded-lg bg-white border border-slate-300 text-xs font-mono text-slate-900 focus:ring-2 focus:ring-[#6a5fc1]/25 focus:border-[#150f23] outline-none placeholder:text-slate-400 transition-all"
+                  className="w-full px-3 py-2 rounded-lg bg-white border border-slate-300 text-xs font-mono text-slate-900 focus:ring-2 focus:ring-[#6a5fc1]/25 focus:border-[#150f23] outline-none placeholder:text-slate-500 transition-colors"
                 />
                 <p className="text-[10px] text-slate-500 mt-1">
                   Dapatkan API Key gratis di{' '}

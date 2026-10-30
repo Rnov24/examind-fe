@@ -205,7 +205,7 @@ export default function Sidebar() {
                     href={item.href}
                     aria-label={item.label}
                     aria-current={active ? 'page' : undefined}
-                    className={`w-11 h-11 rounded-full flex items-center justify-center transition-all cursor-pointer ${
+                    className={`w-11 h-11 rounded-full flex items-center justify-center transition-colors cursor-pointer ${
                       active
                         ? 'bg-[#150f23] text-[#c2ef4e] shadow-sm ring-1 ring-slate-800'
                         : 'text-slate-400 hover:text-slate-900 hover:bg-[#f1effa]'
@@ -243,7 +243,7 @@ export default function Sidebar() {
                 onClick={() => setShowHelp(true)}
                 title="Bantuan & Dokumentasi"
                 aria-label="Bantuan & Dokumentasi"
-                className="w-10 h-10 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer"
+                className="w-11 h-11 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer"
               >
                 <HelpCircle className="w-5 h-5" aria-hidden="true" />
               </button>
@@ -263,7 +263,7 @@ export default function Sidebar() {
                 onClick={handleLogout}
                 title="Keluar dari Akun"
                 aria-label="Keluar dari Akun"
-                className="w-10 h-10 rounded-full flex items-center justify-center text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                className="w-11 h-11 rounded-full flex items-center justify-center text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
               >
                 <LogOut className="w-5 h-5" aria-hidden="true" />
               </button>
@@ -295,14 +295,14 @@ export default function Sidebar() {
           <aside
             id="sidebar-nav"
             aria-label="Menu Navigasi Lengkap"
-            className={`fixed md:sticky top-0 md:top-4 inset-y-0 md:inset-y-auto left-0 md:left-auto z-50 md:z-20 shrink-0 md:my-4 md:ml-4 w-72 h-full ${panelHeightClass} bg-white md:rounded-3xl border-r md:border border-[#ddd9ef] shadow-2xl md:shadow-card flex flex-col justify-between p-4 overflow-y-auto text-slate-800 select-none transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]`}
+            className={`fixed md:sticky top-0 md:top-4 inset-y-0 md:inset-y-auto left-0 md:left-auto z-50 md:z-20 shrink-0 md:my-4 md:ml-4 w-72 h-full ${panelHeightClass} bg-white md:rounded-3xl border-r md:border border-[#ddd9ef] shadow-2xl md:shadow-card flex flex-col justify-between p-4 overflow-y-auto text-slate-800 select-none transition-colors duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]`}
           >
             <div className="space-y-4">
               {/* Header with Brand & Close Button */}
               <div className="flex items-center justify-between pb-3 border-b border-[#e9e5f6]">
                 <Link href="/dashboard" className="flex items-center gap-2 group" onClick={handleNavClick}>
                   <ExamindLogo variant="lockup" theme="color" className="h-6 w-auto shrink-0" priority />
-                  <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-[#f1effa] text-[#584dae] border border-[#c9c2ec] font-mono tracking-wider">
+                  <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-[#f1effa] text-[#6a5fc1] border border-[#c9c2ec] font-mono tracking-wider">
                     CBT
                   </span>
                 </Link>
@@ -342,7 +342,7 @@ export default function Sidebar() {
                           title={item.label}
                           aria-label={item.label}
                           aria-current={active ? 'page' : undefined}
-                          className={`group flex items-center justify-between px-3 py-2.5 rounded-xl text-xs transition-all ${
+                          className={`group flex items-center justify-between px-3 py-2.5 rounded-xl text-xs transition-colors ${
                             active
                               ? 'bg-[#150f23] text-white font-semibold shadow-card ring-1 ring-slate-800'
                               : 'text-slate-600 hover:bg-[#f1effa] hover:text-slate-900 font-medium'

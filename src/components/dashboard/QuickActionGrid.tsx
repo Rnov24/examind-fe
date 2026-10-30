@@ -27,7 +27,7 @@ export function QuickActionGrid({ items, className = '' }: QuickActionGridProps)
         tokens.border.default,
         'p-1',
         tokens.shadow.cardHover,
-        'transition-all',
+        'transition-colors',
         className
       )}
     >

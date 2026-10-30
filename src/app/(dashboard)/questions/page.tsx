@@ -191,7 +191,7 @@ export default function QuestionBankPage() {
               setCreateError(null)
               setShowCreateModal(true)
             }}
-            className="flex-1 sm:flex-none min-h-[44px] px-5 py-2.5 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-card hover:shadow-card-hover transition-all flex items-center justify-center gap-2 cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
+            className="flex-1 sm:flex-none min-h-[44px] px-5 py-2.5 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-card hover:shadow-card-hover transition-colors flex items-center justify-center gap-2 cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
           >
             <Plus className="w-4 h-4 text-[#c2ef4e]" aria-hidden="true" />
             <span>Buat Bank Soal</span>
@@ -200,7 +200,7 @@ export default function QuestionBankPage() {
       </div>
 
       {/* Prominent AI Generator Spotlight Card */}
-      <div className="bg-gradient-to-r from-[#150f23] via-[#1c1430] to-[#241a3e] rounded-2xl p-5 sm:p-6 text-white border border-slate-800 shadow-card relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-5">
+      <div className="bg-[#150f23] rounded-2xl p-5 sm:p-6 text-white border border-slate-800 shadow-card relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-5">
         <div className="space-y-2 relative z-10 max-w-xl">
           <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/10 backdrop-blur-md text-[11px] font-bold text-[#c2ef4e] font-mono border border-white/15">
             <Sparkles className="w-3.5 h-3.5 text-[#c2ef4e]" aria-hidden="true" />
@@ -217,7 +217,7 @@ export default function QuestionBankPage() {
         <div className="relative z-10 shrink-0 w-full md:w-auto">
           <button
             onClick={handleOpenAIStudio}
-            className="w-full md:w-auto min-h-[44px] px-5 py-3 rounded-xl bg-[#c2ef4e] hover:bg-[#b0dc3d] text-slate-950 font-bold text-xs shadow-card transition-all flex items-center justify-center gap-2 cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-[#c2ef4e]/30 focus:outline-none"
+            className="w-full md:w-auto min-h-[44px] px-5 py-3 rounded-xl bg-[#c2ef4e] hover:bg-[#b0dc3d] text-slate-950 font-bold text-xs shadow-card transition-colors flex items-center justify-center gap-2 cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-[#c2ef4e]/30 focus:outline-none"
           >
             <Sparkles className="w-4 h-4 text-slate-950" aria-hidden="true" />
             <span>Generate Soal dengan AI</span>
@@ -235,7 +235,7 @@ export default function QuestionBankPage() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Cari bank soal berdasarkan judul, mata pelajaran, atau deskripsi..."
-            className="w-full pl-10 pr-9 py-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium placeholder:text-slate-400 focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-[#6a5fc1]/40 outline-none transition-all"
+            className="w-full pl-10 pr-9 py-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium placeholder:text-slate-500 focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-[#6a5fc1]/40 outline-none transition-colors"
           />
           {searchQuery && (
             <button
@@ -310,7 +310,7 @@ export default function QuestionBankPage() {
           {filteredBanks.map((b) => (
             <div
               key={b.id}
-              className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/80 shadow-card hover:shadow-card-hover transition-all flex flex-col justify-between group"
+              className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/80 shadow-card hover:shadow-card-hover transition-[color,background-color,border-color,box-shadow] flex flex-col justify-between group"
             >
               <div>
                 <div className="flex items-center justify-between mb-3">
@@ -338,7 +338,7 @@ export default function QuestionBankPage() {
                     setSelectedBankForAI(b)
                     setShowAIModal(true)
                   }}
-                  className="px-3 py-1.5 rounded-xl bg-violet-50 hover:bg-violet-100 text-violet-700 font-bold text-[11px] border border-violet-200 transition-colors flex items-center gap-1.5 shadow-2xs focus:ring-2 focus:ring-violet-500/20 focus:outline-none cursor-pointer"
+                  className="min-h-[44px] px-3 py-1.5 rounded-xl bg-violet-50 hover:bg-violet-100 text-violet-700 font-bold text-[11px] border border-violet-200 transition-colors flex items-center gap-1.5 shadow-2xs focus:ring-2 focus:ring-violet-500/20 focus:outline-none cursor-pointer"
                   title="Generate soal AI untuk bank ini"
                 >
                   <Sparkles className="w-3 h-3 text-violet-600" aria-hidden="true" />
@@ -347,7 +347,7 @@ export default function QuestionBankPage() {
 
                 <Link
                   href={`/questions/${b.id}`}
-                  className="px-3.5 py-1.5 rounded-xl bg-white hover:bg-[#f1effa] text-slate-700 font-bold text-xs border border-slate-200 hover:border-slate-300 transition-colors flex items-center gap-1.5 shadow-xs focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
+                  className="min-h-[44px] px-3.5 py-1.5 rounded-xl bg-white hover:bg-[#f1effa] text-slate-700 font-bold text-xs border border-slate-200 hover:border-slate-300 transition-colors flex items-center gap-1.5 shadow-xs focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
                 >
                   <span>Buka Bank Soal</span>
                   <ArrowRight className="w-3.5 h-3.5 text-slate-500" aria-hidden="true" />
@@ -433,7 +433,7 @@ export default function QuestionBankPage() {
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(true)}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-card hover:shadow-card-hover transition-all cursor-pointer font-display focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-card hover:shadow-card-hover transition-colors cursor-pointer font-display focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
                 >
                   <Plus className="w-4 h-4 text-[#c2ef4e]" aria-hidden="true" />
                   <span>Buat Bank Soal Pertama</span>

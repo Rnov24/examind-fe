@@ -130,7 +130,7 @@ export default function ExamSubmitModal({
             type="button"
             onClick={onConfirm}
             disabled={isSubmitting}
-            className="min-h-[44px] px-5 py-2.5 rounded-xl bg-[#150f23] hover:bg-slate-800 disabled:opacity-50 text-white font-bold text-xs shadow-md transition-all cursor-pointer font-display flex items-center justify-center gap-2 focus:ring-2 focus:ring-[#6a5fc1]/30 focus:outline-none"
+            className="min-h-[44px] px-5 py-2.5 rounded-xl bg-[#150f23] hover:bg-slate-800 disabled:opacity-50 text-white font-bold text-xs shadow-md transition-colors cursor-pointer font-display flex items-center justify-center gap-2 focus:ring-2 focus:ring-[#6a5fc1]/30 focus:outline-none"
           >
             {isSubmitting ? (
               <>

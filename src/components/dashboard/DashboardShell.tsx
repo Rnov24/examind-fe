@@ -70,7 +70,7 @@ export function DashboardShell({
             <Link
               href="/dashboard"
               className={cn(
-                'bg-white px-3.5 py-1.5 flex items-center gap-2 hover:border-[#c9c2ec] transition-all group',
+                'bg-white px-3.5 py-1.5 flex items-center gap-2 hover:border-[#c9c2ec] transition-colors group',
                 tokens.radius.full,
                 tokens.border.default,
                 tokens.shadow.subtle

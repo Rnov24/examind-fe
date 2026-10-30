@@ -193,7 +193,7 @@ function ResetPasswordContent() {
 
               <Link
                 href="/login"
-                className="w-full py-3 px-4 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs transition-all shadow-card hover:shadow-card-hover font-display flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-3 px-4 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs transition-[color,background-color,border-color,box-shadow] shadow-card hover:shadow-card-hover font-display flex items-center justify-center gap-2 cursor-pointer"
               >
                 <span>Masuk Sekarang</span>
               </Link>
@@ -226,7 +226,7 @@ function ResetPasswordContent() {
               <div className="space-y-2 pt-2">
                 <Link
                   href="/forgot-password"
-                  className="w-full py-3 px-4 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs transition-all shadow-card hover:shadow-card-hover font-display flex items-center justify-center gap-2 cursor-pointer"
+                  className="w-full py-3 px-4 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs transition-[color,background-color,border-color,box-shadow] shadow-card hover:shadow-card-hover font-display flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <KeyRound className="w-4 h-4 text-[#c2ef4e]" />
                   <span>Minta Tautan Reset Baru</span>
@@ -238,7 +238,7 @@ function ResetPasswordContent() {
                     setTokenValid(null)
                     setToken('')
                   }}
-                  className="w-full py-2.5 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-all border border-slate-200 cursor-pointer"
+                  className="w-full py-2.5 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-colors border border-slate-200 cursor-pointer"
                 >
                   Input Token/Kode Secara Manual
                 </button>
@@ -289,13 +289,13 @@ function ResetPasswordContent() {
                         type="text"
                         required
                         placeholder="Contoh: 414805 atau ZalTuBDM..."
-                        className="flex-1 px-4 py-2.5 rounded-xl bg-slate-50/70 border border-slate-200 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-slate-900 font-mono transition-all shadow-xs"
+                        className="flex-1 px-4 py-2.5 rounded-xl bg-slate-50/70 border border-slate-200 text-xs sm:text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:bg-white focus:border-slate-900 font-mono transition-colors shadow-xs"
                       />
                       <button
                         type="button"
                         onClick={handleManualVerify}
                         disabled={!token.trim()}
-                        className="px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 disabled:opacity-40 text-slate-700 font-bold text-xs border border-slate-200 cursor-pointer transition-colors"
+                        className="min-h-[44px] px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 disabled:opacity-40 text-slate-700 font-bold text-xs border border-slate-200 cursor-pointer transition-colors"
                       >
                         Periksa
                       </button>
@@ -315,12 +315,13 @@ function ResetPasswordContent() {
                       type={showPassword ? 'text' : 'password'}
                       required
                       placeholder="Minimal 6 karakter"
-                      className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-slate-50/70 border border-slate-200 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-[#6a5fc1]/40 transition-all shadow-xs"
+                      className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-slate-50/70 border border-slate-200 text-xs sm:text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-[#6a5fc1]/40 transition-colors shadow-xs"
                     />
                     <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
+                      aria-label="Tampilkan kata sandi"
                       className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -336,7 +337,7 @@ function ResetPasswordContent() {
                       </div>
                       <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
                         <div
-                          className={`h-full transition-all duration-300 ${strengthColor}`}
+                          className={`h-full transition-[width] duration-300 ${strengthColor}`}
                           style={{ width: `${Math.min(100, (strength / 4) * 100)}%` }}
                         ></div>
                       </div>
@@ -356,7 +357,7 @@ function ResetPasswordContent() {
                       type={showPassword ? 'text' : 'password'}
                       required
                       placeholder="Ulangi kata sandi baru"
-                      className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50/70 border border-slate-200 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-[#6a5fc1]/40 transition-all shadow-xs"
+                      className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50/70 border border-slate-200 text-xs sm:text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-[#6a5fc1]/40 transition-colors shadow-xs"
                     />
                     <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                   </div>
@@ -365,7 +366,7 @@ function ResetPasswordContent() {
                 <button
                   type="submit"
                   disabled={loading || !newPassword || !confirmPassword || (tokenValid !== true && !token.trim())}
-                  className="w-full mt-2 py-3 px-4 rounded-xl bg-[#150f23] hover:bg-[#1f1633] active:bg-slate-950 text-white font-bold text-xs transition-all disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer shadow-card hover:shadow-card-hover font-display tracking-wide"
+                  className="w-full mt-2 min-h-[44px] py-3 px-4 rounded-xl bg-[#150f23] hover:bg-[#1f1633] active:bg-slate-950 text-white font-bold text-xs transition-[color,background-color,border-color,box-shadow] disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer shadow-card hover:shadow-card-hover font-display tracking-wide"
                 >
                   {loading ? (
                     <>

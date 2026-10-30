@@ -128,7 +128,7 @@ export default function CompanionQrModal({
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 py-2.5 px-3 rounded-xl bg-[#150f23] hover:bg-slate-800 text-white font-bold text-xs transition-all shadow-md cursor-pointer font-display focus:ring-2 focus:ring-[#6a5fc1]/30 focus:outline-none"
+            className="flex-1 py-2.5 px-3 rounded-xl bg-[#150f23] hover:bg-slate-800 text-white font-bold text-xs transition-colors shadow-md cursor-pointer font-display focus:ring-2 focus:ring-[#6a5fc1]/30 focus:outline-none"
           >
             Tutup
           </button>

@@ -112,9 +112,9 @@ export default function ClassDetailPage() {
           <ArrowLeft className="w-4 h-4" aria-hidden="true" />
         </Link>
         <div>
-          <h2 className="text-2xl font-black text-slate-900 tracking-tight">
+          <h1 className="text-2xl font-black text-slate-900 tracking-tight">
             {classDetail?.name || 'Rombel Kelas'}
-          </h2>
+          </h1>
           <p className="text-xs text-slate-500 font-medium font-mono">
             Tingkat {classDetail?.grade_level} • Tahun Ajaran {classDetail?.academic_year}
           </p>
@@ -131,7 +131,7 @@ export default function ClassDetailPage() {
 
           <button
             onClick={openAddMemberModal}
-            className="px-4 py-2 rounded-lg bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-xs flex items-center gap-2 cursor-pointer transition-colors focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
+            className="min-h-[44px] px-4 py-2 rounded-lg bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-xs flex items-center gap-2 cursor-pointer transition-colors focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
           >
             <UserPlus className="w-3.5 h-3.5" aria-hidden="true" />
             <span>Tambah Siswa ke Kelas</span>

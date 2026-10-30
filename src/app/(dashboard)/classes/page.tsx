@@ -86,13 +86,13 @@ export default function ClassListPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-black text-slate-900 tracking-tight">Manajemen Kelas Akademik</h2>
+          <h1 className="text-2xl font-black text-slate-900 tracking-tight">Manajemen Kelas Akademik</h1>
           <p className="text-sm text-slate-500 font-medium">Kelola rombel belajar, pendaftaran siswa, dan penugasan ujian</p>
         </div>
 
         <button
           onClick={() => setShowCreateModal(true)}
-          className="px-4 py-2.5 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-xs transition-all flex items-center gap-2 cursor-pointer focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
+          className="min-h-[44px] px-4 py-2.5 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-xs transition-colors flex items-center gap-2 cursor-pointer focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
         >
           <Plus className="w-4 h-4" aria-hidden="true" />
           <span>Tambah Kelas Baru</span>
@@ -148,7 +148,7 @@ export default function ClassListPage() {
           {classes.map((c) => (
             <div
               key={c.id}
-              className="bg-white rounded-xl p-5 border border-slate-200 shadow-xs hover:border-slate-300 transition-all flex flex-col justify-between text-slate-900 min-w-0"
+              className="bg-white rounded-xl p-5 border border-slate-200 shadow-xs hover:border-slate-300 transition-colors flex flex-col justify-between text-slate-900 min-w-0"
             >
               <div className="min-w-0">
                 <div className="flex items-center justify-between mb-4">
@@ -194,7 +194,7 @@ export default function ClassListPage() {
               <button
                 type="button"
                 onClick={() => setShowCreateModal(true)}
-                className="px-4 py-2.5 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-xs transition-all flex items-center gap-2 cursor-pointer focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
+                className="min-h-[44px] px-4 py-2.5 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-xs transition-colors flex items-center gap-2 cursor-pointer focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
               >
                 <Plus className="w-4 h-4" aria-hidden="true" />
                 <span>Tambah Kelas Baru</span>

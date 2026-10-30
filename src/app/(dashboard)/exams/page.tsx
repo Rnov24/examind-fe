@@ -59,7 +59,7 @@ export default function ExamListPage() {
         {/* ONE Primary Action: Buat Paket Ujian */}
         <Link
           href="/exams/create"
-          className="px-5 py-2.5 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-card hover:shadow-card-hover transition-all flex items-center justify-center gap-2 cursor-pointer font-display tracking-wide shrink-0 w-full sm:w-auto focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
+          className="min-h-[44px] px-5 py-2.5 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-card hover:shadow-card-hover transition-colors flex items-center justify-center gap-2 cursor-pointer font-display tracking-wide shrink-0 w-full sm:w-auto focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
         >
           <Plus className="w-4 h-4 text-[#c2ef4e]" aria-hidden="true" />
           <span>Buat Paket Ujian</span>
@@ -193,7 +193,7 @@ export default function ExamListPage() {
                       </p>
                       <Link
                         href="/exams/create"
-                        className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-xs transition-colors focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
+                        className="mt-4 inline-flex items-center gap-2 min-h-[44px] px-4 py-2 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-xs transition-colors focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
                       >
                         <Plus className="w-4 h-4 text-[#c2ef4e]" aria-hidden="true" />
                         <span>Buat Paket Ujian</span>

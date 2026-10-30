@@ -119,13 +119,13 @@ export function TelemetryBarChart({
               <div className="w-full max-w-[18px] flex flex-col items-center gap-0.5 justify-end h-full">
                 {/* Sessions submitted segment (violet = platform activity) */}
                 <div
-                  className="w-full rounded-t-sm transition-all group-hover:scale-y-105 bg-[#6a5fc1]"
+                  className="w-full rounded-t-sm transition-[color,background-color,border-color,transform] group-hover:scale-y-105 bg-[#6a5fc1]"
                   style={{ height: `${(item.ai / maxValue) * 45}%` }}
                   title={`${aiLabel}: ${item.ai} sesi`}
                 />
                 {/* Sessions started bar (midnight violet) */}
                 <div
-                  className="w-full bg-[#150f23] rounded-b-sm transition-all group-hover:bg-[#2a1e47]"
+                  className="w-full bg-[#150f23] rounded-b-sm transition-colors group-hover:bg-[#2a1e47]"
                   style={{ height: `${(item.load / maxValue) * 55}%` }}
                   title={`${serverLabel}: ${item.load} sesi`}
                 />

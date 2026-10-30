@@ -444,6 +444,7 @@ function CompanionInner() {
 
   return (
     <div className="relative h-[100dvh] w-full overflow-hidden bg-[#150f23] text-white font-sans select-none">
+      <h1 className="sr-only">Kamera Pendamping Ujian</h1>
       {/* Full-viewport camera preview */}
       <video ref={videoRef} className="absolute inset-0 h-full w-full object-cover" autoPlay playsInline muted />
 
@@ -655,7 +656,7 @@ function CompanionInner() {
           >
             Masukkan Kode Pairing Manual
           </button>
-          <p className="text-[11px] text-white/35 mt-4">Kamera akan mulai memantau setelah terhubung ke sesi ujian.</p>
+          <p className="text-[11px] text-white/70 mt-4">Kamera akan mulai memantau setelah terhubung ke sesi ujian.</p>
         </div>
       )}
 

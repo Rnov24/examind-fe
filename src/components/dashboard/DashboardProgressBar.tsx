@@ -64,7 +64,7 @@ export function DashboardProgressBar({
         )}
       >
         <div
-          className={cn('h-full relative transition-all duration-500 ease-out', tokens.radius.full, barGradient)}
+          className={cn('h-full relative transition-[width] duration-500 ease-out', tokens.radius.full, barGradient)}
           style={{ width: `${percentage}%` }}
         />
       </div>

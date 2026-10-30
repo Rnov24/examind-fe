@@ -124,7 +124,7 @@ export function TelemetryTicker() {
                 key={item.id}
                 onMouseEnter={() => setActiveItem(item.id)}
                 onMouseLeave={() => setActiveItem(null)}
-                className={`relative p-4 rounded-xl border transition-all duration-200 cursor-default ${
+                className={`relative p-4 rounded-xl border transition-colors duration-200 cursor-default ${
                   isHovered
                     ? 'border-slate-900 bg-slate-50/80 shadow-sm translate-y-[-2px]'
                     : 'border-slate-100 bg-slate-50/40 hover:border-slate-300'

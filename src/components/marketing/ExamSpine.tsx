@@ -69,7 +69,7 @@ export function ExamSpine() {
         aria-hidden="true"
       >
         <div
-          className="h-full bg-gradient-to-r from-violet-600 via-[#c2ef4e] to-slate-900 transition-all duration-150 ease-out"
+          className="h-full bg-gradient-to-r from-violet-600 via-[#c2ef4e] to-slate-900 transition-colors duration-150 ease-out"
           style={{ width: `${scrollProgress}%` }}
         />
       </div>
@@ -82,7 +82,7 @@ export function ExamSpine() {
         <div
           onMouseEnter={() => setIsExpanded(true)}
           onMouseLeave={() => setIsExpanded(false)}
-          className="bg-white/95 backdrop-blur-md border border-slate-200/90 rounded-2xl shadow-xl p-3 flex flex-col items-center gap-3 transition-all duration-300"
+          className="bg-white/95 backdrop-blur-md border border-slate-200/90 rounded-2xl shadow-xl p-3 flex flex-col items-center gap-3 transition-colors duration-300"
         >
           {/* Header booklet stamp */}
           <div className="flex items-center gap-2 pb-2 border-b border-slate-100 w-full justify-between">
@@ -103,7 +103,7 @@ export function ExamSpine() {
                 <button
                   key={sec.id}
                   onClick={() => scrollTo(sec.id)}
-                  className={`flex items-center gap-2.5 py-1.5 px-2 rounded-lg text-left transition-all cursor-pointer ${
+                  className={`flex items-center gap-2.5 py-1.5 px-2 rounded-lg text-left transition-colors cursor-pointer ${
                     isActive
                       ? 'bg-slate-900 text-white font-bold shadow-xs'
                       : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
@@ -135,7 +135,7 @@ export function ExamSpine() {
           {/* Vertical mini progress bar */}
           <div className="w-1.5 h-12 bg-slate-100 rounded-full overflow-hidden mt-1">
             <div
-              className="w-full bg-slate-900 rounded-full transition-all duration-150"
+              className="w-full bg-slate-900 rounded-full transition-colors duration-150"
               style={{ height: `${scrollProgress}%` }}
             />
           </div>

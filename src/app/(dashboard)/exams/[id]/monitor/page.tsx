@@ -329,9 +329,9 @@ export default function LiveMonitoringPage() {
           </Link>
           <div>
             <div className="flex items-center gap-2.5 flex-wrap">
-              <h2 className="font-display text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
+              <h1 className="font-display text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
                 Live Monitoring Pengawasan AI
-              </h2>
+              </h1>
               {examStatus === 'in_progress' && (
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200 font-mono shadow-xs">
                   <span className="relative flex h-2 w-2" aria-hidden="true">
@@ -367,7 +367,7 @@ export default function LiveMonitoringPage() {
         <div className="flex items-center gap-2 self-stretch sm:self-auto">
           <button
             onClick={() => setFilterMode('all')}
-            className={`flex-1 sm:flex-initial px-4 py-2 rounded-xl font-bold text-xs transition-all cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none ${
+            className={`flex-1 sm:flex-initial min-h-[44px] px-4 py-2 rounded-xl font-bold text-xs transition-colors cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none ${
               filterMode === 'all'
                 ? 'bg-slate-900 text-white shadow-card'
                 : 'bg-white border border-slate-200 text-slate-700 hover:bg-[#f1effa] shadow-xs'
@@ -377,7 +377,7 @@ export default function LiveMonitoringPage() {
           </button>
           <button
             onClick={() => setFilterMode('flagged')}
-            className={`flex-1 sm:flex-initial px-4 py-2 rounded-xl font-bold text-xs transition-all cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-amber-500/20 focus:outline-none ${
+            className={`flex-1 sm:flex-initial min-h-[44px] px-4 py-2 rounded-xl font-bold text-xs transition-colors cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-amber-500/20 focus:outline-none ${
               filterMode === 'flagged'
                 ? 'bg-amber-600 text-white shadow-card'
                 : 'bg-amber-50 border border-amber-200 text-amber-800 hover:bg-amber-100 shadow-xs'
@@ -401,7 +401,7 @@ export default function LiveMonitoringPage() {
           return (
             <div
               key={student.session_id}
-              className={`bg-white rounded-2xl border transition-all duration-200 p-5 space-y-4 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 text-slate-900 ${borderClass}`}
+              className={`bg-white rounded-2xl border transition-[color,background-color,border-color,box-shadow] duration-200 p-5 space-y-4 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 text-slate-900 ${borderClass}`}
             >
               {/* Card Header */}
               <div className="flex items-start justify-between gap-2">
@@ -518,14 +518,14 @@ export default function LiveMonitoringPage() {
                   <button
                     onClick={() => openWarningModal(student)}
                     disabled={student.status === 'aborted'}
-                    className="py-2 px-3 rounded-xl border border-slate-200 bg-white hover:bg-[#f1effa] disabled:opacity-50 text-slate-700 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-xs focus:ring-2 focus:ring-amber-500/20 focus:outline-none"
+                    className="min-h-[44px] py-2 px-3 rounded-xl border border-slate-200 bg-white hover:bg-[#f1effa] disabled:opacity-50 text-slate-700 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-xs focus:ring-2 focus:ring-amber-500/20 focus:outline-none"
                   >
                     <Bell className="w-3.5 h-3.5 text-amber-600" aria-hidden="true" />
                     <span>Peringatkan</span>
                   </button>
                   <button
                     onClick={() => openSnapshotModal(student)}
-                    className="py-2 px-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-800 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-xs focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
+                    className="min-h-[44px] py-2 px-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-800 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-xs focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
                   >
                     <History className="w-3.5 h-3.5 text-violet-600" aria-hidden="true" />
                     <span>Log Bukti</span>
@@ -539,7 +539,7 @@ export default function LiveMonitoringPage() {
                       onClick={() => tolerateStudent(student)}
                       disabled={isProcessingAction}
                       title="Toleransi wajar sebagai false positive / pergerakan alami"
-                      className="flex-1 py-1.5 px-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold text-[11px] flex items-center justify-center gap-1 transition-all cursor-pointer shadow-xs disabled:opacity-50 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none"
+                      className="flex-1 py-1.5 px-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold text-[11px] flex items-center justify-center gap-1 transition-colors cursor-pointer shadow-xs disabled:opacity-50 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none"
                     >
                       <Check className="w-3.5 h-3.5 text-emerald-600" aria-hidden="true" />
                       <span>Toleransi</span>
@@ -548,7 +548,7 @@ export default function LiveMonitoringPage() {
                       onClick={() => openDisqualifyModal(student)}
                       disabled={isProcessingAction}
                       title="Putuskan diskualifikasi resmi oleh pengawas"
-                      className="py-1.5 px-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-300 font-bold text-[11px] flex items-center justify-center gap-1 transition-all cursor-pointer shadow-xs disabled:opacity-50 focus:ring-2 focus:ring-rose-500/20 focus:outline-none"
+                      className="py-1.5 px-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-300 font-bold text-[11px] flex items-center justify-center gap-1 transition-colors cursor-pointer shadow-xs disabled:opacity-50 focus:ring-2 focus:ring-rose-500/20 focus:outline-none"
                     >
                       <ShieldAlert className="w-3.5 h-3.5 text-rose-600" aria-hidden="true" />
                       <span>Diskualifikasi</span>
@@ -581,7 +581,7 @@ export default function LiveMonitoringPage() {
               <button
                 type="button"
                 onClick={() => setFilterMode('all')}
-                className="px-4 py-2 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-xs transition-all cursor-pointer focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
+                className="px-4 py-2 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-xs transition-colors cursor-pointer focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
               >
                 Tampilkan Semua Peserta
               </button>
@@ -589,7 +589,7 @@ export default function LiveMonitoringPage() {
               <button
                 type="button"
                 onClick={loadExamSessions}
-                className="px-4 py-2 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-xs transition-all cursor-pointer focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
+                className="px-4 py-2 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-xs transition-colors cursor-pointer focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
               >
                 Muat Ulang Sesi
               </button>

@@ -141,7 +141,7 @@ export function TopRightCluster({ className = '' }: TopRightClusterProps) {
   }
 
   const circularButtonClass = cn(
-    'w-10 h-10 bg-white flex items-center justify-center text-slate-500 hover:text-slate-900 hover:border-[#c9c2ec] transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]',
+    'w-11 h-11 bg-white flex items-center justify-center text-slate-500 hover:text-slate-900 hover:border-[#c9c2ec] transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]',
     tokens.radius.full,
     tokens.border.default,
     tokens.shadow.subtle
@@ -181,7 +181,7 @@ export function TopRightCluster({ className = '' }: TopRightClusterProps) {
                   type="text"
                   autoFocus
                   placeholder="Ketik nama sekolah, kode CBT, atau menu..."
-                  className="w-full bg-transparent text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none font-sans"
+                  className="w-full bg-transparent text-xs text-slate-900 placeholder:text-slate-500 focus:outline-none font-sans"
                 />
                 <button
                   type="button"
@@ -299,7 +299,7 @@ export function TopRightCluster({ className = '' }: TopRightClusterProps) {
           aria-expanded={profileOpen}
           aria-label="Menu Profil Pengguna"
           className={cn(
-            'bg-white p-1.5 pr-3 sm:pr-4 flex items-center gap-2.5 sm:gap-3 hover:border-[#c9c2ec] transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]',
+            'bg-white p-1.5 pr-3 sm:pr-4 flex items-center gap-2.5 sm:gap-3 hover:border-[#c9c2ec] transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#6a5fc1]',
             tokens.radius.full,
             tokens.border.default,
             tokens.shadow.subtle

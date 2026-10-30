@@ -60,7 +60,7 @@ export default function Navbar() {
   }
 
   return (
-    <header className="h-16 border-b border-slate-200/80 bg-white/85 backdrop-blur-md px-4 sm:px-6 flex items-center justify-between sticky top-0 z-30 text-slate-900 transition-all">
+    <header className="h-16 border-b border-slate-200/80 bg-white/85 backdrop-blur-md px-4 sm:px-6 flex items-center justify-between sticky top-0 z-30 text-slate-900 transition-colors">
       {/* Brand Mark & Institution Title */}
       <div className="flex items-center gap-2 sm:gap-3 min-w-0">
         <button

@@ -647,7 +647,7 @@ export default function AIAssistantWidget() {
               }
               disabled={isLoading}
               aria-label="Tulis pesan untuk EXA"
-              className="flex-1 px-3.5 py-2.5 min-h-[44px] rounded-lg bg-slate-50 border border-slate-300 focus:bg-white focus:border-[#6a5fc1] focus:ring-2 focus:ring-[#6a5fc1]/20 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none transition-all resize-none max-h-28 overflow-y-auto leading-relaxed"
+              className="flex-1 px-3.5 py-2.5 min-h-[44px] rounded-lg bg-slate-50 border border-slate-300 focus:bg-white focus:border-[#6a5fc1] focus:ring-2 focus:ring-[#6a5fc1]/20 text-xs text-slate-900 placeholder:text-slate-500 focus:outline-none transition-colors resize-none max-h-28 overflow-y-auto leading-relaxed"
             />
             <button
               type="button"

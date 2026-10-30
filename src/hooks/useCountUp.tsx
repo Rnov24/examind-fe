@@ -257,7 +257,7 @@ export function MoneyCountUp({
       {showLimeTick && (
         <span
           aria-hidden="true"
-          className={`inline-block w-1.5 h-1.5 rounded-full transition-all duration-75 shrink-0 ${
+          className={`inline-block w-1.5 h-1.5 rounded-full transition-[color,background-color,border-color,transform] duration-75 shrink-0 ${
             isAnimating
               ? justTickedThousand
                 ? 'bg-[#c2ef4e] scale-125 shadow-[0_0_6px_#c2ef4e]'

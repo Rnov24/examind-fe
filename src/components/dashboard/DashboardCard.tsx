@@ -34,7 +34,7 @@ export function DashboardCard({
         tokens.radius.xl,
         tokens.border.default,
         tokens.shadow.card,
-        'hover:shadow-card-hover transition-all flex flex-col justify-between overflow-hidden',
+        'hover:shadow-card-hover transition-[color,background-color,border-color,box-shadow] flex flex-col justify-between overflow-hidden',
         className
       )}
     >

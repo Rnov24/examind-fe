@@ -421,7 +421,7 @@ export default function CameraSetupWizard({
                     />
                     {faceMode === 'mediapipe' && faceBoxCss && (
                       <div
-                        className={`pointer-events-none absolute rounded-xl border-2 transition-all duration-200 ${
+                        className={`pointer-events-none absolute rounded-xl border-2 transition-colors duration-200 ${
                           faceAllGood ? 'border-emerald-400' : 'border-amber-400'
                         }`}
                         style={{
@@ -860,7 +860,7 @@ export default function CameraSetupWizard({
                     type="button"
                     onClick={goNext}
                     disabled={!canProceed}
-                    className="flex-1 py-3 px-4 rounded-xl bg-[#150f23] hover:bg-slate-800 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-white font-bold text-xs sm:text-sm shadow-card transition-all cursor-pointer font-display flex items-center justify-center gap-2"
+                    className="flex-1 py-3 px-4 rounded-xl bg-[#150f23] hover:bg-slate-800 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-white font-bold text-xs sm:text-sm shadow-card transition-colors cursor-pointer font-display flex items-center justify-center gap-2"
                   >
                     <span>Lanjut</span>
                     <Check className="w-4 h-4 text-[#c2ef4e]" aria-hidden="true" />
@@ -870,7 +870,7 @@ export default function CameraSetupWizard({
                     type="button"
                     onClick={handleComplete}
                     disabled={!allPassed}
-                    className="flex-1 py-3 px-4 rounded-xl bg-[#150f23] hover:bg-slate-800 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-white font-bold text-xs sm:text-sm shadow-card transition-all cursor-pointer font-display flex items-center justify-center gap-2"
+                    className="flex-1 py-3 px-4 rounded-xl bg-[#150f23] hover:bg-slate-800 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-white font-bold text-xs sm:text-sm shadow-card transition-colors cursor-pointer font-display flex items-center justify-center gap-2"
                   >
                     <Maximize className="w-4 h-4 text-[#c2ef4e]" aria-hidden="true" />
                     <span>Mulai Ujian</span>

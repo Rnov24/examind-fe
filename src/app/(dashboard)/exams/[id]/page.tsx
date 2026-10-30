@@ -404,7 +404,7 @@ export default function ExamDetailPage() {
               <button
                 onClick={handlePublish}
                 disabled={isPublishing}
-                className="flex-1 sm:flex-none px-5 py-2.5 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-card hover:shadow-card-hover flex items-center justify-center gap-2 cursor-pointer transition-all font-display tracking-wide focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none disabled:opacity-50"
+                className="flex-1 sm:flex-none px-5 py-2.5 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-card hover:shadow-card-hover flex items-center justify-center gap-2 cursor-pointer transition-colors font-display tracking-wide focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none disabled:opacity-50"
               >
                 {isPublishing ? (
                   <Loader2 className="w-4 h-4 animate-spin text-[#c2ef4e]" aria-hidden="true" />
@@ -487,7 +487,7 @@ export default function ExamDetailPage() {
         {/* Visual Progress Bar */}
         <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
           <div
-            className={`h-full rounded-full transition-all duration-300 ${
+            className={`h-full rounded-full transition-[width] duration-300 ${
               isTargetAchieved
                 ? 'bg-emerald-500'
                 : totalPoints < 100
@@ -610,7 +610,7 @@ export default function ExamDetailPage() {
                     <button
                       type="button"
                       onClick={() => setShowAddQuestionModal(true)}
-                      className="px-5 py-2.5 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-card hover:shadow-card-hover transition-all flex items-center gap-2 cursor-pointer focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none font-display"
+                      className="px-5 py-2.5 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-card hover:shadow-card-hover transition-colors flex items-center gap-2 cursor-pointer focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none font-display"
                     >
                       <Plus className="w-4 h-4 text-[#c2ef4e]" aria-hidden="true" />
                       <span>Pilih Soal dari Bank</span>
@@ -693,7 +693,7 @@ export default function ExamDetailPage() {
                       value={modalSearch}
                       onChange={(e) => setModalSearch(e.target.value)}
                       placeholder="Cari teks soal..."
-                      className="w-full pl-9 pr-3 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-xl text-slate-900 font-medium placeholder:text-slate-400 focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-[#6a5fc1]/40 outline-none"
+                      className="w-full pl-9 pr-3 py-2.5 text-xs bg-slate-50 border border-slate-300 rounded-xl text-slate-900 font-medium placeholder:text-slate-500 focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-[#6a5fc1]/40 outline-none"
                     />
                   </div>
                 </div>

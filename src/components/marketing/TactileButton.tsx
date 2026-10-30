@@ -24,7 +24,7 @@ export function TactileButton({
   type = 'button',
 }: TactileButtonProps) {
   const baseClasses =
-    'relative inline-flex items-center justify-center gap-2 font-bold text-sm rounded-xl overflow-hidden transition-all duration-200 cursor-pointer group focus:outline-none focus:ring-2 focus:ring-offset-2 select-none'
+    'relative inline-flex items-center justify-center gap-2 font-bold text-sm rounded-xl overflow-hidden transition-colors duration-200 cursor-pointer group focus:outline-none focus:ring-2 focus:ring-offset-2 select-none'
 
   const variantClasses = {
     primary:

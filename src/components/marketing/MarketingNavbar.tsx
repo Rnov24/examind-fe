@@ -69,7 +69,7 @@ export function MarketingNavbar() {
   })()
 
   const linkClasses = (id: SectionId) =>
-    `rounded-full px-3.5 py-1.5 transition-all duration-200 ${
+    `rounded-full px-3.5 py-1.5 transition-colors duration-200 ${
       activeSection === id
         ? 'bg-[#c2ef4e] text-slate-950 shadow-xs'
         : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'

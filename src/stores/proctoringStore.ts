@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import api from '@/lib/api'
-import { withWsToken } from '@/lib/ws'
+import { withWsToken, wsBaseUrl } from '@/lib/ws'
 
 export interface ProctoringAlert {
   id: string
@@ -44,6 +44,15 @@ interface ProctoringState {
 }
 
 let studentWs: WebSocket | null = null
+// Bounded reconnect for the student alerts socket: without it, one failed
+// handshake (or a dropped connection) strands the wizard's "Kamera Kedua"
+// step on "Menunggu pindai…" forever, even though the phone already shows
+// "Terhubung". Intentional closes (cleanup / exam end) never reconnect.
+let studentWsIntentionalClose = false
+let studentWsReconnectTimer: ReturnType<typeof setTimeout> | null = null
+let studentWsReconnectAttempts = 0
+const STUDENT_WS_MAX_RECONNECTS = 5
+const STUDENT_WS_RECONNECT_DELAY_MS = 2000
 
 export const useProctoringStore = create<ProctoringState>((set, get) => ({
   primaryCamActive: false,
@@ -85,13 +94,31 @@ export const useProctoringStore = create<ProctoringState>((set, get) => ({
     if (typeof window === 'undefined') return
 
     if (studentWs) {
+      // Detach handlers first: closing the old socket must not schedule a
+      // reconnect that would fight the new socket created below.
+      studentWs.onclose = null
+      studentWs.onmessage = null
       studentWs.close()
     }
+    if (studentWsReconnectTimer) {
+      clearTimeout(studentWsReconnectTimer)
+      studentWsReconnectTimer = null
+    }
+    studentWsIntentionalClose = false
 
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
-    const host = window.location.host
-    const wsUrl = withWsToken(`${protocol}//${host}/ws/student/${sessionId}/alerts`)
+    // Connect to the BACKEND directly, not to the page's own host. In
+    // production the page is served by Vercel, which cannot serve WebSocket
+    // upgrades, so building the URL from window.location.host made this
+    // socket fail silently while the companion socket (which correctly uses
+    // wsBaseUrl) connected fine. That mismatch is exactly "phone says
+    // connected, desktop still scanning": the COMPANION_PAIRED_SUCCESS event
+    // had no desktop socket to arrive on.
+    const wsUrl = withWsToken(`${wsBaseUrl()}/ws/student/${sessionId}/alerts`)
     studentWs = new WebSocket(wsUrl)
+
+    studentWs.onopen = () => {
+      studentWsReconnectAttempts = 0
+    }
 
     studentWs.onmessage = (event) => {
       try {
@@ -118,7 +145,13 @@ export const useProctoringStore = create<ProctoringState>((set, get) => ({
     }
 
     studentWs.onclose = () => {
-      // Reconnect if needed
+      studentWs = null
+      if (studentWsIntentionalClose) return
+      if (studentWsReconnectAttempts >= STUDENT_WS_MAX_RECONNECTS) return
+      studentWsReconnectAttempts += 1
+      studentWsReconnectTimer = setTimeout(() => {
+        get().initStudentWebSocket(sessionId)
+      }, STUDENT_WS_RECONNECT_DELAY_MS)
     }
   },
 
@@ -127,6 +160,12 @@ export const useProctoringStore = create<ProctoringState>((set, get) => ({
   },
 
   closeStudentWebSocket: () => {
+    studentWsIntentionalClose = true
+    if (studentWsReconnectTimer) {
+      clearTimeout(studentWsReconnectTimer)
+      studentWsReconnectTimer = null
+    }
+    studentWsReconnectAttempts = 0
     if (studentWs) {
       studentWs.close()
       studentWs = null

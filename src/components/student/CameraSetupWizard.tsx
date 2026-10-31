@@ -203,8 +203,11 @@ export default function CameraSetupWizard({
         const b = faces[0].boundingBox
         const centerX = (b.originX + b.width / 2) / frameW
         const centerY = (b.originY + b.height / 2) / frameH
-        // Centered = face center stays within the middle 50% of the frame.
-        centered = centerX >= 0.25 && centerX <= 0.75 && centerY >= 0.25 && centerY <= 0.75
+        // Centered = face center stays within the middle 40% of the frame.
+        // The old middle-50% window (0.25-0.75) passed a face whose center
+        // sat at y=0.75, i.e. visibly hanging at the bottom edge, while the
+        // checklist still claimed "di tengah bingkai".
+        centered = centerX >= 0.3 && centerX <= 0.7 && centerY >= 0.3 && centerY <= 0.7
         // Reasonable size = face width between 15% and 60% of frame width.
         const widthRatio = b.width / frameW
         sizeOk = widthRatio >= 0.15 && widthRatio <= 0.6
@@ -258,7 +261,11 @@ export default function CameraSetupWizard({
   const lightGoodStreakRef = useRef(0)
 
   useEffect(() => {
-    if (camState !== 'ready') return
+    // Gated on the lighting step, like the face check is gated on its own
+    // step. Without this gate the check ran from step 1 onward and latched
+    // lightPassed early, so the stepper showed Pencahayaan as done while
+    // the user was still on step 2.
+    if (currentStep !== 'cahaya' || camState !== 'ready') return
     const interval = setInterval(() => {
       const video = videoRef.current
       if (!video || video.readyState < 2 || !video.videoWidth) return
@@ -294,7 +301,7 @@ export default function CameraSetupWizard({
       }
     }, 600)
     return () => clearInterval(interval)
-  }, [camState])
+  }, [camState, currentStep])
 
   // ---------------------------------------------------------------
   // Step 5 — rules acknowledgement + pass bookkeeping

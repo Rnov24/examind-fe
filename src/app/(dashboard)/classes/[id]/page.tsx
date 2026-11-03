@@ -112,7 +112,7 @@ export default function ClassDetailPage() {
           <ArrowLeft className="w-4 h-4" aria-hidden="true" />
         </Link>
         <div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight">
+          <h1 className="text-2xl font-bold text-slate-900">
             {classDetail?.name || 'Rombel Kelas'}
           </h1>
           <p className="text-xs text-slate-500 font-medium font-mono">
@@ -125,7 +125,7 @@ export default function ClassDetailPage() {
       <div className="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden text-slate-900">
         <div className="p-5 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h3 className="text-base font-bold text-slate-900">Daftar Anggota & Roster Siswa</h3>
+            <h3 className="text-base font-bold text-slate-900">Daftar Anggota</h3>
             <p className="text-xs text-slate-500">Total: {classDetail?.members?.length || 0} Siswa Terdaftar</p>
           </div>
 
@@ -140,15 +140,15 @@ export default function ClassDetailPage() {
 
         {isLoading ? (
           <div className="flex items-center justify-center p-12">
-            <Loader2 className="w-8 h-8 text-violet-600 animate-spin" />
+            <Loader2 className="w-8 h-8 text-[#6a5fc1] animate-spin" />
           </div>
         ) : (
           <div className="overflow-x-auto touch-pan-x">
             <table className="w-full text-left text-sm text-slate-600">
-              <thead className="bg-[#f1effa] text-xs uppercase font-bold text-slate-600 tracking-wider font-mono border-b border-[#ddd9ef]">
+              <thead className="bg-[#f1effa] text-xs font-bold text-slate-600 font-mono border-b border-[#ddd9ef]">
                 <tr>
                   <th className="px-6 py-4">NISN / Identifier</th>
-                  <th className="px-6 py-4">Nama Lengkap</th>
+                  <th className="px-6 py-4">Nama lengkap</th>
                   <th className="px-6 py-4">Email</th>
                   <th className="px-6 py-4">Peran</th>
                   <th className="px-6 py-4 text-right">Aksi</th>
@@ -166,7 +166,7 @@ export default function ClassDetailPage() {
                       <span
                         className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold capitalize font-mono ${
                           m.role === 'teacher'
-                            ? 'bg-violet-50 text-violet-700 border border-violet-200'
+                            ? 'bg-[#f1effa] text-[#6a5fc1] border border-[#ddd9ef]'
                             : 'bg-slate-100 text-slate-700 border border-slate-200'
                         }`}
                       >
@@ -234,7 +234,7 @@ export default function ClassDetailPage() {
 
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase mb-1 font-mono">Pilih Siswa</label>
+                <label className="block text-xs font-bold text-slate-700 mb-1 font-mono">Pilih siswa</label>
                 <select
                   value={selectedStudentId ?? ''}
                   onChange={(e) => setSelectedStudentId(e.target.value ? Number(e.target.value) : null)}

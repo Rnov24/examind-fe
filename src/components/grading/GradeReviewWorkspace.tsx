@@ -322,14 +322,14 @@ export default function GradeReviewWorkspace({
           </Link>
           <div className="min-w-0">
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-900 bg-[#c2ef4e] px-2.5 py-0.5 rounded-md font-mono shadow-2xs">
+              <span className="text-[10px] font-bold text-slate-900 bg-[#c2ef4e] px-2.5 py-0.5 rounded-md font-mono shadow-2xs">
                 Koreksi Human-in-the-Loop
               </span>
               <span className="text-xs text-slate-500 font-mono">
                 Evaluasi Esai AI & Otoritas Guru
               </span>
             </div>
-            <h2 className="font-display text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight truncate">
+            <h2 className="font-display text-xl sm:text-2xl font-bold text-slate-900 truncate">
               Koreksi Esai & Validasi Nilai AI
             </h2>
             <p className="text-xs text-slate-500 font-medium">
@@ -494,7 +494,7 @@ export default function GradeReviewWorkspace({
 
           {isLoading ? (
             <div className="p-16 flex flex-col items-center justify-center gap-3">
-              <Loader2 className="w-8 h-8 text-violet-600 animate-spin" aria-hidden="true" />
+              <Loader2 className="w-8 h-8 text-[#6a5fc1] animate-spin" aria-hidden="true" />
               <p className="text-xs font-semibold text-slate-500 font-mono">
                 Memuat daftar submission & hasil koreksi esai AI...
               </p>
@@ -515,10 +515,10 @@ export default function GradeReviewWorkspace({
                         </p>
                       </div>
                       <span
-                        className={`shrink-0 inline-block px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-wider font-mono shadow-2xs ${
+                        className={`shrink-0 inline-block px-2.5 py-1 rounded-lg text-xs font-bold font-mono shadow-2xs ${
                           s.status === 'graded'
                             ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
-                            : 'bg-violet-50 text-violet-700 border border-violet-200'
+                            : 'bg-[#f1effa] text-[#6a5fc1] border border-[#ddd9ef]'
                         }`}
                       >
                         {s.status === 'graded' ? 'Terverifikasi' : 'Draf AI'}
@@ -527,14 +527,14 @@ export default function GradeReviewWorkspace({
 
                     <div className="grid grid-cols-3 gap-2 bg-slate-50/80 rounded-xl p-2.5 border border-slate-100 text-center">
                       <div>
-                        <span className="text-[10px] text-slate-500 block uppercase font-mono">Nilai</span>
-                        <span className="font-extrabold text-slate-900 font-mono text-xs tabular-nums">
+                        <span className="text-[10px] text-slate-500 block font-mono">Nilai</span>
+                        <span className="font-bold text-slate-900 font-mono text-xs tabular-nums">
                           {s.total_score}
                           <span className="text-[10px] text-slate-400 font-normal">/100</span>
                         </span>
                       </div>
                       <div>
-                        <span className="text-[10px] text-slate-500 block uppercase font-mono">Integritas</span>
+                        <span className="text-[10px] text-slate-500 block font-mono">Integritas</span>
                         <span
                           className={`font-bold font-mono text-xs tabular-nums ${
                             s.integrity_score >= 90 ? 'text-emerald-700' : 'text-rose-600'
@@ -544,7 +544,7 @@ export default function GradeReviewWorkspace({
                         </span>
                       </div>
                       <div>
-                        <span className="text-[10px] text-slate-500 block uppercase font-mono">Saran AI</span>
+                        <span className="text-[10px] text-slate-500 block font-mono">Saran AI</span>
                         <span
                           className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold capitalize font-mono ${
                             s.lowest_confidence_level === 'high'
@@ -567,7 +567,7 @@ export default function GradeReviewWorkspace({
 
                     <button
                       onClick={() => openSessionReview(s.session_id)}
-                      className="w-full min-h-[44px] px-4 py-2 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-card hover:shadow-card-hover cursor-pointer transition-[color,background-color,border-color,box-shadow] font-display tracking-wide flex items-center justify-center gap-2"
+                      className="w-full min-h-[44px] px-4 py-2 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-card hover:shadow-card-hover cursor-pointer transition-[color,background-color,border-color,box-shadow] font-display flex items-center justify-center gap-2"
                     >
                       <span>Review & Beri Nilai</span>
                     </button>
@@ -597,7 +597,7 @@ export default function GradeReviewWorkspace({
                 {/* Total Empty State (<md) */}
                 {sessionsList.length === 0 && !errorMessage && (
                   <div className="p-8 text-center text-slate-500 space-y-3">
-                    <div className="w-12 h-12 rounded-2xl bg-violet-50 border border-violet-100 text-violet-600 flex items-center justify-center mx-auto">
+                    <div className="w-12 h-12 rounded-2xl bg-[#f1effa] border border-[#ddd9ef] text-[#6a5fc1] flex items-center justify-center mx-auto">
                       <FileSpreadsheet className="w-6 h-6" aria-hidden="true" />
                     </div>
                     <div className="space-y-1">
@@ -630,12 +630,12 @@ export default function GradeReviewWorkspace({
               {/* Desktop Table View (>=md) */}
               <div className="hidden md:block overflow-x-auto touch-pan-x">
                 <table className="w-full text-left text-sm text-slate-600">
-                  <thead className="bg-slate-50/80 text-xs uppercase font-bold text-slate-600 tracking-wider border-b border-slate-200 font-mono">
+                  <thead className="bg-slate-50/80 text-xs font-bold text-slate-600 border-b border-slate-200 font-mono">
                     <tr>
-                      <th className="px-6 py-4">Nama Siswa</th>
-                      <th className="px-6 py-4">NISN / Identitas</th>
-                      <th className="px-6 py-4">Status Sesi</th>
-                      <th className="px-6 py-4">Nilai Total</th>
+                      <th className="px-6 py-4">Nama siswa</th>
+                      <th className="px-6 py-4">NISN / identitas</th>
+                      <th className="px-6 py-4">Status sesi</th>
+                      <th className="px-6 py-4">Nilai total</th>
                       <th className="px-6 py-4">Integritas</th>
                       <th className="px-6 py-4">Saran AI</th>
                       <th className="px-6 py-4 text-right print:hidden">Aksi</th>
@@ -652,16 +652,16 @@ export default function GradeReviewWorkspace({
                         </td>
                         <td className="px-6 py-4">
                           <span
-                            className={`inline-block px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-wider font-mono shadow-2xs ${
+                            className={`inline-block px-2.5 py-1 rounded-lg text-xs font-bold font-mono shadow-2xs ${
                               s.status === 'graded'
                                 ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
-                                : 'bg-violet-50 text-violet-700 border border-violet-200'
+                                : 'bg-[#f1effa] text-[#6a5fc1] border border-[#ddd9ef]'
                             }`}
                           >
                             {s.status === 'graded' ? 'Terverifikasi' : 'Draf AI'}
                           </span>
                         </td>
-                        <td className="px-6 py-4 font-extrabold text-slate-900 font-mono tabular-nums text-sm">
+                        <td className="px-6 py-4 font-bold text-slate-900 font-mono tabular-nums text-sm">
                           {s.total_score} / 100
                         </td>
                         <td className="px-6 py-4">
@@ -695,7 +695,7 @@ export default function GradeReviewWorkspace({
                         <td className="px-6 py-4 text-right print:hidden">
                           <button
                             onClick={() => openSessionReview(s.session_id)}
-                            className="min-h-[44px] px-4 py-2 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-card hover:shadow-card-hover cursor-pointer transition-colors font-display tracking-wide focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
+                            className="min-h-[44px] px-4 py-2 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-card hover:shadow-card-hover cursor-pointer transition-colors font-display focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
                           >
                             Review & Beri Nilai
                           </button>
@@ -732,7 +732,7 @@ export default function GradeReviewWorkspace({
                       <tr>
                         <td colSpan={7} className="p-16 text-center text-slate-500">
                           <div className="flex flex-col items-center justify-center gap-3 max-w-md mx-auto">
-                            <div className="w-14 h-14 rounded-2xl bg-violet-50 border border-violet-100 text-violet-600 flex items-center justify-center">
+                            <div className="w-14 h-14 rounded-2xl bg-[#f1effa] border border-[#ddd9ef] text-[#6a5fc1] flex items-center justify-center">
                               <FileSpreadsheet className="w-7 h-7" aria-hidden="true" />
                             </div>
                             <div className="space-y-1">

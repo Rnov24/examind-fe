@@ -86,7 +86,7 @@ export default function ClassListPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight">Manajemen Kelas Akademik</h1>
+          <h1 className="text-2xl font-bold text-slate-900">Manajemen Kelas Akademik</h1>
           <p className="text-sm text-slate-500 font-medium">Kelola rombel belajar, pendaftaran siswa, dan penugasan ujian</p>
         </div>
 
@@ -120,7 +120,7 @@ export default function ClassListPage() {
       {isLoading ? (
         <div className="space-y-4">
           <div className="flex items-center gap-2 text-xs font-semibold text-slate-500 font-mono">
-            <Loader2 className="w-4 h-4 text-violet-600 animate-spin" aria-hidden="true" />
+            <Loader2 className="w-4 h-4 text-[#6a5fc1] animate-spin" aria-hidden="true" />
             <span>Memuat data kelas akademik & rombel belajar...</span>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -152,7 +152,7 @@ export default function ClassListPage() {
             >
               <div className="min-w-0">
                 <div className="flex items-center justify-between mb-4">
-                  <span className="px-2.5 py-0.5 bg-violet-50 text-violet-700 border border-violet-200 rounded text-[11px] font-bold font-mono">
+                  <span className="px-2.5 py-0.5 bg-[#f1effa] text-[#6a5fc1] border border-[#ddd9ef] rounded text-[11px] font-bold font-mono">
                     Tingkat {c.grade_level}
                   </span>
                   <span className="text-xs text-slate-500 font-mono font-medium">{c.academic_year}</span>
@@ -168,7 +168,7 @@ export default function ClassListPage() {
 
               <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2 text-xs font-semibold text-slate-700 min-w-0">
-                  <Users className="w-4 h-4 text-violet-600 shrink-0" aria-hidden="true" />
+                  <Users className="w-4 h-4 text-[#6a5fc1] shrink-0" aria-hidden="true" />
                   <span className="font-mono truncate">{c.members_count ?? 0} Siswa Terdaftar</span>
                 </div>
 
@@ -215,7 +215,7 @@ export default function ClassListPage() {
           <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl border border-slate-200 text-slate-900">
             <div className="flex items-center justify-between border-b border-slate-200 pb-3 mb-4">
               <div>
-                <h3 className="text-lg font-black text-slate-900">Buat Kelas Akademik Baru</h3>
+                <h3 className="text-lg font-bold text-slate-900">Buat Kelas Akademik Baru</h3>
                 <p className="text-xs text-slate-500">Tentukan nama rombel dan tahun akademik</p>
               </div>
               <button
@@ -238,7 +238,7 @@ export default function ClassListPage() {
 
             <form onSubmit={handleCreateClass} className="space-y-4">
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase mb-1">Nama Kelas</label>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Nama kelas</label>
                 <input
                   value={newClassName}
                   onChange={(e) => setNewClassName(e.target.value)}
@@ -252,7 +252,7 @@ export default function ClassListPage() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 uppercase mb-1">Tingkat</label>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Tingkat</label>
                   <select
                     value={newGradeLevel}
                     onChange={(e) => setNewGradeLevel(e.target.value)}
@@ -265,7 +265,7 @@ export default function ClassListPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 uppercase mb-1">Tahun Ajaran</label>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Tahun ajaran</label>
                   <input
                     value={newAcademicYear}
                     onChange={(e) => setNewAcademicYear(e.target.value)}

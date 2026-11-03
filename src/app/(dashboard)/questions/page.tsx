@@ -253,7 +253,7 @@ export default function QuestionBankPage() {
               onChange={(e) => setSelectedSubject(e.target.value)}
               className="px-3 py-2 text-xs font-semibold rounded-xl border border-slate-200 bg-slate-50 hover:bg-white text-slate-700 outline-none focus:ring-2 focus:ring-[#6a5fc1]/40 focus:border-slate-900"
             >
-              <option value="all">Semua Mata Pelajaran</option>
+              <option value="all">Semua mata pelajaran</option>
               {availableSubjects.map((subj) => (
                 <option key={subj} value={subj}>
                   {subj}
@@ -270,7 +270,7 @@ export default function QuestionBankPage() {
               className="px-3 py-2 text-xs font-semibold rounded-xl border border-slate-200 bg-slate-50 hover:bg-white text-slate-700 outline-none focus:ring-2 focus:ring-[#6a5fc1]/40 focus:border-slate-900"
             >
               <option value="newest">Terbaru</option>
-              <option value="questions">Butir Soal Terbanyak</option>
+              <option value="questions">Butir soal terbanyak</option>
               <option value="alpha">Abjad A-Z</option>
             </select>
           </div>

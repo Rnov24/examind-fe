@@ -339,7 +339,7 @@ export default function GradeReviewWorkspace({
 
         {allExams.length > 0 && !selectedSessionId && (
           <div className="flex items-center gap-2 shrink-0">
-            <span className="text-xs font-bold text-slate-500 font-mono">Pilih Ujian:</span>
+            <span className="text-xs font-bold text-slate-500 font-mono">Pilih ujian:</span>
             <select
               value={examId ?? ''}
               onChange={(e) => {

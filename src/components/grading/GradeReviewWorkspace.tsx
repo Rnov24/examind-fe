@@ -439,9 +439,9 @@ export default function GradeReviewWorkspace({
                 onChange={(e) => setStatusFilter(e.target.value as any)}
                 className="w-full sm:w-auto px-3 py-2 sm:py-1.5 min-h-[40px] sm:min-h-0 text-xs font-semibold rounded-xl border border-slate-200 bg-slate-50 hover:bg-white text-slate-700 outline-none focus:ring-2 focus:ring-[#6a5fc1]/40 focus:border-slate-900"
               >
-                <option value="all">Semua Status Siswa</option>
-                <option value="graded">Selesai Dinilai</option>
-                <option value="pending">Menunggu Verifikasi</option>
+                <option value="all">Semua status siswa</option>
+                <option value="graded">Selesai dinilai</option>
+                <option value="pending">Menunggu verifikasi</option>
               </select>
             </div>
           </div>

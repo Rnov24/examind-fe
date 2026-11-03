@@ -164,14 +164,14 @@ export default function ExamCreatePage() {
         </Link>
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-900 bg-[#c2ef4e] px-2.5 py-0.5 rounded-md font-mono shadow-2xs">
-              Wizard Pembuatan Ujian
+            <span className="text-[10px] font-bold text-slate-900 bg-[#c2ef4e] px-2.5 py-0.5 rounded-md font-mono shadow-2xs">
+              Wizard pembuatan ujian
             </span>
             <span className="text-xs text-slate-500 font-mono">
               3 Langkah Mudah
             </span>
           </div>
-          <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight font-display">
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 font-display">
             Buat Paket Ujian Baru
           </h1>
           <p className="text-xs text-slate-500 font-medium">
@@ -207,7 +207,7 @@ export default function ExamCreatePage() {
               )}
             </div>
             <div className="min-w-0">
-              <span className="text-[10px] uppercase font-mono font-bold tracking-wider block opacity-75">
+              <span className="text-[10px] font-mono font-bold block opacity-75">
                 Langkah 1
               </span>
               <span className="text-xs font-bold truncate block">
@@ -238,7 +238,7 @@ export default function ExamCreatePage() {
               2
             </div>
             <div className="min-w-0">
-              <span className="text-[10px] uppercase font-mono font-bold tracking-wider block opacity-75">
+              <span className="text-[10px] font-mono font-bold block opacity-75">
                 Langkah 2
               </span>
               <span className="text-xs font-bold truncate block">
@@ -253,7 +253,7 @@ export default function ExamCreatePage() {
               3
             </div>
             <div className="min-w-0">
-              <span className="text-[10px] uppercase font-mono font-bold tracking-wider block">
+              <span className="text-[10px] font-mono font-bold block">
                 Langkah 3
               </span>
               <span className="text-xs font-medium truncate block">
@@ -297,8 +297,8 @@ export default function ExamCreatePage() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-800 uppercase mb-1.5 font-mono">
-                  Judul Paket Ujian
+                <label className="block text-xs font-bold text-slate-800 mb-1.5 font-mono">
+                  Judul paket ujian
                 </label>
                 <input
                   value={title}
@@ -311,8 +311,8 @@ export default function ExamCreatePage() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-800 uppercase mb-1.5 font-mono">
-                  Petunjuk & Instruksi Pengerjaan (Opsional)
+                <label className="block text-xs font-bold text-slate-800 mb-1.5 font-mono">
+                  Petunjuk & instruksi pengerjaan (opsional)
                 </label>
                 <textarea
                   value={description}
@@ -325,8 +325,8 @@ export default function ExamCreatePage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-800 uppercase mb-1.5 font-mono">
-                    Rombel Kelas Target
+                  <label className="block text-xs font-bold text-slate-800 mb-1.5 font-mono">
+                    Rombel kelas target
                   </label>
                   <select
                     value={classId ?? ''}
@@ -344,8 +344,8 @@ export default function ExamCreatePage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-800 uppercase mb-1.5 font-mono">
-                    Durasi Pengerjaan Siswa (Menit)
+                  <label className="block text-xs font-bold text-slate-800 mb-1.5 font-mono">
+                    Durasi pengerjaan siswa (menit)
                   </label>
                   <input
                     value={durationMinutes}
@@ -364,8 +364,8 @@ export default function ExamCreatePage() {
 
               {/* Mode Ujian: Live (serentak) vs Mandiri (jendela waktu) */}
               <div>
-                <label className="block text-xs font-bold text-slate-800 uppercase mb-1.5 font-mono">
-                  Mode Ujian
+                <label className="block text-xs font-bold text-slate-800 mb-1.5 font-mono">
+                  Mode ujian
                 </label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3" role="radiogroup" aria-label="Mode ujian">
                   <button
@@ -415,8 +415,8 @@ export default function ExamCreatePage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-800 uppercase mb-1.5 font-mono">
-                    {examMode === 'live' ? 'Waktu Mulai Buka Ujian' : 'Jendela Pengerjaan Dibuka'}
+                  <label className="block text-xs font-bold text-slate-800 mb-1.5 font-mono">
+                    {examMode === 'live' ? 'Waktu mulai buka ujian' : 'Jendela pengerjaan dibuka'}
                   </label>
                   <input
                     value={startTime}
@@ -433,8 +433,8 @@ export default function ExamCreatePage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-800 uppercase mb-1.5 font-mono">
-                    {examMode === 'live' ? 'Waktu Batas Akhir Penutupan' : 'Jendela Pengerjaan Ditutup'}
+                  <label className="block text-xs font-bold text-slate-800 mb-1.5 font-mono">
+                    {examMode === 'live' ? 'Waktu batas akhir penutupan' : 'Jendela pengerjaan ditutup'}
                   </label>
                   <input
                     value={endTime}
@@ -456,7 +456,7 @@ export default function ExamCreatePage() {
                 <button
                   type="button"
                   onClick={handleGoToStep2}
-                  className="min-h-[44px] px-6 py-2.5 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-card hover:shadow-card-hover transition-colors flex items-center gap-2 cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
+                  className="min-h-[44px] px-6 py-2.5 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-card hover:shadow-card-hover transition-colors flex items-center gap-2 cursor-pointer font-display focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
                 >
                   <span>Lanjut ke Pengawasan & Kebijakan</span>
                   <ArrowRight className="w-4 h-4 text-[#c2ef4e]" aria-hidden="true" />
@@ -494,7 +494,7 @@ export default function ExamCreatePage() {
                           AI Proctoring Kamera
                         </label>
                         <span
-                          className={`px-2.5 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider font-mono border shadow-2xs ${
+                          className={`px-2.5 py-0.5 rounded-md text-[10px] font-bold font-mono border shadow-2xs ${
                             isProctoringEnabled
                               ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
                               : 'bg-slate-200 text-slate-600 border-slate-300'
@@ -533,8 +533,8 @@ export default function ExamCreatePage() {
                 {/* Mode selection when proctoring is enabled */}
                 {isProctoringEnabled ? (
                   <div className="pt-4 border-t border-slate-200 space-y-3">
-                    <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider font-mono">
-                      Pilih Mode Kamera Pengawasan
+                    <label className="block text-xs font-bold text-slate-800 font-mono">
+                      Pilih mode kamera pengawasan
                     </label>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <label
@@ -556,7 +556,7 @@ export default function ExamCreatePage() {
                           <div className="flex items-center gap-1.5">
                             <Smartphone className="w-4 h-4 text-slate-700" aria-hidden="true" />
                             <span className="text-xs font-bold text-slate-900">Dual-Camera</span>
-                            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-violet-50 text-violet-700 font-bold border border-violet-200">
+                            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#f1effa] text-[#6a5fc1] font-bold border border-[#ddd9ef]">
                               Rekomendasi
                             </span>
                           </div>
@@ -607,13 +607,13 @@ export default function ExamCreatePage() {
 
               {/* Explanation and Randomization Policies */}
               <div className="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-4">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800 font-mono">
-                  Kebijakan Pembahasan & Pengacakan
+                <h3 className="text-xs font-bold text-slate-800 font-mono">
+                  Kebijakan pembahasan & pengacakan
                 </h3>
 
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1.5 font-mono">
-                    Kebijakan Rilis Penjelasan Konsep AI
+                    Kebijakan rilis penjelasan konsep AI
                   </label>
                   <select
                     value={explanationPolicy}
@@ -664,7 +664,7 @@ export default function ExamCreatePage() {
                 <button
                   type="submit"
                   disabled={loading || !classId}
-                  className="px-6 py-2.5 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white text-xs font-bold shadow-card hover:shadow-card-hover disabled:opacity-50 cursor-pointer transition-colors flex items-center gap-2 focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none font-display tracking-wide"
+                  className="px-6 py-2.5 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white text-xs font-bold shadow-card hover:shadow-card-hover disabled:opacity-50 cursor-pointer transition-colors flex items-center gap-2 focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none font-display"
                 >
                   {loading ? (
                     <>

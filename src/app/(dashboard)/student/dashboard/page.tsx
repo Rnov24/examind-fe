@@ -77,7 +77,7 @@ export default function StudentDashboardPage() {
         heroExam && !isLiveNotStarted(heroExam.exam_mode, heroExam.start_time) ? (
           <Link
             href={`/student/exam/${heroExam.id}`}
-            className="px-5 py-2.5 rounded-full bg-white hover:bg-[#f1effa] text-[#150f23] font-bold text-xs shadow-card hover:shadow-card-hover flex items-center justify-center gap-2 transition-colors cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-[#6a5fc1] focus:outline-none"
+            className="px-5 py-2.5 rounded-full bg-white hover:bg-[#f1effa] text-[#150f23] font-bold text-xs shadow-card hover:shadow-card-hover flex items-center justify-center gap-2 transition-colors cursor-pointer font-display focus:ring-2 focus:ring-[#6a5fc1] focus:outline-none"
           >
             <Eye className="w-4 h-4 text-[#150f23]" aria-hidden="true" />
             <span>Siapkan Kamera &amp; Mulai</span>
@@ -90,7 +90,7 @@ export default function StudentDashboardPage() {
       {/* Loading State */}
       {isLoading && (
         <div className="bg-white rounded-2xl border border-[#ddd9ef] p-12 text-center shadow-card space-y-3">
-          <Loader2 className="w-8 h-8 text-violet-600 animate-spin mx-auto" aria-hidden="true" />
+          <Loader2 className="w-8 h-8 text-[#6a5fc1] animate-spin mx-auto" aria-hidden="true" />
           <h3 className="font-bold text-slate-900 text-sm">Memuat jadwal paket ujian...</h3>
           <p className="text-xs text-slate-500 max-w-sm mx-auto">
             Menghubungkan ke server CBT sekolah untuk mengambil paket ujian aktif Anda.
@@ -126,20 +126,18 @@ export default function StudentDashboardPage() {
           <div className="relative overflow-hidden bg-[#150f23] bg-grid-dots-dark text-white rounded-2xl p-6 sm:p-8 shadow-midnight-elevated border border-[#362d59] hero-exam-card">
             {/* Subtle Lime Edge Glow Pulse on Mount (Transform + Opacity only) */}
             <div className="pointer-events-none absolute inset-0 rounded-2xl border-2 border-[#c2ef4e]/60 hero-lime-glow" aria-hidden="true" />
-            <div className="pointer-events-none absolute top-0 right-0 w-80 h-80 bg-violet-500/10 rounded-full blur-3xl"></div>
-            <div className="pointer-events-none absolute bottom-0 left-1/3 w-64 h-64 bg-[#c2ef4e]/10 rounded-full blur-3xl"></div>
 
             <div className="relative z-10 space-y-5">
               <div className="flex items-center justify-between gap-3 flex-wrap">
                 <div className="flex items-center gap-2">
-                  <span className="px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider bg-[#c2ef4e] text-slate-950 font-mono shadow-xs">
-                    Ujian Aktif Berikutnya
+                  <span className="px-2.5 py-1 rounded-md text-[10px] font-bold bg-[#c2ef4e] text-slate-950 font-mono shadow-xs">
+                    Ujian aktif berikutnya
                   </span>
                   <span className="px-2.5 py-1 rounded-md text-[11px] font-bold bg-white/10 text-white border border-white/10 font-mono">
                     {heroExam.class_name}
                   </span>
                 </div>
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-bold bg-violet-400/15 text-violet-200 border border-violet-400/20 font-mono">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-bold bg-[#6a5fc1]/15 text-[#ddd9ef] border border-[#6a5fc1]/20 font-mono">
                   <Eye className="w-3.5 h-3.5 text-[#c2ef4e]" aria-hidden="true" />
                   {heroExam.proctoring_level === 'dual_camera'
                     ? 'Dual-Camera Proctoring'
@@ -158,7 +156,7 @@ export default function StudentDashboardPage() {
               </div>
 
               <div className="space-y-2 max-w-2xl min-w-0">
-                <h2 className="font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-white leading-tight">
+                <h2 className="font-display text-2xl sm:text-3xl font-bold text-white leading-tight">
                   {heroExam.title}
                 </h2>
                 <div className="flex items-center gap-4 text-xs text-slate-300 flex-wrap pt-1">
@@ -186,7 +184,7 @@ export default function StudentDashboardPage() {
                   <span
                     aria-disabled="true"
                     title={`Ujian live dimulai ${formatExamDateTime(heroExam.start_time)}`}
-                    className="px-6 py-3.5 rounded-xl bg-white/10 text-slate-300 font-extrabold text-sm flex items-center justify-center gap-2.5 cursor-not-allowed font-display tracking-wide border border-white/10"
+                    className="px-6 py-3.5 rounded-xl bg-white/10 text-slate-300 font-bold text-sm flex items-center justify-center gap-2.5 cursor-not-allowed font-display border border-white/10"
                   >
                     <Clock className="w-4 h-4" aria-hidden="true" />
                     <span>Ujian dimulai {formatExamDateTime(heroExam.start_time)}</span>
@@ -194,7 +192,7 @@ export default function StudentDashboardPage() {
                 ) : (
                   <Link
                     href={`/student/exam/${heroExam.id}`}
-                    className="px-6 py-3.5 rounded-xl bg-[#c2ef4e] hover:bg-[#b0df3f] text-slate-950 font-extrabold text-sm shadow-md hover:shadow-lg transition-colors flex items-center justify-center gap-2.5 cursor-pointer font-display tracking-wide group focus:ring-2 focus:ring-white/40 focus:outline-none"
+                    className="px-6 py-3.5 rounded-xl bg-[#c2ef4e] hover:bg-[#b0df3f] text-slate-950 font-bold text-sm shadow-md hover:shadow-lg transition-colors flex items-center justify-center gap-2.5 cursor-pointer font-display group focus:ring-2 focus:ring-white/40 focus:outline-none"
                   >
                     <span>Mulai Ujian Sekarang</span>
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
@@ -216,7 +214,7 @@ export default function StudentDashboardPage() {
             <DashboardCard
               title="Paket Ujian Terjadwal Lainnya"
               subtitle="Daftar ujian yang juga ditugaskan untuk kelas Anda"
-              icon={<FileText className="w-4 h-4 text-violet-600" aria-hidden="true" />}
+              icon={<FileText className="w-4 h-4 text-[#6a5fc1]" aria-hidden="true" />}
               noPadding
               action={
                 <span className="text-xs font-mono font-bold text-[#6a5fc1] bg-[#f1effa] px-2.5 py-1 rounded-lg border border-[#ddd9ef] tabular-nums">

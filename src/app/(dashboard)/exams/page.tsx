@@ -96,11 +96,11 @@ export default function ExamListPage() {
             <table className="w-full text-left text-sm text-slate-600">
               <thead className="bg-[#f1effa] text-xs font-bold text-slate-600 font-mono border-b border-[#ddd9ef]">
                 <tr>
-                  <th className="px-6 py-4">Judul Ujian</th>
-                  <th className="px-6 py-4">Kelas Sasaran</th>
-                  <th className="px-6 py-4">Jadwal & Durasi</th>
+                  <th className="px-6 py-4">Judul ujian</th>
+                  <th className="px-6 py-4">Kelas sasaran</th>
+                  <th className="px-6 py-4">Jadwal & durasi</th>
                   <th className="px-6 py-4">Pengawasan</th>
-                  <th className="px-6 py-4">Total Butir Soal</th>
+                  <th className="px-6 py-4">Total butir soal</th>
                   <th className="px-6 py-4">Status</th>
                   <th className="px-6 py-4 text-right">Aksi</th>
                 </tr>

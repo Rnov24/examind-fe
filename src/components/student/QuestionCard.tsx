@@ -88,7 +88,7 @@ export default function QuestionCard({
       {/* Question Header */}
       <div className="p-4 sm:p-6 pb-4 border-b border-slate-100 flex flex-wrap items-center justify-between gap-3 bg-slate-50/50">
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="px-3 py-1.5 rounded-xl bg-[#150f23] text-white font-bold text-xs uppercase font-mono shadow-xs tracking-wide flex items-center gap-1.5">
+          <span className="px-3 py-1.5 rounded-xl bg-[#150f23] text-white font-bold text-xs font-mono shadow-xs flex items-center gap-1.5">
             <span>Soal No. {currentIndex + 1}</span>
             <span className="text-slate-400 font-normal">/ {totalQuestions}</span>
           </span>
@@ -166,10 +166,10 @@ export default function QuestionCard({
         <div className="space-y-6">
           {/* Question Prompt Paper Surface */}
           <div className="bg-slate-50/70 rounded-2xl border border-slate-200/80 p-5 sm:p-7 relative shadow-inner-soft">
-            <div className="text-[11px] font-mono uppercase tracking-wider text-slate-400 font-bold mb-2.5 flex items-center justify-between">
+            <div className="text-[11px] font-mono text-slate-400 font-bold mb-2.5 flex items-center justify-between">
               <div className="flex items-center gap-1.5">
                 <FileText className="w-3.5 h-3.5 text-slate-400" aria-hidden="true" />
-                <span>Naskah Soal</span>
+                <span>Naskah soal</span>
               </div>
               <span className="text-slate-400 font-normal lowercase text-[10px]">
                 {question.points ?? 10} poin maksimal
@@ -188,8 +188,8 @@ export default function QuestionCard({
               aria-label={`Pilihan jawaban soal nomor ${currentIndex + 1}`}
             >
               <div className="flex items-center justify-between mb-2">
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 font-mono">
-                  Pilih Salah Satu Jawaban:
+                <label className="block text-xs font-bold text-slate-600 font-mono">
+                  Pilih salah satu jawaban:
                 </label>
                 <span className="text-[11px] font-mono text-slate-400 hidden sm:inline-flex items-center gap-1">
                   <Keyboard className="w-3 h-3 text-slate-400" aria-hidden="true" />
@@ -221,7 +221,7 @@ export default function QuestionCard({
                   >
                     <div className="flex items-start gap-3.5">
                       <div
-                        className={`w-9 h-9 rounded-xl font-black text-sm flex items-center justify-center shrink-0 transition-colors font-mono ${
+                        className={`w-9 h-9 rounded-xl font-bold text-sm flex items-center justify-center shrink-0 transition-colors font-mono ${
                           isSelected
                             ? 'bg-[#c2ef4e] text-slate-950 shadow-xs'
                             : 'bg-slate-100 text-slate-700 border border-slate-200 group-hover:bg-slate-200 group-hover:text-slate-900'

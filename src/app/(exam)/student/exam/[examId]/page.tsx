@@ -498,7 +498,7 @@ export default function ExamWorkspacePage() {
       'relative h-11 rounded-xl text-xs font-mono transition-[color,background-color,border-color,transform] duration-150 flex items-center justify-center border cursor-pointer select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#150f23] active:scale-95 '
 
     if (isCurrent) {
-      classes += 'ring-2 ring-[#150f23] ring-offset-2 scale-105 z-10 shadow-md font-black '
+      classes += 'ring-2 ring-[#150f23] ring-offset-2 scale-105 z-10 shadow-md font-bold '
     }
 
     if (isDoubt && isAnswered) {
@@ -546,7 +546,7 @@ export default function ExamWorkspacePage() {
         <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
           <ExamindLogo variant="symbol" theme="color" className="h-8 sm:h-9 w-auto shrink-0" priority />
           <div className="min-w-0">
-            <h1 className="font-display text-xs sm:text-base font-bold text-slate-900 tracking-tight leading-tight truncate">
+            <h1 className="font-display text-xs sm:text-base font-bold text-slate-900 leading-tight truncate">
               {examStore.examMeta?.title || 'Ujian EXAMIND'}
             </h1>
             <p className="text-[10px] sm:text-[11px] text-slate-500 font-mono truncate">
@@ -566,7 +566,7 @@ export default function ExamWorkspacePage() {
         <div className="flex items-center gap-2 sm:gap-3">
           {/* Steady Calm Timer Pill */}
           <div
-            className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1.5 rounded-xl border font-mono font-bold text-xs sm:text-sm tracking-wide shadow-xs tabular-nums transition-colors ${
+            className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1.5 rounded-xl border font-mono font-bold text-xs sm:text-sm shadow-xs tabular-nums transition-colors ${
               isTimerUrgent
                 ? 'bg-rose-50 border-rose-300 text-rose-900'
                 : 'bg-slate-100/90 border-slate-200 text-slate-900'
@@ -581,7 +581,7 @@ export default function ExamWorkspacePage() {
             />
             <span>{formattedTime}</span>
             {isTimerUrgent && (
-              <span className="hidden md:inline-block text-[10px] uppercase font-bold text-rose-700 bg-rose-100 px-1.5 py-0.2 rounded border border-rose-200">
+              <span className="hidden md:inline-block text-[10px] font-bold text-rose-700 bg-rose-100 px-1.5 py-0.2 rounded border border-rose-200">
                 Sisa 5m
               </span>
             )}
@@ -590,7 +590,7 @@ export default function ExamWorkspacePage() {
           {/* Progress: Terjawab X / N */}
           <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100/90 border border-slate-200 text-xs font-mono font-bold text-slate-700 shadow-xs tabular-nums">
             <span>Terjawab:</span>
-            <span className="text-slate-900 font-extrabold">{examStore.answeredCount}</span>
+            <span className="text-slate-900 font-bold">{examStore.answeredCount}</span>
             <span className="text-slate-400">/</span>
             <span>{examStore.totalQuestions}</span>
           </div>
@@ -691,7 +691,7 @@ export default function ExamWorkspacePage() {
           <button
             type="button"
             onClick={() => setShowSubmitModal(true)}
-            className="px-3.5 sm:px-4 py-2 rounded-xl bg-[#150f23] hover:bg-slate-800 text-white font-bold text-xs shadow-card hover:shadow-card-hover transition-[color,background-color,border-color,box-shadow] flex items-center gap-1.5 sm:gap-2 cursor-pointer font-display tracking-wide focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6a5fc1]"
+            className="px-3.5 sm:px-4 py-2 rounded-xl bg-[#150f23] hover:bg-slate-800 text-white font-bold text-xs shadow-card hover:shadow-card-hover transition-[color,background-color,border-color,box-shadow] flex items-center gap-1.5 sm:gap-2 cursor-pointer font-display focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6a5fc1]"
           >
             <CheckCircle2 className="w-4 h-4 text-[#c2ef4e]" aria-hidden="true" />
             <span>Kumpulkan</span>
@@ -747,15 +747,15 @@ export default function ExamWorkspacePage() {
                     </div>
                     <div className="min-w-0">
                       <div className="flex items-center gap-1.5">
-                        <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-emerald-400 bg-emerald-950/70 border border-emerald-500/30 px-1.5 py-0.2 rounded">
-                          AI Live
+                        <span className="text-[10px] font-mono font-bold text-emerald-400 bg-emerald-950/70 border border-emerald-500/30 px-1.5 py-0.2 rounded">
+                          AI live
                         </span>
                         <span className="text-xs font-bold text-white truncate font-display">
-                          Kamera 1 Aktif
+                          Kamera 1 aktif
                         </span>
                       </div>
                       <p className="text-[10px] font-mono text-slate-300 truncate mt-0.5">
-                        {faceDetected ? 'Wajah Terdeteksi Normal' : 'Wajah Tidak Terdeteksi!'}
+                        {faceDetected ? 'Wajah terdeteksi normal' : 'Wajah tidak terdeteksi'}
                       </p>
                     </div>
                   </div>
@@ -783,9 +783,9 @@ export default function ExamWorkspacePage() {
 
                   {/* Top Overlay: LIVE & Face Detection Status */}
                   <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between pointer-events-none">
-                    <div className="px-2 py-0.5 rounded-md bg-rose-600 text-white font-mono font-black text-[10px] flex items-center gap-1.5 shadow-xs uppercase tracking-wider">
+                    <div className="px-2 py-0.5 rounded-md bg-rose-600 text-white font-mono font-bold text-[10px] flex items-center gap-1.5 shadow-xs">
                       <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-                      <span>LIVE</span>
+                      <span>Live</span>
                     </div>
 
                     <div
@@ -800,7 +800,7 @@ export default function ExamWorkspacePage() {
                           faceDetected ? 'bg-[#c2ef4e]' : 'bg-rose-400 animate-pulse'
                         }`}
                       />
-                      <span>{faceDetected ? 'Wajah Terdeteksi' : 'Wajah Tidak Terdeteksi'}</span>
+                      <span>{faceDetected ? 'Wajah terdeteksi' : 'Wajah tidak terdeteksi'}</span>
                     </div>
                   </div>
 
@@ -861,7 +861,7 @@ export default function ExamWorkspacePage() {
               <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                 <div className="flex items-center gap-2">
                   <LayoutGrid className="w-4 h-4 text-slate-700" aria-hidden="true" />
-                  <h3 className="font-display text-sm font-bold text-slate-900 tracking-tight">
+                  <h3 className="font-display text-sm font-bold text-slate-900">
                     Daftar Soal
                   </h3>
                 </div>
@@ -1308,8 +1308,8 @@ export default function ExamWorkspacePage() {
                 <Bell className="w-5 h-5 text-amber-600 animate-bounce" aria-hidden="true" />
               </div>
               <div>
-                <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-900 border border-amber-200 font-mono">
-                  Peringatan Langsung Pengawas
+                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-200 font-mono">
+                  Peringatan langsung pengawas
                 </span>
                 <h3 className="text-sm font-bold text-slate-900 mt-0.5">
                   {proctoringStore.warningTeacherName || 'Guru Pengawas'}
@@ -1378,16 +1378,15 @@ export default function ExamWorkspacePage() {
       {!isExamStarted && !isSecurityModalOpen && setupPhase === 'done' && (
         <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 flex items-center justify-center p-4">
           <div className="bg-white border border-slate-200/90 rounded-2xl p-6 sm:p-8 max-w-lg w-full text-center space-y-6 shadow-subtle-elevated relative overflow-hidden">
-            <div className="pointer-events-none absolute -top-12 -right-12 w-48 h-48 bg-violet-50/70 rounded-full blur-2xl" />
-            <div className="w-16 h-16 rounded-2xl bg-violet-50 border border-violet-200/70 text-violet-700 flex items-center justify-center mx-auto shadow-xs ring-4 ring-violet-50/70">
+            <div className="w-16 h-16 rounded-2xl bg-[#f1effa] border border-[#ddd9ef] text-[#6a5fc1] flex items-center justify-center mx-auto shadow-xs ring-4 ring-[#f1effa]">
               {isCameraProctoringEnabled ? (
-                <ShieldAlert className="w-8 h-8 text-violet-600" aria-hidden="true" />
+                <ShieldAlert className="w-8 h-8 text-[#6a5fc1]" aria-hidden="true" />
               ) : (
-                <ShieldCheck className="w-8 h-8 text-violet-600" aria-hidden="true" />
+                <ShieldCheck className="w-8 h-8 text-[#6a5fc1]" aria-hidden="true" />
               )}
             </div>
             <div className="space-y-1.5">
-              <h2 className="font-display text-2xl font-extrabold text-slate-900 tracking-tight">
+              <h2 className="font-display text-2xl font-bold text-slate-900">
                 Protokol Keamanan CBT EXAMIND
               </h2>
               <p className="text-xs text-slate-500">
@@ -1419,10 +1418,10 @@ export default function ExamWorkspacePage() {
             <button
               type="button"
               onClick={enterFullscreenAndStart}
-              className="w-full py-3.5 px-6 rounded-xl bg-[#150f23] hover:bg-slate-800 text-white font-bold text-xs sm:text-sm shadow-card hover:shadow-card-hover transition-[color,background-color,border-color,box-shadow] flex items-center justify-center gap-2 cursor-pointer font-display tracking-wide group"
+              className="w-full py-3.5 px-6 rounded-xl bg-[#150f23] hover:bg-slate-800 text-white font-bold text-xs sm:text-sm shadow-card hover:shadow-card-hover transition-[color,background-color,border-color,box-shadow] flex items-center justify-center gap-2 cursor-pointer font-display"
             >
               <Maximize
-                className="w-4 h-4 text-[#c2ef4e] group-hover:scale-110 transition-transform"
+                className="w-4 h-4 text-[#c2ef4e]"
                 aria-hidden="true"
               />
               <span>Masuk Mode Layar Penuh & Mulai Ujian</span>

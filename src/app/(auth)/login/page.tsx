@@ -133,7 +133,7 @@ function LoginForm() {
       <div className="space-y-5">
         {/* Card Header */}
         <div>
-          <h1 className="font-display text-[22px] font-bold tracking-tight text-[#150f23]">
+          <h1 className="font-display text-[22px] font-bold text-[#150f23]">
             Masuk ke Portal Ujian
           </h1>
         </div>
@@ -276,7 +276,7 @@ function LoginForm() {
                 className="inline-flex items-center gap-1 font-bold text-[#6a5fc1] transition-colors hover:text-[#422082]"
               >
                 <span>Daftar dengan Kode Sekolah</span>
-                <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </Link>
             </p>
           </div>

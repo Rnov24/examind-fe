@@ -76,7 +76,7 @@ export default function ForgotPasswordPage() {
       })
       const data = res.data?.data
       setCooldown(data?.cooldown_seconds || 60)
-      setResendNotice('Email instruksi dan kode reset baru berhasil dikirim ulang!')
+      setResendNotice('Email instruksi dan kode reset baru berhasil dikirim ulang')
       if (data?.dev_preview) {
         setDevPreview(data.dev_preview)
       }
@@ -114,7 +114,7 @@ export default function ForgotPasswordPage() {
 
           {/* Error Alert */}
           {errorMessage && (
-            <div className="flex items-center gap-2.5 rounded-xl border border-rose-200 bg-rose-50 p-3.5 text-[13px] text-rose-900" role="alert">
+            <div className="flex items-center gap-2.5 rounded-xl border border-rose-200 bg-rose-50 p-3 text-[13px] text-rose-900" role="alert">
               <AlertCircle className="h-4 w-4 shrink-0 text-rose-600" aria-hidden="true" />
               <span>{errorMessage}</span>
             </div>
@@ -181,7 +181,7 @@ export default function ForgotPasswordPage() {
 
             <div className="space-y-1.5">
               <h1 className="font-display text-xl font-bold text-[#150f23]">
-                Email Reset Terkirim!
+                Email Reset Terkirim
               </h1>
               <p className="mx-auto max-w-xs text-[13px] leading-relaxed text-slate-500">
                 Tautan &amp; kode reset dikirim ke:
@@ -201,7 +201,7 @@ export default function ForgotPasswordPage() {
           )}
 
           {errorMessage && (
-            <div className="flex items-center gap-2.5 rounded-xl border border-rose-200 bg-rose-50 p-3.5 text-[13px] text-rose-900" role="alert">
+            <div className="flex items-center gap-2.5 rounded-xl border border-rose-200 bg-rose-50 p-3 text-[13px] text-rose-900" role="alert">
               <AlertCircle className="h-4 w-4 shrink-0 text-rose-600" aria-hidden="true" />
               <span>{errorMessage}</span>
             </div>

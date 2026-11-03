@@ -159,7 +159,7 @@ export default function TeacherDashboardPage() {
           </Link>
           <Link
             href="/exams/create"
-            className="px-5 py-2.5 bg-white hover:bg-[#f1effa] text-[#150f23] font-bold text-xs rounded-xl transition-colors shadow-card hover:shadow-card-hover flex items-center justify-center gap-2 cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-[#6a5fc1] focus:outline-none"
+            className="px-5 py-2.5 bg-white hover:bg-[#f1effa] text-[#150f23] font-bold text-xs rounded-xl transition-colors shadow-card hover:shadow-card-hover flex items-center justify-center gap-2 cursor-pointer font-display focus:ring-2 focus:ring-[#6a5fc1] focus:outline-none"
           >
             <Plus className="w-4 h-4 text-[#150f23]" aria-hidden="true" />
             <span>Buat Paket Ujian</span>
@@ -171,7 +171,7 @@ export default function TeacherDashboardPage() {
       {/* Loading Skeleton */}
       {isLoading && (
         <div className="bg-white rounded-2xl border border-[#ddd9ef] p-12 text-center shadow-card space-y-3">
-          <Loader2 className="w-8 h-8 text-violet-600 animate-spin mx-auto" aria-hidden="true" />
+          <Loader2 className="w-8 h-8 text-[#6a5fc1] animate-spin mx-auto" aria-hidden="true" />
           <h3 className="font-bold text-slate-900 text-sm">Memuat ringkasan aktivitas pengawas...</h3>
           <p className="text-xs text-slate-500 max-w-sm mx-auto">
             Menghubungkan data jadwal ujian, rombel siswa, dan status koreksi esai Anda.
@@ -242,8 +242,8 @@ export default function TeacherDashboardPage() {
                           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                           <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                         </span>
-                        <span className="text-[10px] font-bold uppercase font-mono text-emerald-700 tracking-wider">
-                          Ujian Sedang Berlangsung
+                        <span className="text-[10px] font-bold font-mono text-emerald-700">
+                          Ujian sedang berlangsung
                         </span>
                       </div>
                       <h3 className="font-display text-sm font-bold text-slate-900 truncate">
@@ -268,11 +268,11 @@ export default function TeacherDashboardPage() {
                 {completedExams.map((exam) => (
                   <div
                     key={`comp-${exam.id}`}
-                    className="p-4 rounded-xl border border-violet-200 bg-violet-50/30 flex items-center justify-between gap-3 hover:bg-violet-50/60 transition-colors"
+                    className="p-4 rounded-xl border border-[#ddd9ef] bg-[#f1effa]/30 flex items-center justify-between gap-3 hover:bg-[#f1effa]/60 transition-colors"
                   >
                     <div className="min-w-0 space-y-1">
-                      <span className="text-[10px] font-bold uppercase font-mono text-violet-700 tracking-wider">
-                        Selesai • Siap Dinilai
+                      <span className="text-[10px] font-bold font-mono text-[#6a5fc1]">
+                        Selesai • siap dinilai
                       </span>
                       <h3 className="font-display text-sm font-bold text-slate-900 truncate">
                         {exam.title}
@@ -310,7 +310,7 @@ export default function TeacherDashboardPage() {
               <StatCard
                 title="Master Bank Soal"
                 value={`${banksCount} Paket`}
-                icon={<BookOpen className="w-5 h-5 text-violet-600" aria-hidden="true" />}
+                icon={<BookOpen className="w-5 h-5 text-[#6a5fc1]" aria-hidden="true" />}
                 tone="violet"
                 subtitle="Kelola butir soal"
                 className="h-full"
@@ -346,7 +346,7 @@ export default function TeacherDashboardPage() {
           <DashboardCard
             title="Daftar Paket Ujian Terkini"
             subtitle="Kelola paket ujian, akses pemantauan, dan buka lembar koreksi"
-            icon={<FileSpreadsheet className="w-4 h-4 text-violet-600" aria-hidden="true" />}
+            icon={<FileSpreadsheet className="w-4 h-4 text-[#6a5fc1]" aria-hidden="true" />}
             noPadding
             action={
               <div className="flex items-center gap-2 flex-wrap">
@@ -378,7 +378,7 @@ export default function TeacherDashboardPage() {
                     onClick={() => setExamStatusFilter('completed')}
                     className={`min-h-[44px] px-3 py-1 rounded-lg transition-colors cursor-pointer ${
                       examStatusFilter === 'completed'
-                        ? 'bg-white text-violet-800 shadow-2xs font-bold'
+                        ? 'bg-white text-[#6a5fc1] shadow-2xs font-bold'
                         : 'text-slate-600 hover:text-slate-900'
                     }`}
                   >
@@ -388,7 +388,7 @@ export default function TeacherDashboardPage() {
 
                 <Link
                   href="/exams"
-                  className="text-xs font-bold text-slate-900 hover:text-violet-600 flex items-center gap-1 font-mono transition-colors shrink-0 rounded-lg px-2 py-1"
+                  className="text-xs font-bold text-slate-900 hover:text-[#6a5fc1] flex items-center gap-1 font-mono transition-colors shrink-0 rounded-lg px-2 py-1"
                 >
                   <span>Semua ({recentExams.length})</span>
                   <ChevronRight className="w-3.5 h-3.5 text-slate-500" aria-hidden="true" />

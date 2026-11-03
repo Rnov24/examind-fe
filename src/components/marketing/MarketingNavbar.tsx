@@ -80,7 +80,7 @@ export function MarketingNavbar() {
       <div className="relative w-full max-w-3xl">
         <header className="flex items-center justify-between gap-2 rounded-full border border-slate-200 bg-white/90 py-2 pl-4 pr-2 shadow-lg shadow-slate-900/5 backdrop-blur-xl">
           {/* Brand */}
-          <a href="#hero" className="flex shrink-0 items-center" aria-label="EXAMIND Beranda">
+          <a href="#hero" className="flex shrink-0 items-center py-2.5" aria-label="EXAMIND Beranda">
             <ExamindLogo variant="lockup" theme="color" className="h-6 w-auto shrink-0 sm:h-7" priority />
           </a>
 
@@ -107,7 +107,7 @@ export function MarketingNavbar() {
             {isAuth ? (
               <Link
                 href={dashboardRoute}
-                className="mkt-btn-press inline-flex items-center gap-1.5 rounded-full bg-[#c2ef4e] px-3 py-1.5 text-xs font-bold text-slate-950 shadow-xs hover:bg-[#b2e234] sm:px-4 sm:py-2 sm:text-[13px]"
+                className="mkt-btn-press inline-flex items-center gap-1.5 rounded-full bg-[#c2ef4e] px-3 py-3.5 text-xs font-bold text-slate-950 shadow-xs hover:bg-[#b2e234] sm:px-4 sm:py-2 sm:text-[13px]"
               >
                 <span>Ke Dashboard</span>
                 <ArrowRight className="h-3.5 w-3.5" />
@@ -115,7 +115,7 @@ export function MarketingNavbar() {
             ) : (
               <Link
                 href="/register"
-                className="mkt-btn-press inline-flex items-center gap-1.5 rounded-full bg-[#c2ef4e] px-3 py-1.5 text-xs font-bold text-slate-950 shadow-xs hover:bg-[#b2e234] sm:px-4 sm:py-2 sm:text-[13px]"
+                className="mkt-btn-press inline-flex items-center gap-1.5 rounded-full bg-[#c2ef4e] px-3 py-3.5 text-xs font-bold text-slate-950 shadow-xs hover:bg-[#b2e234] sm:px-4 sm:py-2 sm:text-[13px]"
               >
                 <span>Mulai</span>
                 <ArrowRight className="h-3.5 w-3.5" />
@@ -124,7 +124,7 @@ export function MarketingNavbar() {
 
             <button
               onClick={() => setIsMobileMenuOpen((open) => !open)}
-              className="rounded-full p-2 text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 md:hidden"
+              className="rounded-full p-3 text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 md:hidden"
               aria-label={isMobileMenuOpen ? 'Tutup menu navigasi' : 'Buka menu navigasi'}
               aria-expanded={isMobileMenuOpen}
             >
@@ -146,7 +146,7 @@ export function MarketingNavbar() {
                     setIsMobileMenuOpen(false)
                   }}
                   aria-current={activeSection === link.id ? 'true' : undefined}
-                  className={`rounded-2xl px-4 py-2.5 transition-colors duration-200 ${
+                  className={`rounded-2xl px-4 py-3 transition-colors duration-200 ${
                     activeSection === link.id
                       ? 'bg-[#c2ef4e] text-slate-950'
                       : 'text-slate-700 hover:bg-slate-100'

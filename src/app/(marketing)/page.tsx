@@ -541,7 +541,7 @@ export default function LandingPage() {
                     { label: 'Rata-rata Nilai', bars: [45, 60, 52, 74, 68] },
                   ].map((card) => (
                     <div key={card.label} className="rounded-lg border border-slate-200 p-3">
-                      <div className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wide text-slate-500 truncate">
+                      <div className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wide text-slate-500 leading-snug">
                         {card.label}
                       </div>
                       <div className="mt-2 flex items-end gap-1 h-8">
@@ -1478,7 +1478,7 @@ export default function LandingPage() {
             </p>
             <button
               onClick={() => openInquiryModal('cs')}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-white hover:bg-slate-100 text-slate-900 border border-slate-300 font-semibold text-sm cursor-pointer shadow-xs"
+              className="inline-flex items-center gap-2 px-4 py-3 sm:py-2.5 rounded-lg bg-white hover:bg-slate-100 text-slate-900 border border-slate-300 font-semibold text-sm cursor-pointer shadow-xs"
             >
               <MessageSquare className="w-4 h-4" />
               <span>Mulai Konsultasi</span>

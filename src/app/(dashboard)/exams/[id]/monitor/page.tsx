@@ -93,7 +93,7 @@ export default function LiveMonitoringPage() {
       })
       setActiveWarningStudent(null)
       setWarningMessageText('')
-      alert('Peringatan telah terkirim!')
+      alert('Peringatan telah terkirim.')
     } catch {
       alert('Gagal mengirim peringatan')
     }
@@ -329,7 +329,7 @@ export default function LiveMonitoringPage() {
           </Link>
           <div>
             <div className="flex items-center gap-2.5 flex-wrap">
-              <h1 className="font-display text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
+              <h1 className="font-display text-xl sm:text-2xl font-bold text-slate-900">
                 Live Monitoring Pengawasan AI
               </h1>
               {examStatus === 'in_progress' && (
@@ -338,22 +338,22 @@ export default function LiveMonitoringPage() {
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
                   </span>
-                  LIVE PROCTOR
+                  Live proctor
                 </span>
               )}
               {examStatus === 'published' && (
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-violet-50 text-violet-700 border border-violet-200 font-mono shadow-xs">
-                  TERJADWAL
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-[#f1effa] text-[#6a5fc1] border border-[#ddd9ef] font-mono shadow-xs">
+                  Terjadwal
                 </span>
               )}
               {examStatus === 'completed' && (
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200 font-mono shadow-xs">
-                  SELESAI
+                  Selesai
                 </span>
               )}
               {examStatus === 'draft' && (
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200 font-mono shadow-xs">
-                  DRAFT
+                  Draft
                 </span>
               )}
             </div>
@@ -367,7 +367,7 @@ export default function LiveMonitoringPage() {
         <div className="flex items-center gap-2 self-stretch sm:self-auto">
           <button
             onClick={() => setFilterMode('all')}
-            className={`flex-1 sm:flex-initial min-h-[44px] px-4 py-2 rounded-xl font-bold text-xs transition-colors cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none ${
+            className={`flex-1 sm:flex-initial min-h-[44px] px-4 py-2 rounded-xl font-bold text-xs transition-colors cursor-pointer font-display focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none ${
               filterMode === 'all'
                 ? 'bg-slate-900 text-white shadow-card'
                 : 'bg-white border border-slate-200 text-slate-700 hover:bg-[#f1effa] shadow-xs'
@@ -377,7 +377,7 @@ export default function LiveMonitoringPage() {
           </button>
           <button
             onClick={() => setFilterMode('flagged')}
-            className={`flex-1 sm:flex-initial min-h-[44px] px-4 py-2 rounded-xl font-bold text-xs transition-colors cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-amber-500/20 focus:outline-none ${
+            className={`flex-1 sm:flex-initial min-h-[44px] px-4 py-2 rounded-xl font-bold text-xs transition-colors cursor-pointer font-display focus:ring-2 focus:ring-amber-500/20 focus:outline-none ${
               filterMode === 'flagged'
                 ? 'bg-amber-600 text-white shadow-card'
                 : 'bg-amber-50 border border-amber-200 text-amber-800 hover:bg-amber-100 shadow-xs'
@@ -401,7 +401,7 @@ export default function LiveMonitoringPage() {
           return (
             <div
               key={student.session_id}
-              className={`bg-white rounded-2xl border transition-[color,background-color,border-color,box-shadow] duration-200 p-5 space-y-4 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 text-slate-900 ${borderClass}`}
+              className={`bg-white rounded-2xl border transition-[color,background-color,border-color,box-shadow] duration-200 p-5 space-y-4 shadow-card hover:shadow-card-hover text-slate-900 ${borderClass}`}
             >
               {/* Card Header */}
               <div className="flex items-start justify-between gap-2">
@@ -411,17 +411,17 @@ export default function LiveMonitoringPage() {
                       {student.student_name}
                     </h4>
                     {student.status === 'aborted' ? (
-                      <span className="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase bg-rose-50 text-rose-700 border border-rose-200 tracking-wider font-mono flex items-center gap-1 shrink-0">
+                      <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200 font-mono flex items-center gap-1 shrink-0">
                         <ShieldAlert className="w-3 h-3 text-rose-600" aria-hidden="true" />
                         Didiskualifikasi
                       </span>
                     ) : student.integrity_score < 90 ? (
-                      <span className="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase bg-amber-50 text-amber-700 border border-amber-200 tracking-wider font-mono flex items-center gap-1 animate-pulse shrink-0">
+                      <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200 font-mono flex items-center gap-1 shrink-0">
                         <AlertTriangle className="w-3 h-3 text-amber-600" aria-hidden="true" />
                         Perlu Klarifikasi
                       </span>
                     ) : (
-                      <span className="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase bg-emerald-50 text-emerald-700 border border-emerald-200 tracking-wider font-mono flex items-center gap-1 shrink-0">
+                      <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 font-mono flex items-center gap-1 shrink-0">
                         <CheckCircle2 className="w-3 h-3 text-emerald-600" aria-hidden="true" />
                         Aman
                       </span>
@@ -432,7 +432,7 @@ export default function LiveMonitoringPage() {
 
                 {/* Integrity Score Pill */}
                 <div
-                  className={`px-2.5 py-1 rounded-xl text-xs font-black font-mono shrink-0 shadow-xs tabular-nums ${
+                  className={`px-2.5 py-1 rounded-xl text-xs font-bold font-mono shrink-0 shadow-xs tabular-nums ${
                     student.status === 'aborted'
                       ? 'bg-rose-50 text-rose-700 border border-rose-200'
                       : student.integrity_score === null
@@ -453,7 +453,7 @@ export default function LiveMonitoringPage() {
                 {student.status === 'aborted' ? (
                   <div className="text-center p-4 bg-slate-950/95 w-full h-full flex flex-col items-center justify-center space-y-1.5">
                     <ShieldAlert className="w-7 h-7 text-rose-500" aria-hidden="true" />
-                    <span className="text-rose-400 font-bold text-xs uppercase tracking-wider font-mono">
+                    <span className="text-rose-400 font-bold text-xs font-mono">
                       Didiskualifikasi Pengawas
                     </span>
                     <span className="text-[11px] text-slate-300 font-medium px-2 py-0.5 rounded-md bg-slate-800 border border-slate-700 max-w-[90%] truncate">
@@ -479,7 +479,7 @@ export default function LiveMonitoringPage() {
                 {/* Secondary Camera (Companion) Picture-in-Picture Thumbnail */}
                 {student.companion_snapshot_url ? (
                   <div
-                    className="absolute top-2 right-2 w-20 h-14 rounded-lg overflow-hidden border-2 border-violet-500 bg-black shadow-lg"
+                    className="absolute top-2 right-2 w-20 h-14 rounded-lg overflow-hidden border-2 border-[#6a5fc1] bg-black shadow-lg"
                     title="Cam 2 (Mobile Desk Cam)"
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -492,7 +492,7 @@ export default function LiveMonitoringPage() {
                   <div
                     className={`absolute top-2 right-2 px-1.5 py-0.5 rounded text-[9px] font-semibold border backdrop-blur font-mono ${
                       student.companion_paired
-                        ? 'bg-violet-950/80 border-violet-500/80 text-emerald-300'
+                        ? 'bg-[#150f23]/80 border-[#6a5fc1]/80 text-emerald-300'
                         : 'bg-black/60 border-slate-700 text-slate-400'
                     }`}
                   >
@@ -527,7 +527,7 @@ export default function LiveMonitoringPage() {
                     onClick={() => openSnapshotModal(student)}
                     className="min-h-[44px] py-2 px-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-800 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-xs focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
                   >
-                    <History className="w-3.5 h-3.5 text-violet-600" aria-hidden="true" />
+                    <History className="w-3.5 h-3.5 text-[#6a5fc1]" aria-hidden="true" />
                     <span>Log Bukti</span>
                   </button>
                 </div>
@@ -568,7 +568,7 @@ export default function LiveMonitoringPage() {
 
         {filteredStudents.length === 0 && (
           <div className="col-span-full bg-white rounded-2xl p-12 text-center flex flex-col items-center justify-center border border-slate-200/80 shadow-card">
-            <div className="w-12 h-12 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center mb-3">
+            <div className="w-12 h-12 rounded-xl bg-[#f1effa] text-[#6a5fc1] flex items-center justify-center mb-3">
               <UserCheck className="w-6 h-6" aria-hidden="true" />
             </div>
             <h4 className="font-bold text-slate-900 text-base">Tidak Ada Peserta yang Sesuai</h4>
@@ -614,8 +614,8 @@ export default function LiveMonitoringPage() {
             </p>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase mb-1 font-mono">
-                Isi Pesan Peringatan
+              <label className="block text-xs font-bold text-slate-700 mb-1 font-mono">
+                Isi pesan peringatan
               </label>
               <textarea
                 value={warningMessageText}
@@ -695,7 +695,7 @@ export default function LiveMonitoringPage() {
                         {formatTimestamp(log.event_timestamp)} • {cameraSourceLabel(log.camera_source)}
                       </p>
                       <span
-                        className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase font-mono ${
+                        className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold font-mono ${
                           log.teacher_verdict === 'confirmed_violation'
                             ? 'bg-rose-50 text-rose-700 border border-rose-200'
                             : log.teacher_verdict === 'ignored_false_positive'
@@ -782,7 +782,7 @@ export default function LiveMonitoringPage() {
                 <ShieldAlert className="w-5 h-5" aria-hidden="true" />
               </div>
               <div>
-                <h3 className="text-base font-black text-slate-900 tracking-tight">Putusan Diskualifikasi Ujian</h3>
+                <h3 className="text-base font-bold text-slate-900">Putusan Diskualifikasi Ujian</h3>
                 <p className="text-xs text-slate-500 font-mono">
                   {activeDisqualifyStudent.student_name} ({activeDisqualifyStudent.student_identifier})
                 </p>

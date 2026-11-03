@@ -279,7 +279,7 @@ export default function ExamDetailPage() {
               <CheckCircle2 className="w-4 h-4" aria-hidden="true" />
             </div>
             <div className="min-w-0">
-              <span className="text-[10px] uppercase font-mono font-bold tracking-wider block text-emerald-800">
+              <span className="text-[10px] font-mono font-bold tracking-wider block text-emerald-800">
                 Langkah 1 (Selesai)
               </span>
               <span className="text-xs font-bold truncate block text-slate-800">
@@ -294,7 +294,7 @@ export default function ExamDetailPage() {
               <CheckCircle2 className="w-4 h-4" aria-hidden="true" />
             </div>
             <div className="min-w-0">
-              <span className="text-[10px] uppercase font-mono font-bold tracking-wider block text-emerald-800">
+              <span className="text-[10px] font-mono font-bold tracking-wider block text-emerald-800">
                 Langkah 2 (Selesai)
               </span>
               <span className="text-xs font-bold truncate block text-slate-800">
@@ -324,7 +324,7 @@ export default function ExamDetailPage() {
             </div>
             <div className="min-w-0">
               <span
-                className={`text-[10px] uppercase font-mono font-bold tracking-wider block ${
+                className={`text-[10px] font-mono font-bold tracking-wider block ${
                   isExistingExam ? 'text-emerald-800' : 'text-[#c2ef4e]'
                 }`}
               >
@@ -356,7 +356,7 @@ export default function ExamDetailPage() {
           <div className="min-w-0">
             <div className="flex items-center gap-2.5 flex-wrap mb-1">
               <span
-                className={`px-2.5 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider font-mono shadow-2xs ${
+                className={`px-2.5 py-0.5 rounded-md text-[10px] font-bold tracking-wider font-mono shadow-2xs ${
                   examDetail?.status === 'published'
                     ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
                     : examDetail?.status === 'in_progress'
@@ -366,7 +366,7 @@ export default function ExamDetailPage() {
               >
                 Status: {examDetail?.status === 'published' ? 'Terjadwal' : examDetail?.status === 'in_progress' ? 'Berlangsung' : examDetail?.status === 'completed' ? 'Selesai' : examDetail?.status || 'Draft'}
               </span>
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider font-mono bg-violet-50 text-violet-700 border border-violet-200 shadow-2xs">
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[10px] font-bold tracking-wider font-mono bg-[#f1effa] text-[#6a5fc1] border border-[#ddd9ef] shadow-2xs">
                 {examDetail?.exam_mode === 'non_live' ? (
                   <UserRound className="w-3 h-3" aria-hidden="true" />
                 ) : (
@@ -383,7 +383,7 @@ export default function ExamDetailPage() {
                   : 'Serentak'}
               </span>
             </div>
-            <h1 className="font-display text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
+            <h1 className="font-display text-xl sm:text-2xl font-bold text-slate-900">
               {examDetail?.title || 'Memuat Paket Ujian...'}
             </h1>
           </div>
@@ -421,7 +421,7 @@ export default function ExamDetailPage() {
               href={`/exams/${examDetail.id}/monitor`}
               className="px-4 py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-bold text-xs shadow-xs flex items-center gap-2 transition-colors cursor-pointer focus:ring-2 focus:ring-rose-500/20 focus:outline-none"
             >
-              <Radio className="w-4 h-4 text-rose-600 animate-pulse" aria-hidden="true" />
+              <Radio className="w-4 h-4 text-rose-600" aria-hidden="true" />
               <span>Buka Live Monitoring</span>
             </Link>
           )}
@@ -452,11 +452,11 @@ export default function ExamDetailPage() {
       <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-card space-y-3">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div className="space-y-0.5">
-            <span className="text-[10px] font-bold uppercase tracking-wider font-mono text-slate-500">
-              Progres Alokasi Target Poin Asesmen
+            <span className="text-[10px] font-bold tracking-wider font-mono text-slate-500">
+              Progres alokasi target poin asesmen
             </span>
             <div className="flex items-center gap-2">
-              <span className="text-xl font-black text-slate-900 font-display tabular-nums">
+              <span className="text-xl font-bold text-slate-900 font-display tabular-nums">
                 {totalPoints} / 100 Poin
               </span>
               <span className="text-xs text-slate-500 font-mono">
@@ -469,7 +469,7 @@ export default function ExamDetailPage() {
             {isTargetAchieved ? (
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-bold font-mono">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" aria-hidden="true" />
-                <span>Target 100 Poin Terpenuhi! Siap Rilis</span>
+                <span>Target 100 poin terpenuhi, siap rilis</span>
               </span>
             ) : totalPoints < 100 ? (
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-amber-50 text-amber-800 border border-amber-200 text-xs font-bold font-mono">
@@ -477,7 +477,7 @@ export default function ExamDetailPage() {
                 <span>Kurang {pointsRemaining} Poin Menuju 100</span>
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-violet-50 text-violet-700 border border-violet-200 text-xs font-bold font-mono">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[#f1effa] text-[#6a5fc1] border border-[#ddd9ef] text-xs font-bold font-mono">
                 <span>Total Poin: {totalPoints}</span>
               </span>
             )}
@@ -492,7 +492,7 @@ export default function ExamDetailPage() {
                 ? 'bg-emerald-500'
                 : totalPoints < 100
                 ? 'bg-amber-500'
-                : 'bg-violet-600'
+                : 'bg-[#6a5fc1]'
             }`}
             style={{ width: `${Math.min(100, (totalPoints / 100) * 100)}%` }}
           />
@@ -524,7 +524,7 @@ export default function ExamDetailPage() {
 
         {isLoading ? (
           <div className="flex flex-col items-center justify-center p-16 space-y-3">
-            <Loader2 className="w-8 h-8 text-violet-600 animate-spin" aria-hidden="true" />
+            <Loader2 className="w-8 h-8 text-[#6a5fc1] animate-spin" aria-hidden="true" />
             <p className="text-xs font-bold text-slate-700">Memuat butir soal ujian...</p>
           </div>
         ) : (
@@ -540,9 +540,9 @@ export default function ExamDetailPage() {
                       {idx + 1}
                     </span>
                     <span
-                      className={`px-2.5 py-0.5 rounded-lg text-[11px] font-bold uppercase font-mono shadow-2xs ${
+                      className={`px-2.5 py-0.5 rounded-lg text-[11px] font-bold font-mono shadow-2xs ${
                         eq.question?.question_type === 'multiple_choice'
-                          ? 'bg-violet-50 text-violet-700 border border-violet-200'
+                          ? 'bg-[#f1effa] text-[#6a5fc1] border border-[#ddd9ef]'
                           : 'bg-slate-100 text-slate-700 border border-slate-200'
                       }`}
                     >
@@ -593,7 +593,7 @@ export default function ExamDetailPage() {
             {/* Actionable Empty State */}
             {(!examDetail?.exam_questions || examDetail.exam_questions.length === 0) && (
               <div className="p-10 sm:p-12 text-center flex flex-col items-center justify-center space-y-4">
-                <div className="w-14 h-14 rounded-2xl bg-violet-50 border border-violet-100 text-violet-600 flex items-center justify-center">
+                <div className="w-14 h-14 rounded-2xl bg-[#f1effa] border border-[#ddd9ef] text-[#6a5fc1] flex items-center justify-center">
                   <CheckSquare className="w-7 h-7" aria-hidden="true" />
                 </div>
                 <div className="space-y-1 max-w-md">
@@ -662,8 +662,8 @@ export default function ExamDetailPage() {
             <div className="space-y-3">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-slate-800 uppercase mb-1 font-mono">
-                    Pilih Bank Soal
+                  <label className="block text-xs font-bold text-slate-800 mb-1 font-mono">
+                    Pilih bank soal
                   </label>
                   <select
                     value={selectedBankId ?? ''}
@@ -683,8 +683,8 @@ export default function ExamDetailPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-800 uppercase mb-1 font-mono">
-                    Cari & Saring Butir
+                  <label className="block text-xs font-bold text-slate-800 mb-1 font-mono">
+                    Cari & saring butir
                   </label>
                   <div className="relative">
                     <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" aria-hidden="true" />
@@ -709,7 +709,7 @@ export default function ExamDetailPage() {
                       className="inline-flex items-center gap-1.5 font-bold text-slate-700 hover:text-slate-900 cursor-pointer"
                     >
                       {selectedModalQuestionIds.size === filteredModalQuestions.length ? (
-                        <CheckSquare className="w-4 h-4 text-violet-600" aria-hidden="true" />
+                        <CheckSquare className="w-4 h-4 text-[#6a5fc1]" aria-hidden="true" />
                       ) : (
                         <Square className="w-4 h-4 text-slate-400" aria-hidden="true" />
                       )}
@@ -745,25 +745,25 @@ export default function ExamDetailPage() {
                       <div
                         key={q.id}
                         className={`p-3 rounded-xl border transition-colors flex items-start justify-between gap-3 text-xs ${
-                          isSelected ? 'bg-violet-50/60 border-violet-300' : 'bg-white border-slate-200 hover:bg-slate-50'
+                          isSelected ? 'bg-[#f1effa] border-[#ddd9ef]' : 'bg-white border-slate-200 hover:bg-slate-50'
                         }`}
                       >
                         <div className="flex items-start gap-2.5 min-w-0">
                           <button
                             type="button"
                             onClick={() => toggleModalQuestionSelect(q.id)}
-                            className="mt-0.5 text-slate-400 hover:text-violet-600 cursor-pointer shrink-0"
+                            className="mt-0.5 text-slate-400 hover:text-[#6a5fc1] cursor-pointer shrink-0"
                             aria-label="Pilih butir soal ini"
                           >
                             {isSelected ? (
-                              <CheckSquare className="w-4 h-4 text-violet-600" aria-hidden="true" />
+                              <CheckSquare className="w-4 h-4 text-[#6a5fc1]" aria-hidden="true" />
                             ) : (
                               <Square className="w-4 h-4 text-slate-300" aria-hidden="true" />
                             )}
                           </button>
                           <div className="space-y-1 min-w-0">
                             <div className="flex items-center gap-2">
-                              <span className="px-2 py-0.5 bg-violet-50 text-violet-700 border border-violet-200 rounded text-[10px] font-bold uppercase font-mono">
+                              <span className="px-2 py-0.5 bg-[#f1effa] text-[#6a5fc1] border border-[#ddd9ef] rounded text-[10px] font-bold font-mono">
                                 {q.question_type === 'multiple_choice' ? 'PG' : 'Esai'}
                               </span>
                               <span className="text-[10px] font-mono text-slate-500">

@@ -10,7 +10,6 @@ import {
   ShieldAlert,
   AlertTriangle,
   Lightbulb,
-  Sparkles,
   Check,
   X,
 } from 'lucide-react'
@@ -196,7 +195,7 @@ export default function ExamResultPage() {
           </button>
 
           <span
-            className={`px-3 py-1 rounded-full text-xs font-bold uppercase border font-mono ${
+            className={`px-3 py-1 rounded-full text-xs font-bold border font-mono ${
               resultData?.status === 'aborted'
                 ? 'bg-rose-50 text-rose-700 border-rose-200'
                 : resultData?.status === 'graded'
@@ -205,10 +204,10 @@ export default function ExamResultPage() {
             }`}
           >
             {resultData?.status === 'aborted'
-              ? 'Didiskualifikasi Pengawas'
+              ? 'Didiskualifikasi pengawas'
               : resultData?.status === 'graded'
-              ? 'Selesai Dinilai'
-              : 'Dalam Evaluasi Guru'}
+              ? 'Selesai dinilai'
+              : 'Dalam evaluasi guru'}
           </span>
         </div>
       </div>
@@ -270,10 +269,10 @@ export default function ExamResultPage() {
           </div>
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <h3 className="text-base font-black text-rose-900 tracking-tight font-mono">
+              <h3 className="text-base font-bold text-rose-900 font-mono">
                 Keputusan Diskualifikasi oleh Pengawas Ujian
               </h3>
-              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-200 text-rose-900 uppercase font-mono">
+              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-200 text-rose-900 font-mono">
                 Resmi
               </span>
             </div>
@@ -305,12 +304,12 @@ export default function ExamResultPage() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-1.5">
             <div className="flex items-center gap-2">
-              <span className="px-2 py-0.5 bg-slate-100 text-slate-700 rounded text-[10px] font-bold uppercase tracking-wider border border-slate-200 font-mono">
-                Lembar Hasil Ujian
+              <span className="px-2 py-0.5 bg-slate-100 text-slate-700 rounded text-[10px] font-bold border border-slate-200 font-mono">
+                Lembar hasil ujian
               </span>
               <span className="text-xs text-slate-500 font-mono">ID: EXM-{examId}</span>
             </div>
-            <h2 className="text-xl font-bold tracking-tight text-slate-900">{resultData?.exam_title}</h2>
+            <h2 className="text-xl font-bold text-slate-900">{resultData?.exam_title}</h2>
             <p className="text-slate-500 text-xs">
               Peserta: <strong className="text-slate-800">{resultData?.student_name}</strong> • Selesai:{' '}
               {formatTime(resultData?.submit_time)}
@@ -320,11 +319,11 @@ export default function ExamResultPage() {
           {/* Big Score Pill */}
           <div className="flex items-center gap-5 bg-slate-50 border border-slate-200 px-5 py-4 rounded-xl shadow-xs">
             <div>
-              <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider font-mono">
-                Nilai Akhir
+              <div className="text-[10px] text-slate-500 font-bold font-mono">
+                Nilai akhir
               </div>
               <div
-                className={`text-3xl font-extrabold tracking-tight tabular-nums font-mono ${
+                className={`text-3xl font-bold tabular-nums font-mono ${
                   resultData?.status === 'aborted' ? 'text-rose-600' : 'text-slate-900'
                 }`}
               >
@@ -336,7 +335,7 @@ export default function ExamResultPage() {
             <div className="w-px h-10 bg-slate-200" />
 
             <div>
-              <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider font-mono">
+              <div className="text-[10px] text-slate-500 font-bold font-mono">
                 Integritas
               </div>
               <div
@@ -367,17 +366,17 @@ export default function ExamResultPage() {
               {/* Item Header */}
               <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                 <div className="flex items-center gap-2">
-                  <span className="w-7 h-7 rounded-lg bg-slate-100 font-black text-xs text-slate-800 border border-slate-200 flex items-center justify-center font-mono">
+                  <span className="w-7 h-7 rounded-lg bg-slate-100 font-bold text-xs text-slate-800 border border-slate-200 flex items-center justify-center font-mono">
                     {idx + 1}
                   </span>
                   <span
-                    className={`px-2.5 py-0.5 rounded-full text-xs font-bold uppercase font-mono ${
+                    className={`px-2.5 py-0.5 rounded-full text-xs font-bold font-mono ${
                       ans.question_type === 'multiple_choice'
-                        ? 'bg-violet-50 text-violet-700 border border-violet-200'
+                        ? 'bg-[#f1effa] text-[#6a5fc1] border border-[#ddd9ef]'
                         : 'bg-slate-100 text-slate-700 border border-slate-200'
                     }`}
                     >
-                      {ans.question_type === 'multiple_choice' ? 'Pilihan Ganda' : 'Esai'}
+                      {ans.question_type === 'multiple_choice' ? 'Pilihan ganda' : 'Esai'}
                     </span>
                 </div>
 
@@ -420,9 +419,9 @@ export default function ExamResultPage() {
 
                   {/* Formative AI Explanation */}
                   {ans.ai_explanation && (
-                    <div className="p-4 rounded-xl bg-violet-50/70 border border-violet-200 text-xs space-y-1">
-                      <span className="font-bold text-violet-900 flex items-center gap-1.5 font-mono">
-                        <Lightbulb className="w-3.5 h-3.5 text-violet-700" />
+                    <div className="p-4 rounded-xl bg-[#f1effa]/70 border border-[#ddd9ef] text-xs space-y-1">
+                      <span className="font-bold text-[#6a5fc1] flex items-center gap-1.5 font-mono">
+                        <Lightbulb className="w-3.5 h-3.5 text-[#6a5fc1]" />
                         Penjelasan Konsep Pedagogis:
                       </span>
                       <p className="text-slate-800 leading-relaxed">{ans.ai_explanation}</p>
@@ -433,7 +432,7 @@ export default function ExamResultPage() {
                 /* Essay Breakdown */
                 <div className="space-y-3">
                   <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs space-y-1">
-                    <span className="text-slate-500 font-bold uppercase font-mono">Jawaban Anda:</span>
+                    <span className="text-slate-500 font-bold font-mono">Jawaban anda:</span>
                     <p className="text-slate-800 whitespace-pre-line leading-relaxed">
                       {ans.student_response || '(Tidak dijawab)'}
                     </p>
@@ -450,13 +449,12 @@ export default function ExamResultPage() {
 
                     if (parsed && parsed.evaluations && parsed.evaluations.length > 0) {
                       return (
-                        <div className="p-4 rounded-xl bg-violet-50/70 border border-violet-200 text-xs space-y-2.5">
+                        <div className="p-4 rounded-xl bg-[#f1effa]/70 border border-[#ddd9ef] text-xs space-y-2.5">
                           <div className="flex items-center justify-between">
-                            <span className="font-bold text-violet-900 flex items-center gap-1.5 font-mono">
-                              <Sparkles className="w-3.5 h-3.5 text-violet-700" />
+                            <span className="font-bold text-[#6a5fc1] font-mono">
                               Penilaian Kriteria Semantik (Respan Decision Engine):
                             </span>
-                            <span className="text-[10px] font-mono text-violet-600 font-semibold">
+                            <span className="text-[10px] font-mono text-[#6a5fc1] font-semibold">
                               Akurasi Probabilitas Terkalibrasi
                             </span>
                           </div>
@@ -488,7 +486,7 @@ export default function ExamResultPage() {
                           </div>
 
                           {ans.ai_explanation && (
-                            <p className="text-slate-800 leading-relaxed pt-1 border-t border-violet-200/60 text-xs">
+                            <p className="text-slate-800 leading-relaxed pt-1 border-t border-[#ddd9ef]/60 text-xs">
                               <strong className="text-slate-900 font-semibold">Catatan Formatif:</strong>{' '}
                               {ans.ai_explanation}
                             </p>
@@ -499,9 +497,8 @@ export default function ExamResultPage() {
 
                     if (ans.ai_explanation || ans.ai_grading_rationale) {
                       return (
-                        <div className="p-4 rounded-xl bg-violet-50/70 border border-violet-200 text-xs space-y-1">
-                          <span className="font-bold text-violet-900 flex items-center gap-1.5 font-mono">
-                            <Sparkles className="w-3.5 h-3.5 text-violet-700" />
+                        <div className="p-4 rounded-xl bg-[#f1effa]/70 border border-[#ddd9ef] text-xs space-y-1">
+                          <span className="font-bold text-[#6a5fc1] font-mono">
                             Evaluasi & Pembahasan Esai:
                           </span>
                           <p className="text-slate-800 leading-relaxed">

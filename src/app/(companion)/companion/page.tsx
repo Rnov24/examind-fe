@@ -480,7 +480,7 @@ function CompanionInner() {
       <header className="absolute inset-x-0 top-0 z-20 px-4 pt-[max(0.75rem,env(safe-area-inset-top))]">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <div className="text-sm font-black tracking-[0.22em] leading-tight">
+            <div className="text-sm font-bold leading-tight">
               EXAMIND<span className="text-[#c2ef4e]">.</span>
             </div>
             <p className="text-[10px] text-white/55 leading-tight mt-0.5">Kamera Pendamping Ujian</p>
@@ -627,7 +627,7 @@ function CompanionInner() {
           onClick={() => setIsDimmed(false)}
           className="absolute inset-0 bg-black/90 z-30 flex flex-col items-center justify-center p-6 text-center cursor-pointer"
         >
-          <Moon className="w-10 h-10 text-[#c2ef4e] mb-2 animate-pulse" />
+          <Moon className="w-10 h-10 text-[#c2ef4e] mb-2" />
           <h4 className="text-sm font-bold text-white">Layar Diredupkan</h4>
           <p className="text-xs text-white/50 mt-1">
             Kamera dan pemantauan tetap berjalan di latar belakang.
@@ -723,7 +723,7 @@ function CompanionInner() {
                 />
               </div>
               <div>
-                <label className="text-[11px] font-semibold text-white/70 block mb-1">Token Pairing</label>
+                <label className="text-[11px] font-semibold text-white/70 block mb-1">Token pairing</label>
                 <input
                   value={manualToken}
                   onChange={(e) => setManualToken(e.target.value)}
@@ -760,7 +760,7 @@ function CompanionInner() {
               <AlertTriangle className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="text-base font-black text-white uppercase tracking-wider">Peringatan dari Pengawas</h3>
+              <h3 className="text-base font-bold text-white">Peringatan dari pengawas</h3>
               <p className="text-[11px] text-rose-300 mt-0.5">Pengawas: {warningTeacherName}</p>
             </div>
             <p className="text-xs font-semibold text-rose-100 bg-rose-900/40 p-3 rounded-xl border border-rose-800/50 leading-relaxed text-left">

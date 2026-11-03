@@ -216,7 +216,7 @@ function LoginForm() {
               </label>
               <Link
                 href="/forgot-password"
-                className="text-[13px] font-semibold text-[#6a5fc1] transition-colors hover:text-[#422082]"
+                className="py-3 text-[13px] font-semibold text-[#6a5fc1] transition-colors hover:text-[#422082] sm:py-0"
               >
                 Lupa kata sandi?
               </Link>
@@ -273,7 +273,7 @@ function LoginForm() {
               Belum memiliki akun?{' '}
               <Link
                 href="/register"
-                className="inline-flex items-center gap-1 font-bold text-[#6a5fc1] transition-colors hover:text-[#422082]"
+                className="inline-flex items-center gap-1 py-3 font-bold text-[#6a5fc1] transition-colors hover:text-[#422082] sm:py-0"
               >
                 <span>Daftar dengan Kode Sekolah</span>
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />

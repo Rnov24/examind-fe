@@ -334,7 +334,7 @@ function RegisterContent() {
             : 'Siswa'
 
         setSuccessMessage(
-          `Pendaftaran sebagai ${roleLabel} berhasil! Mengalihkan ke dashboard Anda...`
+          `Pendaftaran sebagai ${roleLabel} berhasil. Mengalihkan ke dashboard Anda...`
         )
 
         // Redirect to appropriate role dashboard
@@ -374,10 +374,10 @@ function RegisterContent() {
       })
 
       if (password) {
-        setOtpSuccess('Verifikasi berhasil! Sedang masuk ke akun Anda...')
+        setOtpSuccess('Verifikasi berhasil. Sedang masuk ke akun Anda...')
         try {
           const loggedUser = await login(email.trim().toLowerCase(), password)
-          setOtpSuccess('Pendaftaran berhasil! Mengalihkan ke dashboard Anda...')
+          setOtpSuccess('Pendaftaran berhasil. Mengalihkan ke dashboard Anda...')
           setTimeout(() => {
             const userRole = loggedUser?.role || role
             if (userRole === 'student') router.push('/student/dashboard')
@@ -754,9 +754,9 @@ function RegisterContent() {
                       className="absolute right-0 top-1/2 flex h-11 w-11 -translate-y-1/2 cursor-pointer items-center justify-center text-slate-400 transition-colors hover:text-slate-600"
                     >
                       {showPassword ? (
-                        <EyeOff className="h-[18px] w-[18px]" aria-hidden="true" />
+                        <EyeOff className="h-4 w-4" aria-hidden="true" />
                       ) : (
-                        <Eye className="h-[18px] w-[18px]" aria-hidden="true" />
+                        <Eye className="h-4 w-4" aria-hidden="true" />
                       )}
                     </button>
                   </div>

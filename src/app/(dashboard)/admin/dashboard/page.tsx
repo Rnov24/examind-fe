@@ -204,7 +204,7 @@ export default function AdminDashboardPage() {
             type="button"
             onClick={fetchStats}
             title="Perbarui status sistem"
-            className="text-xs font-mono font-semibold text-slate-600 hover:text-slate-900 px-2.5 py-1 rounded-lg border border-slate-200 hover:bg-[#f1effa] transition-colors flex items-center gap-1.5 cursor-pointer"
+            className="text-xs font-mono font-semibold text-slate-600 hover:text-slate-900 px-2.5 py-1 rounded-lg border border-slate-200 hover:bg-[#f1effa] transition-colors flex items-center gap-1.5 cursor-pointer max-sm:min-h-[44px]"
           >
             <RefreshCw className="w-3 h-3 text-slate-500" aria-hidden="true" />
             <span>Sinkronkan Status</span>
@@ -366,6 +366,7 @@ export default function AdminDashboardPage() {
             <div className="w-full sm:w-48">
               <Select
                 selectSize="sm"
+                className="max-sm:h-11"
                 value={selectedRole}
                 onChange={(e) => {
                   setSelectedRole(e.target.value)
@@ -382,6 +383,7 @@ export default function AdminDashboardPage() {
             <div className="w-full sm:w-64">
               <SearchInput
                 inputSize="sm"
+                className="max-sm:h-11"
                 value={searchKeyword}
                 onChange={(e) => {
                   setSearchKeyword(e.target.value)
@@ -480,6 +482,7 @@ export default function AdminDashboardPage() {
                       {usr.id !== user?.id ? (
                         <Button
                           size="xs"
+                          className="max-sm:h-11"
                           variant={usr.is_active ? 'destructive' : 'secondary'}
                           onClick={() => toggleUserStatus(usr)}
                           disabled={togglingUserId === usr.id}

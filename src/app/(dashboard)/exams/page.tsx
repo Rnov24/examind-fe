@@ -48,7 +48,7 @@ export default function ExamListPage() {
     <div className="space-y-6 max-w-6xl mx-auto font-sans">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-card">
         <div className="min-w-0">
-          <h1 className="font-display text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight truncate">
+          <h1 className="font-display text-xl sm:text-2xl font-bold text-slate-900 truncate">
             Manajemen Paket Ujian & Jadwal
           </h1>
           <p className="text-xs text-slate-500 font-medium mt-0.5">
@@ -59,7 +59,7 @@ export default function ExamListPage() {
         {/* ONE Primary Action: Buat Paket Ujian */}
         <Link
           href="/exams/create"
-          className="min-h-[44px] px-5 py-2.5 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-card hover:shadow-card-hover transition-colors flex items-center justify-center gap-2 cursor-pointer font-display tracking-wide shrink-0 w-full sm:w-auto focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
+          className="min-h-[44px] px-5 py-2.5 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-card hover:shadow-card-hover transition-colors flex items-center justify-center gap-2 cursor-pointer font-display shrink-0 w-full sm:w-auto focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
         >
           <Plus className="w-4 h-4 text-[#c2ef4e]" aria-hidden="true" />
           <span>Buat Paket Ujian</span>
@@ -70,7 +70,7 @@ export default function ExamListPage() {
       <div className="bg-white rounded-2xl border border-slate-200/80 shadow-card overflow-hidden">
         {loading ? (
           <div className="flex flex-col items-center justify-center p-16 space-y-3">
-            <Loader2 className="w-8 h-8 text-violet-600 animate-spin" aria-hidden="true" />
+            <Loader2 className="w-8 h-8 text-[#6a5fc1] animate-spin" aria-hidden="true" />
             <p className="text-xs font-bold text-slate-900">Memuat daftar paket ujian...</p>
           </div>
         ) : errorMessage ? (
@@ -94,7 +94,7 @@ export default function ExamListPage() {
         ) : (
           <div className="overflow-x-auto touch-pan-x">
             <table className="w-full text-left text-sm text-slate-600">
-              <thead className="bg-[#f1effa] text-xs uppercase font-bold text-slate-600 tracking-wider font-mono border-b border-[#ddd9ef]">
+              <thead className="bg-[#f1effa] text-xs font-bold text-slate-600 font-mono border-b border-[#ddd9ef]">
                 <tr>
                   <th className="px-6 py-4">Judul Ujian</th>
                   <th className="px-6 py-4">Kelas Sasaran</th>
@@ -111,7 +111,7 @@ export default function ExamListPage() {
                     <td className="px-6 py-4 max-w-xs truncate min-w-0">
                       <Link
                         href={`/exams/${e.id}`}
-                        className="font-display font-bold text-slate-900 hover:text-violet-600 transition-colors truncate block"
+                        className="font-display font-bold text-slate-900 hover:text-[#6a5fc1] transition-colors truncate block"
                       >
                         {e.title}
                       </Link>
@@ -126,7 +126,7 @@ export default function ExamListPage() {
                       </p>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold capitalize font-mono bg-violet-50 text-violet-700 border border-violet-200/80 shadow-xs">
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold capitalize font-mono bg-[#f1effa] text-[#6a5fc1] border border-[#ddd9ef]/80 shadow-xs">
                         <Eye className="w-3.5 h-3.5" aria-hidden="true" />
                         {(e.proctoring_level || '').replace('_', ' ')}
                       </span>
@@ -136,11 +136,11 @@ export default function ExamListPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span
-                        className={`inline-block px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-wider font-mono border shadow-xs ${
+                        className={`inline-block px-2.5 py-1 rounded-lg text-xs font-bold font-mono border shadow-xs ${
                           e.status === 'in_progress'
                             ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
                             : e.status === 'published'
-                            ? 'bg-violet-50 text-violet-700 border-violet-200'
+                            ? 'bg-[#f1effa] text-[#6a5fc1] border-[#ddd9ef]'
                             : 'bg-slate-100 text-slate-700 border-slate-200'
                         }`}
                       >
@@ -165,14 +165,14 @@ export default function ExamListPage() {
                           href={`/exams/${e.id}/monitor`}
                           className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-bold text-xs transition-colors cursor-pointer shadow-xs focus:ring-2 focus:ring-rose-500/20 focus:outline-none"
                         >
-                          <Radio className="w-3.5 h-3.5 animate-pulse text-rose-600" aria-hidden="true" />
+                          <Radio className="w-3.5 h-3.5 text-rose-600" aria-hidden="true" />
                           <span>Monitor</span>
                         </Link>
                       )}
                       {e.status === 'completed' && (
                         <Link
                           href={`/exams/${e.id}/analytics`}
-                          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-violet-50 hover:bg-violet-100 text-violet-700 border border-violet-200 font-bold text-xs transition-colors cursor-pointer shadow-xs focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
+                          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#f1effa] hover:bg-[#ddd9ef] text-[#6a5fc1] border border-[#ddd9ef] font-bold text-xs transition-colors cursor-pointer shadow-xs focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
                         >
                           <BarChart3 className="w-3.5 h-3.5" aria-hidden="true" />
                           <span>Hasil</span>
@@ -184,8 +184,8 @@ export default function ExamListPage() {
                 {exams.length === 0 && (
                   <tr>
                     <td colSpan={7} className="text-center py-12 px-4">
-                      <div className="w-12 h-12 rounded-2xl bg-violet-50 border border-violet-100 flex items-center justify-center mx-auto mb-3">
-                        <FileText className="w-6 h-6 text-violet-600" aria-hidden="true" />
+                      <div className="w-12 h-12 rounded-2xl bg-[#f1effa] border border-[#ddd9ef] flex items-center justify-center mx-auto mb-3">
+                        <FileText className="w-6 h-6 text-[#6a5fc1]" aria-hidden="true" />
                       </div>
                       <h4 className="font-bold text-slate-900 text-sm">Belum Ada Paket Ujian</h4>
                       <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">

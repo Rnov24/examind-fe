@@ -5,7 +5,6 @@ import Link from 'next/link'
 import {
   Plus,
   BookOpen,
-  Sparkles,
   Search,
   ArrowRight,
   X,
@@ -162,14 +161,14 @@ export default function QuestionBankPage() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-card">
         <div className="min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-900 bg-[#c2ef4e] px-2.5 py-0.5 rounded-md font-mono shadow-2xs">
-              Repository Kurikulum
+            <span className="text-[10px] font-bold text-slate-900 bg-[#c2ef4e] px-2.5 py-0.5 rounded-md font-mono shadow-2xs">
+              Repository kurikulum
             </span>
             <span className="text-xs text-slate-500 font-mono">
               Total {banks.length} Bank Terdaftar
             </span>
           </div>
-          <h1 className="text-xl sm:text-2xl font-display font-extrabold text-slate-900 tracking-tight truncate">
+          <h1 className="text-xl sm:text-2xl font-display font-bold text-slate-900 truncate">
             Master Bank Soal & AI Generator
           </h1>
           <p className="text-xs text-slate-500 font-medium mt-0.5">
@@ -181,9 +180,8 @@ export default function QuestionBankPage() {
         <div className="flex items-center gap-2.5 shrink-0 w-full sm:w-auto">
           <button
             onClick={handleOpenAIStudio}
-            className="flex-1 sm:flex-none min-h-[44px] px-4 py-2.5 rounded-xl bg-violet-50 hover:bg-violet-100 text-violet-700 border border-violet-200 font-bold text-xs shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer focus:ring-2 focus:ring-[#6a5fc1]/20 focus:outline-none"
+            className="flex-1 sm:flex-none min-h-[44px] px-4 py-2.5 rounded-xl bg-[#f1effa] hover:bg-[#ddd9ef] text-[#6a5fc1] border border-[#ddd9ef] font-bold text-xs shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer focus:ring-2 focus:ring-[#6a5fc1]/20 focus:outline-none"
           >
-            <Sparkles className="w-4 h-4 text-violet-600" aria-hidden="true" />
             <span>AI Studio</span>
           </button>
           <button
@@ -191,7 +189,7 @@ export default function QuestionBankPage() {
               setCreateError(null)
               setShowCreateModal(true)
             }}
-            className="flex-1 sm:flex-none min-h-[44px] px-5 py-2.5 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-card hover:shadow-card-hover transition-colors flex items-center justify-center gap-2 cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
+            className="flex-1 sm:flex-none min-h-[44px] px-5 py-2.5 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-card hover:shadow-card-hover transition-colors flex items-center justify-center gap-2 cursor-pointer font-display focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
           >
             <Plus className="w-4 h-4 text-[#c2ef4e]" aria-hidden="true" />
             <span>Buat Bank Soal</span>
@@ -203,10 +201,9 @@ export default function QuestionBankPage() {
       <div className="bg-[#150f23] rounded-2xl p-5 sm:p-6 text-white border border-slate-800 shadow-card relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-5">
         <div className="space-y-2 relative z-10 max-w-xl">
           <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/10 backdrop-blur-md text-[11px] font-bold text-[#c2ef4e] font-mono border border-white/15">
-            <Sparkles className="w-3.5 h-3.5 text-[#c2ef4e]" aria-hidden="true" />
             <span>AI Question Generator Studio</span>
           </div>
-          <h2 className="text-lg sm:text-xl font-display font-extrabold text-white tracking-tight">
+          <h2 className="text-lg sm:text-xl font-display font-bold text-white">
             Buat Butir Soal & Rubrik Otomatis dari Silabus
           </h2>
           <p className="text-xs text-slate-300 leading-relaxed">
@@ -217,9 +214,8 @@ export default function QuestionBankPage() {
         <div className="relative z-10 shrink-0 w-full md:w-auto">
           <button
             onClick={handleOpenAIStudio}
-            className="w-full md:w-auto min-h-[44px] px-5 py-3 rounded-xl bg-[#c2ef4e] hover:bg-[#b0dc3d] text-slate-950 font-bold text-xs shadow-card transition-colors flex items-center justify-center gap-2 cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-[#c2ef4e]/30 focus:outline-none"
+            className="w-full md:w-auto min-h-[44px] px-5 py-3 rounded-xl bg-[#c2ef4e] hover:bg-[#b0dc3d] text-slate-950 font-bold text-xs shadow-card transition-colors flex items-center justify-center gap-2 cursor-pointer font-display focus:ring-2 focus:ring-[#c2ef4e]/30 focus:outline-none"
           >
-            <Sparkles className="w-4 h-4 text-slate-950" aria-hidden="true" />
             <span>Generate Soal dengan AI</span>
           </button>
         </div>
@@ -284,7 +280,7 @@ export default function QuestionBankPage() {
       {/* Question Banks Grid */}
       {isFetching ? (
         <div className="bg-white rounded-2xl border border-slate-200/80 p-12 text-center shadow-card space-y-3">
-          <Loader2 className="w-8 h-8 text-violet-600 animate-spin mx-auto" aria-hidden="true" />
+          <Loader2 className="w-8 h-8 text-[#6a5fc1] animate-spin mx-auto" aria-hidden="true" />
           <p className="text-xs font-bold text-slate-900">Memuat master bank soal...</p>
         </div>
       ) : fetchError ? (
@@ -314,7 +310,7 @@ export default function QuestionBankPage() {
             >
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <span className="px-2.5 py-0.5 bg-violet-50 text-violet-700 border border-violet-200 rounded-md text-[11px] font-bold font-mono">
+                  <span className="px-2.5 py-0.5 bg-[#f1effa] text-[#6a5fc1] border border-[#ddd9ef] rounded-md text-[11px] font-bold font-mono">
                     {b.subject}
                   </span>
                   <span className="text-xs text-slate-500 font-mono font-medium tabular-nums flex items-center gap-1.5">
@@ -323,7 +319,7 @@ export default function QuestionBankPage() {
                   </span>
                 </div>
 
-                <h3 className="text-base font-bold text-slate-900 leading-snug font-display line-clamp-2 group-hover:text-violet-600 transition-colors">
+                <h3 className="text-base font-bold text-slate-900 leading-snug font-display line-clamp-2 group-hover:text-[#6a5fc1] transition-colors">
                   {b.title}
                 </h3>
                 <p className="text-xs text-slate-500 mt-2 line-clamp-2 leading-relaxed">
@@ -338,10 +334,9 @@ export default function QuestionBankPage() {
                     setSelectedBankForAI(b)
                     setShowAIModal(true)
                   }}
-                  className="min-h-[44px] px-3 py-1.5 rounded-xl bg-violet-50 hover:bg-violet-100 text-violet-700 font-bold text-[11px] border border-violet-200 transition-colors flex items-center gap-1.5 shadow-2xs focus:ring-2 focus:ring-violet-500/20 focus:outline-none cursor-pointer"
+                  className="min-h-[44px] px-3 py-1.5 rounded-xl bg-[#f1effa] hover:bg-[#ddd9ef] text-[#6a5fc1] font-bold text-[11px] border border-[#ddd9ef] transition-colors flex items-center gap-1.5 shadow-2xs focus:ring-2 focus:ring-[#6a5fc1]/20 focus:outline-none cursor-pointer"
                   title="Generate soal AI untuk bank ini"
                 >
-                  <Sparkles className="w-3 h-3 text-violet-600" aria-hidden="true" />
                   <span>AI Gen</span>
                 </button>
 
@@ -383,7 +378,7 @@ export default function QuestionBankPage() {
           {/* Total Empty State with Action Guidance */}
           {banks.length === 0 && (
             <div className="col-span-full bg-white rounded-2xl p-10 sm:p-12 text-center border border-slate-200/80 shadow-card space-y-6">
-              <div className="w-14 h-14 rounded-2xl bg-violet-50 border border-violet-100 text-violet-600 flex items-center justify-center mx-auto">
+              <div className="w-14 h-14 rounded-2xl bg-[#f1effa] border border-[#ddd9ef] text-[#6a5fc1] flex items-center justify-center mx-auto">
                 <BookOpen className="w-7 h-7" aria-hidden="true" />
               </div>
 
@@ -477,8 +472,8 @@ export default function QuestionBankPage() {
               )}
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase mb-1 font-mono">
-                  Mata Pelajaran
+                <label className="block text-xs font-bold text-slate-700 mb-1 font-mono">
+                  Mata pelajaran
                 </label>
                 <input
                   ref={subjectInputRef}
@@ -492,8 +487,8 @@ export default function QuestionBankPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase mb-1 font-mono">
-                  Judul Bank Soal
+                <label className="block text-xs font-bold text-slate-700 mb-1 font-mono">
+                  Judul bank soal
                 </label>
                 <input
                   value={newBankTitle}
@@ -506,8 +501,8 @@ export default function QuestionBankPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase mb-1 font-mono">
-                  Deskripsi (Opsional)
+                <label className="block text-xs font-bold text-slate-700 mb-1 font-mono">
+                  Deskripsi (opsional)
                 </label>
                 <textarea
                   value={newBankDesc}
@@ -529,7 +524,7 @@ export default function QuestionBankPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="min-h-[44px] px-5 py-2.5 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-xs disabled:opacity-50 cursor-pointer flex items-center justify-center gap-1.5 focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none font-display tracking-wide"
+                  className="min-h-[44px] px-5 py-2.5 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-xs disabled:opacity-50 cursor-pointer flex items-center justify-center gap-1.5 focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none font-display"
                 >
                   {loading && <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" />}
                   <span>{loading ? 'Menyimpan...' : 'Simpan Bank Soal'}</span>

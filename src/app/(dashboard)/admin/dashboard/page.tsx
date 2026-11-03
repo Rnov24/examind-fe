@@ -174,7 +174,7 @@ export default function AdminDashboardPage() {
         <>
           <Link
             href="/classes"
-            className="px-4 py-2.5 bg-white/10 hover:bg-white/15 text-white font-semibold text-xs rounded-xl border border-white/15 transition-colors shadow-xs cursor-pointer flex items-center justify-center focus-visible:ring-2 focus-visible:ring-[#6a5fc1] focus-visible:outline-none"
+            className="min-h-[44px] px-4 py-2.5 bg-white/10 hover:bg-white/15 text-white font-semibold text-xs rounded-xl border border-white/15 transition-colors shadow-xs cursor-pointer flex items-center justify-center focus-visible:ring-2 focus-visible:ring-[#6a5fc1] focus-visible:outline-none"
           >
             Kelola Kelas
           </Link>
@@ -184,7 +184,7 @@ export default function AdminDashboardPage() {
               setFormErrorMessage('')
               setShowAddUserModal(true)
             }}
-            className="min-h-[44px] px-5 py-2.5 rounded-full bg-white hover:bg-[#f1effa] text-[#150f23] font-bold text-xs shadow-card hover:shadow-card-hover flex items-center justify-center gap-2 transition-colors cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-[#6a5fc1] focus:outline-none"
+            className="min-h-[44px] px-5 py-2.5 rounded-xl bg-white hover:bg-[#f1effa] text-[#150f23] font-bold text-xs shadow-card hover:shadow-card-hover flex items-center justify-center gap-2 transition-colors cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-[#6a5fc1] focus:outline-none"
           >
             <UserPlus className="w-4 h-4 text-[#150f23]" aria-hidden="true" />
             <span>Tambah Pengguna</span>
@@ -303,7 +303,7 @@ export default function AdminDashboardPage() {
               {stats.active_sessions || 0}{' '}
               <span className="text-xs font-normal text-slate-500">Siswa Aktif</span>
             </div>
-            <p className="text-[11px] text-slate-500">Dari {stats.total_sessions || 0} total submission</p>
+            <p className="text-[11px] text-slate-500">Dari {stats.total_sessions || 0} total sesi</p>
           </div>
 
           {/* Disqualified / Flagged Incidents */}
@@ -372,7 +372,7 @@ export default function AdminDashboardPage() {
                   fetchUsers(e.target.value, searchKeyword)
                 }}
               >
-                <option value="all">Semua Peran (All)</option>
+                <option value="all">Semua Peran</option>
                 <option value="admin">Administrator</option>
                 <option value="teacher">Guru / Pengawas</option>
                 <option value="student">Siswa / Peserta</option>
@@ -488,7 +488,7 @@ export default function AdminDashboardPage() {
                           {usr.is_active ? 'Nonaktifkan' : 'Aktifkan'}
                         </Button>
                       ) : (
-                        <span className="text-xs text-slate-400 italic font-mono">Akun Anda</span>
+                        <span className="text-xs text-slate-400 font-mono">Akun Anda</span>
                       )}
                     </TableCell>
                   </TableRow>

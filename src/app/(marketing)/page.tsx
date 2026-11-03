@@ -432,13 +432,6 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen overflow-x-clip bg-white text-slate-900 font-sans antialiased selection:bg-[#6a5fc1] selection:text-white">
-      {/* Ambient Background Depth & Subtle Radial Bleed */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0 opacity-40">
-        <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[1100px] h-[550px] bg-gradient-to-b from-violet-100/60 via-violet-50/40 to-transparent blur-3xl"></div>
-        <div className="absolute top-[900px] -left-48 w-[500px] h-[500px] bg-violet-100/40 blur-3xl rounded-full"></div>
-        <div className="absolute top-[1800px] -right-48 w-[600px] h-[600px] bg-violet-100/30 blur-3xl rounded-full"></div>
-      </div>
-
       <MarketingNavbar />
 
       {/* HERO SECTION */}
@@ -1058,9 +1051,11 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              {/* Sync Bridge */}
+              {/* Sync Bridge: static dot. The old travelling-dot animation
+                  slid +/-22px inside this row and covered the first letter
+                  of the label ("TERSINKRON" rendered as "ERSINKRON"). */}
               <div className="flex items-center justify-center gap-2 text-[11px] font-mono font-bold tracking-wider text-slate-400">
-                <span className="sync-pulse-dot w-2 h-2 rounded-full bg-[#c2ef4e] shadow-[0_0_6px_rgba(194,239,78,0.9)]" />
+                <span className="w-2 h-2 rounded-full bg-[#c2ef4e]" />
                 TERSINKRON ANTAR KAMERA
               </div>
 

@@ -388,7 +388,7 @@ export default function TeacherDashboardPage() {
 
                 <Link
                   href="/exams"
-                  className="text-xs font-bold text-slate-900 hover:text-[#6a5fc1] flex items-center gap-1 font-mono transition-colors shrink-0 rounded-lg px-2 py-1"
+                  className="text-xs font-bold text-slate-900 hover:text-[#6a5fc1] flex items-center gap-1 font-mono transition-colors shrink-0 rounded-lg px-2 py-1 max-sm:min-h-[44px]"
                 >
                   <span>Semua ({recentExams.length})</span>
                   <ChevronRight className="w-3.5 h-3.5 text-slate-500" aria-hidden="true" />
@@ -482,6 +482,7 @@ export default function TeacherDashboardPage() {
                               <Button
                                 size="sm"
                                 variant="primary"
+                                className="max-sm:h-11"
                                 leftIcon={<Plus className="w-3.5 h-3.5 text-[#c2ef4e]" aria-hidden="true" />}
                               >
                                 Buat Paket Ujian

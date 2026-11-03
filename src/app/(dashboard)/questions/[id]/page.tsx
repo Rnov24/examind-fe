@@ -318,8 +318,8 @@ export default function QuestionBankDetailPage() {
               onChange={(e) => setTypeFilter(e.target.value as any)}
               className="px-3 py-1.5 text-xs font-semibold rounded-xl border border-slate-200 bg-slate-50 hover:bg-white text-slate-700 outline-none focus:ring-2 focus:ring-[#6a5fc1]/40 focus:border-slate-900"
             >
-              <option value="all">Semua Tipe Soal</option>
-              <option value="multiple_choice">Pilihan Ganda (PG)</option>
+              <option value="all">Semua tipe soal</option>
+              <option value="multiple_choice">Pilihan ganda (PG)</option>
               <option value="essay">Esai</option>
             </select>
           </div>
@@ -330,7 +330,7 @@ export default function QuestionBankDetailPage() {
               onChange={(e) => setDifficultyFilter(e.target.value as any)}
               className="px-3 py-1.5 text-xs font-semibold rounded-xl border border-slate-200 bg-slate-50 hover:bg-white text-slate-700 outline-none focus:ring-2 focus:ring-[#6a5fc1]/40 focus:border-slate-900"
             >
-              <option value="all">Semua Kesulitan</option>
+              <option value="all">Semua kesulitan</option>
               <option value="easy">Mudah</option>
               <option value="medium">Sedang</option>
               <option value="hard">Sulit</option>
@@ -701,9 +701,9 @@ export default function QuestionBankDetailPage() {
                     onChange={(e) => setManualForm({ ...manualForm, question_type: e.target.value })}
                     className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-slate-50 text-slate-900 text-xs font-medium focus:bg-white focus:border-slate-900 focus:ring-2 focus:ring-[#6a5fc1]/40 outline-none"
                   >
-                    <option value="multiple_choice">Pilihan Ganda (PG)</option>
-                    <option value="short_essay">Esai Singkat</option>
-                    <option value="long_essay">Esai Panjang</option>
+                    <option value="multiple_choice">Pilihan ganda (PG)</option>
+                    <option value="short_essay">Esai singkat</option>
+                    <option value="long_essay">Esai panjang</option>
                   </select>
                 </div>
 

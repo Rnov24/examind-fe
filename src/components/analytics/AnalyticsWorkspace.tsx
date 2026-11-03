@@ -14,7 +14,7 @@ import {
   Activity,
   CheckCircle2,
   TrendingUp,
-  Sparkles,
+  Sigma,
 } from 'lucide-react'
 import api from '@/lib/api'
 import { fetchCachedExamsList } from '@/lib/bentoCache'
@@ -250,7 +250,7 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
             type="button"
             onClick={downloadPdf}
             disabled={isDownloadingPdf}
-            className="min-h-[40px] sm:min-h-[44px] px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-[#150f23] hover:bg-slate-800 disabled:opacity-50 text-white font-bold text-xs shadow-card hover:shadow-card-hover flex items-center justify-center gap-2 transition-colors cursor-pointer font-display tracking-wide focus:ring-2 focus:ring-[#150f23] focus:outline-none"
+            className="min-h-[40px] sm:min-h-[44px] px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-[#150f23] hover:bg-slate-800 disabled:opacity-50 text-white font-bold text-xs shadow-card hover:shadow-card-hover flex items-center justify-center gap-2 transition-colors cursor-pointer font-display focus:ring-2 focus:ring-[#150f23] focus:outline-none"
           >
             {isDownloadingPdf ? (
               <Loader2 className="w-4 h-4 animate-spin text-[#c2ef4e]" />
@@ -348,7 +348,7 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
         {/* Exam Selector Banner */}
         {allExams.length > 0 && (
           <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-card flex items-center gap-3 text-slate-800 print:hidden">
-            <span className="text-xs font-bold text-slate-600 uppercase font-mono">Pilih Paket Ujian:</span>
+            <span className="text-xs font-bold text-slate-600 font-mono">Pilih paket ujian:</span>
             <select
               value={selectedExamId ?? ''}
               onChange={(e) => handleExamChange(Number(e.target.value))}
@@ -372,7 +372,7 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
           <StatCard
             title="Rata-Rata Kelas"
             value={analyticsData?.average_score ?? 0}
-            icon={<Activity className="w-5 h-5 text-violet-600" aria-hidden="true" />}
+            icon={<Activity className="w-5 h-5 text-[#6a5fc1]" aria-hidden="true" />}
             tone="violet"
             subtitle={`Dari ${analyticsData?.total_examinees ?? analyticsData?.total_submissions ?? 0} siswa dinilai`}
             className="min-h-[160px]"
@@ -384,7 +384,7 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
             value={`${analyticsData?.pass_rate ?? analyticsData?.mastery_percentage ?? 0}%`}
             icon={<CheckCircle2 className="w-5 h-5 text-emerald-600" aria-hidden="true" />}
             tone="emerald"
-            trend={{ value: 'TUNTAS', positive: true, label: 'standar KKM' }}
+            trend={{ value: 'Tuntas', positive: true, label: 'standar KKM' }}
             subtitle="Standar Kurikulum Nasional"
             className="min-h-[160px]"
           />
@@ -403,7 +403,7 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
           <StatCard
             title="Standar Deviasi"
             value={analyticsData?.std_deviation ?? analyticsData?.standard_deviation ?? 0}
-            icon={<Sparkles className="w-5 h-5 text-[#6a5fc1]" aria-hidden="true" />}
+            icon={<Sigma className="w-5 h-5 text-[#6a5fc1]" aria-hidden="true" />}
             tone="violet"
             subtitle="Tingkat homogenitas kelas"
             className="min-h-[160px]"
@@ -427,7 +427,7 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
                 <div
                   className={`w-full rounded-t-xl transition-[color,background-color,border-color,transform] duration-200 group-hover:scale-y-105 ${
                     bin.count === maxBinCount && bin.count > 0
-                      ? 'bg-[#150f23] ring-2 ring-violet-400 shadow-md'
+                      ? 'bg-[#150f23] ring-2 ring-[#6a5fc1] shadow-md'
                       : 'bg-slate-800 group-hover:bg-[#150f23]'
                   }`}
                   style={{ height: `${Math.max(14, (bin.count / maxBinCount) * 130)}px` }}
@@ -448,7 +448,7 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
         >
           {isLoading ? (
             <div className="flex items-center justify-center p-16">
-              <Loader2 className="w-8 h-8 text-violet-600 animate-spin" />
+              <Loader2 className="w-8 h-8 text-[#6a5fc1] animate-spin" />
             </div>
           ) : (
             <div>
@@ -462,9 +462,9 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
                           {idx + 1}
                         </span>
                         <span
-                          className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold uppercase font-mono shadow-2xs ${
+                          className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold font-mono shadow-2xs ${
                             item.question_type === 'multiple_choice'
-                              ? 'bg-violet-50 text-violet-700 border border-violet-200'
+                              ? 'bg-[#f1effa] text-[#6a5fc1] border border-[#ddd9ef]'
                               : 'bg-slate-100 text-slate-700 border border-slate-200'
                           }`}
                         >
@@ -492,7 +492,7 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
 
                     <div className="grid grid-cols-2 gap-2 pt-1 border-t border-slate-100/80 text-[11px]">
                       <div className="bg-slate-50/80 rounded-lg p-2 border border-slate-100">
-                        <span className="text-slate-500 block text-[10px] uppercase font-mono">T. Kesukaran</span>
+                        <span className="text-slate-500 block text-[10px] font-mono">T. kesukaran</span>
                         <div className="flex items-baseline gap-1 mt-0.5">
                           <span className="font-bold text-slate-900 font-mono tabular-nums">
                             {item.difficulty_index}
@@ -503,7 +503,7 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
                         </div>
                       </div>
                       <div className="bg-slate-50/80 rounded-lg p-2 border border-slate-100">
-                        <span className="text-slate-500 block text-[10px] uppercase font-mono">Daya Pembeda</span>
+                        <span className="text-slate-500 block text-[10px] font-mono">Daya pembeda</span>
                         <div className="flex items-baseline gap-1 mt-0.5">
                           <span className="font-bold text-slate-900 font-mono tabular-nums">
                             {item.discrimination_index}
@@ -527,13 +527,13 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
               {/* Desktop Table View (>=md) */}
               <div className="hidden md:block overflow-x-auto touch-pan-x">
                 <table className="w-full text-left text-xs text-slate-600">
-                  <thead className="bg-slate-50/80 text-[11px] uppercase font-bold text-slate-600 tracking-wider font-mono border-b border-slate-100">
+                  <thead className="bg-slate-50/80 text-[11px] font-bold text-slate-600 font-mono border-b border-slate-100">
                     <tr>
                       <th className="py-3 px-5">No</th>
-                      <th className="py-3 px-4">Tipe Soal</th>
-                      <th className="py-3 px-4">Butir Soal</th>
-                      <th className="py-3 px-4">Tingkat Kesukaran</th>
-                      <th className="py-3 px-4">Daya Pembeda</th>
+                      <th className="py-3 px-4">Tipe soal</th>
+                      <th className="py-3 px-4">Butir soal</th>
+                      <th className="py-3 px-4">Tingkat kesukaran</th>
+                      <th className="py-3 px-4">Daya pembeda</th>
                       <th className="py-3 px-5 font-semibold text-right">Rekomendasi</th>
                     </tr>
                   </thead>
@@ -543,9 +543,9 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
                         <td className="py-3.5 px-5 font-bold text-slate-900 font-mono">{idx + 1}</td>
                         <td className="py-3.5 px-4">
                           <span
-                            className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase font-mono shadow-2xs ${
+                            className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold font-mono shadow-2xs ${
                               item.question_type === 'multiple_choice'
-                                ? 'bg-violet-50 text-violet-700 border border-violet-200'
+                                ? 'bg-[#f1effa] text-[#6a5fc1] border border-[#ddd9ef]'
                                 : 'bg-slate-100 text-slate-700 border border-slate-200'
                             }`}
                           >

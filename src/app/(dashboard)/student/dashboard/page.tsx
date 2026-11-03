@@ -77,7 +77,7 @@ export default function StudentDashboardPage() {
         heroExam && !isLiveNotStarted(heroExam.exam_mode, heroExam.start_time) ? (
           <Link
             href={`/student/exam/${heroExam.id}`}
-            className="px-5 py-2.5 rounded-full bg-white hover:bg-[#f1effa] text-[#150f23] font-bold text-xs shadow-card hover:shadow-card-hover flex items-center justify-center gap-2 transition-colors cursor-pointer font-display focus:ring-2 focus:ring-[#6a5fc1] focus:outline-none"
+            className="px-5 py-2.5 rounded-full bg-white hover:bg-[#f1effa] text-[#150f23] font-bold text-xs shadow-card hover:shadow-card-hover flex items-center justify-center gap-2 transition-colors cursor-pointer font-display focus:ring-2 focus:ring-[#6a5fc1] focus:outline-none max-sm:min-h-[44px]"
           >
             <Eye className="w-4 h-4 text-[#150f23]" aria-hidden="true" />
             <span>Siapkan Kamera &amp; Mulai</span>
@@ -111,6 +111,7 @@ export default function StudentDashboardPage() {
           <Button
             variant="primary"
             size="sm"
+            className="max-sm:h-11"
             onClick={loadActiveExams}
             leftIcon={<RefreshCw className="w-3.5 h-3.5" aria-hidden="true" />}
           >
@@ -273,7 +274,7 @@ export default function StudentDashboardPage() {
                       ) : (
                         <Link
                           href={`/student/exam/${exam.id}`}
-                          className="px-4 py-2 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-xs transition-colors flex items-center justify-center gap-1.5 w-full sm:w-auto cursor-pointer focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
+                          className="px-4 py-2 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-xs transition-colors flex items-center justify-center gap-1.5 w-full sm:w-auto cursor-pointer focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none max-sm:min-h-[44px]"
                         >
                           <span>Mulai Ujian</span>
                           <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />

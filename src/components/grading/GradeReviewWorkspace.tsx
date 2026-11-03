@@ -7,7 +7,6 @@ import {
   Check,
   Printer,
   Loader2,
-  Sparkles,
   AlertCircle,
   RotateCcw,
   X,
@@ -188,7 +187,7 @@ export default function GradeReviewWorkspace({
         )
         setSessionDetail({ ...sessionDetail, answers: updatedAnswers })
       }
-      showNotification('success', 'Nilai guru berhasil disimpan ke lembar penilaian siswa!')
+      showNotification('success', 'Nilai guru berhasil disimpan ke lembar penilaian siswa.')
       // Patch the session row locally from the PUT response (backend returns the new
       // session total and always marks the session "graded"), avoiding a full sessions refetch.
       const newTotal = res?.data?.data?.session_total
@@ -807,8 +806,8 @@ export default function GradeReviewWorkspace({
                 </button>
                 <div className="min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
-                    <span className="text-[10px] font-bold uppercase font-mono px-2 py-0.5 rounded bg-violet-50 text-violet-700 border border-violet-200">
-                      Sesi Jawaban Siswa
+                    <span className="text-[10px] font-bold font-mono px-2 py-0.5 rounded bg-[#f1effa] text-[#6a5fc1] border border-[#ddd9ef]">
+                      Sesi jawaban siswa
                     </span>
                     <span className="text-xs text-slate-500 font-mono">
                       NISN: {sessionDetail?.student_identifier}
@@ -853,7 +852,7 @@ export default function GradeReviewWorkspace({
               <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-700 space-y-1.5 animate-in fade-in duration-150">
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-slate-900 font-display flex items-center gap-1.5">
-                    <Keyboard className="w-3.5 h-3.5 text-violet-600" aria-hidden="true" />
+                    <Keyboard className="w-3.5 h-3.5 text-[#6a5fc1]" aria-hidden="true" />
                     Pintasan Keyboard Review Berkecepatan Tinggi:
                   </span>
                   <button
@@ -907,7 +906,7 @@ export default function GradeReviewWorkspace({
                           : isVerified
                           ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
                           : isEssay
-                          ? 'bg-violet-50 text-violet-700 border-violet-200'
+                          ? 'bg-[#f1effa] text-[#6a5fc1] border-[#ddd9ef]'
                           : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                       }`}
                       title={`Nomor ${qIdx + 1} (${isEssay ? 'Esai' : 'PG'})`}
@@ -945,17 +944,17 @@ export default function GradeReviewWorkspace({
                   {/* Question Header Bar */}
                   <div className="flex items-center justify-between border-b border-slate-100 pb-3 flex-wrap gap-2">
                     <div className="flex items-center gap-2.5">
-                      <span className="px-3 py-1 rounded-xl bg-slate-900 font-black text-xs text-white font-mono shadow-xs">
+                      <span className="px-3 py-1 rounded-xl bg-slate-900 font-bold text-xs text-white font-mono shadow-xs">
                         Nomor {idx + 1}
                       </span>
                       <span
-                        className={`px-2.5 py-0.5 rounded-lg text-xs font-bold uppercase font-mono shadow-2xs ${
+                        className={`px-2.5 py-0.5 rounded-lg text-xs font-bold font-mono shadow-2xs ${
                           ans.question_type === 'multiple_choice'
-                            ? 'bg-violet-50 text-violet-700 border border-violet-200'
+                            ? 'bg-[#f1effa] text-[#6a5fc1] border border-[#ddd9ef]'
                             : 'bg-slate-100 text-slate-700 border border-slate-200'
                         }`}
                       >
-                        {ans.question_type === 'multiple_choice' ? 'Pilihan Ganda' : 'Esai'}
+                        {ans.question_type === 'multiple_choice' ? 'Pilihan ganda' : 'Esai'}
                       </span>
                       {isActive && (
                         <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#c2ef4e] text-slate-950 shadow-2xs">
@@ -1009,8 +1008,8 @@ export default function GradeReviewWorkspace({
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-2">
                       {/* Left Column: Student Response */}
                       <div className="space-y-3 p-5 rounded-2xl bg-slate-50/80 border border-slate-200">
-                        <span className="text-xs font-bold uppercase tracking-wider text-slate-600 font-mono block">
-                          Lembar Jawaban Siswa
+                        <span className="text-xs font-bold text-slate-600 font-mono block">
+                          Lembar jawaban siswa
                         </span>
                         <p className="text-sm text-slate-800 whitespace-pre-line leading-relaxed font-normal bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
                           {ans.student_response || '(Siswa tidak menjawab pertanyaan ini)'}
@@ -1018,13 +1017,12 @@ export default function GradeReviewWorkspace({
                       </div>
 
                       {/* Right Column: AI Suggestion & Teacher Decision */}
-                      <div className="space-y-4 p-5 rounded-2xl bg-violet-50/40 border border-violet-200">
+                      <div className="space-y-4 p-5 rounded-2xl bg-[#f1effa]/40 border border-[#ddd9ef]">
                         {/* AI Suggestion Header */}
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-1.5">
-                            <Sparkles className="w-4 h-4 text-violet-600" aria-hidden="true" />
-                            <span className="text-xs font-bold uppercase tracking-wider text-violet-950 font-mono">
-                              Saran Evaluasi AI (Rekomendasi)
+                            <span className="text-xs font-bold text-[#6a5fc1] font-mono">
+                              Saran evaluasi AI (rekomendasi)
                             </span>
                           </div>
                           <span
@@ -1055,7 +1053,7 @@ export default function GradeReviewWorkspace({
                                     Matriks Kriteria Evaluasi Atomik:
                                   </span>
                                   <span className="text-[10px] text-slate-500 font-mono">
-                                    Rekomendasi Skor: <strong className="text-violet-700 font-bold">{ans.auto_score} Poin</strong>
+                                    Rekomendasi Skor: <strong className="text-[#6a5fc1] font-bold">{ans.auto_score} Poin</strong>
                                   </span>
                                 </div>
 
@@ -1126,15 +1124,15 @@ export default function GradeReviewWorkspace({
 
                           return (
                             <div className="text-xs text-slate-700 space-y-1.5 bg-white p-4 rounded-xl border border-slate-200 leading-relaxed shadow-xs">
-                              <p className="font-bold text-violet-950 font-display flex items-center gap-1">
-                                <Info className="w-3.5 h-3.5 text-violet-600" aria-hidden="true" />
+                              <p className="font-bold text-[#6a5fc1] font-display flex items-center gap-1">
+                                <Info className="w-3.5 h-3.5 text-[#6a5fc1]" aria-hidden="true" />
                                 <span>Pertimbangan AI:</span>
                               </p>
                               <p>
                                 {ans.ai_grading_rationale ||
                                   'Penilaian otomatis dihitung berdasarkan rubrik konsep dan kata kunci silabus.'}
                               </p>
-                              <p className="text-[11px] font-mono font-bold text-violet-700 pt-1">
+                              <p className="text-[11px] font-mono font-bold text-[#6a5fc1] pt-1">
                                 Rekomendasi Skor AI: {ans.auto_score} Poin
                               </p>
                             </div>
@@ -1168,10 +1166,9 @@ export default function GradeReviewWorkspace({
                               <button
                                 type="button"
                                 onClick={() => acceptAiScore(ans)}
-                                className="px-3.5 py-2.5 rounded-xl bg-white hover:bg-[#f1effa] text-violet-700 font-bold text-xs border border-violet-200 transition-colors cursor-pointer font-mono shadow-xs flex items-center gap-1.5"
+                                className="px-3.5 py-2.5 rounded-xl bg-white hover:bg-[#f1effa] text-[#6a5fc1] font-bold text-xs border border-[#ddd9ef] transition-colors cursor-pointer font-mono shadow-xs flex items-center gap-1.5"
                                 title="Terapkan nilai yang disarankan AI (Tekan 'A')"
                               >
-                                <Sparkles className="w-3.5 h-3.5 text-violet-600" aria-hidden="true" />
                                 <span>Gunakan Saran AI ({ans.auto_score})</span>
                               </button>
                             </div>
@@ -1202,7 +1199,7 @@ export default function GradeReviewWorkspace({
                             <button
                               onClick={() => saveOverride(ans.id)}
                               disabled={savingOverrideMap[ans.id]}
-                              className="px-5 py-2.5 rounded-xl bg-[#150f23] hover:bg-[#1f1633] disabled:opacity-50 text-white font-bold text-xs shadow-card hover:shadow-card-hover transition-[color,background-color,border-color,box-shadow] flex items-center gap-1.5 cursor-pointer font-display tracking-wide"
+                              className="px-5 py-2.5 rounded-xl bg-[#150f23] hover:bg-[#1f1633] disabled:opacity-50 text-white font-bold text-xs shadow-card hover:shadow-card-hover transition-[color,background-color,border-color,box-shadow] flex items-center gap-1.5 cursor-pointer font-display"
                             >
                               {savingOverrideMap[ans.id] ? (
                                 <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" />

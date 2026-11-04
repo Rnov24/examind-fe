@@ -85,7 +85,7 @@ export default function ExamListPage() {
             <button
               type="button"
               onClick={loadExams}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-xs transition-colors cursor-pointer focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#150f23] hover:bg-[#1f1633] text-white font-bold text-xs shadow-xs transition-colors cursor-pointer focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none max-sm:min-h-[44px]"
             >
               <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" />
               <span>Coba Lagi</span>
@@ -156,14 +156,14 @@ export default function ExamListPage() {
                     <td className="px-6 py-4 text-right space-x-2 whitespace-nowrap">
                       <Link
                         href={`/exams/${e.id}`}
-                        className="px-3.5 py-1.5 rounded-xl bg-white hover:bg-[#f1effa] text-slate-700 font-bold text-xs border border-slate-200 transition-colors cursor-pointer shadow-xs inline-block focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
+                        className="px-3.5 py-1.5 rounded-xl bg-white hover:bg-[#f1effa] text-slate-700 font-bold text-xs border border-slate-200 transition-colors cursor-pointer shadow-xs inline-block focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none max-sm:py-3.5"
                       >
                         Kelola
                       </Link>
                       {e.status === 'published' && (
                         <Link
                           href={`/exams/${e.id}/monitor`}
-                          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-bold text-xs transition-colors cursor-pointer shadow-xs focus:ring-2 focus:ring-rose-500/20 focus:outline-none"
+                          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-bold text-xs transition-colors cursor-pointer shadow-xs focus:ring-2 focus:ring-rose-500/20 focus:outline-none max-sm:min-h-[44px]"
                         >
                           <Radio className="w-3.5 h-3.5 text-rose-600" aria-hidden="true" />
                           <span>Monitor</span>
@@ -172,7 +172,7 @@ export default function ExamListPage() {
                       {e.status === 'completed' && (
                         <Link
                           href={`/exams/${e.id}/analytics`}
-                          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#f1effa] hover:bg-[#ddd9ef] text-[#6a5fc1] border border-[#ddd9ef] font-bold text-xs transition-colors cursor-pointer shadow-xs focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
+                          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#f1effa] hover:bg-[#ddd9ef] text-[#6a5fc1] border border-[#ddd9ef] font-bold text-xs transition-colors cursor-pointer shadow-xs focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none max-sm:min-h-[44px]"
                         >
                           <BarChart3 className="w-3.5 h-3.5" aria-hidden="true" />
                           <span>Hasil</span>

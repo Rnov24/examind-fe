@@ -18,6 +18,7 @@ export interface ProctoringAlert {
 interface ProctoringState {
   primaryCamActive: boolean
   companionPaired: boolean
+  studentWsState: StudentWsState
   currentIntegrityScore: number
   alerts: ProctoringAlert[]
   warningModalOpen: boolean
@@ -28,6 +29,7 @@ interface ProctoringState {
 
   setPrimaryCamActive: (active: boolean) => void
   setCompanionPaired: (paired: boolean) => void
+  reconnectStudentWs: () => void
   logViolation: (
     sessionId: number,
     eventType: string,
@@ -44,19 +46,34 @@ interface ProctoringState {
 }
 
 let studentWs: WebSocket | null = null
-// Bounded reconnect for the student alerts socket: without it, one failed
-// handshake (or a dropped connection) strands the wizard's "Kamera Kedua"
+// Unbounded reconnect for the student alerts socket: without it, one failed
+// handshake (or a dropped connection — Modal cold start, edge 524,
+// ECONNRESET, all observed in the wild) strands the wizard's "Kamera Kedua"
 // step on "Menunggu pindai…" forever, even though the phone already shows
-// "Terhubung". Intentional closes (cleanup / exam end) never reconnect.
+// "Terhubung". The phone retries forever; the desktop must too, for as long
+// as the exam page is alive. Intentional closes (cleanup / exam end) never
+// reconnect. Backoff starts at 2s and is capped at 5s. The hub is in-memory
+// per container, so a live broadcast from the companion's container may
+// never reach this socket — the DB-backed replay in ws_student_alerts plus
+// the REST pairing-status poll cover that gap.
 let studentWsIntentionalClose = false
 let studentWsReconnectTimer: ReturnType<typeof setTimeout> | null = null
 let studentWsReconnectAttempts = 0
-const STUDENT_WS_MAX_RECONNECTS = 5
-const STUDENT_WS_RECONNECT_DELAY_MS = 2000
+let studentWsSessionId: number | null = null
+let studentWsEverOpened = false
+const STUDENT_WS_RECONNECT_BASE_DELAY_MS = 2000
+const STUDENT_WS_RECONNECT_MAX_DELAY_MS = 5000
+
+export type StudentWsState = 'connecting' | 'connected' | 'reconnecting' | 'failed'
+// 'failed' is a vocabulary placeholder for a terminal failure: with the
+// unbounded retry above there is no terminal state, so it is never assigned
+// today. 'connecting' is before the first open; 'reconnecting' is a retry
+// after a socket that had opened once dropped.
 
 export const useProctoringStore = create<ProctoringState>((set, get) => ({
   primaryCamActive: false,
   companionPaired: false,
+  studentWsState: 'connecting',
   currentIntegrityScore: 100,
   alerts: [],
   warningModalOpen: false,
@@ -105,6 +122,8 @@ export const useProctoringStore = create<ProctoringState>((set, get) => ({
       studentWsReconnectTimer = null
     }
     studentWsIntentionalClose = false
+    studentWsSessionId = sessionId
+    set({ studentWsState: studentWsEverOpened ? 'reconnecting' : 'connecting' })
 
     // Connect to the BACKEND directly, not to the page's own host. In
     // production the page is served by Vercel, which cannot serve WebSocket
@@ -118,6 +137,8 @@ export const useProctoringStore = create<ProctoringState>((set, get) => ({
 
     studentWs.onopen = () => {
       studentWsReconnectAttempts = 0
+      studentWsEverOpened = true
+      set({ studentWsState: 'connected' })
     }
 
     studentWs.onmessage = (event) => {
@@ -147,12 +168,32 @@ export const useProctoringStore = create<ProctoringState>((set, get) => ({
     studentWs.onclose = () => {
       studentWs = null
       if (studentWsIntentionalClose) return
-      if (studentWsReconnectAttempts >= STUDENT_WS_MAX_RECONNECTS) return
+      // Unbounded retry with backoff (2s, then 4s, capped at 5s) for as
+      // long as the exam page is alive. Giving up after N attempts is what
+      // stranded the wizard while the phone kept retrying forever.
+      set({ studentWsState: studentWsEverOpened ? 'reconnecting' : 'connecting' })
+      const delay = Math.min(
+        STUDENT_WS_RECONNECT_BASE_DELAY_MS * (studentWsReconnectAttempts + 1),
+        STUDENT_WS_RECONNECT_MAX_DELAY_MS
+      )
       studentWsReconnectAttempts += 1
       studentWsReconnectTimer = setTimeout(() => {
         get().initStudentWebSocket(sessionId)
-      }, STUDENT_WS_RECONNECT_DELAY_MS)
+      }, delay)
     }
+  },
+
+  // Force an immediate reconnect of the student WS (the wizard's
+  // "Hubungkan ulang" button). Resets the backoff so the retry happens
+  // now instead of at the next scheduled attempt.
+  reconnectStudentWs: () => {
+    if (studentWsSessionId === null) return
+    if (studentWsReconnectTimer) {
+      clearTimeout(studentWsReconnectTimer)
+      studentWsReconnectTimer = null
+    }
+    studentWsReconnectAttempts = 0
+    get().initStudentWebSocket(studentWsSessionId)
   },
 
   connectStudentWs: (sessionId: number) => {
@@ -166,6 +207,8 @@ export const useProctoringStore = create<ProctoringState>((set, get) => ({
       studentWsReconnectTimer = null
     }
     studentWsReconnectAttempts = 0
+    studentWsSessionId = null
+    studentWsEverOpened = false
     if (studentWs) {
       studentWs.close()
       studentWs = null
@@ -177,6 +220,7 @@ export const useProctoringStore = create<ProctoringState>((set, get) => ({
     set({
       primaryCamActive: false,
       companionPaired: false,
+      studentWsState: 'connecting',
       currentIntegrityScore: 100,
       alerts: [],
       warningModalOpen: false,

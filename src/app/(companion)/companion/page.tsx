@@ -16,6 +16,7 @@ import {
   Power,
   SwitchCamera,
   Clock,
+  Zap,
 } from 'lucide-react'
 import { CompanionEdgeEngine, type CompanionTelemetry } from '@/utils/companionEdge'
 import { wsBaseUrl } from '@/lib/ws'
@@ -80,6 +81,7 @@ function CompanionInner() {
   const [lastAlert, setLastAlert] = useState<StatusAlert | null>(null)
   const [elapsedSec, setElapsedSec] = useState(0)
   const [connectFails, setConnectFails] = useState(0)
+  const [pingResult, setPingResult] = useState<string | null>(null)
   const [batteryInfo, setBatteryInfo] = useState<{ level: number; charging: boolean } | null>(null)
 
   // Teacher Warning State
@@ -106,6 +108,7 @@ function CompanionInner() {
   const endedRef = useRef(false)
   const disposedRef = useRef(false)
   const reconnectTimerRef = useRef<any>(null)
+  const pingTimeoutRef = useRef<any>(null)
   const startTsRef = useRef<number | null>(null)
 
   const [telemetry, setTelemetry] = useState<CompanionTelemetry>(INITIAL_TELEMETRY)
@@ -205,6 +208,21 @@ function CompanionInner() {
     ws.onmessage = (event) => {
       try {
         const msg = JSON.parse(event.data)
+        // Answer to the "Kirim Ping" button: round-trip time proves the
+        // phone-to-server leg works right now.
+        if (msg.event === 'pong') {
+          if (pingTimeoutRef.current) {
+            clearTimeout(pingTimeoutRef.current)
+            pingTimeoutRef.current = null
+          }
+          const rtt = typeof msg.sent_at === 'number' ? Date.now() - msg.sent_at : null
+          setPingResult(
+            rtt !== null
+              ? `Ping terkirim — jawaban ${rtt}ms`
+              : 'Ping terkirim — server menjawab'
+          )
+          return
+        }
         if (msg.event === 'SUPERVISOR_WARNING') {
           setWarningTeacherName(msg.payload.teacher_name || 'Pengawas')
           setWarningMessage(msg.payload.message_text || 'Harap fokus ke ujian.')
@@ -230,6 +248,24 @@ function CompanionInner() {
         }
       }, 4000)
     }
+  }
+
+  // "Kirim Ping": proves the phone-to-server leg works right now. The
+  // server answers with a pong echoing sent_at; no reply within 5s means
+  // the leg is broken even if the socket looks open.
+  function sendPing() {
+    const ws = wsRef.current
+    if (!ws || ws.readyState !== WebSocket.OPEN) {
+      setPingResult('Belum terhubung ke server — tunggu status Terhubung.')
+      return
+    }
+    setPingResult('Mengirim ping…')
+    ws.send(JSON.stringify({ type: 'ping', sent_at: Date.now() }))
+    if (pingTimeoutRef.current) clearTimeout(pingTimeoutRef.current)
+    pingTimeoutRef.current = setTimeout(() => {
+      pingTimeoutRef.current = null
+      setPingResult('Tidak ada jawaban dari server')
+    }, 5000)
   }
 
   async function requestWakeLock() {
@@ -258,6 +294,11 @@ function CompanionInner() {
     endedRef.current = true
     setEnded(true)
     setConnState('idle')
+    setPingResult(null)
+    if (pingTimeoutRef.current) {
+      clearTimeout(pingTimeoutRef.current)
+      pingTimeoutRef.current = null
+    }
     if (reconnectTimerRef.current) {
       clearTimeout(reconnectTimerRef.current)
       reconnectTimerRef.current = null
@@ -319,6 +360,10 @@ function CompanionInner() {
     return () => {
       disposedRef.current = true
       clearInterval(sendInterval)
+      if (pingTimeoutRef.current) {
+        clearTimeout(pingTimeoutRef.current)
+        pingTimeoutRef.current = null
+      }
       if (reconnectTimerRef.current) {
         clearTimeout(reconnectTimerRef.current)
         reconnectTimerRef.current = null
@@ -583,8 +628,16 @@ function CompanionInner() {
           {/* Secondary controls — all touch targets >= 48px */}
           <div className="flex items-center gap-2">
             <button
+              onClick={sendPing}
+              disabled={connState !== 'connected'}
+              className="flex-1 min-w-0 h-12 px-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white text-xs font-bold transition-colors flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+            >
+              <Zap className="w-4 h-4 text-[#c2ef4e]" />
+              <span>Kirim Ping</span>
+            </button>
+            <button
               onClick={recalibrateOrientation}
-              className="flex-1 h-12 px-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white text-xs font-bold transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+              className="flex-1 min-w-0 h-12 px-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white text-xs font-bold transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
             >
               <SlidersHorizontal className="w-4 h-4 text-[#c2ef4e]" />
               <span>Kalibrasi</span>
@@ -592,7 +645,7 @@ function CompanionInner() {
             <button
               onClick={toggleCameraFacing}
               disabled={isSwitchingCamera}
-              className="flex-1 h-12 px-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white text-xs font-bold transition-colors flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+              className="flex-1 min-w-0 h-12 px-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white text-xs font-bold transition-colors flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
             >
               {isSwitchingCamera ? (
                 <RefreshCw className="w-4 h-4 animate-spin" />
@@ -603,12 +656,19 @@ function CompanionInner() {
             </button>
             <button
               onClick={() => setIsDimmed(true)}
-              className="flex-1 h-12 px-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white text-xs font-bold transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+              className="flex-1 min-w-0 h-12 px-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white text-xs font-bold transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
             >
               <Moon className="w-4 h-4 text-[#c2ef4e]" />
               <span>Redupkan</span>
             </button>
           </div>
+
+          {/* Ping result, inline under the controls */}
+          {pingResult && (
+            <p className="text-[11px] text-white/70 leading-relaxed px-1 tabular-nums" role="status">
+              {pingResult}
+            </p>
+          )}
 
           {/* End session */}
           <button

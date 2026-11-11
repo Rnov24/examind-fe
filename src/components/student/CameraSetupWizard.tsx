@@ -27,6 +27,7 @@ import { QRCodeSVG } from 'qrcode.react'
 import { AnimatePresence, motion } from 'motion/react'
 import { EMIL_EASE } from '@/components/system/PageTransition'
 import { useProctoringStore } from '@/stores/proctoringStore'
+import api from '@/lib/api'
 import { detectFaces, ensureMediaPipeLoaded } from '@/utils/mediapipeDetect'
 import { ExamindLogo } from '@/components/brand/ExamindLogo'
 
@@ -73,6 +74,9 @@ export default function CameraSetupWizard({
 }: CameraSetupWizardProps) {
   const isDual = proctoringLevel === 'dual_camera'
   const companionPaired = useProctoringStore((s) => s.companionPaired)
+  const studentWsState = useProctoringStore((s) => s.studentWsState)
+  const setCompanionPaired = useProctoringStore((s) => s.setCompanionPaired)
+  const reconnectStudentWs = useProctoringStore((s) => s.reconnectStudentWs)
 
   const steps = useMemo<Array<{ key: StepKey; label: string; icon: typeof Camera }>>(() => {
     const base: Array<{ key: StepKey; label: string; icon: typeof Camera }> = [
@@ -87,6 +91,34 @@ export default function CameraSetupWizard({
 
   const [stepIndex, setStepIndex] = useState(0)
   const currentStep = steps[stepIndex].key
+
+  // REST fallback for pairing state. The wizard normally learns about
+  // pairing from the student WS (COMPANION_PAIRED_SUCCESS), but when that
+  // socket is dead the wizard would sit on "Menunggu pindai…" forever even
+  // though the phone is already connected. While on the kamera2 step, poll
+  // the pairing status every 3s; a "paired" answer un-sticks the wizard.
+  // Polling stops as soon as pairing is confirmed or the step is left.
+  useEffect(() => {
+    if (currentStep !== 'kamera2' || companionPaired || !sessionId) return
+    let cancelled = false
+    const checkPairing = async () => {
+      try {
+        const res = await api.get(`/student/exam/${sessionId}/pairing-status`)
+        if (!cancelled && res.data?.data?.companion_paired) {
+          setCompanionPaired(true)
+        }
+      } catch {
+        // A failed poll is not an error state: the WS is the live path and
+        // the next poll retries in 3s.
+      }
+    }
+    checkPairing()
+    const timer = setInterval(checkPairing, 3000)
+    return () => {
+      cancelled = true
+      clearInterval(timer)
+    }
+  }, [currentStep, companionPaired, sessionId, setCompanionPaired])
 
   // ---------------------------------------------------------------
   // Camera stream (owned by the wizard, stopped before hand-off)
@@ -757,6 +789,43 @@ export default function CameraSetupWizard({
                           />
                           {companionPaired ? 'Terhubung' : 'Menunggu pindai…'}
                         </span>
+                      </div>
+                      {/* Server connection for this page's live channel. When
+                          it drops, the phone can be paired while this page
+                          never hears about it — the text below says so
+                          plainly, and "Hubungkan ulang" retries immediately
+                          instead of waiting for the next backoff tick. */}
+                      <div className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="text-slate-500">Koneksi server:</span>
+                          <span
+                            className={`font-bold whitespace-nowrap ${
+                              studentWsState === 'connected'
+                                ? 'text-emerald-700'
+                                : studentWsState === 'reconnecting'
+                                  ? 'text-rose-700'
+                                  : 'text-amber-700'
+                            }`}
+                          >
+                            {studentWsState === 'connected'
+                              ? 'Terhubung ke server'
+                              : studentWsState === 'reconnecting'
+                                ? 'Koneksi terputus — mencoba lagi…'
+                                : studentWsState === 'failed'
+                                  ? 'Koneksi gagal'
+                                  : 'Menghubungkan ke server…'}
+                          </span>
+                        </div>
+                        {studentWsState !== 'connected' && (
+                          <button
+                            type="button"
+                            onClick={reconnectStudentWs}
+                            className="mt-1.5 ml-auto flex items-center gap-1 px-2 py-1 rounded-lg bg-white hover:bg-slate-50 text-slate-700 font-bold border border-slate-200 shadow-xs cursor-pointer"
+                          >
+                            <RefreshCw className="w-3 h-3 text-slate-500" aria-hidden="true" />
+                            Hubungkan ulang
+                          </button>
+                        )}
                       </div>
                       <ul className="space-y-1.5 list-disc pl-4">
                         <li>Sandarkan HP di sisi kanan atau kiri meja, jangan dipegang.</li>

@@ -436,8 +436,17 @@ export default function ExamWorkspacePage() {
         // The student WebSocket connects now (not deferred): companion
         // pairing for dual-camera is signalled over this socket, and the
         // wizard's "Kamera Kedua" step watches proctoringStore.companionPaired.
-        if (examStore.sessionId) {
-          proctoringStore.connectStudentWs(examStore.sessionId)
+        // Read the session id from loadExam's RETURN value, NOT from
+        // examStore.sessionId: this effect runs once on mount, so the
+        // examStore snapshot in its closure still holds the initial null
+        // sessionId even after loadExam() stored the real one. Reading the
+        // stale null here meant connectStudentWs never ran at all — the
+        // desktop never subscribed, so COMPANION_PAIRED_SUCCESS had no
+        // socket to arrive on and the wizard sat on "Menunggu pindai…"
+        // while the phone showed connected.
+        const sessionId = examData?.session_id
+        if (sessionId) {
+          proctoringStore.connectStudentWs(sessionId)
         }
 
         if (examData?.begun_at) {

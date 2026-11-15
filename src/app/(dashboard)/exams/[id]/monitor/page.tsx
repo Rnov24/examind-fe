@@ -6,6 +6,7 @@ import Link from 'next/link'
 import {
   ArrowLeft,
   Bell,
+  Download,
   History,
   UserCheck,
   X,
@@ -15,6 +16,7 @@ import {
   Check,
 } from 'lucide-react'
 import api from '@/lib/api'
+import { useAuthStore } from '@/stores/authStore'
 import { wsBaseUrl, withWsToken } from '@/lib/ws'
 import { proctoringEventLabel, cameraSourceLabel } from '@/utils/proctoringLabels'
 
@@ -45,6 +47,11 @@ interface IncidentLog {
 export default function LiveMonitoringPage() {
   const params = useParams()
   const examId = Number(params?.id) || 1
+  // Same roles as the export endpoint (teacher / admin / superadmin):
+  // students never see the download control.
+  const { user } = useAuthStore()
+  const canExportCameraReport = user != null && user.role !== 'student'
+  const [isDownloadingCameraReport, setIsDownloadingCameraReport] = useState(false)
 
   const [filterMode, setFilterMode] = useState<'all' | 'flagged'>('all')
   const [studentsList, setStudentsList] = useState<StudentSession[]>([])
@@ -200,6 +207,31 @@ export default function LiveMonitoringPage() {
       alert(err.response?.data?.message || 'Gagal menetapkan diskualifikasi')
     } finally {
       setIsProcessingAction(false)
+    }
+  }
+
+  async function downloadCameraReport() {
+    if (isDownloadingCameraReport) return
+    setIsDownloadingCameraReport(true)
+    try {
+      const res = await api.get(`/proctoring/exam/${examId}/export/excel`, {
+        responseType: 'blob',
+      })
+      const blob = new Blob([res.data], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      })
+      const url = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.setAttribute('download', `laporan_kamera_exam_${examId}.xlsx`)
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(url)
+    } catch {
+      alert('Gagal mengunduh laporan kamera')
+    } finally {
+      setIsDownloadingCameraReport(false)
     }
   }
 
@@ -365,6 +397,16 @@ export default function LiveMonitoringPage() {
 
         {/* Quick Stats Filter */}
         <div className="flex items-center gap-2 self-stretch sm:self-auto">
+          {canExportCameraReport && (
+            <button
+              onClick={downloadCameraReport}
+              disabled={isDownloadingCameraReport}
+              className="flex-1 sm:flex-initial min-h-[44px] px-4 py-2 rounded-xl font-bold text-xs transition-colors cursor-pointer font-display bg-[#150f23] hover:bg-[#1f1633] text-white shadow-card disabled:opacity-50 flex items-center justify-center gap-1.5 focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none"
+            >
+              <Download className="w-4 h-4 text-[#c2ef4e]" aria-hidden="true" />
+              <span>{isDownloadingCameraReport ? 'Mengunduh...' : 'Unduh Laporan Kamera'}</span>
+            </button>
+          )}
           <button
             onClick={() => setFilterMode('all')}
             className={`flex-1 sm:flex-initial min-h-[44px] px-4 py-2 rounded-xl font-bold text-xs transition-colors cursor-pointer font-display focus:ring-2 focus:ring-[#6a5fc1]/40 focus:outline-none ${

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import {
@@ -26,29 +26,56 @@ import {
 } from '@/components/dashboard'
 import { useAuthStore } from '@/stores/authStore'
 
+// Item shape returned by GET /analytics/exam/{id}/items
+// (app/services/analytics/item_analysis.py :: compute_exam_analytics).
+// p_index: difficulty P = correct / N (0.00–1.00); difficulty_label: Sukar (<0.30),
+// Sedang (0.30–0.70), Mudah (>0.70). d_index: discrimination D = (upper − lower) /
+// group size; discrimination_label: Perlu Direvisi (Negatif) (<0), Jelek (<0.20),
+// Cukup (<0.40), Baik (<0.70), Sangat Baik (>=0.70). recommendation is the
+// backend's own verdict text for the item.
 interface ItemAnalysis {
+  order_index: number
   question_id: number
+  prompt_snippet: string
   question_type: string
-  prompt: string
-  difficulty_index: number
-  difficulty_category: string
-  discrimination_index: number
-  discrimination_category: string
-  status: string
+  allocated_points: number
+  p_index: number
+  difficulty_label: string
+  d_index: number
+  discrimination_label: string
+  recommendation: string
 }
 
 interface AnalyticsData {
-  total_submissions?: number
   total_examinees?: number
   average_score?: number
   pass_rate?: number
-  mastery_percentage?: number
   highest_score?: number
   lowest_score?: number
   std_deviation?: number
-  standard_deviation?: number
   score_distribution?: Record<string, number>
   item_analysis?: ItemAnalysis[]
+}
+
+// Badge tier derived from the API's own discrimination judgement: the label
+// text is shown verbatim, the colour follows its meaning (with the numeric
+// d_index bands from the backend as fallback when the label is missing).
+// Only "Jelek" / negative discrimination render the red badge.
+function getItemVerdict(item: ItemAnalysis): { tone: 'good' | 'revise' | 'drop'; label: string } {
+  const label = item.discrimination_label || ''
+  if (label === 'Sangat Baik' || label === 'Baik') return { tone: 'good', label }
+  if (label === 'Cukup') return { tone: 'revise', label }
+  if (label === 'Jelek' || label === 'Perlu Direvisi (Negatif)') return { tone: 'drop', label }
+  if (typeof item.d_index === 'number') {
+    if (item.d_index >= 0.4) return { tone: 'good', label: label || 'Baik' }
+    if (item.d_index >= 0.2) return { tone: 'revise', label: label || 'Cukup' }
+    return { tone: 'drop', label: label || 'Jelek' }
+  }
+  return { tone: 'drop', label: label || '—' }
+}
+
+function formatIndex(value: number | undefined): string {
+  return typeof value === 'number' ? value.toFixed(2) : '—'
 }
 
 interface ExamOption {
@@ -75,6 +102,12 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
   const [isLoading, setIsLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [exportNotice, setExportNotice] = useState<{ type: 'error' | 'success'; text: string } | null>(null)
+  // Monotonic id of the latest analytics request. Concurrent loads happen in
+  // practice (StrictMode double-invokes the effect in dev, and exam changes
+  // used to fire loadAnalytics twice); only the latest request may touch
+  // data/error/loading, so a slow failed attempt can never overwrite a newer
+  // successful load with a stale error banner.
+  const analyticsRequestRef = useRef(0)
 
   function showExportNotice(type: 'error' | 'success', text: string) {
     setExportNotice({ type, text })
@@ -175,19 +208,27 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
   }
 
   async function loadAnalytics(id: number) {
+    const requestId = ++analyticsRequestRef.current
     setIsLoading(true)
     setErrorMessage(null)
     try {
       const res = await api.get(`/analytics/exam/${id}/items`)
+      // Ignore stale responses: a newer request has already superseded this one.
+      if (requestId !== analyticsRequestRef.current) return
       setAnalyticsData(res.data.data)
+      // A successful load clears any error left by an earlier failed attempt.
+      setErrorMessage(null)
     } catch (err: any) {
+      if (requestId !== analyticsRequestRef.current) return
       console.error('Failed to load analytics:', err)
       setErrorMessage(
         err.response?.data?.message ||
           'Gagal memuat data analisis psikometrik butir soal. Periksa koneksi ke server ujian CBT.'
       )
     } finally {
-      setIsLoading(false)
+      if (requestId === analyticsRequestRef.current) {
+        setIsLoading(false)
+      }
     }
   }
 
@@ -196,7 +237,9 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
     setExamId(newId)
     setErrorMessage(null)
     router.push(`/exams/${newId}/analytics`)
-    loadAnalytics(newId)
+    // No direct loadAnalytics call here: the examId state change above fires
+    // the effect below, which is the single load trigger. Calling both used
+    // to launch two concurrent fetches for every exam change.
   }
 
   useEffect(() => {
@@ -290,7 +333,7 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
             </p>
             <p>
               <span className="font-bold text-slate-500">Total Peserta:</span>{' '}
-              {analyticsData?.total_submissions || 0} Siswa
+              {analyticsData?.total_examinees ?? 0} Siswa
             </p>
             <p>
               <span className="font-bold text-slate-500">Rata-rata Nilai:</span>{' '}
@@ -298,7 +341,7 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
             </p>
             <p>
               <span className="font-bold text-slate-500">Ketuntasan KKM:</span>{' '}
-              {analyticsData?.mastery_percentage || 0}%
+              {analyticsData?.pass_rate ?? 0}%
             </p>
           </div>
         </div>
@@ -374,14 +417,14 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
             value={analyticsData?.average_score ?? 0}
             icon={<Activity className="w-5 h-5 text-[#6a5fc1]" aria-hidden="true" />}
             tone="violet"
-            subtitle={`Dari ${analyticsData?.total_examinees ?? analyticsData?.total_submissions ?? 0} siswa dinilai`}
+            subtitle={`Dari ${analyticsData?.total_examinees ?? 0} siswa dinilai`}
             className="min-h-[160px]"
           />
 
           {/* Ketuntasan KKM */}
           <StatCard
             title="Ketuntasan KKM (70.0)"
-            value={`${analyticsData?.pass_rate ?? analyticsData?.mastery_percentage ?? 0}%`}
+            value={`${analyticsData?.pass_rate ?? 0}%`}
             icon={<CheckCircle2 className="w-5 h-5 text-emerald-600" aria-hidden="true" />}
             tone="emerald"
             trend={{ value: 'Tuntas', positive: true, label: 'standar KKM' }}
@@ -402,7 +445,7 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
           {/* Standar Deviasi */}
           <StatCard
             title="Standar Deviasi"
-            value={analyticsData?.std_deviation ?? analyticsData?.standard_deviation ?? 0}
+            value={analyticsData?.std_deviation ?? 0}
             icon={<Sigma className="w-5 h-5 text-[#6a5fc1]" aria-hidden="true" />}
             tone="violet"
             subtitle="Tingkat homogenitas kelas"
@@ -454,7 +497,9 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
             <div>
               {/* Mobile Card List View (<md) */}
               <div className="md:hidden divide-y divide-slate-100">
-                {(analyticsData?.item_analysis || []).map((item, idx) => (
+                {(analyticsData?.item_analysis || []).map((item, idx) => {
+                  const verdict = getItemVerdict(item)
+                  return (
                   <div key={item.question_id} className="p-4 space-y-2.5">
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-2">
@@ -473,32 +518,31 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
                       </div>
                       <span
                         className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold font-mono inline-block shadow-2xs ${
-                          item.status === 'good'
+                          verdict.tone === 'good'
                             ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
-                            : item.status === 'revise'
+                            : verdict.tone === 'revise'
                             ? 'bg-amber-50 text-amber-800 border border-amber-200'
                             : 'bg-rose-50 text-rose-700 border border-rose-200'
                         }`}
                       >
-                        {item.status === 'good'
-                          ? 'Sangat Baik'
-                          : item.status === 'revise'
-                          ? 'Perlu Revisi'
-                          : 'Gugur'}
+                        {verdict.label}
                       </span>
                     </div>
 
-                    <p className="text-xs font-medium text-slate-900 line-clamp-2">{item.prompt}</p>
+                    <p className="text-xs font-medium text-slate-900 line-clamp-2">{item.prompt_snippet}</p>
+                    {item.recommendation && (
+                      <p className="text-[11px] text-slate-500">{item.recommendation}</p>
+                    )}
 
                     <div className="grid grid-cols-2 gap-2 pt-1 border-t border-slate-100/80 text-[11px]">
                       <div className="bg-slate-50/80 rounded-lg p-2 border border-slate-100">
                         <span className="text-slate-500 block text-[10px] font-mono">T. kesukaran</span>
                         <div className="flex items-baseline gap-1 mt-0.5">
                           <span className="font-bold text-slate-900 font-mono tabular-nums">
-                            {item.difficulty_index}
+                            {formatIndex(item.p_index)}
                           </span>
-                          <span className="text-[10px] text-slate-500 capitalize font-mono">
-                            ({item.difficulty_category})
+                          <span className="text-[10px] text-slate-500 font-mono">
+                            ({item.difficulty_label || '—'})
                           </span>
                         </div>
                       </div>
@@ -506,16 +550,17 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
                         <span className="text-slate-500 block text-[10px] font-mono">Daya pembeda</span>
                         <div className="flex items-baseline gap-1 mt-0.5">
                           <span className="font-bold text-slate-900 font-mono tabular-nums">
-                            {item.discrimination_index}
+                            {formatIndex(item.d_index)}
                           </span>
-                          <span className="text-[10px] text-slate-500 capitalize font-mono">
-                            ({item.discrimination_category})
+                          <span className="text-[10px] text-slate-500 font-mono">
+                            ({item.discrimination_label || '—'})
                           </span>
                         </div>
                       </div>
                     </div>
                   </div>
-                ))}
+                  )
+                })}
 
                 {(!analyticsData?.item_analysis || analyticsData.item_analysis.length === 0) && (
                   <div className="py-10 px-4 text-center text-slate-500 text-xs">
@@ -538,7 +583,9 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 font-medium">
-                    {(analyticsData?.item_analysis || []).map((item, idx) => (
+                    {(analyticsData?.item_analysis || []).map((item, idx) => {
+                      const verdict = getItemVerdict(item)
+                      return (
                       <tr key={item.question_id} className="hover:bg-[#f1effa] transition-colors">
                         <td className="py-3.5 px-5 font-bold text-slate-900 font-mono">{idx + 1}</td>
                         <td className="py-3.5 px-4">
@@ -552,42 +599,44 @@ export default function AnalyticsWorkspace({ initialExamId }: AnalyticsWorkspace
                             {item.question_type === 'multiple_choice' ? 'PG' : 'Esai'}
                           </span>
                         </td>
-                        <td className="py-3.5 px-4 max-w-xs truncate text-slate-900 font-semibold">{item.prompt}</td>
+                        <td className="py-3.5 px-4 max-w-xs truncate text-slate-900 font-semibold">{item.prompt_snippet}</td>
                         <td className="py-3.5 px-4">
                           <span className="font-bold text-slate-900 font-mono tabular-nums">
-                            {item.difficulty_index}
+                            {formatIndex(item.p_index)}
                           </span>
-                          <span className="text-[10px] text-slate-500 block capitalize font-mono">
-                            ({item.difficulty_category})
+                          <span className="text-[10px] text-slate-500 block font-mono">
+                            ({item.difficulty_label || '—'})
                           </span>
                         </td>
                         <td className="py-3.5 px-4">
                           <span className="font-bold text-slate-900 font-mono tabular-nums">
-                            {item.discrimination_index}
+                            {formatIndex(item.d_index)}
                           </span>
-                          <span className="text-[10px] text-slate-500 block capitalize font-mono">
-                            ({item.discrimination_category})
+                          <span className="text-[10px] text-slate-500 block font-mono">
+                            ({item.discrimination_label || '—'})
                           </span>
                         </td>
                         <td className="py-3.5 px-5 text-right">
                           <span
                             className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold font-mono inline-block shadow-2xs ${
-                              item.status === 'good'
+                              verdict.tone === 'good'
                                 ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
-                                : item.status === 'revise'
+                                : verdict.tone === 'revise'
                                 ? 'bg-amber-50 text-amber-800 border border-amber-200'
                                 : 'bg-rose-50 text-rose-700 border border-rose-200'
                             }`}
                           >
-                            {item.status === 'good'
-                              ? 'Sangat Baik'
-                              : item.status === 'revise'
-                              ? 'Perlu Revisi'
-                              : 'Gugur'}
+                            {verdict.label}
                           </span>
+                          {item.recommendation && (
+                            <span className="text-[10px] text-slate-500 block font-normal mt-1">
+                              {item.recommendation}
+                            </span>
+                          )}
                         </td>
                       </tr>
-                    ))}
+                      )
+                    })}
 
                     {(!analyticsData?.item_analysis || analyticsData.item_analysis.length === 0) && (
                       <tr>

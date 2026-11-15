@@ -24,8 +24,12 @@ interface ResultAnswer {
   question_id: number
   question_type: string
   prompt: string
-  is_correct?: boolean
-  final_score: number
+  // Null while the session is in_progress / grading_in_progress: the
+  // backend gates per-question correctness until grading finishes, so a
+  // pending answer must render as "menunggu penilaian", never as wrong
+  // or as a 0 score. (Finding 3.)
+  is_correct?: boolean | null
+  final_score: number | null
   allocated_points: number
   student_response?: string
   correct_answer?: string
@@ -434,15 +438,25 @@ export default function ExamResultPage() {
 
                 <div className="flex items-center gap-2">
                   {ans.question_type === 'multiple_choice' ? (
-                    <span
-                      className={`px-2.5 py-1 rounded-lg text-xs font-bold font-mono ${
-                        ans.is_correct
-                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                          : 'bg-rose-50 text-rose-700 border border-rose-200'
-                      }`}
-                    >
-                      {ans.is_correct ? 'Jawaban Benar' : 'Jawaban Salah'} (Skor: {ans.final_score}/
-                      {ans.allocated_points})
+                    ans.is_correct == null ? (
+                      <span className="px-2.5 py-1 rounded-lg bg-amber-50 text-amber-700 border border-amber-200 text-xs font-bold font-mono">
+                        Menunggu penilaian
+                      </span>
+                    ) : (
+                      <span
+                        className={`px-2.5 py-1 rounded-lg text-xs font-bold font-mono ${
+                          ans.is_correct
+                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                            : 'bg-rose-50 text-rose-700 border border-rose-200'
+                        }`}
+                      >
+                        {ans.is_correct ? 'Jawaban Benar' : 'Jawaban Salah'} (Skor: {ans.final_score}/
+                        {ans.allocated_points})
+                      </span>
+                    )
+                  ) : ans.final_score == null ? (
+                    <span className="px-2.5 py-1 rounded-lg bg-amber-50 text-amber-700 border border-amber-200 text-xs font-bold font-mono">
+                      Menunggu penilaian
                     </span>
                   ) : (
                     <span className="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold font-mono">
@@ -465,7 +479,9 @@ export default function ExamResultPage() {
                     </div>
                     <div className="p-3 rounded-lg bg-emerald-50 border border-emerald-200">
                       <span className="text-emerald-700 font-medium block">Kunci Jawaban:</span>
-                      <span className="font-bold text-emerald-900">{ans.correct_answer}</span>
+                      <span className="font-bold text-emerald-900">
+                        {ans.correct_answer ?? 'Menunggu penilaian'}
+                      </span>
                     </div>
                   </div>
 
@@ -591,20 +607,31 @@ export default function ExamResultPage() {
                 </div>
               )}
 
-              {/* Question-Level Explanation Chatbot */}
-              <QuestionExplanationChat
-                examId={resultData?.exam_id || examId}
-                questionId={ans.question_id}
-                questionNumber={idx + 1}
-                questionPrompt={ans.prompt}
-                questionType={ans.question_type}
-                isCorrect={ans.is_correct}
-                studentResponse={ans.student_response}
-                correctAnswer={ans.correct_answer}
-                officialExplanation={ans.ai_explanation}
-                finalScore={ans.final_score}
-                allocatedPoints={ans.allocated_points}
-              />
+              {/* Question-Level Explanation Chatbot — hidden while the
+                  session is still being graded. Its welcome message
+                  treats a falsy isCorrect as "jawaban salah" and prints
+                  the (still-gated, empty) official key, so showing it
+                  mid-grading would mislabel a pending answer as wrong.
+                  (Finding 3.) */}
+              {resultData.status !== 'in_progress' && resultData.status !== 'grading_in_progress' ? (
+                <QuestionExplanationChat
+                  examId={resultData?.exam_id || examId}
+                  questionId={ans.question_id}
+                  questionNumber={idx + 1}
+                  questionPrompt={ans.prompt}
+                  questionType={ans.question_type}
+                  isCorrect={ans.is_correct ?? undefined}
+                  studentResponse={ans.student_response}
+                  correctAnswer={ans.correct_answer}
+                  officialExplanation={ans.ai_explanation}
+                  finalScore={ans.final_score ?? undefined}
+                  allocatedPoints={ans.allocated_points}
+                />
+              ) : (
+                <p className="text-[11px] text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 font-medium">
+                  Diskusi AI untuk soal ini tersedia setelah penilaian selesai.
+                </p>
+              )}
             </div>
           ))}
         </div>

@@ -14,6 +14,9 @@ import {
   X,
 } from 'lucide-react'
 import api from '@/lib/api'
+import ReactMarkdown from 'react-markdown'
+import type { Components } from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import QuestionExplanationChat from '@/components/student/QuestionExplanationChat'
 
 interface ResultAnswer {
@@ -44,6 +47,47 @@ interface ExamResultData {
   max_score: number
   integrity_score: number
   answers: ResultAnswer[]
+}
+
+// AI explanations arrive as markdown from the backend; render them with the
+// same react-markdown + remark-gfm stack already used by AIAssistantWidget,
+// sized to the explanation boxes on this page. No new dependency.
+const explanationMarkdownComponents: Components = {
+  p: ({ children }) => (
+    <p className="mb-2 last:mb-0 leading-relaxed text-slate-800">{children}</p>
+  ),
+  strong: ({ children }) => (
+    <strong className="font-semibold text-slate-900">{children}</strong>
+  ),
+  em: ({ children }) => <em className="italic text-slate-800">{children}</em>,
+  ul: ({ children }) => (
+    <ul className="list-disc pl-4 space-y-1 my-2 text-slate-800">{children}</ul>
+  ),
+  ol: ({ children }) => (
+    <ol className="list-decimal pl-4 space-y-1 my-2 text-slate-800">{children}</ol>
+  ),
+  li: ({ children }) => <li className="leading-relaxed text-slate-800">{children}</li>,
+  h2: ({ children }) => (
+    <h2 className="text-sm font-bold text-slate-900 mt-2.5 mb-1">{children}</h2>
+  ),
+  h3: ({ children }) => (
+    <h3 className="text-xs font-bold text-slate-900 mt-2 mb-1">{children}</h3>
+  ),
+  code: ({ children }) => (
+    <code className="bg-slate-100 text-[#150f23] px-1 py-0.5 rounded text-[11px] font-mono border border-slate-200">
+      {children}
+    </code>
+  ),
+  blockquote: ({ children }) => (
+    <blockquote className="border-l-2 border-[#6a5fc1] pl-3 py-1 my-2 text-slate-600 italic bg-slate-50/80 rounded-r">
+      {children}
+    </blockquote>
+  ),
+  a: ({ children, href }) => (
+    <a href={href} className="text-[#6a5fc1] underline" target="_blank" rel="noreferrer">
+      {children}
+    </a>
+  ),
 }
 
 export default function ExamResultPage() {
@@ -99,7 +143,15 @@ export default function ExamResultPage() {
     setIsLoading(true)
     setLoadError('')
     try {
-      const res = await api.get(`/student/exam/${examId}/result`)
+      // Admin/guru arrive via /results/{sessionId} with ?session_id=, so the
+      // backend can resolve which student's result to show. Students ignore
+      // the parameter and always see their own result. Read from
+      // window.location instead of useSearchParams to avoid the Suspense
+      // boundary requirement (this runs client-side in an effect).
+      const sid = new URLSearchParams(window.location.search).get('session_id')
+      const res = await api.get(
+        `/student/exam/${examId}/result${sid ? `?session_id=${encodeURIComponent(sid)}` : ''}`
+      )
       setResultData(res.data.data)
     } catch (err: any) {
       console.error('Failed to load exam result:', err)
@@ -424,7 +476,14 @@ export default function ExamResultPage() {
                         <Lightbulb className="w-3.5 h-3.5 text-[#6a5fc1]" />
                         Penjelasan Konsep Pedagogis:
                       </span>
-                      <p className="text-slate-800 leading-relaxed">{ans.ai_explanation}</p>
+                      <div className="text-slate-800 leading-relaxed text-xs">
+                        <ReactMarkdown
+                          remarkPlugins={[remarkGfm]}
+                          components={explanationMarkdownComponents}
+                        >
+                          {ans.ai_explanation}
+                        </ReactMarkdown>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -486,10 +545,17 @@ export default function ExamResultPage() {
                           </div>
 
                           {ans.ai_explanation && (
-                            <p className="text-slate-800 leading-relaxed pt-1 border-t border-[#ddd9ef]/60 text-xs">
-                              <strong className="text-slate-900 font-semibold">Catatan Formatif:</strong>{' '}
-                              {ans.ai_explanation}
-                            </p>
+                            <div className="text-slate-800 leading-relaxed pt-1 border-t border-[#ddd9ef]/60 text-xs">
+                              <strong className="text-slate-900 font-semibold">Catatan Formatif:</strong>
+                              <div className="mt-1">
+                                <ReactMarkdown
+                                  remarkPlugins={[remarkGfm]}
+                                  components={explanationMarkdownComponents}
+                                >
+                                  {ans.ai_explanation}
+                                </ReactMarkdown>
+                              </div>
+                            </div>
                           )}
                         </div>
                       )
@@ -501,9 +567,14 @@ export default function ExamResultPage() {
                           <span className="font-bold text-[#6a5fc1] font-mono">
                             Evaluasi & Pembahasan Esai:
                           </span>
-                          <p className="text-slate-800 leading-relaxed">
-                            {ans.ai_explanation || ans.ai_grading_rationale}
-                          </p>
+                          <div className="text-slate-800 leading-relaxed">
+                            <ReactMarkdown
+                              remarkPlugins={[remarkGfm]}
+                              components={explanationMarkdownComponents}
+                            >
+                              {ans.ai_explanation || ans.ai_grading_rationale}
+                            </ReactMarkdown>
+                          </div>
                         </div>
                       )
                     }

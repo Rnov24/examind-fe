@@ -18,7 +18,11 @@ export default function ResultSessionRedirectPage() {
         const res = await api.get(`/grading/session/${sessionId}`)
         const examId = res.data.data?.exam_id
         if (examId) {
-          router.replace(`/student/exam/${examId}/result`)
+          // Carry the session id through: the result page fetches
+          // /student/exam/{examId}/result, and for admin/guru the backend
+          // needs ?session_id= to know WHICH student's result to show
+          // (students ignore it and always see their own).
+          router.replace(`/student/exam/${examId}/result?session_id=${sessionId}`)
         } else {
           router.replace('/student/dashboard')
         }

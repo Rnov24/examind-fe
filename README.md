@@ -1,5 +1,7 @@
 # EXAMIND Frontend (Next.js 15 + App Router)
 
+[![CI](https://github.com/Rnov24/examind-fe/actions/workflows/ci.yml/badge.svg)](https://github.com/Rnov24/examind-fe/actions/workflows/ci.yml)
+
 > Production Next.js 15 (React 19 + TypeScript + Tailwind CSS) frontend for the EXAMIND AI-Powered Online Examination Platform (*Sistem Ujian Online Berbasis AI*). Fully managed via **pnpm**.
 
 Companion repo: [Rnov24/examind-be](https://github.com/Rnov24/examind-be) (FastAPI backend).

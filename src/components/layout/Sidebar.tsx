@@ -8,6 +8,7 @@ import {
   LayoutDashboard,
   Users,
   BookOpen,
+  FileText,
   FileSpreadsheet,
   CheckCircle2,
   BarChart3,
@@ -153,6 +154,7 @@ export default function Sidebar() {
     }
     return [
       { href: '/student/dashboard', label: 'Dashboard', icon: LayoutDashboard, section: 'Menu Utama' },
+      { href: '/student/results', label: 'Hasil Ujian', icon: FileText, section: 'Menu Utama' },
       { href: '/companion', label: 'Kamera HP', icon: Smartphone, section: 'Perangkat' },
     ]
   }

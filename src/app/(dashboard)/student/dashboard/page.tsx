@@ -200,7 +200,7 @@ export default function StudentDashboardPage() {
                   </Link>
                 )}
                 <Link
-                  href={`/student/exam/${heroExam.id}/result`}
+                  href="/student/results"
                   className="px-4 py-3.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-200 font-semibold text-xs border border-white/10 transition-colors flex items-center justify-center cursor-pointer focus:ring-2 focus:ring-white/20 focus:outline-none"
                 >
                   Lihat Riwayat & Pembahasan
